@@ -9,7 +9,7 @@ from config import SQLALCHEMY_DATABASE_URI
 from config import SQLALCHEMY_MIGRATE_REPO
 
 
-def create_db():
+def create():
     db.create_all()
 
     if not os.path.exists(SQLALCHEMY_MIGRATE_REPO):
@@ -23,7 +23,7 @@ def create_db():
         )
 
 
-def create_migration():
+def addmigration():
     version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
     migration = "%s/versions/%03d_migration.py" % (
         SQLALCHEMY_MIGRATE_REPO,
@@ -53,13 +53,13 @@ def create_migration():
     print "Current database version:", str(version)
 
 
-def upgrade_db():
+def upgrade():
     api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
     version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
     print "Current database version:", str(version)
 
 
-def downgrade_db():
+def downgrade():
     version = api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
 
     api.downgrade(
@@ -108,12 +108,4 @@ def main():
 
 if __name__ == "__main__":
     command = main()
-
-    if command == "create":
-        create_db()
-    elif command == "addmigration":
-        create_migration()
-    elif command == "upgrade":
-        upgrade_db()
-    elif command == "downgrade":
-        downgrade_db()
+    locals()[command]()
