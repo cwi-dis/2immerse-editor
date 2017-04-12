@@ -2,10 +2,10 @@ const webpack = require("webpack");
 const failPlugin = require("webpack-fail-plugin");
 
 module.exports = {
-  entry: "./components/main.tsx",
+  entry: "./js/components/main.tsx",
   output: {
     path: __dirname,
-    filename: 'bundle.js'
+    filename: 'js/bundle.js'
   },
   devtool: "source-map",
   resolve: {

@@ -10,8 +10,8 @@
     "strictNullChecks": true
   },
   "include": [
-    "./**/*.tsx",
-    "./**/*.ts"
+    "./js/**/*.tsx",
+    "./js/**/*.ts"
   ],
   "exclude": [
     "./node_modules/**/*"
