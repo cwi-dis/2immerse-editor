@@ -107,4 +107,13 @@ def main():
 
 
 if __name__ == "__main__":
-    print main()
+    command = main()
+
+    if command == "create":
+        create_db()
+    elif command == "addmigration":
+        create_migration()
+    elif command == "upgrade":
+        upgrade_db()
+    elif command == "downgrade":
+        downgrade_db()
