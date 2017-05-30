@@ -3,9 +3,8 @@
 This repository contains the 2IMMERSE editing platform, a web application for
 creating 2IMMERSE presentation in the browser.
 
-The application uses *Flask* as a HTTP server, backed by a *PostgreSQL*
-database for handling the data. The frontend is handled by *React* and *Redux*
-implemented in *TypeScript*.
+The application uses *Flask* as a HTTP server. The frontend is handled by
+*React* and *Redux* implemented in *TypeScript*.
 
 ## Installation
 
@@ -18,19 +17,6 @@ This will install all the required software and command line utilities. In
 order to run the application, clone this repository and in the root directory,
 run `docker-compose build`. This will download and build all the images and
 install the application code.
-
-### Database Setup
-
-The next step is initialising the database. To do this, run the following
-command:
-
-    docker-compose run web python migration.py create
-
-This will initialise all the tables in the database based on the contents of
-the `app/models/` directory. Finally, to make sure all database changes are
-applied correctly run the following command:
-
-    docker-compose run web python migration.py upgrade
 
 ### Frontend Setup
 
