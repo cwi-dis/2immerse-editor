@@ -1,11 +1,12 @@
-import { createStore } from 'redux';
-import { syncHistoryWithStore } from 'react-router-redux';
-import { hashHistory } from 'react-router';
+import { createStore } from "redux";
+import { syncHistoryWithStore } from "react-router-redux";
+import { hashHistory } from "react-router";
 
-import rootReducer from './reducers/index';
+import rootReducer from "./reducers/index";
 
-const defaultState = {
+export type RootState = {};
 
+const defaultState: RootState = {
 };
 
 const store = createStore(rootReducer, defaultState);
