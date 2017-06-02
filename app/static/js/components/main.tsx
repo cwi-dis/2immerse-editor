@@ -6,6 +6,7 @@ import { Router, Route } from "react-router";
 import store, { history } from "../store";
 
 import App from "./app";
+import LayoutDesigner from "./layout_designer";
 
 import "bulma/css/bulma.css";
 import "../../css/style.css";
@@ -15,6 +16,7 @@ window.onload = () => {
     <Provider store={store}>
       <Router history={history}>
         <Route component={App}>
+          <Route path="/" component={LayoutDesigner} />
         </Route>
       </Router>
     </Provider>,
