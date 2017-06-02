@@ -7,6 +7,8 @@ import store, { history } from "../store";
 
 import App from "./app";
 import LayoutDesigner from "./layout_designer";
+import MasterManager from "./master_manager";
+import ProgramAuthor from "./program_author";
 
 import "bulma/css/bulma.css";
 import "../../css/style.css";
@@ -17,6 +19,8 @@ window.onload = () => {
       <Router history={history}>
         <Route component={App}>
           <Route path="/" component={LayoutDesigner} />
+          <Route path="/masters" component={MasterManager} />
+          <Route path="/program" component={ProgramAuthor} />
         </Route>
       </Router>
     </Provider>,
