@@ -1,13 +1,20 @@
 import * as React from "react";
 
-const Layout = React.createClass({
-  render: function () {
+class Layout extends React.Component<{children?: any}, {}> {
+  public render() {
     return (
       <div>
-        {React.cloneElement(this.props.children, Object.assign({}, this.props))}
+        <div>
+          <ul>
+            <li>Design Layout</li>
+            <li>Manage Masters</li>
+            <li>Author Program</li>
+          </ul>
+        </div>
+        <div>{React.cloneElement(this.props.children, Object.assign({}, this.props))}</div>
       </div>
     );
   }
-});
+}
 
 export default Layout;
