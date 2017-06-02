@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import { actionCreators } from "../actions";
 
 import Layout from "./layout";
-import { RootState } from "../store";
+import { ApplicationState } from "../store";
 
-function mapStateToProps(state: RootState): RootState {
+function mapStateToProps(state: ApplicationState): ApplicationState {
   return {
   };
 }
