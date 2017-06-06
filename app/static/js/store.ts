@@ -5,9 +5,7 @@ import { hashHistory } from "react-router";
 import rootReducer from "./reducers/index";
 
 export type ApplicationState = {};
-
-const defaultState: ApplicationState = {
-};
+const defaultState: ApplicationState = {};
 
 const store = createStore(rootReducer, defaultState);
 
