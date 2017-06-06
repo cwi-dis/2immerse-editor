@@ -1,0 +1,13 @@
+html {
+  background-color: #262626;
+  color: #B1B1B1;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.menubar * a {
+  color: #B1B1B1;
+}
+
+.menubar * a:hover {
+  color: #319aee;
+}
