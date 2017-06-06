@@ -1,18 +1,23 @@
 import { ActionCreatorsMapObject } from "redux";
 
-export type Action<T> = {
-  type: T
+export type Action = {
+  type: string
 };
 
-export const HELLO_WORLD = "HELLO_WORLD";
-export type HELLO_WORLD = {};
-
-function helloWorld(): Action<HELLO_WORLD> {
+function addPersonalDevice(): Action {
+  console.log("personal event triggered");
   return {
-    type: HELLO_WORLD
+    type: "ADD_PERSONAL_DEVICE"
+  };
+}
+
+function addCommunalDevice(): Action {
+  return {
+    type: "ADD_COMMUNAL_DEVICE"
   };
 }
 
 export const actionCreators: ActionCreatorsMapObject = {
-  helloWorld
+  addPersonalDevice,
+  addCommunalDevice
 };
