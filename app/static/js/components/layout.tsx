@@ -2,7 +2,11 @@ import * as React from "react";
 
 import MenuBar from "./menu_bar";
 
-class Layout extends React.Component<{children?: any}, {}> {
+interface ApplicationProps {
+  children?: any;
+}
+
+class Layout extends React.Component<ApplicationProps, {}> {
   public render() {
     return (
       <div>
