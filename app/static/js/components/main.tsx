@@ -6,7 +6,7 @@ import { Router, Route } from "react-router";
 import store, { history } from "../store";
 
 import App from "./app";
-import LayoutDesigner from "./layout_designer";
+import LayoutDesigner from "./layout_designer/layout_designer";
 import MasterManager from "./master_manager";
 import ProgramAuthor from "./program_author";
 
