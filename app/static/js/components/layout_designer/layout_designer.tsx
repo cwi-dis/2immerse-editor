@@ -11,8 +11,10 @@ interface LayoutDesignerProps {
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
   public render() {
+    const { screens } = this.props;
+
     return (
-      <div className="column">
+      <div className="column" style={{overflow: "scroll"}}>
         <div className="content">
           <h1>Layout Designer</h1>
 
@@ -26,14 +28,14 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
           <div className="columns">
             <div className="column is-8" style={{borderRight: "1px solid #B1B1B1"}}>
               <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
-              <p>{this.props.screens.communalScreens.map((screen, i) => {
-                return <span onClick={this.props.removeCommunalDevice.bind(null, i)} key={i}>{screen}, </span>;
+              <p>{screens.communalScreens.map((screen, i) => {
+                return <span onClick={this.props.removeCommunalDevice.bind(null, i)} key={i}>{screen.name}, </span>;
               })}</p>
             </div>
             <div className="column is-4">
               <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
-              <p>{this.props.screens.personalScreens.map((screen, i) => {
-                return <span onClick={this.props.removePersonalDevice.bind(null, i)} key={i}>{screen}, </span>;
+              <p>{screens.personalScreens.map((screen, i) => {
+                return <span onClick={this.props.removePersonalDevice.bind(null, i)} key={i}>{screen.name}, </span>;
               })}</p>
             </div>
           </div>
