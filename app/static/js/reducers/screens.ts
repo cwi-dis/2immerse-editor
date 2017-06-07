@@ -10,7 +10,7 @@ interface ScreenRegion {
   rightSubRegion?: ScreenRegion;
 }
 
-interface Screen {
+export interface Screen {
   name: string;
   orientation: "portrait" | "landscape";
   regions?: ScreenRegion;

@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { ApplicationState } from "../../store";
+import Screen from "./screen";
 
 interface LayoutDesignerProps {
   addPersonalDevice: () => void;
@@ -28,15 +29,19 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
           <div className="columns">
             <div className="column is-8" style={{borderRight: "1px solid #B1B1B1"}}>
               <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
-              <p>{screens.communalScreens.map((screen, i) => {
-                return <span onClick={this.props.removeCommunalDevice.bind(null, i)} key={i}>{screen.name}, </span>;
-              })}</p>
+              <div>{screens.communalScreens.map((screen, i) => {
+                return (
+                  <Screen key={i} screenInfo={screen} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
+                );
+              })}</div>
             </div>
             <div className="column is-4">
               <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
-              <p>{screens.personalScreens.map((screen, i) => {
-                return <span onClick={this.props.removePersonalDevice.bind(null, i)} key={i}>{screen.name}, </span>;
-              })}</p>
+              <div>{screens.personalScreens.map((screen, i) => {
+                return (
+                  <Screen key={i} screenInfo={screen} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
+                );
+              })}</div>
             </div>
           </div>
         </div>
