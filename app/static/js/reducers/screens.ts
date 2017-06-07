@@ -39,8 +39,6 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
   console.log("Action triggered:");
   console.log(action);
 
-  state.personalScreens.map(screen => screen.name);
-
   switch (action.type) {
     case "ADD_PERSONAL_DEVICE": {
       console.log("personal device reducer called");
