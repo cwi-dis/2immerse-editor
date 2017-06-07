@@ -24,6 +24,13 @@ class Screen extends React.Component<ScreenProps, {}> {
   public render() {
     const screen = this.props.screenInfo;
 
+    const computedWidth = this.props.width * 2 / 3;
+    const marginLeft = (this.props.width / 2) - (computedWidth / 2);
+
+    const computedHeight = (screen.orientation === "landscape")
+      ? 9 / 16 * computedWidth
+      : 16 / 9 * computedWidth;
+
     return (
       <div>
         <p>
@@ -31,7 +38,7 @@ class Screen extends React.Component<ScreenProps, {}> {
           <br/>
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
         </p>
-        <canvas ref={(el) => this.canvas = el} width={this.props.width - 50}></canvas>
+        <canvas ref={(el) => this.canvas = el} height={computedHeight} width={computedWidth} style={{marginLeft: marginLeft}}></canvas>
       </div>
     );
   }
