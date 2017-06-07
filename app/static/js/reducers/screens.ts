@@ -78,6 +78,8 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
         ...state,
         communalScreens: state.communalScreens.delete(id)
       };
+    } case "ADD_SCREEN_DIVIDER": {
+      return state;
     } default:
       return state;
   }

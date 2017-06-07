@@ -41,12 +41,14 @@ function removeCommunalDevice(id: number): PayloadAction<REMOVE_COMMUNAL_DEVICE>
   };
 }
 
-function addScreenDivider(id: number, orientation: string): PayloadAction<{id: number, orientation: string}> {
+type ADD_SCREEN_DIVIDER = {id: number, orientation: string, position: number};
+function addScreenDivider(id: number, orientation: string, position: number): PayloadAction<ADD_SCREEN_DIVIDER> {
   return {
     type: "ADD_SCREEN_DIVIDER",
     payload: {
       id,
-      orientation
+      orientation,
+      position
     }
   };
 }
