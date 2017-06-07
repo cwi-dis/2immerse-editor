@@ -5,6 +5,8 @@ import { ApplicationState } from "../../store";
 interface LayoutDesignerProps {
   addPersonalDevice: () => void;
   addCommunalDevice: () => void;
+  removePersonalDevice: (id: number) => void;
+  removeCommunalDevice: (id: number) => void;
 }
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
@@ -24,11 +26,15 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
           <div className="columns">
             <div className="column is-8" style={{borderRight: "1px solid #B1B1B1"}}>
               <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
-              <p>{this.props.screens.communalScreens.map((screen, i) => <span key={i}>{screen}, </span>)}</p>
+              <p>{this.props.screens.communalScreens.map((screen, i) => {
+                return <span onClick={this.props.removeCommunalDevice.bind(null, i)} key={i}>{screen}, </span>;
+              })}</p>
             </div>
             <div className="column is-4">
               <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
-              <p>{this.props.screens.personalScreens.map((screen, i) => <span key={i}>{screen}, </span>)}</p>
+              <p>{this.props.screens.personalScreens.map((screen, i) => {
+                return <span onClick={this.props.removePersonalDevice.bind(null, i)} key={i}>{screen}, </span>;
+              })}</p>
             </div>
           </div>
         </div>
