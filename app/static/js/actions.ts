@@ -1,8 +1,12 @@
 import { ActionCreatorsMapObject } from "redux";
 
-export type Action = {
-  type: string
+export interface Action {
+  type: string;
 };
+
+export interface PayloadAction<T> extends Action {
+  payload: T;
+}
 
 function addPersonalDevice(): Action {
   console.log("personal event triggered");
