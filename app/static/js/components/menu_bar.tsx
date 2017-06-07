@@ -4,7 +4,7 @@ import { Link } from "react-router";
 class MenuBar extends React.Component<{}, {}> {
   public render() {
     return (
-      <div className="columns menubar" style={{borderBottom: "2px solid #B1B1B1", textAlign: "center", fontSize: 20, marginTop: 10}}>
+      <div className="columns menubar">
         <div className="column is-2 is-offset-3">
           <Link to="/" activeStyle={{color: "#319aee"}}>Design Layout</Link>
         </div>

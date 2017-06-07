@@ -4,6 +4,14 @@ html {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+.menubar {
+  font-family: 'Lucida Sans', Geneva, Verdana, sans-serif;
+  font-size: 18px;
+  border-bottom: 2px solid #161616;
+  text-align: center;
+  margin-top: 5px;
+}
+
 .menubar * a {
   color: #B1B1B1;
 }
