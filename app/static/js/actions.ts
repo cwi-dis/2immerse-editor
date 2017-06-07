@@ -21,7 +21,27 @@ function addCommunalDevice(): Action {
   };
 }
 
+function removePersonalDevice(id: number): PayloadAction<{id: number}> {
+  return {
+    type: "REMOVE_PERSONAL_DEVICE",
+    payload: {
+      id
+    }
+  };
+}
+
+function removeCommunalDevice(id: number): PayloadAction<{id: number}> {
+  return {
+    type: "REMOVE_COMMUNAL_DEVICE",
+    payload: {
+      id
+    }
+  };
+}
+
 export const actionCreators: ActionCreatorsMapObject = {
   addPersonalDevice,
-  addCommunalDevice
+  addCommunalDevice,
+  removePersonalDevice,
+  removeCommunalDevice
 };
