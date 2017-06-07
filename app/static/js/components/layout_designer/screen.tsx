@@ -21,6 +21,17 @@ class Screen extends React.Component<ScreenProps, {}> {
     }
   }
 
+  private getCanvasClickPosition(clickEvent: any) {
+    return [
+      clickEvent.pageX - this.canvas.offsetLeft,
+      clickEvent.pageY - this.canvas.offsetTop
+    ];
+  }
+
+  private handleClick(e: any) {
+    const [x, y] = this.getCanvasClickPosition(e);
+  }
+
   public render() {
     const screen = this.props.screenInfo;
 
@@ -38,7 +49,7 @@ class Screen extends React.Component<ScreenProps, {}> {
           <br/>
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
         </p>
-        <canvas ref={(el) => this.canvas = el} height={computedHeight} width={computedWidth} style={{marginLeft: marginLeft}}></canvas>
+        <canvas onClick={this.handleClick.bind(this)} ref={(el) => this.canvas = el} height={computedHeight} width={computedWidth} style={{marginLeft: marginLeft}}></canvas>
       </div>
     );
   }
