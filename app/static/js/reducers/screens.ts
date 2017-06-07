@@ -56,20 +56,11 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
       };
 
       return state.push(screen);
-    } case "REMOVE_PERSONAL_DEVICE": {
-      const { id } = (action as PayloadAction<{id: number}>).payload;
+    } case "REMOVE_DEVICE": {
+      let { id } = (action as PayloadAction<{id: string}>).payload;
+      let index = state.findIndex((screen) => screen.id === id);
 
-      return {
-        ...state,
-        personalScreens: state.personalScreens.delete(id)
-      };
-    } case "REMOVE_COMMUNAL_DEVICE": {
-      let { id } = (action as PayloadAction<{id: number}>).payload;
-
-      return {
-        ...state,
-        communalScreens: state.communalScreens.delete(id)
-      };
+      return state.delete(index);
     } case "ADD_SCREEN_DIVIDER": {
       return state;
     } default:

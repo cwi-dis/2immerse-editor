@@ -21,20 +21,10 @@ function addCommunalDevice(): Action {
   };
 }
 
-type REMOVE_PERSONAL_DEVICE = {id: number};
-function removePersonalDevice(id: number): PayloadAction<REMOVE_PERSONAL_DEVICE> {
+type REMOVE_DEVICE = {id: string};
+function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   return {
-    type: "REMOVE_PERSONAL_DEVICE",
-    payload: {
-      id
-    }
-  };
-}
-
-type REMOVE_COMMUNAL_DEVICE = {id: number};
-function removeCommunalDevice(id: number): PayloadAction<REMOVE_COMMUNAL_DEVICE> {
-  return {
-    type: "REMOVE_COMMUNAL_DEVICE",
+    type: "REMOVE_DEVICE",
     payload: {
       id
     }
@@ -56,6 +46,5 @@ function addScreenDivider(id: number, orientation: string, position: number): Pa
 export const actionCreators: ActionCreatorsMapObject = {
   addPersonalDevice,
   addCommunalDevice,
-  removePersonalDevice,
-  removeCommunalDevice
+  removeDevice
 };
