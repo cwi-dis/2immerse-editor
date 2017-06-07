@@ -11,6 +11,9 @@ interface LayoutDesignerProps {
 }
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
+  private communalColumn: HTMLDivElement;
+  private personalColumn: HTMLDivElement;
+
   public render() {
     const { screens } = this.props;
 
@@ -27,19 +30,19 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
           <br/>
 
           <div className="columns">
-            <div className="column is-8" style={{borderRight: "1px solid #B1B1B1"}}>
+            <div className="column is-8" ref={(el) => this.communalColumn = el} style={{borderRight: "1px solid #B1B1B1"}}>
               <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
               <div>{screens.communalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
                 );
               })}</div>
             </div>
-            <div className="column is-4">
+            <div className="column is-4" ref={(el) => this.personalColumn = el}>
               <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
               <div>{screens.personalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
                 );
               })}</div>
             </div>
