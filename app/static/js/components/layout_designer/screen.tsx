@@ -5,6 +5,7 @@ import { Screen as ScreenModel } from "../../reducers/screens";
 
 interface ScreenProps {
   screenInfo: ScreenModel;
+  width: number;
   removeDevice: () => void;
 }
 
