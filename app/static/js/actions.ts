@@ -39,6 +39,16 @@ function removeCommunalDevice(id: number): PayloadAction<{id: number}> {
   };
 }
 
+function addScreenDivider(id: number, orientation: string): PayloadAction<{id: number, orientation: string}> {
+  return {
+    type: "ADD_SCREEN_DIVIDER",
+    payload: {
+      id,
+      orientation
+    }
+  };
+}
+
 export const actionCreators: ActionCreatorsMapObject = {
   addPersonalDevice,
   addCommunalDevice,
