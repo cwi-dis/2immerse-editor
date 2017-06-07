@@ -6,8 +6,7 @@ import Screen from "./screen";
 interface LayoutDesignerProps {
   addPersonalDevice: () => void;
   addCommunalDevice: () => void;
-  removePersonalDevice: (id: number) => void;
-  removeCommunalDevice: (id: number) => void;
+  removeDevice: (id: string) => void;
 }
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
@@ -16,6 +15,8 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
 
   public render() {
     const { screens } = this.props;
+    const personalScreens = screens.filter((screen) => screen.type === "personal");
+    const communalScreens = screens.filter((screen) => screen.type === "communal");
 
     return (
       <div className="column" style={{overflow: "scroll"}}>
@@ -31,18 +32,18 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
 
           <div className="columns">
             <div className="column is-8" ref={(el) => this.communalColumn = el} style={{borderRight: "1px solid #B1B1B1"}}>
-              <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
-              <div>{screens.communalScreens.map((screen, i) => {
+              <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.count()})</h3>
+              <div>{communalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth * 3 / 4} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth * 3 / 4} removeDevice={this.props.removeDevice.bind(null, screen.id)} />
                 );
               })}</div>
             </div>
             <div className="column is-4" ref={(el) => this.personalColumn = el}>
-              <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
-              <div>{screens.personalScreens.map((screen, i) => {
+              <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.count()})</h3>
+              <div>{personalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth * 1 / 2} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth * 1 / 2} removeDevice={this.props.removeDevice.bind(null, screen.id)} />
                 );
               })}</div>
             </div>
