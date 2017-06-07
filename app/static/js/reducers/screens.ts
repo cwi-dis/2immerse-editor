@@ -12,7 +12,7 @@ interface ScreenRegion {
 }
 
 export interface Screen {
-  id: string,
+  id: string;
   name: string;
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
