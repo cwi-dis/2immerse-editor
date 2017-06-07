@@ -21,7 +21,8 @@ function addCommunalDevice(): Action {
   };
 }
 
-function removePersonalDevice(id: number): PayloadAction<{id: number}> {
+type REMOVE_PERSONAL_DEVICE = {id: number};
+function removePersonalDevice(id: number): PayloadAction<REMOVE_PERSONAL_DEVICE> {
   return {
     type: "REMOVE_PERSONAL_DEVICE",
     payload: {
@@ -30,7 +31,8 @@ function removePersonalDevice(id: number): PayloadAction<{id: number}> {
   };
 }
 
-function removeCommunalDevice(id: number): PayloadAction<{id: number}> {
+type REMOVE_COMMUNAL_DEVICE = {id: number};
+function removeCommunalDevice(id: number): PayloadAction<REMOVE_COMMUNAL_DEVICE> {
   return {
     type: "REMOVE_COMMUNAL_DEVICE",
     payload: {
