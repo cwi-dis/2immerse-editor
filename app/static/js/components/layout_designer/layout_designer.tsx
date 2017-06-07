@@ -34,7 +34,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
               <h3 style={{textAlign: "center"}}>Communal Device ({this.props.screens.communalScreens.count()})</h3>
               <div>{screens.communalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth * 3 / 4} removeDevice={this.props.removeCommunalDevice.bind(null, i)} />
                 );
               })}</div>
             </div>
@@ -42,7 +42,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
               <h3 style={{textAlign: "center"}}>Personal Devices ({this.props.screens.personalScreens.count()})</h3>
               <div>{screens.personalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
+                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth * 1 / 2} removeDevice={this.props.removePersonalDevice.bind(null, i)} />
                 );
               })}</div>
             </div>
