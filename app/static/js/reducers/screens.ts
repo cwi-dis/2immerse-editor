@@ -1,15 +1,16 @@
 import { Action } from "../actions";
+import { List } from "immutable";
 
 import { ApplicationState } from "../store";
 
 export interface ScreenState {
-  personalScreens: Array<string>;
-  communalScreens: Array<string>;
+  personalScreens: List<string>;
+  communalScreens: List<string>;
 }
 
 const defaultState: ScreenState = {
-  personalScreens: [],
-  communalScreens: []
+  personalScreens: List<string>(),
+  communalScreens: List<string>()
 };
 
 function getRandomInt(min: number = 0, max: number = 10) {
@@ -26,14 +27,14 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       return {
         ...state,
-        personalScreens: state.personalScreens.concat("personal " + getRandomInt())
+        personalScreens: state.personalScreens.push("personal " + getRandomInt())
       };
     case "ADD_COMMUNAL_DEVICE":
       console.log("communal device reducer called");
 
       return {
         ...state,
-        communalScreens: state.communalScreens.concat("communal " + getRandomInt())
+        communalScreens: state.communalScreens.push("communal " + getRandomInt())
       };
     default:
       return state;
