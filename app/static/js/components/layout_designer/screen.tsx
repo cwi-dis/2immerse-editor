@@ -30,6 +30,18 @@ class Screen extends React.Component<ScreenProps, {}> {
 
   private handleClick(e: any) {
     const [x, y] = this.getCanvasClickPosition(e);
+    const context = this.canvas.getContext("2d");
+
+    if (context) {
+      context.beginPath();
+
+      context.lineWidth = 1;
+      context.fillStyle = "black";
+
+      context.moveTo(x, 0);
+      context.lineTo(x, this.canvas.height);
+      context.stroke();
+    }
   }
 
   public render() {
