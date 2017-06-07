@@ -1,4 +1,5 @@
 import { List } from "immutable";
+import * as shortid from "shortid";
 
 import { Action, PayloadAction } from "../actions";
 import { ApplicationState } from "../store";
@@ -11,24 +12,17 @@ interface ScreenRegion {
 }
 
 export interface Screen {
+  id: string,
   name: string;
+  type: "personal" | "communal";
   orientation: "portrait" | "landscape";
   regions?: ScreenRegion;
 }
 
-export interface ScreenState {
-  personalScreens: List<Screen>;
-  communalScreens: List<Screen>;
-}
-
-const defaultState: ScreenState = {
-  personalScreens: List<Screen>(),
-  communalScreens: List<Screen>()
-};
+export type ScreenState = List<Screen>;
+const defaultState: ScreenState = List<Screen>();
 
 function getRandomInt(min: number = 0, max: number = 10) {
-  const blag = List<string>(["a", "b", "c"]);
-
   min = Math.ceil(min);
   max = Math.floor(max);
 
@@ -44,26 +38,24 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
       console.log("personal device reducer called");
 
       const screen: Screen = {
+        id: shortid.generate(),
         name: "personal " + getRandomInt(),
-        orientation: "portrait"
+        type: "personal",
+        orientation: "portrait",
       };
 
-      return {
-        ...state,
-        personalScreens: state.personalScreens.push(screen)
-      };
+      return state.push(screen);
     } case "ADD_COMMUNAL_DEVICE": {
       console.log("communal device reducer called");
 
       const screen: Screen = {
+        id: shortid.generate(),
         name: "communal " + getRandomInt(),
+        type: "communal",
         orientation: "landscape"
       };
 
-      return {
-        ...state,
-        communalScreens: state.communalScreens.push(screen)
-      };
+      return state.push(screen);
     } case "REMOVE_PERSONAL_DEVICE": {
       const { id } = (action as PayloadAction<{id: number}>).payload;
 
