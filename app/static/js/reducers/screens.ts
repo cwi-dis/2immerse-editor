@@ -1,6 +1,6 @@
-import { Action } from "../actions";
 import { List } from "immutable";
 
+import { Action, PayloadAction } from "../actions";
 import { ApplicationState } from "../store";
 
 export interface ScreenState {
@@ -21,6 +21,9 @@ function getRandomInt(min: number = 0, max: number = 10) {
 }
 
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
+  console.log("Action triggered:");
+  console.log(action);
+
   switch (action.type) {
     case "ADD_PERSONAL_DEVICE":
       console.log("personal device reducer called");
@@ -36,7 +39,21 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
         ...state,
         communalScreens: state.communalScreens.push("communal " + getRandomInt())
       };
-    default:
+    case "REMOVE_PERSONAL_DEVICE": {
+      const { id } = (action as PayloadAction<{id: number}>).payload;
+
+      return {
+        ...state,
+        personalScreens: state.personalScreens.delete(id)
+      };
+    } case "REMOVE_COMMUNAL_DEVICE": {
+      let { id } = (action as PayloadAction<{id: number}>).payload;
+
+      return {
+        ...state,
+        communalScreens: state.communalScreens.delete(id)
+      };
+    } default:
       return state;
   }
 }
