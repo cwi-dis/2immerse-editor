@@ -28,7 +28,7 @@ class Screen extends React.Component<ScreenProps, {}> {
     ];
   }
 
-  private handleClick(e: any) {
+  private handleCanvasClick(orientation: "horizontal" | "vertical", e: any) {
     const [x, y] = this.getCanvasClickPosition(e);
     const context = this.canvas.getContext("2d");
 
@@ -38,8 +38,14 @@ class Screen extends React.Component<ScreenProps, {}> {
       context.lineWidth = 1;
       context.fillStyle = "black";
 
-      context.moveTo(x, 0);
-      context.lineTo(x, this.canvas.height);
+      if (orientation === "horizontal") {
+        context.moveTo(x, 0);
+        context.lineTo(x, this.canvas.height);
+      } else {
+        context.moveTo(0, y);
+        context.lineTo(this.canvas.width, y);
+      }
+
       context.stroke();
     }
   }
@@ -59,7 +65,13 @@ class Screen extends React.Component<ScreenProps, {}> {
           <br/>
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
         </p>
-        <canvas onClick={this.handleClick.bind(this)} ref={(el) => this.canvas = el} height={computedHeight} width={width} style={{display: "block", margin: "0 auto"}}></canvas>
+        <canvas onClick={this.handleCanvasClick.bind(this, "horizontal")}
+                onDoubleClick={this.handleCanvasClick.bind(this, "vertical")}
+                ref={(el) => this.canvas = el}
+                height={computedHeight}
+                width={width}
+                style={{display: "block", margin: "0 auto"}}>
+        </canvas>
       </div>
     );
   }
