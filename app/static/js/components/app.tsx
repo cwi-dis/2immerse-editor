@@ -8,6 +8,7 @@ import { ApplicationState } from "../store";
 
 function mapStateToProps(state: ApplicationState): ApplicationState {
   return {
+    screens: state.screens
   };
 }
 
