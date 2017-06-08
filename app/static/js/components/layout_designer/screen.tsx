@@ -28,8 +28,7 @@ class Screen extends React.Component<ScreenProps, {}> {
     ];
   }
 
-  private handleCanvasClick(orientation: "horizontal" | "vertical", e: any) {
-    const [x, y] = this.getCanvasClickPosition(e);
+  private drawCanvasLine(coord: number, orientation: "horizontal" | "vertical") {
     const context = this.canvas.getContext("2d");
 
     if (context) {
@@ -39,14 +38,24 @@ class Screen extends React.Component<ScreenProps, {}> {
       context.fillStyle = "black";
 
       if (orientation === "horizontal") {
-        context.moveTo(x, 0);
-        context.lineTo(x, this.canvas.height);
+        context.moveTo(coord, 0);
+        context.lineTo(coord, this.canvas.height);
       } else {
-        context.moveTo(0, y);
-        context.lineTo(this.canvas.width, y);
+        context.moveTo(0, coord);
+        context.lineTo(this.canvas.width, coord);
       }
 
       context.stroke();
+    }
+  }
+
+  private handleCanvasClick(orientation: "horizontal" | "vertical", e: any) {
+    const [x, y] = this.getCanvasClickPosition(e);
+
+    if (orientation === "horizontal") {
+      this.drawCanvasLine(x, orientation);
+    } else {
+      this.drawCanvasLine(y, orientation);
     }
   }
 
