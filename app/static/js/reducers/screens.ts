@@ -110,11 +110,20 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
       return state.delete(index);
     } case "SPLIT_REGION": {
       console.log("split region reducer called");
-      let splitParams = (action as PayloadAction<SPLIT_REGION>).payload;
+      const splitParams = (action as PayloadAction<SPLIT_REGION>).payload;
 
-      console.log(splitParams);
+      const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
+      let screen = state.get(screenIndex)!;
 
-      return state;
+      const regionIndex = screen.regions.findIndex((region) => region.id === splitParams.regionId);
+      let region = screen.regions.get(regionIndex)!;
+
+      const [region1, region2] = splitRegion(region, splitParams.position, splitParams.orientation);
+
+      screen.regions = screen.regions.set(regionIndex, region1)
+                                     .insert(regionIndex, region2);
+
+      return state.set(screenIndex, screen);
     } default:
       return state;
   }
