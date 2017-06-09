@@ -86,9 +86,11 @@ class Screen extends React.Component<ScreenProps, {}> {
     return (
       <div>
         <p>
-          Name: {screen.name} Orientation: {screen.orientation}
-          <br/>
-          <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
+          Name: {screen.name}<br/>
+          Orientation: {screen.orientation}<br/>
+          <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>
+            remove
+          </span>
         </p>
         <canvas onClick={this.handleCanvasClick.bind(this, "vertical")}
                 onContextMenu={this.handleCanvasClick.bind(this, "horizontal")}
@@ -97,6 +99,7 @@ class Screen extends React.Component<ScreenProps, {}> {
                 width={width}
                 style={{display: "block", margin: "0 auto"}}>
         </canvas>
+        <br/>
       </div>
     );
   }
