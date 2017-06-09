@@ -64,27 +64,6 @@ class Screen extends React.Component<ScreenProps, {}> {
     ];
   }
 
-  private drawCanvasLine(coord: number, orientation: "horizontal" | "vertical") {
-    const context = this.canvas.getContext("2d");
-
-    if (context) {
-      context.beginPath();
-
-      context.lineWidth = 1;
-      context.fillStyle = "black";
-
-      if (orientation === "vertical") {
-        context.moveTo(coord, 0);
-        context.lineTo(coord, this.canvas.height);
-      } else {
-        context.moveTo(0, coord);
-        context.lineTo(this.canvas.width, coord);
-      }
-
-      context.stroke();
-    }
-  }
-
   private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
     e.preventDefault();
     const [x, y] = this.getCanvasClickPosition(e);
@@ -93,12 +72,6 @@ class Screen extends React.Component<ScreenProps, {}> {
     if (clickedRegion) {
       const splitPosition = (orientation === "horizontal") ? y / this.canvas.height : x / this.canvas.width;
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
-    }
-
-    if (orientation === "vertical") {
-      this.drawCanvasLine(x, orientation);
-    } else {
-      this.drawCanvasLine(y, orientation);
     }
   }
 
