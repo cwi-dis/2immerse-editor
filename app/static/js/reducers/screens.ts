@@ -2,6 +2,7 @@ import { List } from "immutable";
 import * as shortid from "shortid";
 
 import { Action, PayloadAction } from "../actions";
+import { REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ApplicationState } from "../store";
 
 export interface ScreenRegion {
@@ -71,11 +72,12 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       return state.push(screen);
     } case "REMOVE_DEVICE": {
-      let { id } = (action as PayloadAction<{id: string}>).payload;
+      let { id } = (action as PayloadAction<REMOVE_DEVICE>).payload;
       let index = state.findIndex((screen) => screen.id === id);
 
       return state.delete(index);
-    } case "ADD_SCREEN_DIVIDER": {
+    } case "SPLIT_REGION": {
+      let splitParams = (action as PayloadAction<SPLIT_REGION>);
       return state;
     } default:
       return state;
