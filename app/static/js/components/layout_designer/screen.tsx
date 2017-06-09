@@ -50,6 +50,7 @@ class Screen extends React.Component<ScreenProps, {}> {
   }
 
   private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
+    e.preventDefault();
     const [x, y] = this.getCanvasClickPosition(e);
 
     if (orientation === "horizontal") {
@@ -75,7 +76,7 @@ class Screen extends React.Component<ScreenProps, {}> {
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
         </p>
         <canvas onClick={this.handleCanvasClick.bind(this, "horizontal")}
-                onDoubleClick={this.handleCanvasClick.bind(this, "vertical")}
+                onContextMenu={this.handleCanvasClick.bind(this, "vertical")}
                 ref={(el) => this.canvas = el}
                 height={computedHeight}
                 width={width}
