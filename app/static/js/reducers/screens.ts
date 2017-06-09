@@ -8,6 +8,7 @@ interface ScreenRegion {
   id: string;
   position: [number, number];
   size: [number, number];
+  zIndex?: number;
 }
 
 export interface Screen {
