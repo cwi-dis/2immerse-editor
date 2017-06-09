@@ -21,7 +21,7 @@ function addCommunalDevice(): Action {
   };
 }
 
-type REMOVE_DEVICE = {id: string};
+export type REMOVE_DEVICE = {id: string};
 function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   return {
     type: "REMOVE_DEVICE",
@@ -31,10 +31,10 @@ function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   };
 }
 
-type ADD_SCREEN_DIVIDER = {id: number, orientation: string, position: number};
-function addScreenDivider(id: number, orientation: string, position: number): PayloadAction<ADD_SCREEN_DIVIDER> {
+export type SPLIT_REGION = {id: string, orientation: "horizontal" | "vertical", position: number};
+function splitRegion(id: string, orientation: "horizontal" | "vertical", position: number): PayloadAction<SPLIT_REGION> {
   return {
-    type: "ADD_SCREEN_DIVIDER",
+    type: "SPLIT_REGION",
     payload: {
       id,
       orientation,
@@ -46,5 +46,6 @@ function addScreenDivider(id: number, orientation: string, position: number): Pa
 export const actionCreators: ActionCreatorsMapObject = {
   addPersonalDevice,
   addCommunalDevice,
-  removeDevice
+  removeDevice,
+  splitRegion
 };
