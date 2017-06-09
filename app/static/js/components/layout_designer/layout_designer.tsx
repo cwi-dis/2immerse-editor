@@ -7,7 +7,7 @@ interface LayoutDesignerProps {
   addPersonalDevice: () => void;
   addCommunalDevice: () => void;
   removeDevice: (id: string) => void;
-  splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
+  splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
@@ -40,7 +40,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
                           screenInfo={screen}
                           width={this.communalColumn.clientWidth * 3 / 4}
                           removeDevice={this.props.removeDevice.bind(null, screen.id)}
-                          splitRegion={this.props.splitRegion} />
+                          splitRegion={this.props.splitRegion.bind(null, screen.id)} />
                 );
               })}</div>
             </div>
@@ -52,7 +52,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
                           screenInfo={screen}
                           width={this.personalColumn.clientWidth * 1 / 2}
                           removeDevice={this.props.removeDevice.bind(null, screen.id)}
-                          splitRegion={this.props.splitRegion} />
+                          splitRegion={this.props.splitRegion.bind(null, screen.id)} />
                 );
               })}</div>
             </div>

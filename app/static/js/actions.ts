@@ -31,12 +31,13 @@ function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   };
 }
 
-export type SPLIT_REGION = {id: string, orientation: "horizontal" | "vertical", position: number};
-function splitRegion(id: string, orientation: "horizontal" | "vertical", position: number): PayloadAction<SPLIT_REGION> {
+export type SPLIT_REGION = {screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number};
+function splitRegion(screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number): PayloadAction<SPLIT_REGION> {
   return {
     type: "SPLIT_REGION",
     payload: {
-      id,
+      screenId,
+      regionId,
       orientation,
       position
     }
