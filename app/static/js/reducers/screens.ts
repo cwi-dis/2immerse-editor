@@ -77,7 +77,11 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       return state.delete(index);
     } case "SPLIT_REGION": {
-      let splitParams = (action as PayloadAction<SPLIT_REGION>);
+      console.log("split region reducer called");
+      let splitParams = (action as PayloadAction<SPLIT_REGION>).payload;
+
+      console.log(splitParams);
+
       return state;
     } default:
       return state;
