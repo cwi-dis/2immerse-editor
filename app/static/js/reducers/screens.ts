@@ -63,7 +63,6 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
 }
 
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
-  console.log("Action triggered:");
   console.log(action);
 
   switch (action.type) {

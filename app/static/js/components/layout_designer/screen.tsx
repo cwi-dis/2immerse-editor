@@ -24,8 +24,6 @@ class Screen extends React.Component<ScreenProps, {}> {
       context.fillRect(0, 0, width, height);
 
       screen.regions.forEach((region) => {
-        console.log("Drawing region: " + region);
-
         const [x, y] = region.position;
         const [w, h] = region.size;
 

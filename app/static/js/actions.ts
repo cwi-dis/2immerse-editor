@@ -9,7 +9,6 @@ export interface PayloadAction<T> extends Action {
 }
 
 function addPersonalDevice(): Action {
-  console.log("personal event triggered");
   return {
     type: "ADD_PERSONAL_DEVICE"
   };
