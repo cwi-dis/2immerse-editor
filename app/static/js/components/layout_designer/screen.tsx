@@ -13,13 +13,33 @@ interface ScreenProps {
 class Screen extends React.Component<ScreenProps, {}> {
   private canvas: HTMLCanvasElement;
 
-  public componentDidMount() {
+  private drawRegions() {
+    const {width, height} = this.canvas;
+    const screen = this.props.screenInfo;
     const context = this.canvas.getContext("2d");
 
     if (context) {
       context.fillStyle = "white";
-      context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      context.strokeStyle = "black";
+      context.fillRect(0, 0, width, height);
+
+      screen.regions.forEach((region) => {
+        console.log("Drawing region: " + region);
+
+        const [x, y] = region.position;
+        const [w, h] = region.size;
+
+        context.strokeRect(x * width, y * height, w * width, h * height);
+      });
     }
+  }
+
+  public componentDidUpdate() {
+    this.drawRegions();
+  }
+
+  public componentDidMount() {
+    this.drawRegions();
   }
 
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
