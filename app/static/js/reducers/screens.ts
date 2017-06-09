@@ -5,10 +5,9 @@ import { Action, PayloadAction } from "../actions";
 import { ApplicationState } from "../store";
 
 interface ScreenRegion {
-  dividerPosition: number;
-  orientation: "horizontal" | "vertical";
-  leftSubRegion?: ScreenRegion;
-  rightSubRegion?: ScreenRegion;
+  id: string;
+  position: [number, number];
+  size: [number, number];
 }
 
 export interface Screen {
@@ -16,7 +15,7 @@ export interface Screen {
   name: string;
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
-  regions?: ScreenRegion;
+  regions: List<ScreenRegion>;
 }
 
 export type ScreenState = List<Screen>;
