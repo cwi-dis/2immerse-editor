@@ -52,7 +52,7 @@ class Screen extends React.Component<ScreenProps, {}> {
       context.lineWidth = 1;
       context.fillStyle = "black";
 
-      if (orientation === "horizontal") {
+      if (orientation === "vertical") {
         context.moveTo(coord, 0);
         context.lineTo(coord, this.canvas.height);
       } else {
@@ -68,7 +68,7 @@ class Screen extends React.Component<ScreenProps, {}> {
     e.preventDefault();
     const [x, y] = this.getCanvasClickPosition(e);
 
-    if (orientation === "horizontal") {
+    if (orientation === "vertical") {
       this.drawCanvasLine(x, orientation);
     } else {
       this.drawCanvasLine(y, orientation);
@@ -90,8 +90,8 @@ class Screen extends React.Component<ScreenProps, {}> {
           <br/>
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>remove</span>
         </p>
-        <canvas onClick={this.handleCanvasClick.bind(this, "horizontal")}
-                onContextMenu={this.handleCanvasClick.bind(this, "vertical")}
+        <canvas onClick={this.handleCanvasClick.bind(this, "vertical")}
+                onContextMenu={this.handleCanvasClick.bind(this, "horizontal")}
                 ref={(el) => this.canvas = el}
                 height={computedHeight}
                 width={width}
