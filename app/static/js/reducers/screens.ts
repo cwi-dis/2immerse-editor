@@ -36,22 +36,36 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
     case "ADD_PERSONAL_DEVICE": {
       console.log("personal device reducer called");
 
+      const rootRegion: ScreenRegion = {
+        id: shortid.generate(),
+        position: [0, 0],
+        size: [1, 1]
+      };
+
       const screen: Screen = {
         id: shortid.generate(),
         name: "personal " + getRandomInt(),
         type: "personal",
         orientation: "portrait",
+        regions: List([rootRegion])
       };
 
       return state.push(screen);
     } case "ADD_COMMUNAL_DEVICE": {
       console.log("communal device reducer called");
 
+      const rootRegion: ScreenRegion = {
+        id: shortid.generate(),
+        position: [0, 0],
+        size: [1, 1]
+      };
+
       const screen: Screen = {
         id: shortid.generate(),
         name: "communal " + getRandomInt(),
         type: "communal",
-        orientation: "landscape"
+        orientation: "landscape",
+        regions: List([rootRegion])
       };
 
       return state.push(screen);
