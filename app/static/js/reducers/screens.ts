@@ -4,7 +4,7 @@ import * as shortid from "shortid";
 import { Action, PayloadAction } from "../actions";
 import { ApplicationState } from "../store";
 
-interface ScreenRegion {
+export interface ScreenRegion {
   id: string;
   position: [number, number];
   size: [number, number];

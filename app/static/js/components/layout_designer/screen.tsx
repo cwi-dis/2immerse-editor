@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ApplicationState } from "../../store";
-import { Screen as ScreenModel } from "../../reducers/screens";
+import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 
 interface ScreenProps {
   screenInfo: ScreenModel;
@@ -18,6 +18,21 @@ class Screen extends React.Component<ScreenProps, {}> {
     if (context) {
       context.fillStyle = "white";
       context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  }
+
+  private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
+    const regions = this.props.screenInfo.regions;
+
+    const clickedRegion = regions.findEntry((region) => {
+      const topLeft = region.position;
+      const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
+
+      return x >= topLeft[0] && x < bottomRight[0] && y >= topLeft[1] && y < bottomRight[1];
+    });
+
+    if (clickedRegion) {
+      return clickedRegion[1];
     }
   }
 
