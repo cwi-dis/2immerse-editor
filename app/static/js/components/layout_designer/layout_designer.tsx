@@ -10,9 +10,32 @@ interface LayoutDesignerProps {
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
 
-class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
+type CombinedProps = ApplicationState & LayoutDesignerProps;
+
+interface LayoutDesignerState {
+  personalScreenWidth: number;
+  communalScreenWidth: number;
+}
+
+class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState> {
   private communalColumn: HTMLDivElement;
   private personalColumn: HTMLDivElement;
+
+  constructor(props: CombinedProps) {
+    super(props);
+
+    this.state = {
+      personalScreenWidth: 0,
+      communalScreenWidth: 0
+    }
+  }
+
+  public componentDidMount() {
+    this.setState({
+      personalScreenWidth: this.personalColumn.clientWidth,
+      communalScreenWidth: this.communalColumn.clientWidth
+    });
+  }
 
   public render() {
     const { screens } = this.props;
@@ -38,7 +61,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
                 return (
                   <Screen key={i}
                           screenInfo={screen}
-                          width={this.communalColumn.clientWidth * 3 / 4}
+                          width={this.state.communalScreenWidth * 3 / 4}
                           removeDevice={this.props.removeDevice.bind(null, screen.id)}
                           splitRegion={this.props.splitRegion.bind(null, screen.id)} />
                 );
@@ -50,7 +73,7 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
                 return (
                   <Screen key={i}
                           screenInfo={screen}
-                          width={this.personalColumn.clientWidth * 1 / 2}
+                          width={this.state.personalScreenWidth * 1 / 2}
                           removeDevice={this.props.removeDevice.bind(null, screen.id)}
                           splitRegion={this.props.splitRegion.bind(null, screen.id)} />
                 );
