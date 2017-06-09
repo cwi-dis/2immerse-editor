@@ -30,6 +30,38 @@ function getRandomInt(min: number = 0, max: number = 10) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+type coords = [number, number];
+
+function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
+  const topLeft = region.position;
+  const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
+
+  let size1: coords = [0, 0], size2: coords = [0, 0];
+  let position2: coords = [0, 0];
+
+  if (orientation === "vertical") {
+    size1 = [splitAt - topLeft[0], topLeft[1]];
+
+    position2 = [splitAt, topLeft[1]];
+    size2 = [bottomRight[0] - splitAt, region.size[1]];
+  } else {
+    size1 = [topLeft[0], splitAt - topLeft[1]];
+
+    position2 = [topLeft[0], splitAt];
+    size2 = [region.size[0], bottomRight[1] - splitAt];
+  }
+
+  return [{
+    id: region.id,
+    position: region.position,
+    size: size1
+  }, {
+    id: shortid.generate(),
+    position: position2,
+    size: size2
+  }];
+}
+
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
   console.log("Action triggered:");
   console.log(action);
