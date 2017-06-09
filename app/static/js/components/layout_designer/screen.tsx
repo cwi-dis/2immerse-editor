@@ -7,6 +7,7 @@ interface ScreenProps {
   screenInfo: ScreenModel;
   width: number;
   removeDevice: () => void;
+  splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
 
 class Screen extends React.Component<ScreenProps, {}> {
@@ -67,6 +68,12 @@ class Screen extends React.Component<ScreenProps, {}> {
   private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
     e.preventDefault();
     const [x, y] = this.getCanvasClickPosition(e);
+    const clickedRegion = this.getClickedRegion(x / this.canvas.width, y / this.canvas.height);
+
+    if (clickedRegion) {
+      const splitPosition = (orientation === "horizontal") ? y / this.canvas.height : x / this.canvas.width;
+      this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
+    }
 
     if (orientation === "vertical") {
       this.drawCanvasLine(x, orientation);

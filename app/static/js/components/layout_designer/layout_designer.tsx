@@ -7,6 +7,7 @@ interface LayoutDesignerProps {
   addPersonalDevice: () => void;
   addCommunalDevice: () => void;
   removeDevice: (id: string) => void;
+  splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
 
 class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerProps, {}> {
@@ -35,7 +36,11 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
               <h3 style={{textAlign: "center"}}>Communal Device ({communalScreens.count()})</h3>
               <div>{communalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.communalColumn.clientWidth * 3 / 4} removeDevice={this.props.removeDevice.bind(null, screen.id)} />
+                  <Screen key={i}
+                          screenInfo={screen}
+                          width={this.communalColumn.clientWidth * 3 / 4}
+                          removeDevice={this.props.removeDevice.bind(null, screen.id)}
+                          splitRegion={this.props.splitRegion} />
                 );
               })}</div>
             </div>
@@ -43,7 +48,11 @@ class LayoutDesigner extends React.Component<ApplicationState & LayoutDesignerPr
               <h3 style={{textAlign: "center"}}>Personal Devices ({personalScreens.count()})</h3>
               <div>{personalScreens.map((screen, i) => {
                 return (
-                  <Screen key={i} screenInfo={screen} width={this.personalColumn.clientWidth * 1 / 2} removeDevice={this.props.removeDevice.bind(null, screen.id)} />
+                  <Screen key={i}
+                          screenInfo={screen}
+                          width={this.personalColumn.clientWidth * 1 / 2}
+                          removeDevice={this.props.removeDevice.bind(null, screen.id)}
+                          splitRegion={this.props.splitRegion} />
                 );
               })}</div>
             </div>
