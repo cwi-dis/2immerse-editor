@@ -114,16 +114,17 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
       let screen = state.get(screenIndex)!;
+      let { regions } = screen;
 
-      const regionIndex = screen.regions.findIndex((region) => region.id === splitParams.regionId);
-      let region = screen.regions.get(regionIndex)!;
+      const regionIndex = regions.findIndex((region) => region.id === splitParams.regionId);
+      let region = regions.get(regionIndex)!;
 
       const [region1, region2] = splitRegion(region, splitParams.position, splitParams.orientation);
 
-      screen.regions = screen.regions.set(regionIndex, region1)
-                                     .insert(regionIndex, region2);
-
-      return state.set(screenIndex, screen);
+      return state.set(screenIndex, {
+        ...screen,
+        regions: regions.set(regionIndex, region1).insert(regionIndex, region2)
+      });
     } default:
       return state;
   }
