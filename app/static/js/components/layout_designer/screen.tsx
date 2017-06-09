@@ -21,7 +21,7 @@ class Screen extends React.Component<ScreenProps, {}> {
     }
   }
 
-  private getCanvasClickPosition(clickEvent: any) {
+  private getCanvasClickPosition(clickEvent: MouseEvent) {
     return [
       clickEvent.pageX - this.canvas.offsetLeft,
       clickEvent.pageY - this.canvas.offsetTop
@@ -49,7 +49,7 @@ class Screen extends React.Component<ScreenProps, {}> {
     }
   }
 
-  private handleCanvasClick(orientation: "horizontal" | "vertical", e: any) {
+  private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
     const [x, y] = this.getCanvasClickPosition(e);
 
     if (orientation === "horizontal") {
