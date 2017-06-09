@@ -40,12 +40,12 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   let position2: coords = [0, 0];
 
   if (orientation === "vertical") {
-    size1 = [splitAt - topLeft[0], topLeft[1]];
+    size1 = [splitAt - topLeft[0], region.size[1]];
 
     position2 = [splitAt, topLeft[1]];
     size2 = [bottomRight[0] - splitAt, region.size[1]];
   } else {
-    size1 = [topLeft[0], splitAt - topLeft[1]];
+    size1 = [region.size[0], splitAt - topLeft[1]];
 
     position2 = [topLeft[0], splitAt];
     size2 = [region.size[0], bottomRight[1] - splitAt];
