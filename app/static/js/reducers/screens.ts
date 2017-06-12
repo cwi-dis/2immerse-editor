@@ -2,7 +2,7 @@ import { List } from "immutable";
 import * as shortid from "shortid";
 
 import { Action, PayloadAction } from "../actions";
-import { REMOVE_DEVICE, SPLIT_REGION } from "../actions";
+import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ApplicationState } from "../store";
 
 type coords = [number, number];
@@ -66,8 +66,9 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
   console.log(action);
 
   switch (action.type) {
-    case "ADD_PERSONAL_DEVICE": {
-      console.log("personal device reducer called");
+    case "ADD_DEVICE": {
+      console.log("add device reducer called");
+      let { type } = (action as PayloadAction<ADD_DEVICE>).payload;
 
       const rootRegion: ScreenRegion = {
         id: shortid.generate(),
@@ -77,27 +78,9 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       const screen: Screen = {
         id: shortid.generate(),
-        name: "personal " + getRandomInt(),
-        type: "personal",
-        orientation: "portrait",
-        regions: List([rootRegion])
-      };
-
-      return state.push(screen);
-    } case "ADD_COMMUNAL_DEVICE": {
-      console.log("communal device reducer called");
-
-      const rootRegion: ScreenRegion = {
-        id: shortid.generate(),
-        position: [0, 0],
-        size: [1, 1]
-      };
-
-      const screen: Screen = {
-        id: shortid.generate(),
-        name: "communal " + getRandomInt(),
-        type: "communal",
-        orientation: "landscape",
+        name: type + " " + getRandomInt(),
+        type: type,
+        orientation: (type === "communal") ? "landscape" : "portrait",
         regions: List([rootRegion])
       };
 
