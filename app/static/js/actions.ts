@@ -1,8 +1,11 @@
 import { ActionCreatorsMapObject } from "redux";
 
-export interface PayloadAction<U, T> {
-  type: U;
-  payload: T;
+export interface BasicAction<T> {
+  type: T;
+}
+
+export interface PayloadAction<T, U> extends BasicAction<T> {
+  payload: U;
 }
 
 type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
