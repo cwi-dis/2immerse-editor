@@ -8,15 +8,13 @@ export interface PayloadAction<T> extends Action {
   payload: T;
 }
 
-function addPersonalDevice(): Action {
+export type ADD_DEVICE = {type: "personal" | "communal"}
+function addDevice(type: "personal" | "communal"): PayloadAction<ADD_DEVICE> {
   return {
-    type: "ADD_PERSONAL_DEVICE"
-  };
-}
-
-function addCommunalDevice(): Action {
-  return {
-    type: "ADD_COMMUNAL_DEVICE"
+    type: "ADD_DEVICE",
+    payload: {
+      type
+    }
   };
 }
 
@@ -44,8 +42,7 @@ function splitRegion(screenId: string, regionId: string, orientation: "horizonta
 }
 
 export const actionCreators: ActionCreatorsMapObject = {
-  addPersonalDevice,
-  addCommunalDevice,
+  addDevice,
   removeDevice,
   splitRegion
 };
