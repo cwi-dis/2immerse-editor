@@ -1,4 +1,4 @@
-import { List } from "immutable";
+import { List, Collection } from "immutable";
 import * as shortid from "shortid";
 
 import { Action } from "../actions";
@@ -59,6 +59,10 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
     position: position2,
     size: size2
   }];
+}
+
+function findById<T extends {id: string}>(collection: Collection.Indexed<T>, id: string): [number, T] {
+  return collection.findEntry((value) => value.id === id)!;
 }
 
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
