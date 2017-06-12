@@ -8,20 +8,17 @@ export interface PayloadAction<T> extends Action {
   payload: T;
 }
 
-function addPersonalDevice(): Action {
-  console.log("personal event triggered");
+export type ADD_DEVICE = {type: "personal" | "communal"}
+function addDevice(type: "personal" | "communal"): PayloadAction<ADD_DEVICE> {
   return {
-    type: "ADD_PERSONAL_DEVICE"
+    type: "ADD_DEVICE",
+    payload: {
+      type
+    }
   };
 }
 
-function addCommunalDevice(): Action {
-  return {
-    type: "ADD_COMMUNAL_DEVICE"
-  };
-}
-
-type REMOVE_DEVICE = {id: string};
+export type REMOVE_DEVICE = {id: string};
 function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   return {
     type: "REMOVE_DEVICE",
@@ -31,12 +28,13 @@ function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   };
 }
 
-type ADD_SCREEN_DIVIDER = {id: number, orientation: string, position: number};
-function addScreenDivider(id: number, orientation: string, position: number): PayloadAction<ADD_SCREEN_DIVIDER> {
+export type SPLIT_REGION = {screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number};
+function splitRegion(screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number): PayloadAction<SPLIT_REGION> {
   return {
-    type: "ADD_SCREEN_DIVIDER",
+    type: "SPLIT_REGION",
     payload: {
-      id,
+      screenId,
+      regionId,
       orientation,
       position
     }
@@ -44,7 +42,7 @@ function addScreenDivider(id: number, orientation: string, position: number): Pa
 }
 
 export const actionCreators: ActionCreatorsMapObject = {
-  addPersonalDevice,
-  addCommunalDevice,
-  removeDevice
+  addDevice,
+  removeDevice,
+  splitRegion
 };

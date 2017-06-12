@@ -2,13 +2,16 @@ import { List } from "immutable";
 import * as shortid from "shortid";
 
 import { Action, PayloadAction } from "../actions";
+import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ApplicationState } from "../store";
 
-interface ScreenRegion {
-  dividerPosition: number;
-  orientation: "horizontal" | "vertical";
-  leftSubRegion?: ScreenRegion;
-  rightSubRegion?: ScreenRegion;
+type coords = [number, number];
+
+export interface ScreenRegion {
+  id: string;
+  position: coords;
+  size: coords;
+  zIndex?: number;
 }
 
 export interface Screen {
@@ -16,7 +19,7 @@ export interface Screen {
   name: string;
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
-  regions?: ScreenRegion;
+  regions: List<ScreenRegion>;
 }
 
 export type ScreenState = List<Screen>;
@@ -29,40 +32,81 @@ function getRandomInt(min: number = 0, max: number = 10) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
+  const topLeft = region.position;
+  const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
+
+  let size1: coords = [0, 0], size2: coords = [0, 0];
+  let position2: coords = [0, 0];
+
+  if (orientation === "vertical") {
+    size1 = [splitAt - topLeft[0], region.size[1]];
+
+    position2 = [splitAt, topLeft[1]];
+    size2 = [bottomRight[0] - splitAt, region.size[1]];
+  } else {
+    size1 = [region.size[0], splitAt - topLeft[1]];
+
+    position2 = [topLeft[0], splitAt];
+    size2 = [region.size[0], bottomRight[1] - splitAt];
+  }
+
+  return [{
+    id: region.id,
+    position: region.position,
+    size: size1
+  }, {
+    id: shortid.generate(),
+    position: position2,
+    size: size2
+  }];
+}
+
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
-  console.log("Action triggered:");
   console.log(action);
 
   switch (action.type) {
-    case "ADD_PERSONAL_DEVICE": {
-      console.log("personal device reducer called");
+    case "ADD_DEVICE": {
+      console.log("add device reducer called");
+      let { type } = (action as PayloadAction<ADD_DEVICE>).payload;
 
-      const screen: Screen = {
+      const rootRegion: ScreenRegion = {
         id: shortid.generate(),
-        name: "personal " + getRandomInt(),
-        type: "personal",
-        orientation: "portrait",
+        position: [0, 0],
+        size: [1, 1]
       };
 
-      return state.push(screen);
-    } case "ADD_COMMUNAL_DEVICE": {
-      console.log("communal device reducer called");
-
       const screen: Screen = {
         id: shortid.generate(),
-        name: "communal " + getRandomInt(),
-        type: "communal",
-        orientation: "landscape"
+        name: type + " " + getRandomInt(),
+        type: type,
+        orientation: (type === "communal") ? "landscape" : "portrait",
+        regions: List([rootRegion])
       };
 
       return state.push(screen);
     } case "REMOVE_DEVICE": {
-      let { id } = (action as PayloadAction<{id: string}>).payload;
+      let { id } = (action as PayloadAction<REMOVE_DEVICE>).payload;
       let index = state.findIndex((screen) => screen.id === id);
 
       return state.delete(index);
-    } case "ADD_SCREEN_DIVIDER": {
-      return state;
+    } case "SPLIT_REGION": {
+      console.log("split region reducer called");
+      const splitParams = (action as PayloadAction<SPLIT_REGION>).payload;
+
+      const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
+      let screen = state.get(screenIndex)!;
+      let { regions } = screen;
+
+      const regionIndex = regions.findIndex((region) => region.id === splitParams.regionId);
+      let region = regions.get(regionIndex)!;
+
+      const [region1, region2] = splitRegion(region, splitParams.position, splitParams.orientation);
+
+      return state.set(screenIndex, {
+        ...screen,
+        regions: regions.set(regionIndex, region1).insert(regionIndex, region2)
+      });
     } default:
       return state;
   }

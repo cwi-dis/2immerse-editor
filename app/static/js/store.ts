@@ -9,7 +9,10 @@ export interface ApplicationState {
   screens: ScreenState;
 };
 
-const store = createStore(rootReducer, {});
+const store = createStore(
+  rootReducer,
+  (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 export const history = syncHistoryWithStore(hashHistory, store);
 export default store;
