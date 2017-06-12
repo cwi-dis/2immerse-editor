@@ -72,7 +72,7 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
                 return (
                   <Screen key={i}
                           screenInfo={screen}
-                          width={this.state.personalScreenWidth * 1 / 2}
+                          width={this.state.personalScreenWidth * 3 / 8}
                           removeDevice={this.props.removeDevice.bind(null, screen.id)}
                           splitRegion={this.props.splitRegion.bind(null, screen.id)} />
                 );
