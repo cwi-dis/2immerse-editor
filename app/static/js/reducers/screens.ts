@@ -22,7 +22,6 @@ export interface Screen {
 }
 
 export type ScreenState = List<Screen>;
-const defaultState: ScreenState = List<Screen>();
 
 function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
@@ -81,9 +80,7 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-function screens(state: ScreenState = defaultState, action: Action): ScreenState {
-  console.log(action);
-
+export default function screens(state: ScreenState = List<Screen>(), action: Action): ScreenState {
   switch (action.type) {
     case "ADD_DEVICE": {
       const { type } = action.payload;
@@ -107,9 +104,8 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
         ...screen,
         regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
       });
-    } default:
+    } default: {
       return state;
+    }
   }
 }
-
-export default screens;
