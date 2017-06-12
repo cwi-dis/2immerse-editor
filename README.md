@@ -39,11 +39,17 @@ a pluggable module bundler which will be responsible for translating the
 TypeScript code and the React components to simple JavaScript and resolve all
 the imports.
 
+Also install `yarn`, which is basically npm which understands versions:
+
+```
+sudo npm install -g yarn
+```
+
 Next up, build the app 
 
 ```
 cd app/static/
-npm install
+yarn install
 webpack
 ```
 
