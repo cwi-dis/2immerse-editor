@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { Action } from "../actions";
+import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ActionHandler, findById, getRandomInt } from "../util";
 import { ApplicationState } from "../store";
 
@@ -69,32 +69,34 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-export default function screens(state: ScreenState = List<Screen>(), action: Action): ScreenState {
-  switch (action.type) {
-    case "ADD_DEVICE": {
-      const { type } = action.payload;
-      const screen = createNewScreen(type);
+const actionHandler = new ActionHandler<ScreenState>(List<Screen>());
 
-      return state.push(screen);
-    } case "REMOVE_DEVICE": {
-      const { id } = action.payload;
-      const [index] = findById(state, id);
+actionHandler.addHandler("ADD_DEVICE", (state, action: ADD_DEVICE) => {
+  const { type } = action.payload;
+  const screen = createNewScreen(type);
 
-      return state.delete(index);
-    } case "SPLIT_REGION": {
-      const {screenId, regionId, position, orientation} = action.payload;
+  return state.push(screen);
+});
 
-      const [screenIndex, screen] = findById(state, screenId);
-      const [regionIndex, region] = findById(screen.regions, regionId);
+actionHandler.addHandler("REMOVE_DEVICE", (state, action: REMOVE_DEVICE) => {
+  const { id } = action.payload;
+  const [index] = findById(state, id);
 
-      const [region1, region2] = splitRegion(region, position, orientation);
+  return state.delete(index);
+});
 
-      return state.set(screenIndex, {
-        ...screen,
-        regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
-      });
-    } default: {
-      return state;
-    }
-  }
-}
+actionHandler.addHandler("SPLIT_REGION", (state, action: SPLIT_REGION) => {
+  const {screenId, regionId, position, orientation} = action.payload;
+
+  const [screenIndex, screen] = findById(state, screenId);
+  const [regionIndex, region] = findById(screen.regions, regionId);
+
+  const [region1, region2] = splitRegion(region, position, orientation);
+
+  return state.set(screenIndex, {
+    ...screen,
+    regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
+  });
+});
+
+export default actionHandler.getReducer();
