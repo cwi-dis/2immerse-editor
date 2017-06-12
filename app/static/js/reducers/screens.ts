@@ -61,8 +61,8 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-function findById<T extends {id: string}>(collection: Collection.Indexed<T>, id: string): [number, T] {
-  return collection.findEntry((value) => value.id === id)!;
+function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
+  return collection.findEntry((value: T) => value.id === id)!;
 }
 
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
