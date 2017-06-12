@@ -1,15 +1,15 @@
 import { ActionCreatorsMapObject } from "redux";
 
-export interface Action {
-  type: string;
-};
-
-export interface PayloadAction<T> extends Action {
-  payload: T;
+export interface BasicAction<T> {
+  type: T;
 }
 
-export type ADD_DEVICE = {type: "personal" | "communal"}
-function addDevice(type: "personal" | "communal"): PayloadAction<ADD_DEVICE> {
+export interface PayloadAction<T, U> extends BasicAction<T> {
+  payload: U;
+}
+
+type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
+function addDevice(type: "personal" | "communal"): ADD_DEVICE {
   return {
     type: "ADD_DEVICE",
     payload: {
@@ -18,8 +18,8 @@ function addDevice(type: "personal" | "communal"): PayloadAction<ADD_DEVICE> {
   };
 }
 
-export type REMOVE_DEVICE = {id: string};
-function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
+type REMOVE_DEVICE = PayloadAction<"REMOVE_DEVICE", {id: string}>
+function removeDevice(id: string): REMOVE_DEVICE {
   return {
     type: "REMOVE_DEVICE",
     payload: {
@@ -28,8 +28,8 @@ function removeDevice(id: string): PayloadAction<REMOVE_DEVICE> {
   };
 }
 
-export type SPLIT_REGION = {screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number};
-function splitRegion(screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number): PayloadAction<SPLIT_REGION> {
+type SPLIT_REGION = PayloadAction<"SPLIT_REGION", {screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number}>;
+function splitRegion(screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number): SPLIT_REGION {
   return {
     type: "SPLIT_REGION",
     payload: {
@@ -40,6 +40,8 @@ function splitRegion(screenId: string, regionId: string, orientation: "horizonta
     }
   };
 }
+
+export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION;
 
 export const actionCreators: ActionCreatorsMapObject = {
   addDevice,

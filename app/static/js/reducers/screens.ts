@@ -2,7 +2,6 @@ import { List } from "immutable";
 import * as shortid from "shortid";
 
 import { Action, PayloadAction } from "../actions";
-import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ApplicationState } from "../store";
 
 type coords = [number, number];
@@ -68,7 +67,7 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
   switch (action.type) {
     case "ADD_DEVICE": {
       console.log("add device reducer called");
-      let { type } = (action as PayloadAction<ADD_DEVICE>).payload;
+      let { type } = action.payload;
 
       const rootRegion: ScreenRegion = {
         id: shortid.generate(),
@@ -86,13 +85,13 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
 
       return state.push(screen);
     } case "REMOVE_DEVICE": {
-      let { id } = (action as PayloadAction<REMOVE_DEVICE>).payload;
+      let { id } = action.payload;
       let index = state.findIndex((screen) => screen.id === id);
 
       return state.delete(index);
     } case "SPLIT_REGION": {
       console.log("split region reducer called");
-      const splitParams = (action as PayloadAction<SPLIT_REGION>).payload;
+      const splitParams = action.payload;
 
       const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
       let screen = state.get(screenIndex)!;
