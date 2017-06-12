@@ -5,10 +5,12 @@ import { Action, PayloadAction } from "../actions";
 import { REMOVE_DEVICE, SPLIT_REGION } from "../actions";
 import { ApplicationState } from "../store";
 
+type coords = [number, number];
+
 export interface ScreenRegion {
   id: string;
-  position: [number, number];
-  size: [number, number];
+  position: coords;
+  size: coords;
   zIndex?: number;
 }
 
@@ -29,8 +31,6 @@ function getRandomInt(min: number = 0, max: number = 10) {
 
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-type coords = [number, number];
 
 function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
   const topLeft = region.position;
