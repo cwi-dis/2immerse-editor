@@ -90,25 +90,21 @@ function screens(state: ScreenState = defaultState, action: Action): ScreenState
       return state.push(screen);
     } case "REMOVE_DEVICE": {
       let { id } = action.payload;
-      let index = state.findIndex((screen) => screen.id === id);
+      let [index] = findById(state, id);
 
       return state.delete(index);
     } case "SPLIT_REGION": {
       console.log("split region reducer called");
-      const splitParams = action.payload;
+      const {screenId, regionId, position, orientation} = action.payload;
 
-      const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
-      let screen = state.get(screenIndex)!;
-      let { regions } = screen;
+      const [screenIndex, screen] = findById(state, screenId);
+      const [regionIndex, region] = findById(screen.regions, regionId);
 
-      const regionIndex = regions.findIndex((region) => region.id === splitParams.regionId);
-      let region = regions.get(regionIndex)!;
-
-      const [region1, region2] = splitRegion(region, splitParams.position, splitParams.orientation);
+      const [region1, region2] = splitRegion(region, position, orientation);
 
       return state.set(screenIndex, {
         ...screen,
-        regions: regions.set(regionIndex, region1).insert(regionIndex, region2)
+        regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
       });
     } default:
       return state;
