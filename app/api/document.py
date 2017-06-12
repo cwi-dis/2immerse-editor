@@ -1,5 +1,6 @@
 from flask import Response, request
-import urllib
+import urllib2
+import xml.etree.ElementTree as ET
 
 class Document:
     def __init__(self):
@@ -22,6 +23,6 @@ class Document:
         
     def load(self, url):
         print 'xxxjack loading from url:', url
-        data = urllib.urlopen(url).read()
-        return self.loadXml(data)
+        fp = urllib2.urlopen(url)
+        self.document = ET.parse(fp)
         
