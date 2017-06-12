@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { Action, PayloadAction } from "../actions";
+import { Action } from "../actions";
 import { ApplicationState } from "../store";
 
 type coords = [number, number];
