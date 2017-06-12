@@ -24,11 +24,31 @@ export interface Screen {
 export type ScreenState = List<Screen>;
 const defaultState: ScreenState = List<Screen>();
 
+function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
+  return collection.findEntry((value: T) => value.id === id)!;
+}
+
 function getRandomInt(min: number = 0, max: number = 10) {
   min = Math.ceil(min);
   max = Math.floor(max);
 
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function createNewScreen(type: "communal" | "personal"): Screen {
+  const rootRegion: ScreenRegion = {
+    id: shortid.generate(),
+    position: [0, 0],
+    size: [1, 1]
+  };
+
+  return {
+    id: shortid.generate(),
+    name: type + " " + getRandomInt(),
+    type: type,
+    orientation: (type === "communal") ? "landscape" : "portrait",
+    regions: List([rootRegion])
+  };
 }
 
 function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
@@ -61,40 +81,21 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
-  return collection.findEntry((value: T) => value.id === id)!;
-}
-
 function screens(state: ScreenState = defaultState, action: Action): ScreenState {
   console.log(action);
 
   switch (action.type) {
     case "ADD_DEVICE": {
-      console.log("add device reducer called");
-      let { type } = action.payload;
-
-      const rootRegion: ScreenRegion = {
-        id: shortid.generate(),
-        position: [0, 0],
-        size: [1, 1]
-      };
-
-      const screen: Screen = {
-        id: shortid.generate(),
-        name: type + " " + getRandomInt(),
-        type: type,
-        orientation: (type === "communal") ? "landscape" : "portrait",
-        regions: List([rootRegion])
-      };
+      const { type } = action.payload;
+      const screen = createNewScreen(type);
 
       return state.push(screen);
     } case "REMOVE_DEVICE": {
-      let { id } = action.payload;
-      let [index] = findById(state, id);
+      const { id } = action.payload;
+      const [index] = findById(state, id);
 
       return state.delete(index);
     } case "SPLIT_REGION": {
-      console.log("split region reducer called");
       const {screenId, regionId, position, orientation} = action.payload;
 
       const [screenIndex, screen] = findById(state, screenId);

@@ -26,7 +26,7 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
     this.state = {
       personalScreenWidth: 0,
       communalScreenWidth: 0
-    }
+    };
   }
 
   public componentDidMount() {
