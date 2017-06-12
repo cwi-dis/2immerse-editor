@@ -21,31 +21,36 @@ run
 docker-compose build
 ```
 
-This will download and build all the images and
-install the application code.
+This will download and build all the images and install the application code.
 
 ### Frontend Setup
 
 Since the application uses TypeScript and React, we also need to setup the
 frontend build-chain. First off, make sure you have `npm` installed. Then,
-install `webpack` globally by running 
+install `webpack` globally by running
 
 ```
-sudo npm install -g webpack
+[sudo] npm install -g webpack
 ```
 
-Webpack is
-a pluggable module bundler which will be responsible for translating the
-TypeScript code and the React components to simple JavaScript and resolve all
-the imports.
+Webpack is a pluggable module bundler which will be responsible for translating
+the TypeScript code and the React components to simple JavaScript and resolve
+all the imports.
 
 Also install `yarn`, which is basically npm which understands versions:
 
 ```
-sudo npm install -g yarn
+brew install yarn
 ```
 
-Next up, build the app 
+Or if you don't want to use `brew` you can also install it via `npm`. However,
+doing so is discouraged ([see here](https://yarnpkg.com/en/docs/install#alternatives-tab)).
+
+```
+[sudo] npm install -g yarn
+```
+
+Next up, build the app
 
 ```
 cd app/static/
@@ -61,15 +66,15 @@ frontend code.
 
 ## Running the application
 
-After you're done with the setup, in the toplevel directory, call 
+After you're done with the setup, in the toplevel directory, call
 
 ```
 docker-compose up
 ```
 
-to start all the
-containers and the HTTP server. The application should now be accessible from a
-browser at <http://localhost:8000>. Any changes performed to the code on the
-host machine should be reflected in the container automatically, but you may
-need to restart the Flask server if you change something in the backend code.
-To stop the containers, hit *Ctrl+C* on the command line.
+to start all the containers and the HTTP server. The application should now be
+accessible from a browser at <http://localhost:8000>. Any changes performed to
+the code on the host machine should be reflected in the container
+automatically, but you may need to restart the Flask server if you change
+something in the backend code. To stop the containers, hit *Ctrl+C* on the
+command line.
