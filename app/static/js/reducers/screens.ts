@@ -1,10 +1,12 @@
-import { List, Collection } from "immutable";
+import { List } from "immutable";
 import * as shortid from "shortid";
 
 import { Action } from "../actions";
+import { ActionHandler, findById, getRandomInt } from "../util";
 import { ApplicationState } from "../store";
 
 type coords = [number, number];
+export type ScreenState = List<Screen>;
 
 export interface ScreenRegion {
   id: string;
@@ -19,19 +21,6 @@ export interface Screen {
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
   regions: List<ScreenRegion>;
-}
-
-export type ScreenState = List<Screen>;
-
-function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
-  return collection.findEntry((value: T) => value.id === id)!;
-}
-
-function getRandomInt(min: number = 0, max: number = 10) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-
-  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function createNewScreen(type: "communal" | "personal"): Screen {
