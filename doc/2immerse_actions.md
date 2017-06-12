@@ -52,39 +52,39 @@ chapters:
 
 # Events
 
-ADD_DEVICE: add new screen
-  name, type (personal|communal)
-REMOVE_DEVICE: delete an existing screen
-  id
+- ADD_DEVICE: add new screen
+  `name, type (personal|communal)`
+- REMOVE_DEVICE: delete an existing screen
+  `id`
 
-SPLIT_REGION: split currently selected screen region in two at the current position
-  orientation (horizontal|vertical), width, screen_id
-DELETE_REGION: delete currently selected region
-  screen_id
+- SPLIT_REGION: split currently selected screen region in two at the current position
+  `orientation (horizontal|vertical), width, screen_id`
+- DELETE_REGION: delete currently selected region
+  `screen_id`
 
-CREATE_MASTER: create new master layout
-  name
-DELETE_MASTER: delete existing master
-  master_id
-ADD_COMPONENT_TO_MASTER: adds a new DMapp component to a master
-  dmapp_id, region_id
+- CREATE_MASTER: create new master layout
+  `name`
+- DELETE_MASTER: delete existing master
+  `master_id`
+- ADD_COMPONENT_TO_MASTER: adds a new DMapp component to a master
+  `dmappc_id, region_id`
 
-CREATE_STORY_TREE_NODE: create new story tree node in isolation
-  name, ...
-ASSIGN_STORY_TREE_NODE: assign existing node to parent
-  parent_node
-DETACH_STORY_TREE_NODE: detach node from parent node.
-  node_id
-DESTROY_STORY_TREE_NODE: destroy referenced node. also destroys children
-  node_id
-APPLY_MASTER_TO_STORY_NODE: apply a master layout to a story tree node
-  node_id, master_id
-REMOVE_MASTER_FROM_NODE: remove a master layout from a tree node
-  node_id, master_id
-EDIT_CHAPTER: edit timeline of a leaf node in sequence editor
-  node_id
+- CREATE_STORY_TREE_NODE: create new story tree node in isolation
+  `name, ...`
+- ASSIGN_STORY_TREE_NODE: assign existing node to parent
+  `parent_node`
+- DETACH_STORY_TREE_NODE: detach node from parent node.
+  `node_id`
+- DESTROY_STORY_TREE_NODE: destroy referenced node. also destroys children
+  `node_id`
+- APPLY_MASTER_TO_STORY_NODE: apply a master layout to a story tree node
+  `node_id, master_id`
+- REMOVE_MASTER_FROM_NODE: remove a master layout from a tree node
+  `node_id, master_id`
+- EDIT_CHAPTER: edit timeline of a leaf node in sequence editor
+  `node_id`
 
-ADD_COMPONENT_TO_REGION: add a dmapp component to region at given position with given duration and offset
-  region_id, dmapp_id, duration, offset, position
-REMOVE_COMPONENT_FROM_REGION: remove a component from a timeline track
-  dmapp_id
+- ADD_COMPONENT_TO_REGION: add a dmapp component to region at given position with given duration and offset
+  `region_id, dmapp_id, duration, offset, position`
+- REMOVE_COMPONENT_FROM_REGION: remove a component from a timeline track
+  `dmappc_id`
