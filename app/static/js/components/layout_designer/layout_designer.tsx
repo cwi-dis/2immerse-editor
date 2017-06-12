@@ -4,8 +4,7 @@ import { ApplicationState } from "../../store";
 import Screen from "./screen";
 
 interface LayoutDesignerProps {
-  addPersonalDevice: () => void;
-  addCommunalDevice: () => void;
+  addDevice: (type: "personal" | "communal") => void;
   removeDevice: (id: string) => void;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
@@ -48,8 +47,8 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
           <h1>Layout Designer</h1>
 
           <div className="block">
-            <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addCommunalDevice}>Add communal device</a>
-            <a className="button is-info" onClick={this.props.addPersonalDevice}>Add personal device</a>
+            <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addDevice.bind(null, "communal")}>Add communal device</a>
+            <a className="button is-info" onClick={this.props.addDevice.bind(null, "personal")}>Add personal device</a>
           </div>
 
           <br/>
