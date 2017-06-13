@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION } from "../actions";
+import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION, MERGE_REGIONS } from "../actions";
 import { ActionHandler, findById, getRandomInt } from "../util";
 import { ApplicationState } from "../store";
 
@@ -97,6 +97,16 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: SPLIT_REGION) => {
     ...screen,
     regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
   });
+});
+
+actionHandler.addHandler("MERGE_REGIONS", (state, action: MERGE_REGIONS) => {
+  const {screenId, regionId1, regionId2} = action.payload;
+
+  const [screenIndex, screen] = findById(state, screenId);
+  const [regionIndex1, region1] = findById(screen.regions, regionId1);
+  const [regionIndex2, region2] = findById(screen.regions, regionId2);
+
+  return state;
 });
 
 export default actionHandler.getReducer();
