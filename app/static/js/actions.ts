@@ -41,7 +41,19 @@ function splitRegion(screenId: string, regionId: string, orientation: "horizonta
   };
 }
 
-export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION;
+export type MERGE_REGIONS = PayloadAction<"MERGE_REGIONS", {screenId: string, regionId1: string, regionId2: string}>;
+function mergeRegions(screenId: string, regionId1: string, regionId2: string): MERGE_REGIONS {
+  return {
+    type: "MERGE_REGIONS",
+    payload: {
+      screenId,
+      regionId1,
+      regionId2
+    }
+  };
+}
+
+export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION | MERGE_REGIONS;
 
 export const actionCreators: ActionCreatorsMapObject = {
   addDevice,
