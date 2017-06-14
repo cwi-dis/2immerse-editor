@@ -10,7 +10,7 @@
     "webpack": "^2.6.1"
   },
   "dependencies": {
-    "@types/react": "^15.0.10",
+    "@types/react": "^15.0.28",
     "@types/react-dom": "^15.3.2",
     "@types/react-redux": "^4.4.38",
     "@types/react-router": "3.0.0",
@@ -18,13 +18,13 @@
     "@types/shortid": "0.0.29",
     "bulma": "^0.4.2",
     "immutable": "4.0.0-rc.1",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
+    "react": "^15.6.0",
+    "react-dom": "^15.6.0",
     "react-redux": "^5.0.4",
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.1",
     "redux": "^3.6.0",
     "shortid": "^2.2.8",
-    "typescript": "^2.2.1"
+    "typescript": "^2.3.4"
   }
 }
