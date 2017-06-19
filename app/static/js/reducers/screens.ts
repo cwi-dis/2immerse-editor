@@ -1,10 +1,12 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { Action, PayloadAction } from "../actions";
+import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION, MERGE_REGIONS } from "../actions";
+import { ActionHandler, findById, getRandomInt } from "../util";
 import { ApplicationState } from "../store";
 
 type coords = [number, number];
+export type ScreenState = List<Screen>;
 
 export interface ScreenRegion {
   id: string;
@@ -21,14 +23,20 @@ export interface Screen {
   regions: List<ScreenRegion>;
 }
 
-export type ScreenState = List<Screen>;
-const defaultState: ScreenState = List<Screen>();
+function createNewScreen(type: "communal" | "personal"): Screen {
+  const rootRegion: ScreenRegion = {
+    id: shortid.generate(),
+    position: [0, 0],
+    size: [1, 1]
+  };
 
-function getRandomInt(min: number = 0, max: number = 10) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-
-  return Math.floor(Math.random() * (max - min)) + min;
+  return {
+    id: shortid.generate(),
+    name: type + " " + getRandomInt(),
+    type: type,
+    orientation: (type === "communal") ? "landscape" : "portrait",
+    regions: List([rootRegion])
+  };
 }
 
 function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
@@ -61,54 +69,44 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-function screens(state: ScreenState = defaultState, action: Action): ScreenState {
-  console.log(action);
+const actionHandler = new ActionHandler<ScreenState>(List<Screen>());
 
-  switch (action.type) {
-    case "ADD_DEVICE": {
-      console.log("add device reducer called");
-      let { type } = action.payload;
+actionHandler.addHandler("ADD_DEVICE", (state, action: ADD_DEVICE) => {
+  const { type } = action.payload;
+  const screen = createNewScreen(type);
 
-      const rootRegion: ScreenRegion = {
-        id: shortid.generate(),
-        position: [0, 0],
-        size: [1, 1]
-      };
+  return state.push(screen);
+});
 
-      const screen: Screen = {
-        id: shortid.generate(),
-        name: type + " " + getRandomInt(),
-        type: type,
-        orientation: (type === "communal") ? "landscape" : "portrait",
-        regions: List([rootRegion])
-      };
+actionHandler.addHandler("REMOVE_DEVICE", (state, action: REMOVE_DEVICE) => {
+  const { id } = action.payload;
+  const [index] = findById(state, id);
 
-      return state.push(screen);
-    } case "REMOVE_DEVICE": {
-      let { id } = action.payload;
-      let index = state.findIndex((screen) => screen.id === id);
+  return state.delete(index);
+});
 
-      return state.delete(index);
-    } case "SPLIT_REGION": {
-      console.log("split region reducer called");
-      const splitParams = action.payload;
+actionHandler.addHandler("SPLIT_REGION", (state, action: SPLIT_REGION) => {
+  const {screenId, regionId, position, orientation} = action.payload;
 
-      const screenIndex = state.findIndex((screen) => screen.id === splitParams.screenId);
-      let screen = state.get(screenIndex)!;
-      let { regions } = screen;
+  const [screenIndex, screen] = findById(state, screenId);
+  const [regionIndex, region] = findById(screen.regions, regionId);
 
-      const regionIndex = regions.findIndex((region) => region.id === splitParams.regionId);
-      let region = regions.get(regionIndex)!;
+  const [region1, region2] = splitRegion(region, position, orientation);
 
-      const [region1, region2] = splitRegion(region, splitParams.position, splitParams.orientation);
+  return state.set(screenIndex, {
+    ...screen,
+    regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
+  });
+});
 
-      return state.set(screenIndex, {
-        ...screen,
-        regions: regions.set(regionIndex, region1).insert(regionIndex, region2)
-      });
-    } default:
-      return state;
-  }
-}
+actionHandler.addHandler("MERGE_REGIONS", (state, action: MERGE_REGIONS) => {
+  const {screenId, regionId1, regionId2} = action.payload;
 
-export default screens;
+  const [screenIndex, screen] = findById(state, screenId);
+  const [regionIndex1, region1] = findById(screen.regions, regionId1);
+  const [regionIndex2, region2] = findById(screen.regions, regionId2);
+
+  return state;
+});
+
+export default actionHandler.getReducer();

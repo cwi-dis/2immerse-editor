@@ -1,5 +1,4 @@
 const webpack = require("webpack");
-const failPlugin = require("webpack-fail-plugin");
 
 module.exports = {
   entry: "./js/components/main.tsx",
@@ -9,20 +8,20 @@ module.exports = {
   },
   devtool: "source-map",
   resolve: {
-    extensions: ['', '.js', '.jsx', '.ts', '.tsx']
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader"
+        use: "ts-loader"
       }, {
         test: /\.css$/,
-        loader: "style-loader!css-loader?minimize"
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { "minimize": true } }
+        ]
       }
     ]
-  },
-  plugins: [
-    failPlugin
-  ]
+  }
 };

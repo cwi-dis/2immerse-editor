@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ApplicationState } from "../../store";
-import Screen from "./screen";
+import ScreenContainer from "./screen_container";
 
 interface LayoutDesignerProps {
   addDevice: (type: "personal" | "communal") => void;
@@ -26,7 +26,7 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
     this.state = {
       personalScreenWidth: 0,
       communalScreenWidth: 0
-    }
+    };
   }
 
   public componentDidMount() {
@@ -54,30 +54,20 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
           <br/>
 
           <div className="columns">
-            <div className="column is-8" ref={(el) => this.communalColumn = el} style={{borderRight: "1px solid #B1B1B1"}}>
-              <h3 style={{textAlign: "center"}}>Communal Device ({communalScreens.count()})</h3>
-              <div>{communalScreens.map((screen, i) => {
-                return (
-                  <Screen key={i}
-                          screenInfo={screen}
-                          width={this.state.communalScreenWidth * 3 / 4}
-                          removeDevice={this.props.removeDevice.bind(null, screen.id)}
-                          splitRegion={this.props.splitRegion.bind(null, screen.id)} />
-                );
-              })}</div>
-            </div>
-            <div className="column is-4" ref={(el) => this.personalColumn = el}>
-              <h3 style={{textAlign: "center"}}>Personal Devices ({personalScreens.count()})</h3>
-              <div>{personalScreens.map((screen, i) => {
-                return (
-                  <Screen key={i}
-                          screenInfo={screen}
-                          width={this.state.personalScreenWidth * 1 / 2}
-                          removeDevice={this.props.removeDevice.bind(null, screen.id)}
-                          splitRegion={this.props.splitRegion.bind(null, screen.id)} />
-                );
-              })}</div>
-            </div>
+            <ScreenContainer title="Communal Device"
+                             screens={communalScreens}
+                             numColumns={8}
+                             screenWidth={this.state.communalScreenWidth * 3 / 4}
+                             colRef={(el) => this.communalColumn = el}
+                             removeDevice={this.props.removeDevice}
+                             splitRegion={this.props.splitRegion} />
+            <ScreenContainer title="Personal Devices"
+                             screens={personalScreens}
+                             numColumns={4}
+                             screenWidth={this.state.personalScreenWidth * 3 / 8}
+                             colRef={(el) => this.personalColumn = el}
+                             removeDevice={this.props.removeDevice}
+                             splitRegion={this.props.splitRegion} />
           </div>
         </div>
       </div>
