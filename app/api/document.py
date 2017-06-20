@@ -1,6 +1,7 @@
 from flask import Response, request, abort
 import urllib2
 import json
+import copy
 import xml.etree.ElementTree as ET
 
 class Document:
@@ -148,7 +149,7 @@ class Document:
             if pos == len(list(parent)):
                 parent.append(newElement)
             else:
-                parent.insert(pos, newElement)
+                parent.insert(pos+1, newElement)
             self.parentMap[newElement] = parent
         else:
             abort(400)
@@ -157,7 +158,7 @@ class Document:
     def cut(self, path, mimetype='application/x-python-object'):
         element = self._getElement(path)
         parent = self._getParent(element)
-        
+        parent.remove(element)
         del self.parentMap[element]
         return self._fromET(element, mimetype)
         
@@ -198,12 +199,11 @@ class Document:
         sourceElement = self._getElement(sourcepath)
         newElement = copy.deepcopy(sourceElement)
         # newElement._setroot(None)
-        self.paste(path, where, None, newElement)
+        return self.paste(path, where, None, newElement)
         
     def move(self, path, where, sourcepath):
         element = self._getElement(path)
-        sourceElement = self._getElement(sourcepath)
-        newElement = copy.deepcopy(sourceElement)
+        sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
-        self.paste(path, where, None, newElement)
+        return self.paste(path, where, None, sourceElement)
         

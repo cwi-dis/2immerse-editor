@@ -3,8 +3,6 @@
         <firstChild1/>
         <firstChild2 attr="value"/>
     </first>
-    <second>
-    </second>
-    <third>
-    </third>
+    <second><second1 /><second2 /><second3 /></second>
+    <third/>
 </testDocument>
