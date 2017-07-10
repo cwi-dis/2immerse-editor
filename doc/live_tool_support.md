@@ -1,22 +1,22 @@
 # Support for the live editing tool
 
-The basic principle behind the live editing - or triggering - tool is that the timeline document has pre-edited snippets for various events that can happen. These snippets can then be inserted into the timeline document, possibly after filling in some parameters.
+The basic principle behind the live editing - or triggering - tool is that the timeline document has pre-edited snippets for various events that can happen. These snippets can then be inserted into the timeline document, possibly after filling in some parameters. These snippets are called _events_, because that term seems to be closest to how television producers or directors think of them (even though the name has the disadvantage that it already means many different things in the technical domain).
 
-Ideally, the list of currently triggerable snippets and their parameters is retrieved from a service (possibly the timeline service, possibly the editing service), and the live editing tool will populate its GUI from this. This allows snippets to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new snippets into the live document as it is playing, using the preproduction tool operating on the live document.
+Ideally, the list of currently triggerable events and their parameters is retrieved from a service (possibly the timeline service, possibly the editing service), and the live editing tool will populate its GUI from this. This allows events to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new events into the live document as it is playing, using the preproduction tool operating on the live document.
 
-An alternative (simpler) implementation is that the preproduction editing tool exports a list of the snippets.
+An alternative (simpler) implementation is that the preproduction editing tool exports a list of the events.
 
-_Open issue_ This document assume that we want to modify snippets after they have been triggered (for example to manually stop a snippet by setting its ending time to "now"). This requires that the snippet list is retrieved live. Whether this is implemented should depend on the live tool requirements.
+_Open issue_ This document assume that we want to modify events after they have been triggered (for example to manually stop an event by setting its ending time to "now"). This requires that the list of events is retrieved live. Whether this is implemented should depend on the live tool requirements.
 
 ## Requirements Considerations
 
 There are various open issues in this document, that need to be filled from the requirements for the live editing tool:
 
-- Do we need the ability to modify snippets that are already running? Note that _stopping_ a snippet (for example a snippet that has an indefinite duration) is a special case of modifying.
-- What are the parameters we need to be able to change on snippets when triggering them? What are the UIs needed for them and how should the preproduction author specify these?
+- Do we need the ability to modify events that are already running? Note that _stopping_ an event (for example an event that has an indefinite duration) is a special case of modifying.
+- What are the parameters we need to be able to change on events when triggering them? What are the UIs needed for them and how should the preproduction author specify these?
 - How should we specify points in time, i.e. from which origin?
 - This design assumes that layout changes are not needed. Is that reasonable?
-- There may be interaction with the _bookmarking_ functionality, for example to facilitate marking a time instance and later using that bookmark to insert a replay snippet.
+- There may be interaction with the _bookmarking_ functionality, for example to facilitate marking a time instance and later using that bookmark to insert a replay event.
 
 We need to get these clear, with input from Andy and possibly Jonathan and Martin. We also need to get a general go-ahead that this is on the right track, both from a requirements point of view and an implementation point of view.
 
@@ -55,21 +55,21 @@ We may want a callback mechanism so the timeline service (or production tool bac
 
 ## Timeline Document Considerations
 
-The snippets will be `<tl:par>` elements in the timeline document with an `xml:id` attribute to address them. The snippets will be hidden from the timeline service by putting them in a `<tt:snippets>`. 
+The events will be `<tl:par>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`. 
 
-A snippet has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= />` children).
+An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= />` children).
 
 Possibly we need a second set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (which is probably a different set of parameters than those for _trigger_).
 
 The `parameter` parameters can be relative XPath expressions pointing to the attribute to be modified.
 
-On `trigger`, the whole snippet is copied and its `xml:id` is replaced by a new unique id. All parameter values are filled in. Then the new element is inserted into the timeline as a new child of the parent of the `<tt:snippets>` element.
+On `trigger`, the whole event is copied and its `xml:id` is replaced by a new unique id. All parameter values are filled in. Then the new element is inserted into the timeline as a new child of the parent of the `<tt:events>` element.
 
 The new element (with its new ID) will now show up in the `get` return value, with `trigger=false` and `modify=true`. It will disappear from there whenever its natural duration is done.
 
 ## Preproduction Tool Considerations
 
-A snippet is a perfectly normal bit of timeline document, only with the `tt:` bits added. It can probably be edited normally in the timeline editor (with all parameters given their default values by the author of the document), and then there's some extra functionality that allows the author to specify which are the parameters and their names.
+An event is a perfectly normal bit of timeline document, only with the `tt:` bits added. It can probably be edited normally in the timeline editor (with all parameters given their default values by the author of the document), and then there's some extra functionality that allows the author to specify which are the parameters and their names.
 
 
 
