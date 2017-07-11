@@ -34,7 +34,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
       const currentPath = accessPath.concat(i);
 
       let rect = [
-        <Rect key={chapter.id}
+        <Rect key={chapter.get("id")}
               fill="#FFFFFF" stroke="#000000"
               x={x} y={y}
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
@@ -43,7 +43,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
               height={this.baseBoxSize[1]} width={boxWidth} />
       ].concat(
         this.drawChapters(
-          chapter.children,
+          chapter.get("children") as List<Chapter>,
           [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
           currentPath
         )

@@ -1,4 +1,4 @@
-import { Collection } from "immutable";
+import { Collection, List } from "immutable";
 import { Action } from "./actions";
 import { Chapter } from "./reducers/chapters";
 
@@ -14,7 +14,7 @@ export function getRandomInt(min: number = 0, max: number = 10) {
 }
 
 export function countLeafNodes(chapter: Chapter): number {
-  const { children } = chapter;
+  const children = chapter.get("children") as List<Chapter>;
 
   if (children.count() === 0) {
     return 1;
