@@ -53,32 +53,32 @@ function mergeRegions(screenId: string, regionId1: string, regionId2: string): M
   };
 }
 
-export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {chapterId: string}>;
-function addChapterBefore(chapterId: string) {
+export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
+function addChapterBefore(accessPath: Array<number>) {
   return {
     type: "ADD_CHAPTER_BEFORE",
     payload: {
-      chapterId
+      accessPath
     }
   };
 }
 
-export type ADD_CHAPTER_AFTER = PayloadAction<"ADD_CHAPTER_AFTER", {chapterId: string}>;
-function addChapterAfter(chapterId: string) {
+export type ADD_CHAPTER_AFTER = PayloadAction<"ADD_CHAPTER_AFTER", {accessPath: Array<number>}>;
+function addChapterAfter(accessPath: Array<number>) {
   return {
     type: "ADD_CHAPTER_AFTER",
     payload: {
-      chapterId
+      accessPath
     }
   };
 }
 
-export type ADD_CHAPTER_CHILD = PayloadAction<"ADD_CHAPTER_CHILD", {chapterId: string}>;
-function addChapterChild(chapterId: string) {
+export type ADD_CHAPTER_CHILD = PayloadAction<"ADD_CHAPTER_CHILD", {accessPath: Array<number>}>;
+function addChapterChild(accessPath: Array<number>) {
   return {
     type: "ADD_CHAPTER_CHILD",
     payload: {
-      chapterId
+      accessPath
     }
   };
 }
