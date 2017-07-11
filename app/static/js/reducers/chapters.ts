@@ -89,4 +89,20 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: ADD_CHAPTER_AFTER)
   return state.updateIn(keyPath, () => updatedChildren);
 });
 
+actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: ADD_CHAPTER_CHILD) => {
+  const { accessPath } = action.payload;
+
+  const keyPath = List(accessPath.slice(0, accessPath.length).reduce((path: Array<string | number>, i) => {
+    return path.concat([i, "children"]);
+  }, []));
+
+  const newChapter = Map({
+    id: shortid.generate(),
+    masterLayouts: List(),
+    children: state.getIn(keyPath)
+  });
+
+  return state.updateIn(keyPath, () => List([newChapter]));
+});
+
 export default actionHandler.getReducer();
