@@ -33,7 +33,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     }
   }
 
-  private drawChapters(chapters: List<Chapter>, startPos = [10, 10], accessPath: Array<number> = []): Array<any> {
+  private drawChapters(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
     return chapters.reduce((result: any[], chapter, i) => {
       const [x, y] = startPos;
 
@@ -62,14 +62,25 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     }, []);
   }
 
+  private adjustBoxWidth() {
+    const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
+    const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
+
+    if (treeWidth >= window.innerWidth) {
+      console.log("recalculating base box width");
+      this.baseBoxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
+    }
+  }
+
   public render() {
     const { chapters } = this.props;
+    this.adjustBoxWidth();
 
     return (
       <div className="column">
         <div className="content">
           <h1>Author Program</h1>
-          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth} height={window.innerHeight - 100}>
+          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth - 50} height={window.innerHeight - 100}>
             <Layer>
               {this.drawChapters(chapters)}
             </Layer>
