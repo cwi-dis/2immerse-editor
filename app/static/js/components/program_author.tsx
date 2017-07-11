@@ -14,7 +14,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
 
   private handleBoxClick(chapterId: string, topLeft: [number, number], size: [number, number]) {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
-    const {x, y} = this.stage.getPointerPosition();
+    const {x, y} = this.stage.getStage().getPointerPosition();
 
     if (x <= topLeft[0] + this.boxHotArea) {
       console.log("ADD BEFORE", chapterId);
@@ -36,8 +36,8 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
         <Rect key={chapter.id}
               fill="#FFFFFF" stroke="#000000"
               x={x} y={y}
-              onMouseEnter={() => this.stage.container().style.cursor = "pointer" }
-              onMouseLeave={() => this.stage.container().style.cursor = "default" }
+              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
+              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
               onClick={this.handleBoxClick.bind(this, chapter.id, [x, y], [boxWidth, this.baseBoxSize[1]])}
               height={this.baseBoxSize[1]} width={boxWidth} />
       ].concat(
@@ -59,7 +59,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
       <div className="column">
         <div className="content">
           <h1>Author Program</h1>
-          <Stage ref={(e: any) => this.stage = e.getStage()} width={window.innerWidth} height={window.innerHeight - 100}>
+          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth} height={window.innerHeight - 100}>
             <Layer>
               {this.drawChapters(chapters)}
             </Layer>
