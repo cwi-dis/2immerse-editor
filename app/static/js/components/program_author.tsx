@@ -8,6 +8,7 @@ import { countLeafNodes } from "../util";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
+  addChapterAfter: (accessPath: Array<number>) => void;
 }
 
 type CombinedProps = ApplicationState & ProgramAuthorProps;
@@ -25,7 +26,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     if (x <= topLeft[0] + this.boxHotArea) {
       this.props.addChapterBefore(accessPath);
     } else if (x >= bottomRight[0] - this.boxHotArea) {
-      console.log("ADD AFTER", accessPath);
+      this.props.addChapterAfter(accessPath);
     } else if (y >= bottomRight[1] - this.boxHotArea) {
       console.log("ADD CHILD TO", accessPath);
     }
