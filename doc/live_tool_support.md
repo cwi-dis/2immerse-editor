@@ -32,6 +32,7 @@ We need to get these clear, with input from Andy and possibly Jonathan and Marti
 		- `name`: Human-readable name for the parameter (only for the UI).
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
 		- `type`: type of the parameter (string), see below.
+		- `value`: possibly a value to be set into the parameter (based on `type`).
 - `trigger` triggers a triggerable item. Returns a success indicator. Parameters:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings)
@@ -45,6 +46,8 @@ The intention of the `type` field is to help populate the UI in a meaningful way
 - `"time"` a point in time. Probably an integer. The UI should probably have buttons like  `Now` or `In 10 seconds` or so. What this value means (relative to current clock, or beginning of presentation, or something else) needs to come out of the requirements.
 - `"duration"` a duration. Probably in seconds. Should probably have a button _Indefinite_ in the UI, and maybe a button `Default` if the item triggered has a natural duration (for example a prerecorded video clip).
 - `"url"` a url. This probably needs more functionality, so we can present the triggering tool operator with nice names like _Rossi bikeCam_ or _Home Team Reverse Angle_ in stead of them having the type in horribly long URLs.
+- `"set"` set a fixed string value (from the `tt:value` attribute), probably based on a checkmark or something.
+- `"const"` always set a fixed string value (from the `tt:value` attribute).
 - Maybe we need a way to specify a `bookmark`, a point in time which was previously setduring the live playback. Details (such as whether a bookmark implicitly refers to the main video, or is just a point in time so it can be used to pull in videos from different angles) need to be worked out.
 
 Note that a lot of this depends on the requirements for the live triggering tool. For example, it may also be needed to have radio buttons or popups or such that can be populated with name/value pairs during preproduction.
