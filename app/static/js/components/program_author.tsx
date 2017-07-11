@@ -5,6 +5,20 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
   private baseBoxSize: [number, number] = [180, 100];
   private boxMargin: [number, number] = [20, 20];
 
+  private handleBoxClick(chapterId: string, topLeft: [number, number], size: [number, number]) {
+    const hotArea = 20;
+    const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
+    const {x, y} = this.stage.getPointerPosition();
+
+    if (x <= topLeft[0] + hotArea) {
+      console.log("ADD BEFORE", chapterId);
+    } else if (x >= bottomRight[0] - hotArea) {
+      console.log("ADD AFTER", chapterId);
+    } else if (y >= bottomRight[1] - hotArea) {
+      console.log("ADD CHILD TO", chapterId);
+    }
+  }
+
   private drawChapters(chapters: List<Chapter>, startPos = [10, 10], parentNode = "0"): Array<any> {
     return chapters.reduce((result: any[], chapter, i) => {
       const [x, y] = startPos;
@@ -19,6 +33,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
               x={x} y={y}
               onMouseEnter={() => this.stage.container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.container().style.cursor = "default" }
+              onClick={this.handleBoxClick.bind(this, chapter.id, [x, y], [boxWidth, this.baseBoxSize[1]])}
               height={this.baseBoxSize[1]} width={boxWidth} />
       ].concat(
         this.drawChapters(
