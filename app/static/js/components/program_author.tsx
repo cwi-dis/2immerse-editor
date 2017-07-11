@@ -6,38 +6,6 @@ import { Chapter } from "../reducers/chapters";
 import { ApplicationState } from "../store";
 import { countLeafNodes } from "../util";
 
-const testChapters: List<Chapter> = List([
-  {id: "a", masterLayouts: List([]), children: List([
-    {id: "aaa", masterLayouts: List([]), children: List([
-      {id: "aaaa", masterLayouts: List([]), children: List([
-      {id: "aaab", masterLayouts: List([]), children: List([
-        {id: "aaaba", masterLayouts: List([]), children: List([])},
-        {id: "aaaba", masterLayouts: List([]), children: List([])}
-      ])}
-      ])}
-    ])},
-    {id: "aab", masterLayouts: List([]), children: List([])}
-  ])},
-  {id: "b", masterLayouts: List([]), children: List([
-    {id: "ba", masterLayouts: List([]), children: List([
-      {id: "baa", masterLayouts: List([]), children: List([])},
-      {id: "bab", masterLayouts: List([]), children: List([])}
-    ])},
-    {id: "bb", masterLayouts: List([]), children: List([])},
-  ])},
-  {id: "c", masterLayouts: List([]), children: List([
-    {id: "ca", masterLayouts: List([]), children: List([
-      {id: "caa", masterLayouts: List([]), children: List([
-        {id: "caaa", masterLayouts: List([]), children: List([
-          {id: "caaaa", masterLayouts: List([]), children: List([
-            {id: "caaaaa", masterLayouts: List([]), children: List([])}
-          ])}
-        ])}
-      ])}
-    ])}
-  ])}
-]);
-
 class ProgramAuthor extends React.Component<ApplicationState, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [180, 100];
@@ -95,7 +63,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
           <h1>Author Program</h1>
           <Stage ref={(e: any) => this.stage = e.getStage()} width={window.innerWidth} height={window.innerHeight - 100}>
             <Layer>
-              {this.drawChapters(testChapters)}
+              {this.drawChapters(chapters)}
             </Layer>
           </Stage>
         </div>
