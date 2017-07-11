@@ -25,16 +25,15 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
     }
   }
 
-  private drawChapters(chapters: List<Chapter>, startPos = [10, 10], parentNode = "0"): Array<any> {
+  private drawChapters(chapters: List<Chapter>, startPos = [10, 10]): Array<any> {
     return chapters.reduce((result: any[], chapter, i) => {
       const [x, y] = startPos;
-      const key = `${parentNode}.${i}`;
 
       const leafNodes = countLeafNodes(chapter);
       const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
 
       let rect = [
-        <Rect key={key}
+        <Rect key={chapter.id}
               fill="#FFFFFF" stroke="#000000"
               x={x} y={y}
               onMouseEnter={() => this.stage.container().style.cursor = "pointer" }
@@ -45,7 +44,6 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
         this.drawChapters(
           chapter.children,
           [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
-          key
         )
       );
       startPos[0] += boxWidth + this.boxMargin[0];
