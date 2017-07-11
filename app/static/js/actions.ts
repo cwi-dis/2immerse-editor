@@ -53,10 +53,44 @@ function mergeRegions(screenId: string, regionId1: string, regionId2: string): M
   };
 }
 
-export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION | MERGE_REGIONS;
+export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {chapterId: string}>;
+function addChapterBefore(chapterId: string) {
+  return {
+    type: "ADD_CHAPTER_BEFORE",
+    payload: {
+      chapterId
+    }
+  };
+}
+
+export type ADD_CHAPTER_AFTER = PayloadAction<"ADD_CHAPTER_AFTER", {chapterId: string}>;
+function addChapterAfter(chapterId: string) {
+  return {
+    type: "ADD_CHAPTER_AFTER",
+    payload: {
+      chapterId
+    }
+  };
+}
+
+export type ADD_CHAPTER_CHILD = PayloadAction<"ADD_CHAPTER_CHILD", {chapterId: string}>;
+function addChapterChild(chapterId: string) {
+  return {
+    type: "ADD_CHAPTER_CHILD",
+    payload: {
+      chapterId
+    }
+  };
+}
+
+export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION | MERGE_REGIONS |
+                     ADD_CHAPTER_BEFORE | ADD_CHAPTER_AFTER | ADD_CHAPTER_CHILD;
 
 export const actionCreators: ActionCreatorsMapObject = {
   addDevice,
   removeDevice,
-  splitRegion
+  splitRegion,
+  addChapterBefore,
+  addChapterAfter,
+  addChapterChild
 };
