@@ -43,7 +43,26 @@ export type ChapterState = List<Chapter>;
 const actionHandler = new ActionHandler<ChapterState>(testChapters);
 
 actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: ADD_CHAPTER_BEFORE) => {
-  return state;
+  const { accessPath } = action.payload;
+
+  const insertIndex = accessPath[accessPath.length - 1];
+  let list: List<Chapter> = state;
+
+  accessPath.slice(0, accessPath.length - 1).forEach((i) => {
+    list = (list.get(i)!.get("children") as List<Chapter>);
+  });
+
+  const updatedChildren = list.insert(insertIndex, Map({
+    id: shortid.generate(),
+    masterLayouts: List(),
+    children: List()
+  }));
+
+  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
+    return path.concat([i, "children"]);
+  }, []));
+
+  return state.updateIn(keyPath, () => updatedChildren);
 });
 
 export default actionHandler.getReducer();
