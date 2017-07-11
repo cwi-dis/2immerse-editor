@@ -10,17 +10,17 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [180, 100];
   private boxMargin: [number, number] = [20, 20];
+  private boxHotArea = 20;
 
   private handleBoxClick(chapterId: string, topLeft: [number, number], size: [number, number]) {
-    const hotArea = 20;
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
     const {x, y} = this.stage.getPointerPosition();
 
-    if (x <= topLeft[0] + hotArea) {
+    if (x <= topLeft[0] + this.boxHotArea) {
       console.log("ADD BEFORE", chapterId);
-    } else if (x >= bottomRight[0] - hotArea) {
+    } else if (x >= bottomRight[0] - this.boxHotArea) {
       console.log("ADD AFTER", chapterId);
-    } else if (y >= bottomRight[1] - hotArea) {
+    } else if (y >= bottomRight[1] - this.boxHotArea) {
       console.log("ADD CHILD TO", chapterId);
     }
   }
