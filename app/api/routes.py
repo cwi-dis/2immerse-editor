@@ -35,3 +35,16 @@ def document_instance_verb(documentId, verb):
         abort(404)
     return func()
     
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<string:verb>")
+def document_instance_events_verb(documentId, verb):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    events = document.events()
+    try:    
+        func = getattr(events, verb)
+    except AttributeError:
+        abort(404)
+    return func()
+    

@@ -4,10 +4,40 @@ import json
 import copy
 import xml.etree.ElementTree as ET
 
+class NameSpace:
+    def __init__(self, namespace, url):
+        self.namespace = namespace
+        self.url = url
+        
+    def ns(self):
+        return { self.namespace : self.url }
+        
+    def __call__(self, str):
+        return "{%s}%s" % (self.url, str)
+        
+    def __contains__(self, str):
+        return str.startswith('{'+self.url+'}')
+        
+    def localTag(self, str):
+        if str in self:
+            return str[len(self.url)+2:]
+        return str
+
+NS_TIMELINE = NameSpace("tl", "http://jackjansen.nl/timelines")
+NS_XML = NameSpace("xml", "http://www.w3.org/XML/1998/namespace")
+NS_TRIGGER = NameSpace("tt", "http://jackjansen.nl/2immerse/livetrigger")
+NAMESPACES = {}
+NAMESPACES.update(NS_XML.ns())
+NAMESPACES.update(NS_TIMELINE.ns())
+NAMESPACES.update(NS_TRIGGER.ns())
+for k, v in NAMESPACES.items():
+    ET.register_namespace(k, v)
+
 class Document:
     def __init__(self):
         self.document = None
         self.parentMap = None
+        self.eventsHandler = None
         
     def index(self):
         if request.method == 'PUT':
@@ -20,6 +50,11 @@ class Document:
         else:
             return Response(ET.tostring(self.document.root), mimetype="application/xml")    
                 
+    def events(self):
+        if not self.eventsHandler:
+            self.eventsHandler = DocumentEvents(self)
+        return self.eventsHandler
+        
     def loadXml(self, data):
         root = ET.fromstring(data)
         self.document = ET.ElementTree(root)
@@ -98,9 +133,9 @@ class Document:
         
     def _getElement(self, path):
         if path[:1] == '/':
-            positions = self.document.findall(path)
+            positions = self.document.findall(path, NAMESPACES)
         else:
-            positions = self.document.getroot().findall(path)
+            positions = self.document.getroot().findall(path, NAMESPACES)
         if not positions:
             abort(404)
         if len(positions) > 1:
@@ -206,4 +241,41 @@ class Document:
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
+        
+class DocumentEvents:
+    def __init__(self, parent):
+        self.parent = parent
+        self.document = parent.document
+        self.load = parent.load
+        self.loadXml = parent.loadXml
+        
+    def get(self):
+        exprTriggerable = '//tt:events/tl:par[@tt:name]'
+        exprModifyable = '//tl:par/tl:par[@tt:name]'
+        elementsTriggerable = self.document.findall(exprTriggerable, NAMESPACES)
+        elementsModifyable = self.document.findall(exprModifyable, NAMESPACES)
+        print 'xxxjack triggerable', len(elementsTriggerable)
+        print 'xxxjack modifyable', len(elementsModifyable)
+        rv = []
+        for elt in elementsTriggerable:
+            rv.append(self._getDescription(elt, trigger=True))
+        for elt in elementsModifyable:
+            rv.append(self._getDescription(elt, trigger=False))
+        return Response(json.dumps(rv), mimetype="application/json")    
+        
+    def _getDescription(self, elt, trigger):
+        parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
+        parameterElements = elt.findall(parameterExpr, NAMESPACES)
+        print 'xxxjack parameters', elt.tag, len(parameterElements)
+        parameters = []
+        for p in parameterElements:
+            pData = dict(name=p.get(NS_TRIGGER('name')), parameter=p.get(NS_TRIGGER('parameter')))
+            if NS_TRIGGER('type') in p.attrib:
+                pData['type'] = p.get(NS_TRIGGER('type'))
+            if NS_TRIGGER('value') in p.attrib:
+                pData['value'] = p.get(NS_TRIGGER('value'))
+            parameters.append(pData)
+        name = elt.get(NS_TRIGGER('name'))
+        idd = elt.get(NS_XML('id'))
+        return dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
         
