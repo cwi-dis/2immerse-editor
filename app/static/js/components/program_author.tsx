@@ -6,7 +6,13 @@ import { Chapter } from "../reducers/chapters";
 import { ApplicationState } from "../store";
 import { countLeafNodes } from "../util";
 
-class ProgramAuthor extends React.Component<ApplicationState, {}> {
+interface ProgramAuthorProps {
+  addChapterBefore: (accessPath: Array<number>) => void;
+}
+
+type CombinedProps = ApplicationState & ProgramAuthorProps;
+
+class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [180, 100];
   private boxMargin: [number, number] = [20, 20];
@@ -17,7 +23,7 @@ class ProgramAuthor extends React.Component<ApplicationState, {}> {
     const {x, y} = this.stage.getStage().getPointerPosition();
 
     if (x <= topLeft[0] + this.boxHotArea) {
-      console.log("ADD BEFORE", accessPath);
+      this.props.addChapterBefore(accessPath);
     } else if (x >= bottomRight[0] - this.boxHotArea) {
       console.log("ADD AFTER", accessPath);
     } else if (y >= bottomRight[1] - this.boxHotArea) {
