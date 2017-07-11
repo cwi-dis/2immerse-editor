@@ -1,4 +1,42 @@
 import * as React from "react";
+import { List } from "immutable";
+import {Layer, Rect, Stage, Group} from "react-konva";
+
+import { Chapter } from "../reducers/chapters";
+import { ApplicationState } from "../store";
+import { countLeafNodes } from "../util";
+
+const testChapters: List<Chapter> = List([
+  {id: "a", masterLayouts: List([]), children: List([
+    {id: "aaa", masterLayouts: List([]), children: List([
+      {id: "aaaa", masterLayouts: List([]), children: List([
+      {id: "aaab", masterLayouts: List([]), children: List([
+        {id: "aaaba", masterLayouts: List([]), children: List([])},
+        {id: "aaaba", masterLayouts: List([]), children: List([])}
+      ])}
+      ])}
+    ])},
+    {id: "aab", masterLayouts: List([]), children: List([])}
+  ])},
+  {id: "b", masterLayouts: List([]), children: List([
+    {id: "ba", masterLayouts: List([]), children: List([
+      {id: "baa", masterLayouts: List([]), children: List([])},
+      {id: "bab", masterLayouts: List([]), children: List([])}
+    ])},
+    {id: "bb", masterLayouts: List([]), children: List([])},
+  ])},
+  {id: "c", masterLayouts: List([]), children: List([
+    {id: "ca", masterLayouts: List([]), children: List([
+      {id: "caa", masterLayouts: List([]), children: List([
+        {id: "caaa", masterLayouts: List([]), children: List([
+          {id: "caaaa", masterLayouts: List([]), children: List([
+            {id: "caaaaa", masterLayouts: List([]), children: List([])}
+          ])}
+        ])}
+      ])}
+    ])}
+  ])}
+]);
 
 class ProgramAuthor extends React.Component<ApplicationState, {}> {
   private stage: any;
