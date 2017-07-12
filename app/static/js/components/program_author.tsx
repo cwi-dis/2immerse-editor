@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import {Layer, Rect, Stage, Group } from "react-konva";
+import {Layer, Rect, Stage, Group, Text } from "react-konva";
 
 import { Chapter } from "../reducers/chapters";
 import { ApplicationState } from "../store";
@@ -17,7 +17,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [20, 20];
+  private boxMargin: [number, number] = [20, 30];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
@@ -35,7 +35,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
   }
 
   private drawChapters(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
-    return chapters.reduce((result: any[], chapter, i) => {
+    return chapters.reduce((result: Array<any>, chapter, i) => {
       const [x, y] = startPos;
 
       const leafNodes = countLeafNodes(chapter);
@@ -49,7 +49,15 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
               onClick={this.handleBoxClick.bind(this, currentPath, [x, y], [boxWidth, this.baseBoxSize[1]])}
-              height={this.baseBoxSize[1]} width={boxWidth} />
+              height={this.baseBoxSize[1]} width={boxWidth} />,
+        <Text text={chapter.get("name", "(to be named)")} align="center"
+              x={x} y={y + this.baseBoxSize[1] + 5}
+              width={boxWidth}
+              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
+              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
+              onClick={() => console.log("Hello text element", currentPath)}
+              fill="#FFFFFF" fontStyle="bold"
+              key={`label.${chapter.get("id")}`} />
       ].concat(
         this.drawChapters(
           chapter.get("children") as List<Chapter>,
@@ -98,7 +106,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
   public render() {
     const { chapters } = this.props;
 
-    const canvasHeight = this.adjustCanvasHeight(chapters);
+    const canvasHeight = this.adjustCanvasHeight(chapters) + this.boxMargin[1];
     this.adjustBoxWidth();
     const treeOffset = this.getTreeOffset(chapters);
 
