@@ -29,6 +29,16 @@ export function countLeafNodes(chapter: Chapter): number {
   return leafNodeCount;
 }
 
+export function getTreeHeight(chapters: List<Chapter>): number {
+  if (chapters.count() === 0) {
+    return 0;
+  }
+
+  return Math.max(
+    ...chapters.map((childChapter: Chapter) => 1 + getTreeHeight(childChapter.get("children") as List<Chapter>)).toJS()
+  );
+}
+
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
