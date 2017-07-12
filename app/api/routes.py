@@ -35,16 +35,38 @@ def document_instance_verb(documentId, verb):
         abort(404)
     return func()
     
-@app.route(API_ROOT + "/document/<uuid:documentId>/events/<string:verb>")
-def document_instance_events_verb(documentId, verb):
+@app.route(API_ROOT + "/document/<uuid:documentId>/events")
+def document_events_get(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
         abort(404)
     events = document.events()
-    try:    
-        func = getattr(events, verb)
-    except AttributeError:
+    assert events
+    rv = events.get()
+    return return Response(json.dumps(rv), mimetype="application/json")    
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/trigger", methods=["POST"])
+def document_events_trigger(documentId, id):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
         abort(404)
-    return func()
-    
+    events = document.events()
+    assert events
+    parameters = request.get_json()
+    if type(parameters) != type([]):
+        abort(405)
+    events.trigger(id, parameters)
+    return ''
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods["PUT"])
+def document_events_modify(documentId, id):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    events = document.events()
+    assert events
+    events.modify(id, parameters)
+    return ''
