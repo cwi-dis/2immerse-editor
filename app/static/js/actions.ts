@@ -83,11 +83,12 @@ function addChapterChild(accessPath: Array<number>): ADD_CHAPTER_CHILD {
   };
 }
 
-export type RENAME_CHAPTER = PayloadAction<"RENAME_CHAPTER", {name: string}>;
-function renameChapter(name: string): RENAME_CHAPTER {
+export type RENAME_CHAPTER = PayloadAction<"RENAME_CHAPTER", {accessPath: Array<number>, name: string}>;
+function renameChapter(accessPath: Array<number>, name: string): RENAME_CHAPTER {
   return {
     type: "RENAME_CHAPTER",
     payload: {
+      accessPath,
       name
     }
   };
