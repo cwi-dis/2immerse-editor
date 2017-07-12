@@ -29,7 +29,15 @@
                 <tl:ref tic:mediaUrl="../media/300-images/stoppablesplash.png" tim:class="image" tim:url="/dmapp-components/image/image.html" />
             </tl:par>
         </tt:events>        
-      </tl:par>
+      <tl:par tt:name="5 second splash (1)" xml:id="event1-1">
+                <tl:sleep tl:dur="5" tl:prio="high" />
+                <tl:ref tic:mediaUrl="../media/300-images/fivesecondsplash.png" tim:class="image" tim:url="/dmapp-components/image/image.html" />
+            </tl:par>
+            <tl:par tt:name="5 second splash (2)" xml:id="event1-2">
+                <tl:sleep tl:dur="5" tl:prio="high" />
+                <tl:ref tic:mediaUrl="../media/300-images/fivesecondsplash.png" tim:class="image" tim:url="/dmapp-components/image/image.html" />
+            </tl:par>
+            </tl:par>
 
     <tl:par tt:name="test 5 second splash after 5 seconds" xml:id="event4">
         <tl:sleep tl:dur="10" />

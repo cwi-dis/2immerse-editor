@@ -122,16 +122,16 @@ class Document:
                     
             e.set(NS_XML('id'), id)
         # Specific to tt: events
-        name = e.get(NS_TRIGGER('name'))
+        name = elt.get(NS_TRIGGER('name'))
         if name:
             while name in self.nameSet:
                 match = FIND_NAME_INDEX.match(name)
                 if match:
                     num = int(match.group(2))
-                    name = match.group(1) + '(' + str(num+1) + ')'
+                    name = match.group(1) + ' (' + str(num+1) + ')'
                 else:
-                    name = name + '(1)'
-            e.set(NS_TRIGGER('name'), name)
+                    name = name + ' (1)'
+            elt.set(NS_TRIGGER('name'), name)
             
     def events(self):
         if not self.eventsHandler:
@@ -370,9 +370,18 @@ class DocumentEvents:
         
     def trigger(self, id, parameters):
         element = self.document.idMap.get(id)
-        newParent = self.document._getParent(element)
         if element == None:
             abort(404)
+        if False:
+            # Cannot get above starting point with elementTree:-(
+            newParentPath = element.get(NS_TRIGGER('target'), '..')
+            newParent = element.find(newParentPath)
+        else:
+            tmp = self.document._getParent(element)
+            newParent = self.document._getParent(tmp)
+        print 'xxxjack newparetn', newParent
+        
+        assert newParent
         newElement = copy.deepcopy(element)
         self.document._afterCopy(newElement)
         for par in parameters:
