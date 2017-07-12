@@ -63,6 +63,41 @@ class Test(unittest.TestCase):
         oldData = urllib.urlopen(goodDocUrl).read()
         newData = urllib.urlopen(newDocUrl).read()
         self.assertEqual(newData, oldData)
+        
+    def test_triggerParameter(self):
+        d = self._createDocument()
+        oldCount = d._count()
+        e = d.events()
+
+        newId = e.trigger('event2', [dict(parameter='./tl:sleep/@tl:dur', value='42')])
+        self.assertTrue(newId)
+        self.assertNotEqual(newId, 'event2')
+        self.assertEqual(d._count(), oldCount + 5)
+
+        newDocUrl = self._buildUrl('_aftertriggerparameter_tmp')
+        goodDocUrl = self._buildUrl('_aftertriggerparameter')
+        d.save(newDocUrl)
+        oldData = urllib.urlopen(goodDocUrl).read()
+        newData = urllib.urlopen(newDocUrl).read()
+        self.assertEqual(newData, oldData)
+
+    def test_modifyParameter(self):
+        d = self._createDocument()
+        oldCount = d._count()
+        e = d.events()
+
+        newId = e.trigger('event3', [dict(parameter='./tl:sleep/@tl:dur', value='42')])
+        self.assertTrue(newId)
+        self.assertNotEqual(newId, 'event3')
+        self.assertEqual(d._count(), oldCount + 7)
+
+        e.modify(newId, [dict(parameter='./tl:sleep/@tl:dur', value='0')])
+        newDocUrl = self._buildUrl('_aftermodifyparameter_tmp')
+        goodDocUrl = self._buildUrl('_aftermodifyparameter')
+        d.save(newDocUrl)
+        oldData = urllib.urlopen(goodDocUrl).read()
+        newData = urllib.urlopen(newDocUrl).read()
+        self.assertEqual(newData, oldData)
 
 if __name__ == '__main__':
     unittest.main()

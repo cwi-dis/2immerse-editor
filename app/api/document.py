@@ -47,6 +47,7 @@ for k, v in NAMESPACES.items():
 # regular expression to decompose xml:id fields that end in a -number
 FIND_ID_INDEX=re.compile(r'(.+)-([0-9]+)')
 FIND_NAME_INDEX=re.compile(r'(.+) \(([0-9]+)\)')
+FIND_PATH_ATTRIBUTE=re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
 
 class Document:
     def __init__(self):
@@ -343,8 +344,6 @@ class DocumentEvents:
         exprModifyable = './/tl:par/tl:par[@tt:name]'
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
-        print 'xxxjack triggerable', len(elementsTriggerable)
-        print 'xxxjack modifyable', len(elementsModifyable)
         rv = []
         for elt in elementsTriggerable:
             rv.append(self._getDescription(elt, trigger=True))
@@ -355,7 +354,6 @@ class DocumentEvents:
     def _getDescription(self, elt, trigger):
         parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
-        print 'xxxjack parameters', elt.tag, len(parameterElements)
         parameters = []
         for p in parameterElements:
             pData = dict(name=p.get(NS_TRIGGER('name')), parameter=p.get(NS_TRIGGER('parameter')))
@@ -368,6 +366,24 @@ class DocumentEvents:
         idd = elt.get(NS_XML('id'))
         return dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
         
+    def _getParameter(self, parameter):
+        try:
+            parPath = parameter['parameter']
+            parValue = parameter['value']
+        except KeyError:
+            abort(400)
+        match = FIND_PATH_ATTRIBUTE.match(parPath)
+        if not match:
+            abort(400)
+        path = match.group(1)
+        attr = match.group(2)
+        if ':' in attr:
+            ns, rest = attr.split(':')
+            namespace = NAMESPACES[ns]
+            attr = '{%s}%s' % (namespace, rest)
+        return path, attr, parValue
+        
+        
     def trigger(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
@@ -379,15 +395,17 @@ class DocumentEvents:
         else:
             tmp = self.document._getParent(element)
             newParent = self.document._getParent(tmp)
-        print 'xxxjack newparetn', newParent
         
-        assert newParent
+        assert newParent != None
         newElement = copy.deepcopy(element)
         self.document._afterCopy(newElement)
         for par in parameters:
-            parPath = par['parameter']
-            parValue = par['value']
-            # ...
+            path, attr, value = self._getParameter(par)
+            print 'xxxjack path', path
+            e = newElement.find(path, NAMESPACES)
+            if e == None:
+                abort(400)
+            e.set(attr, value)
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent, recursive=True)
         return newElement.get(NS_XML('id'))
@@ -397,6 +415,8 @@ class DocumentEvents:
         if element == None:
             abort(404)
         for par in parameters:
-            parPath = par['parameter']
-            parValue = par['value']
-            # ...
+            path, attr, value = self._getParameter(par)
+            e = element.find(path, NAMESPACES)
+            if e == None:
+                abort(400)
+            e.set(attr, value)
