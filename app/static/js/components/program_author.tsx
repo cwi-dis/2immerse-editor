@@ -16,9 +16,10 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 
 class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
-  private baseBoxSize: [number, number] = [180, 100];
+  private baseBoxSize: [number, number] = [200, 120];
   private boxMargin: [number, number] = [20, 20];
   private boxHotArea = 20;
+  private canvasWidth = window.innerWidth - 50;
 
   private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]) {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
@@ -85,19 +86,29 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     return defaultCanvasHeight;
   }
 
+  private getTreeOffset(chapters: List<Chapter>): [number, number] {
+    const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
+    const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
+
+    const xOffset = this.canvasWidth / 2 - treeWidth / 2;
+
+    return [xOffset + this.boxMargin[0], this.boxMargin[1]];
+  }
+
   public render() {
     const { chapters } = this.props;
 
     const canvasHeight = this.adjustCanvasHeight(chapters);
     this.adjustBoxWidth();
+    const treeOffset = this.getTreeOffset(chapters);
 
     return (
       <div className="column">
         <div className="content">
           <h1>Author Program</h1>
-          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth - 50} height={canvasHeight}>
+          <Stage ref={(e: any) => this.stage = e} width={this.canvasWidth} height={canvasHeight}>
             <Layer>
-              {this.drawChapters(chapters)}
+              {this.drawChapters(chapters, treeOffset)}
             </Layer>
           </Stage>
         </div>
