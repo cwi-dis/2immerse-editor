@@ -38,7 +38,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private handleLabelClick(accessPath: Array<number>): void {
     const chapterName = prompt("Chapter name:");
 
-    if (chapterName !== null) {
+    if (chapterName !== null && chapterName !== "") {
       this.props.renameChapter(accessPath, chapterName);
     }
   }
