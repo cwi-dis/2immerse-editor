@@ -87,7 +87,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const masterLayouts = chapter.get("masterLayouts")! as List<string>;
       const masterLabel = masterLayouts.isEmpty() ? "(no masters assigned)" : masterLayouts.join(", ");
 
-      let rect = [
+      let rects = [
         <Rect key={chapter.get("id")}
               fill="#FFFFFF" stroke="#000000"
               x={x} y={y}
@@ -111,15 +111,18 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               fill="#FFFFFF" fontSize={12} fontStyle="italic"
               key={`masters.${chapter.get("id")}`} />
       ].concat(
-        this.drawChapters(
+        this.drawChapterTree(
           chapter.get("children") as List<Chapter>,
           [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
           currentPath
         )
-      );
+      ).concat(this.drawTreeConnectors(
+        chapters.count(), i, [x, y], boxWidth, chapter.has("children") && !(chapter.get("children")! as List<Chapter>).isEmpty()
+      ));
+
       startPos[0] += boxWidth + this.boxMargin[0];
 
-      return result.concat(rect);
+      return result.concat(rects);
     }, []);
   }
 
