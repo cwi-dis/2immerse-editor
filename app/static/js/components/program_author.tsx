@@ -47,14 +47,20 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     const [x, y] = startPos;
     let connectorLines: Array<any> = [];
 
+    const centerX = x + boxWidth / 2;
+
     if (hasChildren) {
-      const centerX = x + boxWidth / 2;
       const bottomY = y + this.baseBoxSize[1] + 38;
+      const endY = y + this.baseBoxSize[1] + this.boxMargin[1] - 10;
 
       connectorLines.push(
-        <Line points={[centerX, bottomY, centerX, y + this.baseBoxSize[1] + this.boxMargin[1] - 10]} stroke="#2B98F0" strokeWidth={1} />,
+        <Line points={[centerX, bottomY, centerX, endY]} stroke="#2B98F0" strokeWidth={1} />,
       );
     }
+
+    connectorLines.push(
+      <Line points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+    );
 
     if (nodeCount === 1) {
       return connectorLines;
@@ -65,14 +71,14 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const endX = x + boxWidth + this.boxMargin[0] / 2;
 
       connectorLines.push(
-        <Line points={[startX, y, startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+        <Line points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
       );
     } else if (currentIndex === nodeCount - 1) {
       const startX = x - this.boxMargin[0] / 2;
       const endX = x + boxWidth / 2;
 
       connectorLines.push(
-        <Line points={[startX, y - 10, endX, y - 10, endX, y]} stroke="#2B98F0" strokeWidth={1} />
+        <Line points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
       );
     } else {
       const startX = x - this.boxMargin[0] / 2;
@@ -80,7 +86,6 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const centerX = x + boxWidth / 2;
 
       connectorLines.push(
-        <Line points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
         <Line points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
       );
     }
