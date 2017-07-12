@@ -1,10 +1,10 @@
 import * as React from "react";
 import { List } from "immutable";
-import {Layer, Rect, Stage, Group} from "react-konva";
+import {Layer, Rect, Stage, Group } from "react-konva";
 
 import { Chapter } from "../reducers/chapters";
 import { ApplicationState } from "../store";
-import { countLeafNodes } from "../util";
+import { countLeafNodes, getTreeHeight } from "../util";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
@@ -72,15 +72,30 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     }
   }
 
+  private adjustCanvasHeight(chapters: List<Chapter>) {
+    const defaultCanvasHeight = this.baseBoxSize[1] * 2 + this.boxMargin[1] * 2;
+
+    const treeHeight = getTreeHeight(chapters);
+    const neededCanvasHeight = treeHeight * this.baseBoxSize[1] + treeHeight * this.boxMargin[1];
+
+    if (neededCanvasHeight > defaultCanvasHeight) {
+      return neededCanvasHeight;
+    }
+
+    return defaultCanvasHeight;
+  }
+
   public render() {
     const { chapters } = this.props;
+
+    const canvasHeight = this.adjustCanvasHeight(chapters);
     this.adjustBoxWidth();
 
     return (
       <div className="column">
         <div className="content">
           <h1>Author Program</h1>
-          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth - 50} height={window.innerHeight - 100}>
+          <Stage ref={(e: any) => this.stage = e} width={window.innerWidth - 50} height={canvasHeight}>
             <Layer>
               {this.drawChapters(chapters)}
             </Layer>
