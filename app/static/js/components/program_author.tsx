@@ -18,7 +18,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [20, 60];
+  private boxMargin: [number, number] = [20, 70];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
@@ -41,6 +41,10 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     if (chapterName !== null && chapterName !== "") {
       this.props.renameChapter(accessPath, chapterName);
     }
+  }
+
+  private handleMasterLabelClick(accessPath: Array<number>): void {
+    alert("Move along, nothing to see here");
   }
 
   private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number, hasChildren: boolean): Array<any> {
@@ -124,6 +128,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               width={boxWidth}
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
+              onClick={this.handleMasterLabelClick.bind(this, currentPath)}
               fill="#FFFFFF" fontSize={12} fontStyle="italic"
               key={`masters.${chapter.get("id")}`} />
       ].concat(
