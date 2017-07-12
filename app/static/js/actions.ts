@@ -83,8 +83,18 @@ function addChapterChild(accessPath: Array<number>): ADD_CHAPTER_CHILD {
   };
 }
 
+export type RENAME_CHAPTER = PayloadAction<"RENAME_CHAPTER", {name: string}>;
+function renameChapter(name: string): RENAME_CHAPTER {
+  return {
+    type: "RENAME_CHAPTER",
+    payload: {
+      name
+    }
+  };
+}
+
 export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION | MERGE_REGIONS |
-                     ADD_CHAPTER_BEFORE | ADD_CHAPTER_AFTER | ADD_CHAPTER_CHILD;
+                     ADD_CHAPTER_BEFORE | ADD_CHAPTER_AFTER | ADD_CHAPTER_CHILD | RENAME_CHAPTER;
 
 export const actionCreators: ActionCreatorsMapObject = {
   addDevice,
@@ -92,5 +102,6 @@ export const actionCreators: ActionCreatorsMapObject = {
   splitRegion,
   addChapterBefore,
   addChapterAfter,
-  addChapterChild
+  addChapterChild,
+  renameChapter
 };
