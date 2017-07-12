@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import {Layer, Rect, Stage, Group, Text } from "react-konva";
+import {Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 
 import { Chapter } from "../reducers/chapters";
 import { ApplicationState } from "../store";
@@ -18,7 +18,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [20, 50];
+  private boxMargin: [number, number] = [20, 60];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
@@ -43,7 +43,40 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     }
   }
 
-  private drawChapters(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
+  private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number): Array<any> {
+    if (nodeCount === 1) {
+      return [];
+    }
+
+    const [x, y] = startPos;
+
+    if (currentIndex === 0) {
+      const startX = x + boxWidth / 2;
+      const endX = x + boxWidth + this.boxMargin[0] / 2;
+
+      return [
+        <Line points={[startX, y, startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+      ];
+    } else if (currentIndex === nodeCount - 1) {
+      const startX = x - this.boxMargin[0] / 2;
+      const endX = x + boxWidth / 2;
+
+      return [
+        <Line points={[startX, y - 10, endX, y - 10, endX, y]} stroke="#2B98F0" strokeWidth={1} />
+      ];
+    }
+
+    const startX = x - this.boxMargin[0] / 2;
+    const endX = x + boxWidth + this.boxMargin[0] / 2;
+    const centerX = x + boxWidth / 2;
+
+    return [
+      <Line points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+      <Line points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+    ];
+  }
+
+  private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
     return chapters.reduce((result: Array<any>, chapter, i) => {
       const [x, y] = startPos;
 
@@ -135,7 +168,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
           <h3>Author Program</h3>
           <Stage ref={(e: any) => this.stage = e} width={this.canvasWidth} height={canvasHeight}>
             <Layer>
-              {this.drawChapters(chapters, treeOffset)}
+              {this.drawChapterTree(chapters, treeOffset)}
             </Layer>
           </Stage>
         </div>
