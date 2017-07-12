@@ -35,8 +35,8 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     }
   }
 
-  private handleLabelClick(accessPath: Array<number>): void {
-    const chapterName = prompt("Chapter name:");
+  private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
+    const chapterName = prompt("Chapter name:", currentName);
 
     if (chapterName !== null && chapterName !== "") {
       this.props.renameChapter(accessPath, chapterName);
@@ -64,7 +64,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               width={boxWidth}
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
-              onClick={this.handleLabelClick.bind(this, currentPath)}
+              onClick={this.handleLabelClick.bind(this, currentPath, chapter.get("name"))}
               fill="#FFFFFF" fontStyle="bold"
               key={`label.${chapter.get("id")}`} />
       ].concat(
