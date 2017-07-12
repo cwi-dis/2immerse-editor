@@ -46,7 +46,6 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number, hasChildren: boolean): Array<any> {
     const [x, y] = startPos;
     let connectorLines: Array<any> = [];
-
     const centerX = x + boxWidth / 2;
 
     if (hasChildren) {
@@ -189,6 +188,9 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
           <Stage ref={(e: any) => this.stage = e} width={this.canvasWidth} height={canvasHeight}>
             <Layer>
               {this.drawChapterTree(chapters, treeOffset)}
+              <Rect fill="#262626" strokeWidth={0}
+                    x={0} y={0}
+                    width={this.canvasWidth} height={treeOffset[1]} />
             </Layer>
           </Stage>
         </div>
