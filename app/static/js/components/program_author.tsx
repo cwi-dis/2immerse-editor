@@ -18,7 +18,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private stage: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [20, 30];
+  private boxMargin: [number, number] = [20, 50];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
@@ -51,6 +51,9 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
       const currentPath = accessPath.concat(i);
 
+      const masterLayouts = chapter.get("masterLayouts")! as List<string>;
+      const masterLabel = masterLayouts.isEmpty() ? "(no masters assigned)" : masterLayouts.join(", ");
+
       let rect = [
         <Rect key={chapter.get("id")}
               fill="#FFFFFF" stroke="#000000"
@@ -65,8 +68,15 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
               onClick={this.handleLabelClick.bind(this, currentPath, chapter.get("name"))}
-              fill="#FFFFFF" fontStyle="bold"
-              key={`label.${chapter.get("id")}`} />
+              fill="#FFFFFF" fontStyle="bold" fontSize={12}
+              key={`label.${chapter.get("id")}`} />,
+        <Text text={masterLabel} align="center"
+              x={x} y={y + this.baseBoxSize[1] + 23}
+              width={boxWidth}
+              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
+              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
+              fill="#FFFFFF" fontSize={12} fontStyle="italic"
+              key={`masters.${chapter.get("id")}`} />
       ].concat(
         this.drawChapters(
           chapter.get("children") as List<Chapter>,
@@ -109,7 +119,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
 
     const xOffset = this.canvasWidth / 2 - treeWidth / 2;
 
-    return [xOffset + this.boxMargin[0], this.boxMargin[1]];
+    return [xOffset + this.boxMargin[0], 10];
   }
 
   public render() {
