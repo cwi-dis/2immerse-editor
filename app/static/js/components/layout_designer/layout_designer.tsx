@@ -44,7 +44,7 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
     return (
       <div className="column" style={{overflow: "scroll"}}>
         <div className="content">
-          <h1>Layout Designer</h1>
+          <h3>Layout Designer</h3>
 
           <div className="block">
             <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addDevice.bind(null, "communal")}>Add communal device</a>

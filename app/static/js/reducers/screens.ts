@@ -3,7 +3,6 @@ import * as shortid from "shortid";
 
 import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION, MERGE_REGIONS } from "../actions";
 import { ActionHandler, findById, getRandomInt } from "../util";
-import { ApplicationState } from "../store";
 
 type coords = [number, number];
 export type ScreenState = List<Screen>;

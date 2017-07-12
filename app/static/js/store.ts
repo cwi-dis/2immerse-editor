@@ -4,9 +4,11 @@ import { hashHistory } from "react-router";
 
 import rootReducer from "./reducers/index";
 import { ScreenState } from "./reducers/screens";
+import { ChapterState } from "./reducers/chapters";
 
 export interface ApplicationState {
   screens: ScreenState;
+  chapters: ChapterState;
 };
 
 const store = createStore(

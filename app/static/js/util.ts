@@ -1,5 +1,6 @@
-import { Collection } from "immutable";
+import { Collection, List } from "immutable";
 import { Action } from "./actions";
+import { Chapter } from "./reducers/chapters";
 
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
@@ -10,6 +11,32 @@ export function getRandomInt(min: number = 0, max: number = 10) {
   max = Math.floor(max);
 
   return Math.floor(Math.random() * (max - min)) + min;
+}
+
+export function countLeafNodes(chapter: Chapter): number {
+  const children = chapter.get("children") as List<Chapter>;
+
+  if (children.count() === 0) {
+    return 1;
+  }
+
+  let leafNodeCount = 0;
+
+  children.forEach((childChapter: Chapter) => {
+    leafNodeCount += countLeafNodes(childChapter);
+  });
+
+  return leafNodeCount;
+}
+
+export function getTreeHeight(chapters: List<Chapter>): number {
+  if (chapters.count() === 0) {
+    return 0;
+  }
+
+  return chapters.map((childChapter: Chapter) => {
+    return 1 + getTreeHeight(childChapter.get("children") as List<Chapter>);
+  }).max()!;
 }
 
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
