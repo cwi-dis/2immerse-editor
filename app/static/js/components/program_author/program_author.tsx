@@ -2,9 +2,9 @@ import * as React from "react";
 import { List } from "immutable";
 import {Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 
-import { Chapter } from "../reducers/chapters";
-import { ApplicationState } from "../store";
-import { countLeafNodes, getTreeHeight } from "../util";
+import { Chapter } from "../../reducers/chapters";
+import { ApplicationState } from "../../store";
+import { countLeafNodes, getTreeHeight } from "../../util";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
