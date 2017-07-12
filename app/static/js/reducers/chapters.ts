@@ -1,7 +1,7 @@
 import { List, Map } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
-import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD } from "../actions";
+import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER } from "../actions";
 
 type MasterId = string;
 export type Chapter = Map<string, string | List<any>>;
@@ -74,6 +74,16 @@ actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: ADD_CHAPTER_CHILD)
   });
 
   return state.updateIn(keyPath, () => List([newChapter]));
+});
+
+actionHandler.addHandler("RENAME_CHAPTER", (state, action: RENAME_CHAPTER) => {
+  const { accessPath, name } = action.payload;
+
+  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
+    return path.concat([i, "children"]);
+  }, [])).push(accessPath[accessPath.length - 1], "name");
+
+  return state.updateIn(keyPath, () => name);
 });
 
 export default actionHandler.getReducer();
