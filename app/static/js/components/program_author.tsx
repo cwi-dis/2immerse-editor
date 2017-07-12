@@ -49,10 +49,10 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
 
     if (hasChildren) {
       const centerX = x + boxWidth / 2;
-      const bottomY = y + this.baseBoxSize[1] + 24;
+      const bottomY = y + this.baseBoxSize[1] + 38;
 
       connectorLines.push(
-        <Line points={[centerX, bottomY, centerX, bottomY + this.boxMargin[1] - 10]} stroke="#2B98F0" strokeWidth={1} />,
+        <Line points={[centerX, bottomY, centerX, y + this.baseBoxSize[1] + this.boxMargin[1] - 10]} stroke="#2B98F0" strokeWidth={1} />,
       );
     }
 
@@ -116,7 +116,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               fill="#FFFFFF" fontStyle="bold" fontSize={12}
               key={`label.${chapter.get("id")}`} />,
         <Text text={masterLabel} align="center"
-              x={x} y={y + this.baseBoxSize[1] + 23}
+              x={x} y={y + this.baseBoxSize[1] + 24}
               width={boxWidth}
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
