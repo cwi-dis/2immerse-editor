@@ -54,7 +54,7 @@ function mergeRegions(screenId: string, regionId1: string, regionId2: string): M
 }
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
-function addChapterBefore(accessPath: Array<number>) {
+function addChapterBefore(accessPath: Array<number>): ADD_CHAPTER_BEFORE {
   return {
     type: "ADD_CHAPTER_BEFORE",
     payload: {
@@ -64,7 +64,7 @@ function addChapterBefore(accessPath: Array<number>) {
 }
 
 export type ADD_CHAPTER_AFTER = PayloadAction<"ADD_CHAPTER_AFTER", {accessPath: Array<number>}>;
-function addChapterAfter(accessPath: Array<number>) {
+function addChapterAfter(accessPath: Array<number>): ADD_CHAPTER_AFTER {
   return {
     type: "ADD_CHAPTER_AFTER",
     payload: {
@@ -74,7 +74,7 @@ function addChapterAfter(accessPath: Array<number>) {
 }
 
 export type ADD_CHAPTER_CHILD = PayloadAction<"ADD_CHAPTER_CHILD", {accessPath: Array<number>}>;
-function addChapterChild(accessPath: Array<number>) {
+function addChapterChild(accessPath: Array<number>): ADD_CHAPTER_CHILD {
   return {
     type: "ADD_CHAPTER_CHILD",
     payload: {
