@@ -21,7 +21,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
-  private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]) {
+  private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]): void {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
     const {x, y} = this.stage.getStage().getPointerPosition();
 
@@ -32,6 +32,10 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     } else if (y >= bottomRight[1] - this.boxHotArea) {
       this.props.addChapterChild(accessPath);
     }
+  }
+
+  private handleLabelClick(accessPath: Array<number>): void {
+    const chapterName = prompt("Chapter name:");
   }
 
   private drawChapters(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
@@ -55,7 +59,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
               width={boxWidth}
               onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
               onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
-              onClick={() => console.log("Hello text element", currentPath)}
+              onClick={this.handleLabelClick.bind(this, currentPath)}
               fill="#FFFFFF" fontStyle="bold"
               key={`label.${chapter.get("id")}`} />
       ].concat(
