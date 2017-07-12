@@ -10,6 +10,7 @@ interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
   addChapterAfter: (accessPath: Array<number>) => void;
   addChapterChild: (accessPath: Array<number>) => void;
+  renameChapter: (accessPath: Array<number>, name: string) => void;
 }
 
 type CombinedProps = ApplicationState & ProgramAuthorProps;
@@ -36,6 +37,10 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
 
   private handleLabelClick(accessPath: Array<number>): void {
     const chapterName = prompt("Chapter name:");
+
+    if (chapterName !== null) {
+      this.props.renameChapter(accessPath, chapterName);
+    }
   }
 
   private drawChapters(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
