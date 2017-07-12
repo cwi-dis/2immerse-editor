@@ -34,9 +34,9 @@ export function getTreeHeight(chapters: List<Chapter>): number {
     return 0;
   }
 
-  return Math.max(
-    ...chapters.map((childChapter: Chapter) => 1 + getTreeHeight(childChapter.get("children") as List<Chapter>)).toJS()
-  );
+  return chapters.map((childChapter: Chapter) => {
+    return 1 + getTreeHeight(childChapter.get("children") as List<Chapter>);
+  }).max()!;
 }
 
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
