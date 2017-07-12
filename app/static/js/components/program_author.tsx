@@ -132,7 +132,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     return (
       <div className="column">
         <div className="content">
-          <h1>Author Program</h1>
+          <h3>Author Program</h3>
           <Stage ref={(e: any) => this.stage = e} width={this.canvasWidth} height={canvasHeight}>
             <Layer>
               {this.drawChapters(chapters, treeOffset)}

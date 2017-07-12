@@ -5,7 +5,7 @@ class MasterManager extends React.Component<{}, {}> {
     return (
       <div className="column">
         <div className="content">
-          <h1>Manage Masters</h1>
+          <h3>Manage Masters</h3>
         </div>
       </div>
     );
