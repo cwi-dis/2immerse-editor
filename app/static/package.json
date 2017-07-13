@@ -21,7 +21,7 @@
     "konva": "^1.6.3",
     "react": "^15.6.0",
     "react-dom": "^15.6.0",
-    "react-konva": "https://github.com/lavrton/react-konva",
+    "react-konva": "https://github.com/troeggla/react-konva",
     "react-redux": "^5.0.4",
     "react-router": "^3.0.0",
     "react-router-redux": "^4.0.1",
