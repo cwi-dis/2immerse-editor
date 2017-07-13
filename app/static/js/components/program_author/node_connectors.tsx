@@ -13,34 +13,30 @@ interface NodeConnectorsProps {
   hasChildren: boolean;
 }
 
-class NodeConnectors extends React.Component<NodeConnectorsProps, {}> {
-  private drawTreeConnectors(): Array<JSX.Element> {
-    const { nodeCount, currentIndex, hasChildren, position } = this.props;
+const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
+  const { nodeCount, currentIndex, hasChildren, position } = props;
 
-    const [x, y] = position;
-    const [width, height] = this.props.boxSize;
-    const [xMargin, yMargin] = this.props.margins;
+  const [x, y] = position;
+  const [width, height] = props.boxSize;
+  const [xMargin, yMargin] = props.margins;
 
-    let connectorLines: Array<any> = [];
-    const centerX = x + width / 2;
+  let connectorLines: Array<any> = [];
+  const centerX = x + width / 2;
 
-    if (hasChildren) {
-      const bottomY = y + height + 38;
-      const endY = y + height + yMargin - 10;
-
-      connectorLines.push(
-        <Line key={`bottom.${position}`} points={[centerX, bottomY, centerX, endY]} stroke="#2B98F0" strokeWidth={1} />,
-      );
-    }
+  if (hasChildren) {
+    const bottomY = y + height + 38;
+    const endY = y + height + yMargin - 10;
 
     connectorLines.push(
-      <Line key={`top.${position}`} points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+      <Line key={`bottom.${position}`} points={[centerX, bottomY, centerX, endY]} stroke="#2B98F0" strokeWidth={1} />,
     );
+  }
 
-    if (nodeCount === 1) {
-      return connectorLines;
-    }
+  connectorLines.push(
+    <Line key={`top.${position}`} points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+  );
 
+  if (nodeCount > 1) {
     if (currentIndex === 0) {
       const startX = x + width / 2;
       const endX = x + width + xMargin / 2;
@@ -64,17 +60,13 @@ class NodeConnectors extends React.Component<NodeConnectorsProps, {}> {
         <Line key={`middle.${position}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
       );
     }
-
-    return connectorLines;
   }
 
-  public render() {
-    return (
-      <Group>
-        {this.drawTreeConnectors()}
-      </Group>
-    );
-  }
-}
+  return (
+    <Group>
+      {connectorLines}
+    </Group>
+  );
+};
 
 export default NodeConnectors;
