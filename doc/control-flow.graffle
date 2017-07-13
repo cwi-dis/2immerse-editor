@@ -14,7 +14,7 @@
 	<key>BackgroundGraphic</key>
 	<dict>
 		<key>Bounds</key>
-		<string>{{0, 0}, {559.28001499176025, 782.8900146484375}}</string>
+		<string>{{0, 0}, {559, 783}}</string>
 		<key>Class</key>
 		<string>SolidGraphic</string>
 		<key>ID</key>
@@ -326,7 +326,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{166.40899708384873, 46.011735502123173}, {65, 24}}</string>
+			<string>{{153.47942669718728, 65.950279493834074}, {65, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -393,7 +393,7 @@
 			<key>Head</key>
 			<dict>
 				<key>ID</key>
-				<integer>19</integer>
+				<integer>18</integer>
 			</dict>
 			<key>ID</key>
 			<integer>38</integer>
@@ -401,9 +401,9 @@
 			<integer>0</integer>
 			<key>Points</key>
 			<array>
-				<string>{224.93147744447739, 91.60415601506898}</string>
-				<string>{199, 58}</string>
-				<string>{159.75238503103071, 99.600011667472018}</string>
+				<string>{159.77097901027199, 105.84875616102893}</string>
+				<string>{190, 77}</string>
+				<string>{220.27819777092526, 105.87980469583397}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -424,12 +424,12 @@
 			<key>Tail</key>
 			<dict>
 				<key>ID</key>
-				<integer>18</integer>
+				<integer>19</integer>
 			</dict>
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{243.81786527581585, 283.01939667726629}, {74, 24}}</string>
+			<string>{{243.88916910240295, 283.01939158637401}, {74, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -492,7 +492,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{150.19051036230144, 285.00630228004951}, {68, 24}}</string>
+			<string>{{150.32792887426891, 285.00667597238839}, {68, 24}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>FitText</key>
@@ -567,8 +567,8 @@
 			<integer>0</integer>
 			<key>Points</key>
 			<array>
-				<string>{280.27106891952411, 233.49998026260923}</string>
-				<string>{281.25765863159006, 344.50003106510047}</string>
+				<string>{280.30927140715977, 233.49997780141138}</string>
+				<string>{281.35558617058956, 344.5000238591208}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -606,8 +606,8 @@
 			<integer>0</integer>
 			<key>Points</key>
 			<array>
-				<string>{229.32184243037875, 233.40776299225536}</string>
-				<string>{150.42276578322594, 344.59140849922926}</string>
+				<string>{229.39428541469198, 233.40796000582284}</string>
+				<string>{150.60879967881223, 344.59191438451148}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -1599,7 +1599,7 @@ Backend}</string>
 			<key>Print</key>
 			<string>YES</string>
 			<key>View</key>
-			<string>NO</string>
+			<string>YES</string>
 		</dict>
 		<dict>
 			<key>Lock</key>
@@ -1609,7 +1609,7 @@ Backend}</string>
 			<key>Print</key>
 			<string>YES</string>
 			<key>View</key>
-			<string>YES</string>
+			<string>NO</string>
 		</dict>
 		<dict>
 			<key>Lock</key>
@@ -1644,7 +1644,7 @@ Backend}</string>
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2017-07-12 22:15:44 +0000</string>
+	<string>2017-07-13 10:20:29 +0000</string>
 	<key>Modifier</key>
 	<string>Jack Jansen</string>
 	<key>NotesVisible</key>
@@ -1675,7 +1675,7 @@ Backend}</string>
 		<key>NSPaperSize</key>
 		<array>
 			<string>size</string>
-			<string>{595.28001499176025, 841.8900146484375}</string>
+			<string>{595, 842}</string>
 		</array>
 		<key>NSPrintReverseOrientation</key>
 		<array>
