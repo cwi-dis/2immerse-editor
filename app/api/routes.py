@@ -1,5 +1,7 @@
 from app import app
 from api import api
+from flask import Response, request, abort
+import json
 
 API_ROOT = '/api/v1'
 
@@ -44,7 +46,7 @@ def document_events_get(documentId):
     events = document.events()
     assert events
     rv = events.get()
-    return return Response(json.dumps(rv), mimetype="application/json")    
+    return Response(json.dumps(rv), mimetype="application/json")    
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/trigger", methods=["POST"])
 def document_events_trigger(documentId, id):
@@ -60,7 +62,7 @@ def document_events_trigger(documentId, id):
     events.trigger(id, parameters)
     return ''
 
-@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods["PUT"])
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
 def document_events_modify(documentId, id):
     try:
         document = api.documents[documentId]
@@ -70,3 +72,49 @@ def document_events_modify(documentId, id):
     assert events
     events.modify(id, parameters)
     return ''
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/timeline.xml")
+def get_timeline_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    return Response(serve.get_timeline(), mimetype="application/xml")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json")
+def get_layout_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    return Response(serve.get_layout(), mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
+def put_layout_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    layoutJSON = request.get_data() # Gets raw data, without parsing
+    _ = json.loads(layoutJSON)  # Assure it is actually json
+    serve.put_layout(layoutJSON)
+    return ''
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json")
+def get_client_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    docRoot = '%s/document/%s/serve/' % (API_ROOT, documentId)
+    config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json')
+    return Response(config, mimetype="application/json")
+    

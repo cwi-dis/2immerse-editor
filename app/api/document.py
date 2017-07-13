@@ -33,6 +33,7 @@ NS_2IMMERSE = NameSpace("tim", "http://jackjansen.nl/2immerse")
 NS_2IMMERSE_COMPONENT = NameSpace("tic", "http://jackjansen.nl/2immerse/component")
 NS_XML = NameSpace("xml", "http://www.w3.org/XML/1998/namespace")
 NS_TRIGGER = NameSpace("tt", "http://jackjansen.nl/2immerse/livetrigger")
+NS_AUTH = NameSpace("au", "http://jackjansen.nl/2immerse/authoring")
 NAMESPACES = {}
 NAMESPACES.update(NS_XML.ns())
 NAMESPACES.update(NS_TIMELINE.ns())
@@ -41,6 +42,7 @@ NAMESPACES.update(NS_TIMELINE_CHECK.ns())
 NAMESPACES.update(NS_2IMMERSE.ns())
 NAMESPACES.update(NS_2IMMERSE_COMPONENT.ns())
 NAMESPACES.update(NS_TRIGGER.ns())
+NAMESPACES.update(NS_AUTH.ns())
 for k, v in NAMESPACES.items():
     ET.register_namespace(k, v)
 
@@ -56,6 +58,8 @@ class Document:
         self.idMap = None
         self.nameSet = None
         self.eventsHandler = None
+        self.authoringHandler = None
+        self.serveHandler = None
         
     def index(self):
         if request.method == 'PUT':
@@ -138,6 +142,16 @@ class Document:
         if not self.eventsHandler:
             self.eventsHandler = DocumentEvents(self)
         return self.eventsHandler
+        
+    def authoring(self):
+        if not self.authoringHandler:
+            self.authoringHandler = DocumentAuthoring(self)
+        return self.authoringHandler
+        
+    def serve(self):
+        if not self.serveHandler:
+            self.serveHandler = DocumentServe(self)
+        return self.serveHandler
         
     def loadXml(self, data):
         root = ET.fromstring(data)
@@ -420,3 +434,75 @@ class DocumentEvents:
             if e == None:
                 abort(400)
             e.set(attr, value)
+
+class DocumentAuthoring:
+    def __init__(self, document):
+        self.document = document
+        self.tree = document.tree
+
+class DocumentServe:
+    def __init__(self, document):
+        self.document = document
+        self.tree = document.tree
+        
+    def get_timeline(self):
+        """Get timeline document contents (xml) for this authoring document.
+        At the moment, this is actually the whole authoring document itself."""
+        return ET.tostring(self.tree.getroot())
+        
+    def get_layout(self):
+        """Get the layout document contents (json) for this authoring document.
+        At the moment, the layout document JSON representation is stored in a toplevel
+        au:rawLayout element. This will change when the authoring tool starts modifying the
+        layout document data."""
+        rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
+        if rawLayoutElement == None:
+            abort(404)
+        return rawLayoutElement.text
+        
+    def put_layout(self, layoutJSON):
+        """Temporary method, stores the raw layout document data in the authoring document."""
+        rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
+        if rawLayoutElement == None:
+            rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
+        rawLayoutElement.text = layoutJSON
+        
+    def get_client(self, timeline, layout):
+        clientDoc = dict(
+            description="Live Preview",
+            mode="tv",
+            serviceUrlPreset="aws_edge",
+            controllerOptions=dict(
+                deviceIdPrefix="tv",
+                deviceIdNamespace="ts-tv",
+                defaultLogLevel="trace",
+                networkLogLevel="trace",
+                longFormConsoleLogging=True,
+                showUserErrorMessageUI=True,
+                ),
+            debugOptions=dict(
+                debugComponent=True,
+                devLogging=True,
+                failurePlaceholders=True,
+                ),
+            variations=[
+                dict(
+                    name="Live Preview",
+                    description="Live Preview",
+                    type="select",
+                    options=[
+                        dict(
+                            name="Live Preview",
+                            description="Live Preview",
+                            content=dict(
+                                serviceInput=dict(
+                                    layout=layout,
+                                    timeline=timeline,
+                                    ),                            
+                                ),
+                        ),
+                    ],
+                    ),
+                ],
+            )
+        return json.dumps(clientDoc)
