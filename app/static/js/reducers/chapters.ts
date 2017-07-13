@@ -21,7 +21,7 @@ export class Chapter extends Record<ChapterAttributes>({id: "", name: null, mast
 export type ChapterState = List<Chapter>;
 
 const initialChapters: List<Chapter> = List([
-  Map({id: shortid.generate(), masterLayouts: List([]), children: List([])})
+  new Chapter({id: shortid.generate(), masterLayouts: List<MasterId>([]), children: List<Chapter>([])})
 ]);
 
 const actionHandler = new ActionHandler<ChapterState>(initialChapters);
@@ -33,10 +33,10 @@ actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: ADD_CHAPTER_BEFOR
   let list: List<Chapter> = state;
 
   accessPath.slice(0, accessPath.length - 1).forEach((i) => {
-    list = (list.get(i)!.get("children") as List<Chapter>);
+    list = list.get(i)!.get("children")!;
   });
 
-  const updatedChildren = list.insert(insertIndex, Map({
+  const updatedChildren = list.insert(insertIndex, new Chapter({
     id: shortid.generate(),
     masterLayouts: List(),
     children: List()
@@ -56,10 +56,10 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: ADD_CHAPTER_AFTER)
   let list: List<Chapter> = state;
 
   accessPath.slice(0, accessPath.length - 1).forEach((i) => {
-    list = (list.get(i)!.get("children") as List<Chapter>);
+    list = list.get(i)!.get("children")!;
   });
 
-  const newChapter = Map({
+  const newChapter = new Chapter({
     id: shortid.generate(),
     masterLayouts: List(),
     children: List()

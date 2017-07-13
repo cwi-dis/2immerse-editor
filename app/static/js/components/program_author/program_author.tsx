@@ -76,7 +76,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
       const leafNodes = countLeafNodes(chapter);
       const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
       const currentPath = accessPath.concat(i);
-      const hasChildren = chapter.has("children") && !(chapter.get("children")! as List<Chapter>).isEmpty();
+      const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
 
       let rects = [
         <ChapterNode key={`group.${currentPath}`} stage={stage} chapter={chapter}
@@ -87,7 +87,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
                      masterLabelClick={this.handleMasterLabelClick.bind(this)} />
       ].concat(
         this.drawChapterTree(
-          chapter.get("children") as List<Chapter>,
+          chapter.get("children")!,
           [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
           currentPath
         )
