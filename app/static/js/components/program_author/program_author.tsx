@@ -111,6 +111,12 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
   }
 
   private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
+    const { stage } = this.state;
+
+    if (stage === null) {
+      return [];
+    }
+
     return chapters.reduce((result: Array<any>, chapter, i) => {
       const [x, y] = startPos;
 
@@ -119,7 +125,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
       const currentPath = accessPath.concat(i);
 
       let rects = [
-        <ChapterNode key={`group.${currentPath}`} stage={this.state.stage} chapter={chapter}
+        <ChapterNode key={`group.${currentPath}`} stage={stage} chapter={chapter}
                      position={[x, y]} size={[boxWidth, this.baseBoxSize[1]]}
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
