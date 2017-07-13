@@ -1,10 +1,23 @@
-import { List, Map } from "immutable";
+import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
 import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER } from "../actions";
 
 type MasterId = string;
-export type Chapter = Map<string, string | List<any>>;
+
+export interface ChapterAttributes {
+  id?: string;
+  name?: string | null;
+  masterLayouts?: List<MasterId>;
+  children?: List<Chapter>;
+}
+
+export class Chapter extends Record<ChapterAttributes>({id: "", name: null, masterLayouts: List(), children: List()}) {
+  constructor(params?: ChapterAttributes) {
+    params ? super(params) : super();
+  }
+}
+
 export type ChapterState = List<Chapter>;
 
 const initialChapters: List<Chapter> = List([
