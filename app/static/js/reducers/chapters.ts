@@ -8,7 +8,7 @@ export type Chapter = Map<string, string | List<any>>;
 export type ChapterState = List<Chapter>;
 
 const initialChapters: List<Chapter> = List([
-  Map({id: "root", masterLayouts: List([]), children: List([])})
+  Map({id: shortid.generate(), masterLayouts: List([]), children: List([])})
 ]);
 
 const actionHandler = new ActionHandler<ChapterState>(initialChapters);
