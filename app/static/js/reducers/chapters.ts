@@ -6,7 +6,7 @@ import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTE
 type MasterId = string;
 
 export interface ChapterAttributes {
-  id?: string;
+  id: string;
   name?: string | null;
   masterLayouts?: List<MasterId>;
   children?: List<Chapter>;
