@@ -94,7 +94,8 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
       ).concat(
         <NodeConnectors nodeCount={chapters.count()} currentIndex={i}
                         position={[x, y]} boxSize={[boxWidth, this.baseBoxSize[1]]}
-                        margins={this.boxMargin} hasChildren={hasChildren} />
+                        margins={this.boxMargin} hasChildren={hasChildren}
+                        key={`connectors.${currentPath}`} />
       );
 
       startPos[0] += boxWidth + this.boxMargin[0];
