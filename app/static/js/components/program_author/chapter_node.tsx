@@ -21,7 +21,6 @@ interface ChapterBoxProps {
 class ChapterBox extends React.Component<ChapterBoxProps, {}> {
   public render() {
     const {chapter, stage, position, size, currentPath} = this.props;
-    console.log("RENDER", stage);
 
     const [x, y] = position;
     const [boxWidth, boxHeight] = size;

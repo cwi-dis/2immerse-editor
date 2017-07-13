@@ -14,18 +14,30 @@ interface ProgramAuthorProps {
   renameChapter: (accessPath: Array<number>, name: string) => void;
 }
 
+interface ProgramAuthorState {
+  stage: any;
+}
+
 type CombinedProps = ApplicationState & ProgramAuthorProps;
 
-class ProgramAuthor extends React.Component<CombinedProps, {}> {
-  private stage: any;
+class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
+  private stageWrapper: any;
   private baseBoxSize: [number, number] = [200, 120];
   private boxMargin: [number, number] = [20, 70];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
+  constructor(props: CombinedProps) {
+    super(props);
+
+    this.state = {
+      stage: null
+    };
+  }
+
   private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]): void {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
-    const {x, y} = this.stage.getStage().getPointerPosition();
+    const {x, y} = this.state.stage.getPointerPosition();
 
     if (x <= topLeft[0] + this.boxHotArea) {
       this.props.addChapterBefore(accessPath);
@@ -133,7 +145,6 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
     if (treeWidth >= window.innerWidth) {
-      console.log("recalculating base box width");
       this.baseBoxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
     }
   }
@@ -160,6 +171,12 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     return [xOffset + this.boxMargin[0], 10];
   }
 
+  public componentDidMount() {
+    this.setState({
+      stage: this.stageWrapper.getStage()
+    });
+  }
+
   public render() {
     const { chapters } = this.props;
 
@@ -171,7 +188,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       <div className="column">
         <div className="content">
           <h3>Author Program</h3>
-          <Stage ref={(e: any) => this.stage = e} width={this.canvasWidth} height={canvasHeight}>
+          <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
             <Layer>
               {this.drawChapterTree(chapters, treeOffset)}
               <Rect fill="#262626" strokeWidth={0}
