@@ -5,7 +5,7 @@ import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
-import ChapterBox from "./chapter_box";
+import ChapterNode from "./chapter_node";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
@@ -106,12 +106,12 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const currentPath = accessPath.concat(i);
 
       let rects = [
-        <ChapterBox stage={this.stage} chapter={chapter}
-                    position={[x, y]} size={[boxWidth, this.baseBoxSize[1]]}
-                    currentPath={currentPath}
-                    boxClick={this.handleBoxClick}
-                    nameLabelClick={this.handleLabelClick}
-                    masterLabelClick={this.handleMasterLabelClick} />
+        <ChapterNode key={`group.${currentPath}`} stage={this.state.stage} chapter={chapter}
+                     position={[x, y]} size={[boxWidth, this.baseBoxSize[1]]}
+                     currentPath={currentPath}
+                     boxClick={this.handleBoxClick.bind(this)}
+                     nameLabelClick={this.handleLabelClick.bind(this)}
+                     masterLabelClick={this.handleMasterLabelClick.bind(this)} />
       ].concat(
         this.drawChapterTree(
           chapter.get("children") as List<Chapter>,

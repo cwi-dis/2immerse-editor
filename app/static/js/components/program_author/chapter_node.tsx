@@ -7,7 +7,7 @@ import { Chapter } from "../../reducers/chapters";
 type Coords = [number, number];
 
 interface ChapterBoxProps {
-  stage: Stage;
+  stage: any;
   chapter: Chapter;
   position: Coords;
   size: Coords;
@@ -21,6 +21,7 @@ interface ChapterBoxProps {
 class ChapterBox extends React.Component<ChapterBoxProps, {}> {
   public render() {
     const {chapter, stage, position, size, currentPath} = this.props;
+    console.log("RENDER", stage);
 
     const [x, y] = position;
     const [boxWidth, boxHeight] = size;
@@ -33,23 +34,23 @@ class ChapterBox extends React.Component<ChapterBoxProps, {}> {
         <Rect key={chapter.get("id") as string}
               fill="#FFFFFF" stroke="#000000"
               x={x} y={y}
-              onMouseEnter={() => stage.getStage().container().style.cursor = "pointer"}
-              onMouseLeave={() => stage.getStage().container().style.cursor = "default"}
+              onMouseEnter={() => stage.container().style.cursor = "pointer"}
+              onMouseLeave={() => stage.container().style.cursor = "default"}
               onClick={this.props.boxClick.bind(this, currentPath, [x, y], [boxWidth, boxHeight])}
-              height={boxHeight} width={boxWidth} />,
+              height={boxHeight} width={boxWidth} />
         <Text text={chapter.get("name", "(to be named)") as string} align="center"
               x={x} y={y + boxHeight + 5}
               width={boxWidth}
-              onMouseEnter={() => stage.getStage().container().style.cursor = "pointer"}
-              onMouseLeave={() => stage.getStage().container().style.cursor = "default"}
+              onMouseEnter={() => stage.container().style.cursor = "pointer"}
+              onMouseLeave={() => stage.container().style.cursor = "default"}
               onClick={this.props.nameLabelClick.bind(this, currentPath, chapter.get("name"))}
               fill="#FFFFFF" fontStyle="bold" fontSize={12}
-              key={`label.${chapter.get("id")}`} />,
+              key={`label.${chapter.get("id")}`} />
         <Text text={masterLabel} align="center"
               x={x} y={y + boxHeight + 24}
               width={boxWidth}
-              onMouseEnter={() => stage.getStage().container().style.cursor = "pointer" }
-              onMouseLeave={() => stage.getStage().container().style.cursor = "default" }
+              onMouseEnter={() => stage.container().style.cursor = "pointer" }
+              onMouseLeave={() => stage.container().style.cursor = "default" }
               onClick={this.props.masterLabelClick.bind(this, currentPath)}
               fill="#FFFFFF" fontSize={12} fontStyle="italic"
               key={`masters.${chapter.get("id")}`} />
