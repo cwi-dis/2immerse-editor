@@ -1,13 +1,14 @@
 import * as React from "react";
 import { List } from "immutable";
 import { Stage, Group, Rect, Text } from "react-konva";
+import { Stage as KonvaStage } from "konva";
 
 import { Chapter } from "../../reducers/chapters";
 
 type Coords = [number, number];
 
 interface ChapterBoxProps {
-  stage: any;
+  stage: KonvaStage;
   chapter: Chapter;
   position: Coords;
   size: Coords;

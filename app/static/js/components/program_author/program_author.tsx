@@ -1,6 +1,7 @@
 import * as React from "react";
 import { List } from "immutable";
 import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
+import { Stage as KonvaStage } from "konva";
 
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
@@ -15,7 +16,7 @@ interface ProgramAuthorProps {
 }
 
 interface ProgramAuthorState {
-  stage: any;
+  stage: KonvaStage | null;
 }
 
 type CombinedProps = ApplicationState & ProgramAuthorProps;
@@ -37,7 +38,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
 
   private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]): void {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
-    const {x, y} = this.state.stage.getPointerPosition();
+    const {x, y} = this.state.stage!.getPointerPosition();
 
     if (x <= topLeft[0] + this.boxHotArea) {
       this.props.addChapterBefore(accessPath);
