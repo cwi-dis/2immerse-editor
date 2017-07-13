@@ -6,7 +6,7 @@ import { Stage as KonvaStage } from "konva";
 import { Coords } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
-interface ChapterBoxProps {
+interface ChapterNodeProps {
   stage: KonvaStage;
   chapter: Chapter;
   position: Coords;
@@ -18,7 +18,7 @@ interface ChapterBoxProps {
   masterLabelClick: (currentPath: Array<number>) => void;
 }
 
-class ChapterBox extends React.Component<ChapterBoxProps, {}> {
+class ChapterNode extends React.Component<ChapterNodeProps, {}> {
   public render() {
     const {chapter, stage, position, size, currentPath} = this.props;
 
@@ -58,4 +58,4 @@ class ChapterBox extends React.Component<ChapterBoxProps, {}> {
   }
 }
 
-export default ChapterBox;
+export default ChapterNode;
