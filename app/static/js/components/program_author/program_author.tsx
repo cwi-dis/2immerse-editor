@@ -47,7 +47,7 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
     alert("Move along, nothing to see here");
   }
 
-  private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number, hasChildren: boolean): Array<any> {
+  private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number, hasChildren: boolean): Array<JSX.Element> {
     const [x, y] = startPos;
     let connectorLines: Array<any> = [];
     const centerX = x + boxWidth / 2;
