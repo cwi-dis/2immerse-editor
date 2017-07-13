@@ -6,7 +6,9 @@ import { Stage as KonvaStage } from "konva";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
+
 import ChapterNode from "./chapter_node";
+import NodeConnectors from "./node_connectors";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
@@ -61,55 +63,6 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
     alert("Move along, nothing to see here");
   }
 
-  private drawTreeConnectors(nodeCount: number, currentIndex: number, startPos: [number, number], boxWidth: number, hasChildren: boolean): Array<JSX.Element> {
-    const [x, y] = startPos;
-    let connectorLines: Array<any> = [];
-    const centerX = x + boxWidth / 2;
-
-    if (hasChildren) {
-      const bottomY = y + this.baseBoxSize[1] + 38;
-      const endY = y + this.baseBoxSize[1] + this.boxMargin[1] - 10;
-
-      connectorLines.push(
-        <Line key={`bottom.${startPos}`} points={[centerX, bottomY, centerX, endY]} stroke="#2B98F0" strokeWidth={1} />,
-      );
-    }
-
-    connectorLines.push(
-      <Line key={`top.${startPos}`} points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
-    );
-
-    if (nodeCount === 1) {
-      return connectorLines;
-    }
-
-    if (currentIndex === 0) {
-      const startX = x + boxWidth / 2;
-      const endX = x + boxWidth + this.boxMargin[0] / 2;
-
-      connectorLines.push(
-        <Line key={`right.${startPos}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
-      );
-    } else if (currentIndex === nodeCount - 1) {
-      const startX = x - this.boxMargin[0] / 2;
-      const endX = x + boxWidth / 2;
-
-      connectorLines.push(
-        <Line key={`left.${startPos}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
-      );
-    } else {
-      const startX = x - this.boxMargin[0] / 2;
-      const endX = x + boxWidth + this.boxMargin[0] / 2;
-      const centerX = x + boxWidth / 2;
-
-      connectorLines.push(
-        <Line key={`middle.${startPos}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
-      );
-    }
-
-    return connectorLines;
-  }
-
   private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
     const { stage } = this.state;
 
@@ -123,6 +76,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
       const leafNodes = countLeafNodes(chapter);
       const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
       const currentPath = accessPath.concat(i);
+      const hasChildren = chapter.has("children") && !(chapter.get("children")! as List<Chapter>).isEmpty();
 
       let rects = [
         <ChapterNode key={`group.${currentPath}`} stage={stage} chapter={chapter}
@@ -137,9 +91,11 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
           [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
           currentPath
         )
-      ).concat(this.drawTreeConnectors(
-        chapters.count(), i, [x, y], boxWidth, chapter.has("children") && !(chapter.get("children")! as List<Chapter>).isEmpty()
-      ));
+      ).concat(
+        <NodeConnectors nodeCount={chapters.count()} currentIndex={i}
+                        position={[x, y]} boxSize={[boxWidth, this.baseBoxSize[1]]}
+                        margins={this.boxMargin} hasChildren={hasChildren} />
+      );
 
       startPos[0] += boxWidth + this.boxMargin[0];
 
