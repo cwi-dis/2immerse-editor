@@ -1,10 +1,11 @@
 import * as React from "react";
 import { List } from "immutable";
-import {Layer, Rect, Stage, Group, Text, Line } from "react-konva";
+import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
+import ChapterBox from "./chapter_box";
 
 interface ProgramAuthorProps {
   addChapterBefore: (accessPath: Array<number>) => void;
@@ -104,33 +105,13 @@ class ProgramAuthor extends React.Component<CombinedProps, {}> {
       const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
       const currentPath = accessPath.concat(i);
 
-      const masterLayouts = chapter.get("masterLayouts")! as List<string>;
-      const masterLabel = masterLayouts.isEmpty() ? "(no masters assigned)" : masterLayouts.join(", ");
-
       let rects = [
-        <Rect key={chapter.get("id")}
-              fill="#FFFFFF" stroke="#000000"
-              x={x} y={y}
-              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
-              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
-              onClick={this.handleBoxClick.bind(this, currentPath, [x, y], [boxWidth, this.baseBoxSize[1]])}
-              height={this.baseBoxSize[1]} width={boxWidth} />,
-        <Text text={chapter.get("name", "(to be named)")} align="center"
-              x={x} y={y + this.baseBoxSize[1] + 5}
-              width={boxWidth}
-              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
-              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
-              onClick={this.handleLabelClick.bind(this, currentPath, chapter.get("name"))}
-              fill="#FFFFFF" fontStyle="bold" fontSize={12}
-              key={`label.${chapter.get("id")}`} />,
-        <Text text={masterLabel} align="center"
-              x={x} y={y + this.baseBoxSize[1] + 24}
-              width={boxWidth}
-              onMouseEnter={() => this.stage.getStage().container().style.cursor = "pointer" }
-              onMouseLeave={() => this.stage.getStage().container().style.cursor = "default" }
-              onClick={this.handleMasterLabelClick.bind(this, currentPath)}
-              fill="#FFFFFF" fontSize={12} fontStyle="italic"
-              key={`masters.${chapter.get("id")}`} />
+        <ChapterBox stage={this.stage} chapter={chapter}
+                    position={[x, y]} size={[boxWidth, this.baseBoxSize[1]]}
+                    currentPath={currentPath}
+                    boxClick={this.handleBoxClick}
+                    nameLabelClick={this.handleLabelClick}
+                    masterLabelClick={this.handleMasterLabelClick} />
       ].concat(
         this.drawChapterTree(
           chapter.get("children") as List<Chapter>,
