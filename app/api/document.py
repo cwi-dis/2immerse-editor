@@ -89,8 +89,9 @@ class Document:
             if name:
                 self.nameSet.add(name)
                     
-    def _elementAdded(self, elt, parent, recursive=False):
-        """Updates paremtMap and idMap and various other data structures after a new element is added."""
+    def _elementAdded(self, elt, parent, editManager=None):
+        """Updates paremtMap and idMap and various other data structures after a new element is added.
+        Returns edit operation which can be forwarded to slaved documents."""
         assert not elt in self.parentMap
         self.parentMap[elt] = parent
         id = elt.get(NS_XML('id'))
@@ -100,12 +101,16 @@ class Document:
         name = elt.get(NS_TRIGGER('name'))
         if name:
             self.nameSet.add(name)
-        if recursive:
-            for ch in elt:
-                self._elementAdded(ch, elt, True)
+        for ch in elt:
+            self._elementAdded(ch, elt)
+        if editManager:
+            editManager.add(elt, parent)
             
-    def _elementDeleted(self, elt, recursive=False):
-        """Updates paremtMap and idMap and various other data structures after an element is deleted."""
+    def _elementDeleted(self, elt, editManager=None):
+        """Updates parentMap and idMap and various other data structures after an element is deleted.
+        Returns edit operation which can be forwarded to slaved documents."""
+        if editManager:
+            editManager.delete(elt)
         if elt in self.parentMap:
             del self.parentMap[elt]
         id = elt.get(NS_XML('id'))
@@ -113,9 +118,15 @@ class Document:
             del self.idMap[id]
         # We do not remove tt:name, it may occur multiple times so we are not
         # sure it has really disappeared
-        if recursive:
-            for ch in elt:
-                self._elementDeleted(ch, True)
+        for ch in elt:
+            self._elementDeleted(ch)
+                
+    def _elementChanged(self, elt, editManager=None):
+        """Called when element attributes have changed.
+        Returns edit operation which can be forwarded to slaved documents."""
+        if editManager:
+            editManager.change(elt)
+        
             
     def _afterCopy(self, elt):
         """Adjust element attributes (xml:id and tt:name) after a copy.
@@ -288,22 +299,24 @@ class DocumentXml:
         #
         if where == 'begin':
             element.insert(0, newElement)
-            self.document._elementAdded(newElement, element, recursive=True)
+            self.document._elementAdded(newElement, element)
         elif where == 'end':
             element.append(newElement)
-            self.document._elementAdded(newElement, element, recursive=True)
+            self.document._elementAdded(newElement, element)
         elif where == 'replace':
             element.clear()
             for k, v in newElement.items():
                 element.set(k, v)
+            # xxxjack this may be unsafe, replacing children....
             for e in list(newElement):
                 element.append(e)
             newElement = element
+            self.document._elementChanged(element)
         elif where == 'before':
             parent = self.document._getParent(element)
             pos = list(parent).index(element)
             parent.insert(pos, newElement)
-            self.document._elementAdded(newElement, parent, recursive=True)
+            self.document._elementAdded(newElement, parent)
         elif where == 'after':
             parent = self.document._getParent(element)
             pos = list(parent).index(element)
@@ -311,7 +324,7 @@ class DocumentXml:
                 parent.append(newElement)
             else:
                 parent.insert(pos+1, newElement)
-            self.document._elementAdded(newElement, parent, recursive=True)
+            self.document._elementAdded(newElement, parent)
         else:
             abort(400)
         return self.document._getXPath(newElement)
@@ -320,7 +333,7 @@ class DocumentXml:
         element = self.document._getElement(path)
         parent = self.document._getParent(element)
         parent.remove(element)
-        self.document._elementDeleted(element, recursive=True)
+        self.document._elementDeleted(element)
         return self.document._fromET(element, mimetype)
         
     def get(self, path, mimetype='application/x-python-object'):
@@ -445,19 +458,23 @@ class DocumentEvents:
                 abort(400)
             e.set(attr, value)
         newParent.append(newElement)
-        self.document._elementAdded(newElement, newParent, recursive=True)
+        self.document._elementAdded(newElement, newParent)
         return newElement.get(NS_XML('id'))
             
     def modify(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
             abort(404)
+        allElements = set()
         for par in parameters:
             path, attr, value = self._getParameter(par)
             e = element.find(path, NAMESPACES)
             if e == None:
                 abort(400)
             e.set(attr, value)
+            allElements.add(e)
+        for e in allElements:
+            self.document._elementChanged(e)
 
 class DocumentAuthoring:
     def __init__(self, document):
