@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Stage, Group, Rect, Text } from "react-konva";
+import { Stage, Group, Rect, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { Coords } from "../../util";
@@ -65,6 +65,36 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     };
   }
 
+  private renderHandles(): JSX.Element | null {
+    const {chapter, stage, position, size, currentPath} = this.props;
+    const [x, y] = position;
+    const [boxWidth, boxHeight] = size;
+    const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
+
+    if (this.state.hovered) {
+      return (
+        <Group>
+          <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "left")}
+                    x={x - 20} y={y - 7 + boxHeight / 2} size={14} />
+          <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "right")}
+                    x={x + boxWidth + 4} y={y - 7 + boxHeight / 2} size={14} />
+          <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "bottom")}
+                    x={x + boxWidth / 2 - 7} y={y + boxHeight + 42} size={14} />
+        </Group>
+      );
+    } else if (hasChildren) {
+      const startX = x + boxWidth / 2;
+      const startY = y + boxHeight + 42;
+
+      return (
+        <Line points={[startX, startY, startX, startY + 15]}
+              stroke="#2B98F0" strokeWidth={1} />
+      );
+    }
+
+    return null;
+  }
+
   public render() {
     const {chapter, stage, position, size, currentPath} = this.props;
 
@@ -87,12 +117,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
               onMouseLeave={() => stage.container().style.cursor = "default"}
               onClick={this.props.boxClick.bind(null, currentPath, [x, y], [boxWidth, boxHeight])}
               height={boxHeight} width={boxWidth} />
-        <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "left")}
-                  x={x - 20} y={y - 7 + boxHeight / 2} size={14} />
-        <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "right")}
-                  x={x + boxWidth + 4} y={y - 7 + boxHeight / 2} size={14} />
-        <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "bottom")}
-                  x={x + boxWidth / 2 - 7} y={y + boxHeight + 42} size={14} />
+        {this.renderHandles()}
         <Text text={chapter.get("name") || "(to be named)"} align="center"
               x={x} y={y + boxHeight + 5}
               width={boxWidth}
