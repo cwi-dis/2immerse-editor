@@ -55,6 +55,7 @@ const ChapterNode: React.SFC<ChapterNodeProps> = (props) => {
             height={boxHeight} width={boxWidth} />
       <BoxHandle x={x - 20} y={y - 8 + boxHeight / 2} size={16} />
       <BoxHandle x={x + boxWidth + 4} y={y - 8 + boxHeight / 2} size={16} />
+      <BoxHandle x={x + boxWidth / 2 - 8} y={y + boxHeight + 42} size={16} />
       <Text text={chapter.get("name") || "(to be named)"} align="center"
             x={x} y={y + boxHeight + 5}
             width={boxWidth}
