@@ -33,7 +33,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
   }
 
   connectorLines.push(
-    <Line key={`top.${position}`} points={[centerX, y, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+    <Line key={`top.${position}`} points={[centerX, y - 1, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
   );
 
   if (nodeCount > 1) {

@@ -136,7 +136,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
 
     const xOffset = this.canvasWidth / 2 - treeWidth / 2;
 
-    return [xOffset + this.boxMargin[0], 10.5];
+    return [xOffset + this.boxMargin[0], 10];
   }
 
   public componentDidMount() {
@@ -161,7 +161,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
               {this.drawChapterTree(chapters, treeOffset)}
               <Rect fill="#262626" strokeWidth={0}
                     x={0} y={0}
-                    width={this.canvasWidth} height={treeOffset[1]} />
+                    width={this.canvasWidth} height={treeOffset[1] - 1} />
             </Layer>
           </Stage>
         </div>
