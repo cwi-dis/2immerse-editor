@@ -25,7 +25,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 
 class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
   private stageWrapper: any;
-  private baseBoxSize: [number, number] = [200, 120];
+  private baseBoxSize: [number, number] = [200, 110];
   private boxMargin: [number, number] = [60, 80];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
