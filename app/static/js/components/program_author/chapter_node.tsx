@@ -20,7 +20,7 @@ interface ChapterNodeProps {
 }
 
 interface ChapterNodeState {
-  strokeColor: string;
+  hovered: boolean;
 }
 
 interface BoxHandleProps {
@@ -52,11 +52,16 @@ const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
 };
 
 class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
+  private strokeColors = {
+    default: "#000000",
+    hover: "#2B98F0"
+  };
+
   constructor(props: ChapterNodeProps) {
     super(props);
 
     this.state = {
-      strokeColor: "#000000"
+      hovered: false
     };
   }
 
@@ -70,10 +75,10 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     const masterLabel = masterLayouts.isEmpty() ? "(no masters assigned)" : masterLayouts.join(", ");
 
     return (
-      <Group onMouseEnter={() => this.setState({ strokeColor: "#2B98F0" })}
-             onMouseLeave={() => this.setState({ strokeColor: "#000000" })}>
+      <Group onMouseEnter={() => this.setState({ hovered: true })}
+             onMouseLeave={() => this.setState({ hovered: false })}>
         <Rect key={chapter.get("id")}
-              fill="#FFFFFF" stroke={this.state.strokeColor}
+              fill="#FFFFFF" stroke={this.state.hovered ? this.strokeColors.hover : this.strokeColors.default}
               x={x} y={y}
               onMouseEnter={() => stage.container().style.cursor = "pointer"}
               onMouseLeave={() => stage.container().style.cursor = "default"}
