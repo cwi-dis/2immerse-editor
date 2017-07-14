@@ -12,12 +12,6 @@ class API:
             rv += '%s:\n%s\n' % (k, self.documents[k].dump())
         return rv
         
-    def testjson(self):
-        return jsonify(dict(hello="world", answer=43))
-        
-    def testxml(self):
-        return Response('<data><hello>world</hello><answer>43</answer></data>', mimetype="application/xml")
-        
     def document(self):
         if request.method == 'POST':
             documentId = uuid.uuid4()

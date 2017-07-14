@@ -5,6 +5,9 @@ import json
 
 API_ROOT = '/api/v1'
 
+#
+# Global routes
+#
 @app.route(API_ROOT + "/<string:verb>")
 def api_verb(verb):
     try:
@@ -17,6 +20,10 @@ def api_verb(verb):
 def document():
     return api.document()
     
+#
+# Per-document commands, load and save and such
+#
+
 @app.route(API_ROOT + "/document/<uuid:documentId>", methods=["GET", "PUT"])
 def document_instance(documentId):
     try:
@@ -36,7 +43,55 @@ def document_instance_verb(documentId, verb):
     except AttributeError:
         abort(404)
     return func()
-    
+
+#
+# per-document, xml aspect, cut/copy/paste and such on the xml structure
+#
+
+# cut, paste, get and modifyAttributes need work to make the API more restful
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/xml/copy", methods=["POST"])
+def document_xml_paste(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    xml = document.xml()
+    assert xml
+    rv = xml.copy(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
+    return rv   
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/xml/move", methods=["POST"])
+def document_xml_paste(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    xml = document.xml()
+    assert xml
+    rv = xml.move(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
+    return rv   
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/xml/modifyData", methods=["PUT"])
+def document_xml_paste(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    xml = document.xml()
+    assert xml
+    rv = xml.modifyData(path=request.args['path'], data=request.args['data'])
+    return rv   
+
+
+#
+# per-document, authoring aspect, for the authoring tool
+#
+
+#
+# per-document, event aspect, for the triggering tool
+#
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/events")
 def document_events_get(documentId):
     try:
@@ -70,8 +125,15 @@ def document_events_modify(documentId, id):
         abort(404)
     events = document.events()
     assert events
+    parameters = request.get_json()
+    if type(parameters) != type([]):
+        abort(405)
     events.modify(id, parameters)
     return ''
+
+#
+# Per-document, serve aspect, for consumption of views on the document
+#
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/timeline.xml")
 def get_timeline_document(documentId):

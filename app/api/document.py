@@ -53,13 +53,17 @@ FIND_PATH_ATTRIBUTE=re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
 
 class Document:
     def __init__(self):
+        # The whole document, as an elementtree
         self.tree = None
+        # Data strcutures for mapping over the tree
         self.parentMap = None
         self.idMap = None
         self.nameSet = None
+        # handlers for the different views on the document
         self.eventsHandler = None
         self.authoringHandler = None
         self.serveHandler = None
+        self.xmlHandler = None
         
     def index(self):
         if request.method == 'PUT':
@@ -73,6 +77,7 @@ class Document:
             return Response(ET.tostring(self.tree.getroot()), mimetype="application/xml")    
             
     def _documentLoaded(self):
+        """Creates paremtMap and idMap and various other data structures after loading a document."""
         self.parentMap = {c:p for p in self.tree.iter() for c in p}
         self.idMap = {}
         self.nameSet = set()
@@ -83,9 +88,9 @@ class Document:
             name = e.get(NS_TRIGGER('name'))
             if name:
                 self.nameSet.add(name)
-            
-        
+                    
     def _elementAdded(self, elt, parent, recursive=False):
+        """Updates paremtMap and idMap and various other data structures after a new element is added."""
         assert not elt in self.parentMap
         self.parentMap[elt] = parent
         id = elt.get(NS_XML('id'))
@@ -100,6 +105,7 @@ class Document:
                 self._elementAdded(ch, elt, True)
             
     def _elementDeleted(self, elt, recursive=False):
+        """Updates paremtMap and idMap and various other data structures after an element is deleted."""
         if elt in self.parentMap:
             del self.parentMap[elt]
         id = elt.get(NS_XML('id'))
@@ -113,7 +119,8 @@ class Document:
             
     def _afterCopy(self, elt):
         """Adjust element attributes (xml:id and tt:name) after a copy.
-        Makes them unique. Does not insert them into the datastructures yet."""
+        Makes them unique. Does not insert them into the datastructures yet: the element is expected
+        to be currently out-of-tree."""
         for e in elt.iter():
             id = e.get(NS_XML('id'))
             if not id: continue
@@ -139,19 +146,28 @@ class Document:
             elt.set(NS_TRIGGER('name'), name)
             
     def events(self):
+        """Returns the events handler (after creating it if needed)"""
         if not self.eventsHandler:
             self.eventsHandler = DocumentEvents(self)
         return self.eventsHandler
         
     def authoring(self):
+        """Returns the authoring handler (after creating it if needed)"""
         if not self.authoringHandler:
             self.authoringHandler = DocumentAuthoring(self)
         return self.authoringHandler
         
     def serve(self):
+        """Returns the serve handler (after creating it if needed)"""
         if not self.serveHandler:
             self.serveHandler = DocumentServe(self)
         return self.serveHandler
+        
+    def xml(self):
+        """Returns the xml handler (after creating it if needed)"""
+        if not self.xmlHandler:
+            self.xmlHandler = DocumentXml(self)
+        return self.xmlHandler
         
     def loadXml(self, data):
         root = ET.fromstring(data)
@@ -247,16 +263,21 @@ class Document:
             abort(400)
         element = positions[0]
         return element
-            
+
+class DocumentXml:
+    def __init__(self, document):
+        self.document = document
+        self.tree = document.tree
+
     def paste(self, path, where, tag, data, mimetype='application/x-python-object'):
         #
         # where should it go?
         #
-        element = self._getElement(path)
+        element = self.document._getElement(path)
         #
         # what should go there?
         #
-        newElement = self._toET(tag, data, mimetype)
+        newElement = self.document._toET(tag, data, mimetype)
         #
         # Sanity checks
         #
@@ -267,10 +288,10 @@ class Document:
         #
         if where == 'begin':
             element.insert(0, newElement)
-            self._elementAdded(newElement, element, recursive=True)
+            self.document._elementAdded(newElement, element, recursive=True)
         elif where == 'end':
             element.append(newElement)
-            self._elementAdded(newElement, element, recursive=True)
+            self.document._elementAdded(newElement, element, recursive=True)
         elif where == 'replace':
             element.clear()
             for k, v in newElement.items():
@@ -279,35 +300,35 @@ class Document:
                 element.append(e)
             newElement = element
         elif where == 'before':
-            parent = self._getParent(element)
+            parent = self.document._getParent(element)
             pos = list(parent).index(element)
             parent.insert(pos, newElement)
-            self._elementAdded(newElement, parent, recursive=True)
+            self.document._elementAdded(newElement, parent, recursive=True)
         elif where == 'after':
-            parent = self._getParent(element)
+            parent = self.document._getParent(element)
             pos = list(parent).index(element)
             if pos == len(list(parent)):
                 parent.append(newElement)
             else:
                 parent.insert(pos+1, newElement)
-            self._elementAdded(newElement, parent, recursive=True)
+            self.document._elementAdded(newElement, parent, recursive=True)
         else:
             abort(400)
-        return self._getXPath(newElement)
+        return self.document._getXPath(newElement)
         
     def cut(self, path, mimetype='application/x-python-object'):
-        element = self._getElement(path)
-        parent = self._getParent(element)
+        element = self.document._getElement(path)
+        parent = self.document._getParent(element)
         parent.remove(element)
-        self._elementDeleted(element, recursive=True)
-        return self._fromET(element, mimetype)
+        self.document._elementDeleted(element, recursive=True)
+        return self.document._fromET(element, mimetype)
         
     def get(self, path, mimetype='application/x-python-object'):
-        element = self._getElement(path)
-        return self._fromET(element, mimetype)
+        element = self.document._getElement(path)
+        return self.document._fromET(element, mimetype)
         
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
-        element = self._getElement(path)
+        element = self.document._getElement(path)
         if mimetype == 'application/x-python-object':
             pass
         elif mimetype == 'application/json':
@@ -322,28 +343,28 @@ class Document:
                     existingAttrs.pop(k)
             else:
                 existingAttrs[k] = v
-        return self._getXPath(element)
+        return self.document._getXPath(element)
         
     def modifyData(self, path, data):
-        element = self._getElement(path)
+        element = self.document._getElement(path)
         if data == None:
-            self.text = None
-            self.tail = None
+            element.text = None
+            element.tail = None
         else:
-            self.text = data
-            self.tail = None
-        return self._getXPath(element)
+            element.text = data
+            element.tail = None
+        return self.document._getXPath(element)
         
     def copy(self, path, where, sourcepath):
-        element = self._getElement(path)
-        sourceElement = self._getElement(sourcepath)
+        element = self.document._getElement(path)
+        sourceElement = self.document._getElement(sourcepath)
         newElement = copy.deepcopy(sourceElement)
-        self._afterCopy(newElement)
+        self.document._afterCopy(newElement)
         # newElement._setroot(None)
         return self.paste(path, where, None, newElement)
         
     def move(self, path, where, sourcepath):
-        element = self._getElement(path)
+        element = self.document._getElement(path)
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
@@ -378,7 +399,10 @@ class DocumentEvents:
             parameters.append(pData)
         name = elt.get(NS_TRIGGER('name'))
         idd = elt.get(NS_XML('id'))
-        return dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
+        rv = dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
+        if NS_TRIGGER("verb") in elt:
+            rv["verb"] = elt.get(NS_TRIGGER("verb"))
+        return rv
         
     def _getParameter(self, parameter):
         try:

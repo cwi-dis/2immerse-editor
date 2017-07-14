@@ -16,3 +16,4 @@ build/
 tests/report/
 bundle.js
 bundle.js.map
+test_*_tmp.xml
