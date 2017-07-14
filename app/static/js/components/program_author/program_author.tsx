@@ -46,6 +46,11 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
   }
 
   private handleRemoveClick(accessPath: Array<number>): void {
+    if (accessPath.length === 1 && accessPath[0] === 0 && this.props.chapters.count() === 1) {
+      alert("Root node cannot be removed");
+      return;
+    }
+
     this.props.removeChapter(accessPath);
   }
 
