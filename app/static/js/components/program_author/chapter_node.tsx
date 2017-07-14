@@ -22,15 +22,23 @@ interface BoxHandleProps {
   x: number;
   y: number;
   size: number;
+  stage: KonvaStage;
 }
 
 const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
-  const {x, y, size} = props;
+  const {x, y, size, stage} = props;
 
   return (
     <Group>
-      <Rect x={x} y={y} width={size} height={size} fill="#575757" cornerRadius={2} />
-      <Text text="+" x={x} y={y} fill="#FFFFFF" width={size} height={size} fontSize={size} align="center" />
+      <Rect x={x} y={y}
+            width={size} height={size}
+            fill="#575757" cornerRadius={2} />
+      <Text text="+" fill="#FFFFFF"
+            x={x} y={y}
+            width={size} height={size}
+            fontSize={size} align="center"
+            onMouseEnter={() => stage.container().style.cursor = "pointer"}
+            onMouseLeave={() => stage.container().style.cursor = "default"} />
     </Group>
   );
 };
@@ -53,9 +61,9 @@ const ChapterNode: React.SFC<ChapterNodeProps> = (props) => {
             onMouseLeave={() => stage.container().style.cursor = "default"}
             onClick={props.boxClick.bind(null, currentPath, [x, y], [boxWidth, boxHeight])}
             height={boxHeight} width={boxWidth} />
-      <BoxHandle x={x - 20} y={y - 8 + boxHeight / 2} size={16} />
-      <BoxHandle x={x + boxWidth + 4} y={y - 8 + boxHeight / 2} size={16} />
-      <BoxHandle x={x + boxWidth / 2 - 8} y={y + boxHeight + 42} size={16} />
+      <BoxHandle stage={stage} x={x - 20} y={y - 8 + boxHeight / 2} size={16} />
+      <BoxHandle stage={stage} x={x + boxWidth + 4} y={y - 8 + boxHeight / 2} size={16} />
+      <BoxHandle stage={stage} x={x + boxWidth / 2 - 8} y={y + boxHeight + 42} size={16} />
       <Text text={chapter.get("name") || "(to be named)"} align="center"
             x={x} y={y + boxHeight + 5}
             width={boxWidth}
