@@ -18,6 +18,23 @@ interface ChapterNodeProps {
   masterLabelClick: (currentPath: Array<number>) => void;
 }
 
+interface BoxHandleProps {
+  x: number;
+  y: number;
+  size: number;
+}
+
+const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
+  const {x, y, size} = props;
+
+  return (
+    <Group>
+      <Rect x={x} y={y} width={size} height={size} fill="#575757" cornerRadius={2} />
+      <Text text="+" x={x} y={y} fill="#FFFFFF" width={size} height={size} fontSize={size} align="center" />
+    </Group>
+  );
+};
+
 const ChapterNode: React.SFC<ChapterNodeProps> = (props) => {
   const {chapter, stage, position, size, currentPath} = props;
 
