@@ -17,6 +17,7 @@ interface ChapterNodeProps {
   nameLabelClick: (currentPath: Array<number>, currentName: string) => void;
   masterLabelClick: (currentPath: Array<number>) => void;
   addChapterClick: (currentPath: Array<number>, handlePosition: "left" | "right" | "bottom") => void;
+  removeChapterClick: (currentPath: Array<number>) => void;
 }
 
 interface ChapterNodeState {
@@ -75,11 +76,17 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
       return (
         <Group>
           <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "left")}
-                    x={x - 20} y={y - 7 + boxHeight / 2} size={14} />
+                     x={x - 20} y={y - 7 + boxHeight / 2} size={14} />
           <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "right")}
-                    x={x + boxWidth + 4} y={y - 7 + boxHeight / 2} size={14} />
+                     x={x + boxWidth + 4} y={y - 7 + boxHeight / 2} size={14} />
           <BoxHandle stage={stage} onClick={this.props.addChapterClick.bind(null, currentPath, "bottom")}
-                    x={x + boxWidth / 2 - 7} y={y + boxHeight + 42} size={14} />
+                     x={x + boxWidth / 2 - 7} y={y + boxHeight + 42} size={14} />
+          <Text text="×" fontSize={16} align="center"
+                width={14} height={14}
+                onMouseEnter={() => stage.container().style.cursor = "pointer"}
+                onMouseLeave={() => stage.container().style.cursor = "default"}
+                onClick={this.props.removeChapterClick.bind(null, currentPath)}
+                x={x + boxWidth - 14} y={y} />
         </Group>
       );
     } else if (hasChildren) {
