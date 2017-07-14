@@ -1,7 +1,7 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
-import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER } from "../actions";
+import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER, REMOVE_CHAPTER } from "../actions";
 
 type MasterId = string;
 
@@ -88,6 +88,16 @@ actionHandler.addHandler("RENAME_CHAPTER", (state, action: RENAME_CHAPTER) => {
   }, [])).push(accessPath[accessPath.length - 1], "name");
 
   return state.updateIn(keyPath, () => name);
+});
+
+actionHandler.addHandler("REMOVE_CHAPTER", (state, action: REMOVE_CHAPTER) => {
+  const { accessPath } = action.payload;
+
+  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
+    return path.concat([i, "children"]);
+  }, [])).push(accessPath[accessPath.length - 1]);
+
+  return state.deleteIn(keyPath);
 });
 
 export default actionHandler.getReducer();
