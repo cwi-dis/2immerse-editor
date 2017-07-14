@@ -25,8 +25,8 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 
 class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
   private stageWrapper: any;
-  private baseBoxSize: [number, number] = [200, 110];
-  private boxMargin: [number, number] = [60, 80];
+  private baseBoxSize: [number, number] = [200, 120];
+  private boxMargin: [number, number] = [40, 70];
   private canvasWidth = window.innerWidth - 50;
 
   constructor(props: CombinedProps) {
@@ -136,7 +136,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
 
     const xOffset = this.canvasWidth / 2 - treeWidth / 2;
 
-    return [xOffset + this.boxMargin[0], 10];
+    return [xOffset + this.boxMargin[0], 10.5];
   }
 
   public componentDidMount() {
