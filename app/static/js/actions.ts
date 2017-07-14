@@ -94,8 +94,18 @@ function renameChapter(accessPath: Array<number>, name: string): RENAME_CHAPTER 
   };
 }
 
+export type REMOVE_CHAPTER = PayloadAction<"REMOVE_CHAPTER", {accessPath: Array<number>}>;
+function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
+  return {
+    type: "REMOVE_CHAPTER",
+    payload: {
+      accessPath
+    }
+  };
+}
+
 export type Action = ADD_DEVICE | REMOVE_DEVICE | SPLIT_REGION | MERGE_REGIONS |
-                     ADD_CHAPTER_BEFORE | ADD_CHAPTER_AFTER | ADD_CHAPTER_CHILD | RENAME_CHAPTER;
+                     ADD_CHAPTER_BEFORE | ADD_CHAPTER_AFTER | ADD_CHAPTER_CHILD | RENAME_CHAPTER | REMOVE_CHAPTER;
 
 export const actionCreators: ActionCreatorsMapObject = {
   addDevice,
@@ -104,5 +114,6 @@ export const actionCreators: ActionCreatorsMapObject = {
   addChapterBefore,
   addChapterAfter,
   addChapterChild,
-  renameChapter
+  renameChapter,
+  removeChapter
 };
