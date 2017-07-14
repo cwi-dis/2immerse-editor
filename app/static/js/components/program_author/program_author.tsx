@@ -26,7 +26,7 @@ type CombinedProps = ApplicationState & ProgramAuthorProps;
 class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
   private stageWrapper: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [60, 90];
+  private boxMargin: [number, number] = [60, 80];
   private boxHotArea = 20;
   private canvasWidth = window.innerWidth - 50;
 
@@ -42,13 +42,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
     const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
     const {x, y} = this.state.stage!.getPointerPosition();
 
-    if (x <= topLeft[0] + this.boxHotArea) {
-      this.props.addChapterBefore(accessPath);
-    } else if (x >= bottomRight[0] - this.boxHotArea) {
-      this.props.addChapterAfter(accessPath);
-    } else if (y >= bottomRight[1] - this.boxHotArea) {
-      this.props.addChapterChild(accessPath);
-    }
+    alert("Move along, nothing to see here, except for these coords: " + x + "|" + y);
   }
 
   private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
@@ -61,6 +55,16 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
 
   private handleMasterLabelClick(accessPath: Array<number>): void {
     alert("Move along, nothing to see here");
+  }
+
+  private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
+    if (handlePosition === "left") {
+      this.props.addChapterBefore(accessPath);
+    } else if (handlePosition === "right") {
+      this.props.addChapterAfter(accessPath);
+    } else {
+      this.props.addChapterChild(accessPath);
+    }
   }
 
   private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
@@ -84,7 +88,8 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
                      nameLabelClick={this.handleLabelClick.bind(this)}
-                     masterLabelClick={this.handleMasterLabelClick.bind(this)} />
+                     masterLabelClick={this.handleMasterLabelClick.bind(this)}
+                     addChapterClick={this.handleAddChapterClick.bind(this)} />
       ].concat(
         this.drawChapterTree(
           chapter.get("children")!,
