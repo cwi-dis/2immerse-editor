@@ -66,11 +66,11 @@ const ChapterNode: React.SFC<ChapterNodeProps> = (props) => {
             onClick={props.boxClick.bind(null, currentPath, [x, y], [boxWidth, boxHeight])}
             height={boxHeight} width={boxWidth} />
       <BoxHandle stage={stage} onClick={props.addChapterClick.bind(null, currentPath, "left")}
-                 x={x - 20} y={y - 8 + boxHeight / 2} size={16} />
+                 x={x - 20} y={y - 7 + boxHeight / 2} size={14} />
       <BoxHandle stage={stage} onClick={props.addChapterClick.bind(null, currentPath, "right")}
-                 x={x + boxWidth + 4} y={y - 8 + boxHeight / 2} size={16} />
+                 x={x + boxWidth + 4} y={y - 7 + boxHeight / 2} size={14} />
       <BoxHandle stage={stage} onClick={props.addChapterClick.bind(null, currentPath, "bottom")}
-                 x={x + boxWidth / 2 - 8} y={y + boxHeight + 42} size={16} />
+                 x={x + boxWidth / 2 - 7} y={y + boxHeight + 42} size={14} />
       <Text text={chapter.get("name") || "(to be named)"} align="center"
             x={x} y={y + boxHeight + 5}
             width={boxWidth}
