@@ -15,6 +15,7 @@ interface ProgramAuthorProps {
   addChapterAfter: (accessPath: Array<number>) => void;
   addChapterChild: (accessPath: Array<number>) => void;
   renameChapter: (accessPath: Array<number>, name: string) => void;
+  removeChapter: (accessPath: Array<number>) => void;
 }
 
 interface ProgramAuthorState {
@@ -42,6 +43,10 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
     const {x, y} = this.state.stage!.getPointerPosition();
 
     alert("Move along, nothing to see here, except for these coords: " + x + "|" + y);
+  }
+
+  private handleRemoveClick(accessPath: Array<number>): void {
+    this.props.removeChapter(accessPath);
   }
 
   private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
@@ -88,7 +93,8 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
                      boxClick={this.handleBoxClick.bind(this)}
                      nameLabelClick={this.handleLabelClick.bind(this)}
                      masterLabelClick={this.handleMasterLabelClick.bind(this)}
-                     addChapterClick={this.handleAddChapterClick.bind(this)} />
+                     addChapterClick={this.handleAddChapterClick.bind(this)}
+                     removeChapterClick={this.handleRemoveClick.bind(this)} />
       ].concat(
         this.drawChapterTree(
           chapter.get("children")!,
