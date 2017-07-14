@@ -1,14 +1,27 @@
-import { List, Map } from "immutable";
+import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
 import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER } from "../actions";
 
 type MasterId = string;
-export type Chapter = Map<string, string | List<any>>;
+
+export interface ChapterAttributes {
+  id: string;
+  name?: string | null;
+  masterLayouts?: List<MasterId>;
+  children?: List<Chapter>;
+}
+
+export class Chapter extends Record<ChapterAttributes>({id: "", name: null, masterLayouts: List(), children: List()}) {
+  constructor(params?: ChapterAttributes) {
+    params ? super(params) : super();
+  }
+}
+
 export type ChapterState = List<Chapter>;
 
 const initialChapters: List<Chapter> = List([
-  Map({id: "root", masterLayouts: List([]), children: List([])})
+  new Chapter({id: shortid.generate()})
 ]);
 
 const actionHandler = new ActionHandler<ChapterState>(initialChapters);
@@ -20,14 +33,10 @@ actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: ADD_CHAPTER_BEFOR
   let list: List<Chapter> = state;
 
   accessPath.slice(0, accessPath.length - 1).forEach((i) => {
-    list = (list.get(i)!.get("children") as List<Chapter>);
+    list = list.get(i)!.get("children")!;
   });
 
-  const updatedChildren = list.insert(insertIndex, Map({
-    id: shortid.generate(),
-    masterLayouts: List(),
-    children: List()
-  }));
+  const updatedChildren = list.insert(insertIndex, new Chapter({id: shortid.generate()}));
 
   const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
     return path.concat([i, "children"]);
@@ -43,14 +52,10 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: ADD_CHAPTER_AFTER)
   let list: List<Chapter> = state;
 
   accessPath.slice(0, accessPath.length - 1).forEach((i) => {
-    list = (list.get(i)!.get("children") as List<Chapter>);
+    list = list.get(i)!.get("children")!;
   });
 
-  const newChapter = Map({
-    id: shortid.generate(),
-    masterLayouts: List(),
-    children: List()
-  });
+  const newChapter = new Chapter({id: shortid.generate()});
   const updatedChildren = (insertIndex >= list.count()) ? list.push(newChapter) : list.insert(insertIndex + 1, newChapter);
 
   const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
@@ -67,9 +72,8 @@ actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: ADD_CHAPTER_CHILD)
     return path.concat([i, "children"]);
   }, []));
 
-  const newChapter = Map({
+  const newChapter = new Chapter({
     id: shortid.generate(),
-    masterLayouts: List(),
     children: state.getIn(keyPath)
   });
 

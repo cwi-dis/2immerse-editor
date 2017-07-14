@@ -2,6 +2,8 @@ import { Collection, List } from "immutable";
 import { Action } from "./actions";
 import { Chapter } from "./reducers/chapters";
 
+export type Coords = [number, number];
+
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
 }
