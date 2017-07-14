@@ -38,11 +38,8 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
     };
   }
 
-  private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]): void {
-    const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
-    const {x, y} = this.state.stage!.getPointerPosition();
-
-    alert("Move along, nothing to see here, except for these coords: " + x + "|" + y);
+  private handleBoxClick(accessPath: Array<number>): void {
+    alert("Move along, nothing to see here yet");
   }
 
   private handleRemoveClick(accessPath: Array<number>): void {

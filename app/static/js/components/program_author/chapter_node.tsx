@@ -122,7 +122,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
               x={x} y={y}
               onMouseEnter={() => stage.container().style.cursor = "pointer"}
               onMouseLeave={() => stage.container().style.cursor = "default"}
-              onClick={this.props.boxClick.bind(null, currentPath, [x, y], [boxWidth, boxHeight])}
+              onClick={this.props.boxClick.bind(null, currentPath)}
               height={boxHeight} width={boxWidth} />
         {this.renderHandles()}
         <Text text={chapter.get("name") || "(to be named)"} align="center"
