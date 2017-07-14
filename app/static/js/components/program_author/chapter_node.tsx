@@ -77,6 +77,9 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     return (
       <Group onMouseEnter={() => this.setState({ hovered: true })}
              onMouseLeave={() => this.setState({ hovered: false })}>
+        <Rect x={x - 20} y={y}
+              width={boxWidth + 40} height={boxHeight + 56}
+              fill="transparent" />
         <Rect key={chapter.get("id")}
               fill="#FFFFFF" stroke={this.state.hovered ? this.strokeColors.hover : this.strokeColors.default}
               x={x} y={y}
