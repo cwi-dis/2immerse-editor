@@ -1,8 +1,18 @@
 import { Collection, List } from "immutable";
-import { Action } from "./actions";
 import { Chapter } from "./reducers/chapters";
 
 export type Coords = [number, number];
+interface Action {
+  type: string;
+}
+
+export interface BasicAction<T extends string> extends Action {
+  type: T;
+}
+
+export interface PayloadAction<T extends string, U> extends BasicAction<T> {
+  payload: U;
+}
 
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
