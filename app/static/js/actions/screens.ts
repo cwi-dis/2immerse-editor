@@ -46,7 +46,13 @@ function mergeRegions(screenId: string, regionId1: string, regionId2: string): M
   };
 }
 
-export const actionCreators: ActionCreatorsMapObject = {
+export interface ScreenActions extends ActionCreatorsMapObject {
+  addDevice: (type: "personal" | "communal") => ADD_DEVICE;
+  removeDevice: (id: string) => REMOVE_DEVICE;
+  splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
+}
+
+export const actionCreators: ScreenActions = {
   addDevice,
   removeDevice,
   splitRegion

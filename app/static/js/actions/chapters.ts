@@ -52,7 +52,15 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   };
 }
 
-export const actionCreators: ActionCreatorsMapObject = {
+export interface ChapterActions extends ActionCreatorsMapObject {
+  addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
+  addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
+  addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
+  renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
+  removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
+}
+
+export const actionCreators: ChapterActions = {
   addChapterBefore,
   addChapterAfter,
   addChapterChild,
