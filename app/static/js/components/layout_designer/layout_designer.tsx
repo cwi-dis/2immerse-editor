@@ -1,26 +1,19 @@
 import * as React from "react";
 
 import { ApplicationState } from "../../store";
+import { ScreenActions } from "../../actions/screens";
 import ScreenContainer from "./screen_container";
-
-interface LayoutDesignerProps {
-  addDevice: (type: "personal" | "communal") => void;
-  removeDevice: (id: string) => void;
-  splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => void;
-}
-
-type CombinedProps = ApplicationState & LayoutDesignerProps;
 
 interface LayoutDesignerState {
   personalScreenWidth: number;
   communalScreenWidth: number;
 }
 
-class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState> {
+class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, LayoutDesignerState> {
   private communalColumn: HTMLDivElement;
   private personalColumn: HTMLDivElement;
 
-  constructor(props: CombinedProps) {
+  constructor(props: ApplicationState & ScreenActions) {
     super(props);
 
     this.state = {

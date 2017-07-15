@@ -7,30 +7,22 @@ import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
 
+import { ChapterActions } from "../../actions/chapters";
+
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
-
-interface ProgramAuthorProps {
-  addChapterBefore: (accessPath: Array<number>) => void;
-  addChapterAfter: (accessPath: Array<number>) => void;
-  addChapterChild: (accessPath: Array<number>) => void;
-  renameChapter: (accessPath: Array<number>, name: string) => void;
-  removeChapter: (accessPath: Array<number>) => void;
-}
 
 interface ProgramAuthorState {
   stage: KonvaStage | null;
 }
 
-type CombinedProps = ApplicationState & ProgramAuthorProps;
-
-class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
+class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private stageWrapper: any;
   private baseBoxSize: [number, number] = [200, 120];
   private boxMargin: [number, number] = [40, 70];
   private canvasWidth = window.innerWidth - 50;
 
-  constructor(props: CombinedProps) {
+  constructor(props: ApplicationState & ChapterActions) {
     super(props);
 
     this.state = {
