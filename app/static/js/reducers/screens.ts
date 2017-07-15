@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { ADD_DEVICE, REMOVE_DEVICE, SPLIT_REGION, MERGE_REGIONS } from "../actions";
+import * as actions from "../actions/screens";
 import { ActionHandler, findById, getRandomInt } from "../util";
 
 type coords = [number, number];
@@ -70,21 +70,21 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
 
 const actionHandler = new ActionHandler<ScreenState>(List<Screen>());
 
-actionHandler.addHandler("ADD_DEVICE", (state, action: ADD_DEVICE) => {
+actionHandler.addHandler("ADD_DEVICE", (state, action: actions.ADD_DEVICE) => {
   const { type } = action.payload;
   const screen = createNewScreen(type);
 
   return state.push(screen);
 });
 
-actionHandler.addHandler("REMOVE_DEVICE", (state, action: REMOVE_DEVICE) => {
+actionHandler.addHandler("REMOVE_DEVICE", (state, action: actions.REMOVE_DEVICE) => {
   const { id } = action.payload;
   const [index] = findById(state, id);
 
   return state.delete(index);
 });
 
-actionHandler.addHandler("SPLIT_REGION", (state, action: SPLIT_REGION) => {
+actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) => {
   const {screenId, regionId, position, orientation} = action.payload;
 
   const [screenIndex, screen] = findById(state, screenId);
@@ -98,7 +98,7 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: SPLIT_REGION) => {
   });
 });
 
-actionHandler.addHandler("MERGE_REGIONS", (state, action: MERGE_REGIONS) => {
+actionHandler.addHandler("MERGE_REGIONS", (state, action: actions.MERGE_REGIONS) => {
   const {screenId, regionId1, regionId2} = action.payload;
 
   const [screenIndex, screen] = findById(state, screenId);

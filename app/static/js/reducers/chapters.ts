@@ -1,7 +1,7 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
-import { ADD_CHAPTER_BEFORE, ADD_CHAPTER_AFTER, ADD_CHAPTER_CHILD, RENAME_CHAPTER, REMOVE_CHAPTER } from "../actions";
+import * as actions from "../actions/chapters";
 
 type MasterId = string;
 
@@ -26,7 +26,7 @@ const initialChapters: List<Chapter> = List([
 
 const actionHandler = new ActionHandler<ChapterState>(initialChapters);
 
-actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: ADD_CHAPTER_BEFORE) => {
+actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPTER_BEFORE) => {
   const { accessPath } = action.payload;
 
   const insertIndex = accessPath[accessPath.length - 1];
@@ -45,7 +45,7 @@ actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: ADD_CHAPTER_BEFOR
   return state.updateIn(keyPath, () => updatedChildren);
 });
 
-actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: ADD_CHAPTER_AFTER) => {
+actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: actions.ADD_CHAPTER_AFTER) => {
   const { accessPath } = action.payload;
 
   const insertIndex = accessPath[accessPath.length - 1];
@@ -65,7 +65,7 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: ADD_CHAPTER_AFTER)
   return state.updateIn(keyPath, () => updatedChildren);
 });
 
-actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: ADD_CHAPTER_CHILD) => {
+actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: actions.ADD_CHAPTER_CHILD) => {
   const { accessPath } = action.payload;
 
   const keyPath = List(accessPath.slice(0, accessPath.length).reduce((path: Array<string | number>, i) => {
@@ -80,7 +80,7 @@ actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: ADD_CHAPTER_CHILD)
   return state.updateIn(keyPath, () => List([newChapter]));
 });
 
-actionHandler.addHandler("RENAME_CHAPTER", (state, action: RENAME_CHAPTER) => {
+actionHandler.addHandler("RENAME_CHAPTER", (state, action: actions.RENAME_CHAPTER) => {
   const { accessPath, name } = action.payload;
 
   const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
@@ -90,7 +90,7 @@ actionHandler.addHandler("RENAME_CHAPTER", (state, action: RENAME_CHAPTER) => {
   return state.updateIn(keyPath, () => name);
 });
 
-actionHandler.addHandler("REMOVE_CHAPTER", (state, action: REMOVE_CHAPTER) => {
+actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTER) => {
   const { accessPath } = action.payload;
 
   const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
