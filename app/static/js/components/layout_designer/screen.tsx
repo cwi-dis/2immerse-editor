@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
+import ContextMenu, { ContextMenuEntry } from "../context_menu";
 
 interface ScreenProps {
   screenInfo: ScreenModel;
@@ -10,8 +11,26 @@ interface ScreenProps {
   splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
 }
 
-class Screen extends React.Component<ScreenProps, {}> {
+interface ScreenState {
+  contextMenu: {
+    visible: boolean,
+    x: number,
+    y: number,
+  };
+}
+
+class Screen extends React.Component<ScreenProps, ScreenState> {
   private canvas: HTMLCanvasElement;
+
+  constructor(props: ScreenProps) {
+    super(props);
+
+    this.state = {
+      contextMenu: {
+        visible: false, x: 0, y: 0
+      }
+    }
+  }
 
   private drawRegions() {
     const {width, height} = this.canvas;
@@ -75,6 +94,7 @@ class Screen extends React.Component<ScreenProps, {}> {
 
   public render() {
     const screen = this.props.screenInfo;
+    const { contextMenu } = this.state;
 
     const { width } = this.props;
     const computedHeight = (screen.orientation === "landscape")
@@ -83,6 +103,13 @@ class Screen extends React.Component<ScreenProps, {}> {
 
     return (
       <div>
+        <ContextMenu {...contextMenu} onItemClicked={() => {
+          this.setState({contextMenu: {visible: false, x: 0, y: 0}});
+        }}>
+          <ContextMenuEntry name="Horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
+          <ContextMenuEntry name="Vertical" callback={this.splitRegion.bind(this, "vertical")} />
+          <ContextMenuEntry name="Remove Region" callback={() => {}} />
+        </ContextMenu>
         <p>
           Name: {screen.name}<br/>
           Orientation: {screen.orientation}<br/>
