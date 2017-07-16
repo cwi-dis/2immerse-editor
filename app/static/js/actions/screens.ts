@@ -34,14 +34,13 @@ function splitRegion(screenId: string, regionId: string, orientation: "horizonta
   };
 }
 
-export type MERGE_REGIONS = PayloadAction<"MERGE_REGIONS", {screenId: string, regionId1: string, regionId2: string}>;
-function mergeRegions(screenId: string, regionId1: string, regionId2: string): MERGE_REGIONS {
+export type MERGE_REGIONS = PayloadAction<"MERGE_REGIONS", {screenId: string, regionId: string}>;
+function mergeRegions(screenId: string, regionId: string): MERGE_REGIONS {
   return {
     type: "MERGE_REGIONS",
     payload: {
       screenId,
-      regionId1,
-      regionId2
+      regionId
     }
   };
 }
