@@ -74,22 +74,32 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
     }
   }
 
-  private getCanvasClickPosition(clickEvent: MouseEvent) {
+  private getCanvasClickPosition(pageX: number, pageY: number) {
     return [
-      clickEvent.pageX - this.canvas.offsetLeft,
-      clickEvent.pageY - this.canvas.offsetTop
+      pageX - this.canvas.offsetLeft,
+      pageY - this.canvas.offsetTop
     ];
   }
 
-  private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
-    e.preventDefault();
-    const [x, y] = this.getCanvasClickPosition(e);
+  private splitRegion(orientation: "horizontal" | "vertical") {
+    const {x: pageX, y: pageY} = this.state.contextMenu;
+    const [x, y] = this.getCanvasClickPosition(pageX, pageY);
     const clickedRegion = this.getClickedRegion(x / this.canvas.width, y / this.canvas.height);
 
     if (clickedRegion) {
       const splitPosition = (orientation === "horizontal") ? y / this.canvas.height : x / this.canvas.width;
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
     }
+  }
+
+  private handleCanvasClick(ev: MouseEvent) {
+    this.setState({
+      contextMenu: {
+        visible: true,
+        x: ev.pageX,
+        y: ev.pageY
+      }
+    });
   }
 
   public render() {
@@ -117,8 +127,7 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
             remove
           </span>
         </p>
-        <canvas onClick={this.handleCanvasClick.bind(this, "vertical")}
-                onContextMenu={this.handleCanvasClick.bind(this, "horizontal")}
+        <canvas onClick={this.handleCanvasClick.bind(this)}
                 ref={(el) => this.canvas = el}
                 height={computedHeight}
                 width={width}
