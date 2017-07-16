@@ -11,6 +11,7 @@ export interface ScreenRegion {
   id: string;
   position: coords;
   size: coords;
+  splitFrom?: string;
   zIndex?: number;
 }
 
@@ -57,12 +58,16 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
     size2 = [region.size[0], bottomRight[1] - splitAt];
   }
 
+  const newRegionId = shortid.generate();
+
   return [{
     id: region.id,
+    splitFrom: newRegionId,
     position: region.position,
     size: size1
   }, {
-    id: shortid.generate(),
+    id: newRegionId,
+    splitFrom: region.id,
     position: position2,
     size: size2
   }];
