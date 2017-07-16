@@ -63,7 +63,8 @@ class ContextMenu extends React.Component<ContextMenuProps, {}> {
       left: x,
       top: y,
       backgroundColor: "#FFFFFF",
-      borderRadius: 4
+      borderRadius: 4,
+      boxShadow: "0px 0px 4px #555555"
     };
 
     if (visible) {
