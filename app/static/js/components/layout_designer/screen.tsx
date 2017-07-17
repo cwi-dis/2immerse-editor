@@ -120,7 +120,7 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
           <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
           <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
           <ContextMenuDivider />
-          <ContextMenuEntry name="Remove Region" callback={() => {}} />
+          <ContextMenuEntry name="Undo last split" callback={this.props.undoLastSplit.bind(this)} />
           <ContextMenuDivider />
           <ContextMenuEntry name="Cancel" callback={() => {}} />
         </ContextMenu>
