@@ -1,16 +1,16 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
+import { Coords } from "../util";
 import * as actions from "../actions/screens";
 import { ActionHandler, findById, getRandomInt } from "../util";
 
-type coords = [number, number];
 export type ScreenState = List<Screen>;
 
 export interface ScreenRegion {
   id: string;
-  position: coords;
-  size: coords;
+  position: Coords;
+  size: Coords;
   splitFrom?: string;
   zIndex?: number;
 }
@@ -43,8 +43,8 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   const topLeft = region.position;
   const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
 
-  let size1: coords = [0, 0], size2: coords = [0, 0];
-  let position2: coords = [0, 0];
+  let size1: Coords = [0, 0], size2: Coords = [0, 0];
+  let position2: Coords = [0, 0];
 
   if (orientation === "vertical") {
     size1 = [splitAt - topLeft[0], region.size[1]];
