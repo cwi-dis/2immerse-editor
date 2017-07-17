@@ -34,7 +34,7 @@
                     <tt:parameter tt:name="duration" tt:type="duration" tt:parameter="tl:sleep/@tl:dur"/>
                 </tt:parameters>
                 <tt:modparameters>
-                    <tt:parameter tt:name="end now" tt:type="set" tt:parameter="tl:sleep/@tl:dur" tt:value="0"/>
+                    <tt:parameter tt:name="end now" tt:type="const" tt:parameter="tl:sleep/@tl:dur" tt:value="0"/>
                 </tt:modparameters>
                 <tl:sleep tl:dur="999999" tl:prio="high"/>
                 <tl:ref tim:class="image" tim:url="/dmapp-components/image/image.html" tic:mediaUrl="../media/300-images/stoppablesplash.png"/>
