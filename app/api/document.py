@@ -6,6 +6,7 @@ import json
 import copy
 import xml.etree.ElementTree as ET
 import re
+import threading
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -51,6 +52,45 @@ FIND_ID_INDEX=re.compile(r'(.+)-([0-9]+)')
 FIND_NAME_INDEX=re.compile(r'(.+) \(([0-9]+)\)')
 FIND_PATH_ATTRIBUTE=re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
 
+    
+def synchronized(method):
+    """Annotate a mthod to use the object lock"""
+    def wrapper(self, *args, **kwargs):
+        with self.lock:
+            return method(self, *args, **kwargs)
+    return wrapper
+
+class EditMgr:
+    def __init__(self, document):
+        self.document = document
+        self.commandList = []
+        
+    def add(self, element, parent):
+        """Called just after an element subtree has been added to its parent.
+        At time of call, the element is already present in the tree."""
+        content = ET.tostring(element)
+        parentPos = list(parent).index(element)
+        if parentPos == 0:
+            prevSibling = parent[parentPos-1]
+            self.commandList.append(('add', self.document._getXPath(prevSibling), 'after', content))
+        else:
+            self.commandList.append(('add', self.document._getXPath(parent), 'first', content))
+        
+    def delete(self, element, parent):
+        """Called just before an element is about to be deleted.
+        At time of call, the element is still present in the tree."""
+        self.commandList.append(('delete', self.document._getXPath(element)))
+        
+    def change(self, elt):
+        """Called when the attributes of an element have been changed."""
+        self.commandList.append(('change', self.document._getXPath(elt), repr(elt.attrib)))
+        
+    def commit(self):
+        """Close the edit manager and return its list of commands."""
+        rv = self.commandList
+        self.commandList = None
+        return rv
+        
 class Document:
     def __init__(self):
         # The whole document, as an elementtree
@@ -64,7 +104,9 @@ class Document:
         self.authoringHandler = None
         self.serveHandler = None
         self.xmlHandler = None
+        self.lock = threading.RLock()
         
+    @synchronized
     def index(self):
         if request.method == 'PUT':
             if request.data:
@@ -76,6 +118,7 @@ class Document:
         else:
             return Response(ET.tostring(self.tree.getroot()), mimetype="application/xml")    
             
+    @synchronized
     def _documentLoaded(self):
         """Creates paremtMap and idMap and various other data structures after loading a document."""
         self.parentMap = {c:p for p in self.tree.iter() for c in p}
@@ -89,6 +132,7 @@ class Document:
             if name:
                 self.nameSet.add(name)
                     
+    @synchronized
     def _elementAdded(self, elt, parent, editManager=None):
         """Updates paremtMap and idMap and various other data structures after a new element is added.
         Returns edit operation which can be forwarded to slaved documents."""
@@ -106,13 +150,15 @@ class Document:
         if editManager:
             editManager.add(elt, parent)
             
+    @synchronized
     def _elementDeleted(self, elt, editManager=None):
         """Updates parentMap and idMap and various other data structures after an element is deleted.
         Returns edit operation which can be forwarded to slaved documents."""
+        parent = self.parentMap[elt]
         if editManager:
-            editManager.delete(elt)
-        if elt in self.parentMap:
-            del self.parentMap[elt]
+            editManager.delete(elt, parent)
+        del self.parentMap[elt]
+        assert not elt in parent
         id = elt.get(NS_XML('id'))
         if id and id in self.idMap:
             del self.idMap[id]
@@ -121,13 +167,13 @@ class Document:
         for ch in elt:
             self._elementDeleted(ch)
                 
+    @synchronized
     def _elementChanged(self, elt, editManager=None):
         """Called when element attributes have changed.
         Returns edit operation which can be forwarded to slaved documents."""
         if editManager:
             editManager.change(elt)
-        
-            
+          
     def _afterCopy(self, elt):
         """Adjust element attributes (xml:id and tt:name) after a copy.
         Makes them unique. Does not insert them into the datastructures yet: the element is expected
@@ -156,42 +202,49 @@ class Document:
                     name = name + ' (1)'
             elt.set(NS_TRIGGER('name'), name)
             
+    @synchronized
     def events(self):
         """Returns the events handler (after creating it if needed)"""
         if not self.eventsHandler:
             self.eventsHandler = DocumentEvents(self)
         return self.eventsHandler
         
+    @synchronized
     def authoring(self):
         """Returns the authoring handler (after creating it if needed)"""
         if not self.authoringHandler:
             self.authoringHandler = DocumentAuthoring(self)
         return self.authoringHandler
         
+    @synchronized
     def serve(self):
         """Returns the serve handler (after creating it if needed)"""
         if not self.serveHandler:
             self.serveHandler = DocumentServe(self)
         return self.serveHandler
         
+    @synchronized
     def xml(self):
         """Returns the xml handler (after creating it if needed)"""
         if not self.xmlHandler:
             self.xmlHandler = DocumentXml(self)
         return self.xmlHandler
         
+    @synchronized
     def loadXml(self, data):
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
         return ''
         
+    @synchronized
     def load(self, url):
         fp = urllib2.urlopen(url)
         self.tree = ET.parse(fp)
         self._documentLoaded()
         return ''
         
+    @synchronized
     def save(self, url):
         p = urlparse.urlparse(url)
         assert p.scheme == 'file'
@@ -199,15 +252,18 @@ class Document:
         fp = open(filename, 'w')
         fp.write(ET.tostring(self.tree.getroot()))
         
+    @synchronized
     def dump(self):
         return '%d elements' % self._count()
 
+    @synchronized
     def _count(self):
         totalCount = 0
         for _ in self.tree.iter():
             totalCount += 1
         return totalCount 
         
+    @synchronized
     def _getParent(self, element):
         return self.parentMap.get(element, None)
         
@@ -240,6 +296,7 @@ class Document:
         elif mimetype == 'application/xml':
             return ET.tostring(element)
         
+    @synchronized
     def _getXPath(self, elt):
         parent = self._getParent(elt)
         if parent is None:
@@ -263,6 +320,7 @@ class Document:
             rv = rv + '[%d]' % (index+1)
         return rv
         
+    @synchronized
     def _getElement(self, path):
         if path[:1] == '/':
             positions = self.tree.findall(path, NAMESPACES)
@@ -279,7 +337,9 @@ class DocumentXml:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
+        self.lock = self.document.lock
 
+    @synchronized
     def paste(self, path, where, tag, data, mimetype='application/x-python-object'):
         #
         # where should it go?
@@ -329,6 +389,7 @@ class DocumentXml:
             abort(400)
         return self.document._getXPath(newElement)
         
+    @synchronized
     def cut(self, path, mimetype='application/x-python-object'):
         element = self.document._getElement(path)
         parent = self.document._getParent(element)
@@ -336,10 +397,12 @@ class DocumentXml:
         self.document._elementDeleted(element)
         return self.document._fromET(element, mimetype)
         
+    @synchronized
     def get(self, path, mimetype='application/x-python-object'):
         element = self.document._getElement(path)
         return self.document._fromET(element, mimetype)
         
+    @synchronized
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
         element = self.document._getElement(path)
         if mimetype == 'application/x-python-object':
@@ -358,6 +421,7 @@ class DocumentXml:
                 existingAttrs[k] = v
         return self.document._getXPath(element)
         
+    @synchronized
     def modifyData(self, path, data):
         element = self.document._getElement(path)
         if data == None:
@@ -368,6 +432,7 @@ class DocumentXml:
             element.tail = None
         return self.document._getXPath(element)
         
+    @synchronized
     def copy(self, path, where, sourcepath):
         element = self.document._getElement(path)
         sourceElement = self.document._getElement(sourcepath)
@@ -376,6 +441,7 @@ class DocumentXml:
         # newElement._setroot(None)
         return self.paste(path, where, None, newElement)
         
+    @synchronized
     def move(self, path, where, sourcepath):
         element = self.document._getElement(path)
         sourceElement = self.cut(sourcepath)
@@ -386,7 +452,9 @@ class DocumentEvents:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
+        self.lock = self.document.lock
         
+    @synchronized
     def get(self):
         exprTriggerable = './/tt:events/tl:par[@tt:name]'
         exprModifyable = './/tl:par/tl:par[@tt:name]'
@@ -399,6 +467,7 @@ class DocumentEvents:
             rv.append(self._getDescription(elt, trigger=False))
         return rv
         
+    @synchronized
     def _getDescription(self, elt, trigger):
         parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
@@ -417,6 +486,7 @@ class DocumentEvents:
             rv["verb"] = elt.get(NS_TRIGGER("verb"))
         return rv
         
+    @synchronized
     def _getParameter(self, parameter):
         try:
             parPath = parameter['parameter']
@@ -435,6 +505,7 @@ class DocumentEvents:
         return path, attr, parValue
         
         
+    @synchronized
     def trigger(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
@@ -461,6 +532,7 @@ class DocumentEvents:
         self.document._elementAdded(newElement, newParent)
         return newElement.get(NS_XML('id'))
             
+    @synchronized
     def modify(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
@@ -480,17 +552,21 @@ class DocumentAuthoring:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
+        self.lock = self.document.lock
 
 class DocumentServe:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
+        self.lock = self.document.lock
         
+    @synchronized
     def get_timeline(self):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         return ET.tostring(self.tree.getroot())
         
+    @synchronized
     def get_layout(self):
         """Get the layout document contents (json) for this authoring document.
         At the moment, the layout document JSON representation is stored in a toplevel
@@ -501,6 +577,7 @@ class DocumentServe:
             abort(404)
         return rawLayoutElement.text
         
+    @synchronized
     def put_layout(self, layoutJSON):
         """Temporary method, stores the raw layout document data in the authoring document."""
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
