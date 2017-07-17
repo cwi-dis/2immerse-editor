@@ -11,7 +11,8 @@ export interface ScreenRegion {
   id: string;
   position: Coords;
   size: Coords;
-  splitFrom?: string;
+  splitFrom: Array<string | null>;
+  splitDirection?: "horizontal" | "vertical";
   zIndex?: number;
 }
 
@@ -27,7 +28,8 @@ function createNewScreen(type: "communal" | "personal"): Screen {
   const rootRegion: ScreenRegion = {
     id: shortid.generate(),
     position: [0, 0],
-    size: [1, 1]
+    size: [1, 1],
+    splitFrom: [null]
   };
 
   return {
@@ -62,12 +64,14 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
 
   return [{
     id: region.id,
-    splitFrom: newRegionId,
+    splitFrom: region.splitFrom.concat(newRegionId),
+    splitDirection: region.splitDirection,
     position: region.position,
     size: size1
   }, {
     id: newRegionId,
-    splitFrom: region.id,
+    splitFrom: [region.id],
+    splitDirection: orientation,
     position: position2,
     size: size2
   }];
