@@ -34,13 +34,12 @@ function splitRegion(screenId: string, regionId: string, orientation: "horizonta
   };
 }
 
-export type MERGE_REGIONS = PayloadAction<"MERGE_REGIONS", {screenId: string, regionId: string}>;
-function mergeRegions(screenId: string, regionId: string): MERGE_REGIONS {
+export type UNDO_LAST_SPLIT = PayloadAction<"UNDO_LAST_SPLIT", {screenId: string}>;
+function undoLastSplit(screenId: string): UNDO_LAST_SPLIT {
   return {
-    type: "MERGE_REGIONS",
+    type: "UNDO_LAST_SPLIT",
     payload: {
-      screenId,
-      regionId
+      screenId
     }
   };
 }
@@ -49,10 +48,12 @@ export interface ScreenActions extends ActionCreatorsMapObject {
   addDevice: (type: "personal" | "communal") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
+  undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
 }
 
 export const actionCreators: ScreenActions = {
   addDevice,
   removeDevice,
-  splitRegion
+  splitRegion,
+  undoLastSplit
 };
