@@ -13,7 +13,7 @@ Toplevel api is at endpoint `/api/v1`, accepts following calls:
 
 ## per-document calls
 
-Document api is at endpoint `/api/v1/<documentId>`. 
+Document api is at endpoint `/api/v1/document/<documentId>`. 
 
 - GET returns complete document, as `application/xml`.
 - PUT replaces complete document, either from body XML or from `url` parameter (as for toplevel POST).
@@ -21,7 +21,7 @@ Document api is at endpoint `/api/v1/<documentId>`.
 
 ## xml-oriented calls
 
-There are some calls that operate on the whole XML authoring document. These may go away at some point, they may not be needed. They are at endpoint `/api/v1/<documentId>/<verb>`:
+There are some calls that operate on the whole XML authoring document. These may go away at some point, they may not be needed. They are at endpoint `/api/v1/document/<documentId>/<verb>`:
 
 - `copy` (POST) Copy a subtree, returns the XPath of the new copy. Arguments:
 	- `sourcepath` XPath to the source element.
@@ -43,13 +43,13 @@ There are some calls that operate on the whole XML authoring document. These may
 
 ## Authoring tool oriented calls
 
-These provide an interface that is tailored to the preproduction authoring tool. The endpoint is at `/api/v1/<documentId>/author/<verb>`.
+These provide an interface that is tailored to the preproduction authoring tool. The endpoint is at `/api/v1/document/<documentId>/author/<verb>`.
 
 There aren't any calls, at the moment:-)
 
 ## document serving calls
 
-The endpoint at `/api/v1/<documentId>/serve/` serves things like timeline and layout documents, generated on the fly form the underlying document representation:
+The endpoint at `/api/v1/document/<documentId>/serve/` serves things like timeline and layout documents, generated on the fly form the underlying document representation:
 
 - `timeline.xml` timeline server document (mimetype `application/xml`).
 - `layout.json` layout server document (mimetype `application/json`).
@@ -58,4 +58,4 @@ The endpoint at `/api/v1/<documentId>/serve/` serves things like timeline and la
 
 ## trigger tool calls
 
-The endpoint at `/api/v1/<documentId>/events` is meant for the live triggering tool. Its API and data structures are described in [live\_tool\_support.md](live_tool_support.md).
+The endpoint at `/api/v1/document/<documentId>/events` is meant for the live triggering tool. Its API and data structures are described in [live\_tool\_support.md](live_tool_support.md).

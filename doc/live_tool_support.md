@@ -22,7 +22,9 @@ We need to get these clear, with input from Andy and possibly Jonathan and Marti
 
 ## Triggering Tool API
 
-- `get` retrieves a list of the current triggerable and modifyable items as a JSON object. No parameters. Events are triggerable when they are not active yet. When triggered, a copy is made, with a new name, and this event may be modifyable.
+The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
+
+- method `GET` retrieves a list of the current triggerable and modifyable items as a JSON object. No parameters. Events are triggerable when they are not active yet. When triggered, a copy is made, with a new name, and this event may be modifyable.
 
   The return value entries have the following structure (all parameters are strings unless otherwise noted):
 
@@ -36,10 +38,10 @@ We need to get these clear, with input from Andy and possibly Jonathan and Marti
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
 		- `type`: type of the parameter (string), see below.
 		- `value`: optional default value.
-- `trigger` triggers a triggerable item. Returns a success indicator. Parameters:
+- `trigger` (method `POST`) triggers a triggerable item. Returns a success indicator. The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings)
-- `modify` modifies a previously triggered item. Returns a success indicator.  Parameters:
+- `modify` (method `PUT`) modifies a previously triggered item. Returns a success indicator.   The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings).
 
