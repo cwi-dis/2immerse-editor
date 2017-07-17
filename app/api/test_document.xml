@@ -1,8 +1,2 @@
-<testDocument>
-    <first>
-        <firstChild1 />
-        <firstChild2 attr="value" />
-    </first>
-    <second><second1 /><second2 /><second3 /></second>
-    <third />
-</testDocument>
+<testDocument><first><firstChild1 /><firstChild2 attr="value" /></first><second><second1 /><second2 /><second3 /></second><third /></testDocument>
+

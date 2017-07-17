@@ -1,0 +1,58 @@
+<tl:document
+  xmlns:tl="http://jackjansen.nl/timelines"
+  xmlns:tim="http://jackjansen.nl/2immerse"
+  xmlns:tic="http://jackjansen.nl/2immerse/component"
+  xmlns:tlcheck="http://jackjansen.nl/timelines/check"
+  xmlns:tt="http://jackjansen.nl/2immerse/livetrigger"
+  title="Test the live triggering tool">
+
+  <tl:par tl:end="master">
+
+
+      <tl:ref tim:class="video"
+              xml:id="main_video"
+              tic:syncMode="master"
+              tic:mediaUrl="../../../media/rsc/hamlet/videos/hamlet-trailer/manifest.mpd"
+              title="main video"
+              tl:prio="high"/>
+
+      <tl:par xml:id="eventPlayback">
+        <tt:events>
+            <tl:par xml:id="event1" tt:name="5 second splash">
+                <tl:sleep tl:dur="5" tl:prio="high"/>
+                <tl:ref tim:class="image" tim:url="/dmapp-components/image/image.html" tic:mediaUrl="../media/300-images/fivesecondsplash.png"/>
+            </tl:par>
+            <tl:par xml:id="event2" tt:name="Adjustable duration splash">
+                <tt:parameters>
+                    <tt:parameter tt:name="duration" tt:type="duration" tt:parameter="sleep/@tl:dur"/>
+                </tt:parameters>
+                <tl:sleep tl:dur="5" tl:prio="high"/>
+                <tl:ref tim:class="image" tim:url="/dmapp-components/image/image.html" tic:mediaUrl="../media/300-images/nsecondsplash.png"/>
+            </tl:par>
+            <tl:par xml:id="event3" tt:name="Stoppable duration splash">
+                <tt:parameters>
+                    <tt:parameter tt:name="duration" tt:type="duration" tt:parameter="sleep/@tl:dur"/>
+                </tt:parameters>
+                <tt:modparameters>
+                    <tt:parameter tt:name="end now" tt:type="set" tt:parameter="sleep/@tl:dur" tt:value="0"/>
+                </tt:modparameters>
+                <tl:sleep tl:dur="999999" tl:prio="high"/>
+                <tl:ref tim:class="image" tim:url="/dmapp-components/image/image.html" tic:mediaUrl="../media/300-images/stoppablesplash.png"/>
+            </tl:par>
+        </tt:events>        
+      </tl:par>
+
+    <tl:par xml:id="event4" tt:name="test 5 second splash after 5 seconds">
+        <tl:sleep tl:dur="10"/>
+        <tl:seq>
+            <tl:sleep tl:dur="5"/>
+            <tl:par tl:end="master">
+                <tl:sleep tl:dur="5" tl:prio="high"/>
+                <tl:ref tim:class="image" tim:url="/dmapp-components/image/image.html" tic:mediaUrl="../media/300-images/fivesecondsplash.png"/>
+            </tl:par>
+        </tl:seq>
+    </tl:par>
+
+  </tl:par>
+
+</tl:document>

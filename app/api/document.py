@@ -52,7 +52,7 @@ FIND_ID_INDEX=re.compile(r'(.+)-([0-9]+)')
 FIND_NAME_INDEX=re.compile(r'(.+) \(([0-9]+)\)')
 FIND_PATH_ATTRIBUTE=re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
 
-    
+# Decorator: obtain self.lock during the operation
 def synchronized(method):
     """Annotate a mthod to use the object lock"""
     def wrapper(self, *args, **kwargs):
@@ -60,41 +60,55 @@ def synchronized(method):
             return method(self, *args, **kwargs)
     return wrapper
 
-class EditMgr:
+# Decorator: obtain self.lock during the operation, and record all edits
+def edit(method):
+    """Annotate a mthod to use the object lock and record the results."""
+    def wrapper(self, *args, **kwargs):
+        with self.lock:
+            self.document._startListening()
+            rv = method(self, *args, **kwargs)
+        self.document._stopListening()
+        return rv
+    return wrapper
+
+class EditManager:
     def __init__(self, document):
         self.document = document
         self.commandList = []
+        self.document.lock.acquire()
         
     def add(self, element, parent):
         """Called just after an element subtree has been added to its parent.
         At time of call, the element is already present in the tree."""
         content = ET.tostring(element)
         parentPos = list(parent).index(element)
-        if parentPos == 0:
+        if parentPos > 0:
             prevSibling = parent[parentPos-1]
-            self.commandList.append(('add', self.document._getXPath(prevSibling), 'after', content))
+            self.commandList.append(dict(verb='add', path=self.document._getXPath(prevSibling), where='after', data=content))
         else:
-            self.commandList.append(('add', self.document._getXPath(parent), 'first', content))
+            self.commandList.append(dict(verb='add', path=self.document._getXPath(parent), where='begin', data=content))
         
     def delete(self, element, parent):
         """Called just before an element is about to be deleted.
         At time of call, the element is still present in the tree."""
-        self.commandList.append(('delete', self.document._getXPath(element)))
+        self.commandList.append(dict(verb='delete', path=self.document._getXPath(element)))
         
     def change(self, elt):
         """Called when the attributes of an element have been changed."""
-        self.commandList.append(('change', self.document._getXPath(elt), repr(elt.attrib)))
+        self.commandList.append(dict(verb='change', path=self.document._getXPath(elt), attrs=json.dumps(elt.attrib)))
         
     def commit(self):
         """Close the edit manager and return its list of commands."""
         rv = self.commandList
         self.commandList = None
+        self.document.lock.release()
         return rv
         
 class Document:
     def __init__(self):
         # The whole document, as an elementtree
         self.tree = None
+        self.documentElement = None # Nasty trick to work around elementtree XPath incompleteness
         # Data strcutures for mapping over the tree
         self.parentMap = None
         self.idMap = None
@@ -103,8 +117,10 @@ class Document:
         self.eventsHandler = None
         self.authoringHandler = None
         self.serveHandler = None
+        self.forwardHandler = None
         self.xmlHandler = None
         self.lock = threading.RLock()
+        self.editManager = None
         
     @synchronized
     def index(self):
@@ -122,6 +138,9 @@ class Document:
     def _documentLoaded(self):
         """Creates paremtMap and idMap and various other data structures after loading a document."""
         self.parentMap = {c:p for p in self.tree.iter() for c in p}
+        # Workaround for XPath nastiness in ET: it does not handle / correctly so we help it a bit.
+        self.documentElement = ET.Element('')
+        self.documentElement.append(self.tree.getroot())
         self.idMap = {}
         self.nameSet = set()
         for e in self.tree.iter():
@@ -133,7 +152,7 @@ class Document:
                 self.nameSet.add(name)
                     
     @synchronized
-    def _elementAdded(self, elt, parent, editManager=None):
+    def _elementAdded(self, elt, parent, recursive=False):
         """Updates paremtMap and idMap and various other data structures after a new element is added.
         Returns edit operation which can be forwarded to slaved documents."""
         assert not elt in self.parentMap
@@ -146,17 +165,17 @@ class Document:
         if name:
             self.nameSet.add(name)
         for ch in elt:
-            self._elementAdded(ch, elt)
-        if editManager:
-            editManager.add(elt, parent)
+            self._elementAdded(ch, elt, True)
+        if not recursive and self.editManager:
+            self.editManager.add(elt, parent)
             
     @synchronized
-    def _elementDeleted(self, elt, editManager=None):
+    def _elementDeleted(self, elt, recursive=False):
         """Updates parentMap and idMap and various other data structures after an element is deleted.
         Returns edit operation which can be forwarded to slaved documents."""
         parent = self.parentMap[elt]
-        if editManager:
-            editManager.delete(elt, parent)
+        if not recursive and self.editManager:
+            self.editManager.delete(elt, parent)
         del self.parentMap[elt]
         assert not elt in parent
         id = elt.get(NS_XML('id'))
@@ -168,11 +187,11 @@ class Document:
             self._elementDeleted(ch)
                 
     @synchronized
-    def _elementChanged(self, elt, editManager=None):
+    def _elementChanged(self, elt):
         """Called when element attributes have changed.
         Returns edit operation which can be forwarded to slaved documents."""
-        if editManager:
-            editManager.change(elt)
+        if self.editManager:
+            self.editManager.change(elt)
           
     def _afterCopy(self, elt):
         """Adjust element attributes (xml:id and tt:name) after a copy.
@@ -231,6 +250,45 @@ class Document:
         return self.xmlHandler
         
     @synchronized
+    def _startListening(self):
+        """Start recording edit operations."""
+        assert not self.editManager
+        if self.forwardHandler:
+            self.editManager = EditManager(self)
+        
+    def _stopListening(self):
+        commands = None
+        with self.lock:
+            if self.editManager:
+                commands = self.editManager.commit()
+                self.editManager = None
+        if commands:
+            assert self.forwardHandler
+            self.forwardHandler.forward(commands)
+        
+    def forward(self, commands):
+        with self.lock:
+            self._startListening()
+            for command in commands:
+                cmd = command['verb']
+                del command['verb']
+                if cmd == 'add':
+                    path = command['path']
+                    where = command['where']
+                    data = command['data']
+                    self.xml().paste(path=path, where=where, data=data, mimetype='application/xml')
+                elif cmd == 'delete':
+                    path = command['path']
+                    self.xml().cut(path=path)
+                elif cmd == 'change':
+                    path = command['path']
+                    attrs = command['attrs']
+                    self.xml().modifyAttributes(path=path, attrs=attrs, mimetype='application/json')
+                else:
+                    assert 0, 'Unknown forward() verb: %s' % cmd
+        self._stopListening()
+        
+    @synchronized
     def loadXml(self, data):
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
@@ -250,8 +308,17 @@ class Document:
         assert p.scheme == 'file'
         filename = urllib.url2pathname(p.path)
         fp = open(filename, 'w')
+        self._zapWhitespace()
         fp.write(ET.tostring(self.tree.getroot()))
         
+    @synchronized
+    def _zapWhitespace(self):
+        """Temporary method: clear all non-relevant whitespace from the document before saving"""
+        for e in self.tree.getroot().iter():
+            if e.text:
+                e.text = e.text.strip()
+            if e.tail:
+                e.tail = e.tail.strip()
     @synchronized
     def dump(self):
         return '%d elements' % self._count()
@@ -279,11 +346,12 @@ class Document:
             elif mimetype == 'application/json':
                 data = json.loads(data)
             assert type(data) == type({})
+            assert tag
             newElement = ET.Element(tag, data)
         elif mimetype == 'application/xml':
             newElement = ET.fromstring(data)
         else:
-            abort(400)
+            abort(400, 'Unexpected mimetype %s' % mimetype)
         return newElement
 
     def _fromET(self, element, mimetype):
@@ -300,36 +368,30 @@ class Document:
     def _getXPath(self, elt):
         parent = self._getParent(elt)
         if parent is None:
-            return '/'
+            return '/' + elt.tag
         index = 0
         for ch in parent:
             if ch is elt:
                 break
             if ch.tag == elt.tag:
                 index += 1
-        rv = self._getXPath(parent)
-        if rv == '/':
-            # ET uses funny absolute paths (exculding root tag name) so
-            # we work around this by doing relative paths only (from root)
-            rv = ''
-        else:
-            rv += '/'
-        tagname = elt.tag
-        rv += tagname
-        if index:
-            rv = rv + '[%d]' % (index+1)
+        rv = self._getXPath(parent) + '/' + elt.tag
+        rv = rv + '[%d]' % (index+1)
         return rv
         
     @synchronized
     def _getElement(self, path):
-        if path[:1] == '/':
-            positions = self.tree.findall(path, NAMESPACES)
+        if path == '/':
+            # Findall implements bare / paths incorrectly
+            positions = []
+        elif path[:1] == '/':
+            positions = self.documentElement.findall('.'+path, NAMESPACES)
         else:
             positions = self.tree.getroot().findall(path, NAMESPACES)
         if not positions:
-            abort(404)
+            abort(404, 'No tree element matches XPath %s' % path)
         if len(positions) > 1:
-            abort(400)
+            abort(400, 'Multiple tree elements match XPath %s' % path)
         element = positions[0]
         return element
 
@@ -340,7 +402,7 @@ class DocumentXml:
         self.lock = self.document.lock
 
     @synchronized
-    def paste(self, path, where, tag, data, mimetype='application/x-python-object'):
+    def paste(self, path, where, tag=None, data='', mimetype='application/x-python-object'):
         #
         # where should it go?
         #
@@ -374,11 +436,13 @@ class DocumentXml:
             self.document._elementChanged(element)
         elif where == 'before':
             parent = self.document._getParent(element)
+            assert parent != None
             pos = list(parent).index(element)
             parent.insert(pos, newElement)
             self.document._elementAdded(newElement, parent)
         elif where == 'after':
             parent = self.document._getParent(element)
+            assert parent != None
             pos = list(parent).index(element)
             if pos == len(list(parent)):
                 parent.append(newElement)
@@ -386,7 +450,7 @@ class DocumentXml:
                 parent.insert(pos+1, newElement)
             self.document._elementAdded(newElement, parent)
         else:
-            abort(400)
+            abort(400, 'Unknown relative position %s' % where)
         return self.document._getXPath(newElement)
         
     @synchronized
@@ -402,7 +466,7 @@ class DocumentXml:
         element = self.document._getElement(path)
         return self.document._fromET(element, mimetype)
         
-    @synchronized
+    @edit
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
         element = self.document._getElement(path)
         if mimetype == 'application/x-python-object':
@@ -410,16 +474,18 @@ class DocumentXml:
         elif mimetype == 'application/json':
             attrs = json.loads(attrs)
         else:
-            abort(400)
+            abort(400, 'Unexpected mimetype %s' % mimetype)
         assert type(attrs) == type({})
         existingAttrs = element.attrib
-        for k, v in attrs:
+        for k, v in attrs.items():
             if v == None:
                 if k in existingAttrs:
                     existingAttrs.pop(k)
             else:
                 existingAttrs[k] = v
-        return self.document._getXPath(element)
+        rv = self.document._getXPath(element)
+        self.document._elementChanged(element)
+        return rv
         
     @synchronized
     def modifyData(self, path, data):
@@ -432,7 +498,7 @@ class DocumentXml:
             element.tail = None
         return self.document._getXPath(element)
         
-    @synchronized
+    @edit
     def copy(self, path, where, sourcepath):
         element = self.document._getElement(path)
         sourceElement = self.document._getElement(sourcepath)
@@ -441,7 +507,7 @@ class DocumentXml:
         # newElement._setroot(None)
         return self.paste(path, where, None, newElement)
         
-    @synchronized
+    @edit
     def move(self, path, where, sourcepath):
         element = self.document._getElement(path)
         sourceElement = self.cut(sourcepath)
@@ -492,10 +558,10 @@ class DocumentEvents:
             parPath = parameter['parameter']
             parValue = parameter['value']
         except KeyError:
-            abort(400)
+            abort(400, 'Missing parameter and/or value')
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
-            abort(400)
+            abort(400, 'Unsupported parameter XPath: %s' % parPath )
         path = match.group(1)
         attr = match.group(2)
         if ':' in attr:
@@ -505,11 +571,11 @@ class DocumentEvents:
         return path, attr, parValue
         
         
-    @synchronized
+    @edit
     def trigger(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
-            abort(404)
+            abort(404, 'No such xml:id: %s' % id)
         if False:
             # Cannot get above starting point with elementTree:-(
             newParentPath = element.get(NS_TRIGGER('target'), '..')
@@ -523,26 +589,25 @@ class DocumentEvents:
         self.document._afterCopy(newElement)
         for par in parameters:
             path, attr, value = self._getParameter(par)
-            print 'xxxjack path', path
             e = newElement.find(path, NAMESPACES)
             if e == None:
-                abort(400)
+                abort(400, 'No element matches XPath %s' % path)
             e.set(attr, value)
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
         return newElement.get(NS_XML('id'))
             
-    @synchronized
+    @edit
     def modify(self, id, parameters):
         element = self.document.idMap.get(id)
         if element == None:
-            abort(404)
+            abort(404, 'No such xml:id: %s' % id)
         allElements = set()
         for par in parameters:
             path, attr, value = self._getParameter(par)
             e = element.find(path, NAMESPACES)
             if e == None:
-                abort(400)
+                abort(400, 'No element matches XPath %s' % path)
             e.set(attr, value)
             allElements.add(e)
         for e in allElements:
@@ -559,6 +624,7 @@ class DocumentServe:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.callbacks = []
         
     @synchronized
     def get_timeline(self):
@@ -574,7 +640,7 @@ class DocumentServe:
         layout document data."""
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
-            abort(404)
+            abort(404, 'No :au:rawLayout element in document')
         return rawLayoutElement.text
         
     @synchronized
@@ -624,3 +690,21 @@ class DocumentServe:
                 ],
             )
         return json.dumps(clientDoc)
+
+    @synchronized
+    def setCallback(self, url):
+        if not url in self.callbacks:
+            self.callbacks.append(url)
+        self.document.forwardHandler = self
+            
+    def forward(self, operations):
+        toRemove = []
+        for callback in self.callbacks:
+            try:
+                r = requests.post(callback, json=operations)
+                r.raise_for_status()
+            except requests.exceptions.RequestException:
+                toRemove.append(callback)
+        for callback in toRemove:
+            self.callbacks.remove(toRemove)
+            
