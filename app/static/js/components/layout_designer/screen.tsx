@@ -9,6 +9,7 @@ interface ScreenProps {
   width: number;
   removeDevice: () => void;
   splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
+  undoLastSplit: () => void;
 }
 
 interface ScreenState {
