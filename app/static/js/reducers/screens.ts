@@ -107,12 +107,39 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) =
   });
 });
 
-actionHandler.addHandler("MERGE_REGIONS", (state, action: actions.MERGE_REGIONS) => {
-  const {screenId, regionId1, regionId2} = action.payload;
+actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SPLIT) => {
+  const {screenId} = action.payload;
 
   const [screenIndex, screen] = findById(state, screenId);
-  const [regionIndex1, region1] = findById(screen.regions, regionId1);
-  const [regionIndex2, region2] = findById(screen.regions, regionId2);
+  const deleteRegion = screen.regions.last()!;
+
+  if (deleteRegion.splitFrom.length === 1 && deleteRegion.splitFrom[0] !== null) {
+    const [parentSplit] = deleteRegion.splitFrom;
+    const [parentRegionIndex, parentRegion] = findById(screen.regions, parentSplit);
+
+    let newSize: Coords = [0, 0];
+
+    if (deleteRegion.splitDirection! === "vertical") {
+      newSize = [
+        deleteRegion.size[0] + parentRegion.size[0],
+        deleteRegion.size[1]
+      ];
+    } else {
+      newSize = [
+        deleteRegion.size[0],
+        deleteRegion.size[1] + parentRegion.size[1]
+      ];
+    }
+
+    return state.set(screenIndex, {
+      ...screen,
+      regions: screen.regions.set(parentRegionIndex, {
+        ...parentRegion,
+        splitFrom: [parentRegion.splitFrom[0]],
+        size: newSize
+      }).pop()
+    });
+  }
 
   return state;
 });
