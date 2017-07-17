@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
-import ContextMenu, { ContextMenuEntry } from "../context_menu";
+import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
 
 interface ScreenProps {
   screenInfo: ScreenModel;
@@ -29,7 +29,7 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
       contextMenu: {
         visible: false, x: 0, y: 0
       }
-    }
+    };
   }
 
   private drawRegions() {
@@ -116,9 +116,12 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
         <ContextMenu {...contextMenu} onItemClicked={() => {
           this.setState({contextMenu: {visible: false, x: 0, y: 0}});
         }}>
-          <ContextMenuEntry name="Horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
-          <ContextMenuEntry name="Vertical" callback={this.splitRegion.bind(this, "vertical")} />
+          <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
+          <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
+          <ContextMenuDivider />
           <ContextMenuEntry name="Remove Region" callback={() => {}} />
+          <ContextMenuDivider />
+          <ContextMenuEntry name="Cancel" callback={() => {}} />
         </ContextMenu>
         <p>
           Name: {screen.name}<br/>
