@@ -1,5 +1,12 @@
 import * as React from "react";
 
+export type ContextMenuDivider = React.SFC<{}>;
+export const ContextMenuDivider: ContextMenuDivider = (props) => {
+  return (
+    <div style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}}></div>
+  );
+};
+
 interface ContextMenuEntryProps {
   name: string;
   callback: () => void;
