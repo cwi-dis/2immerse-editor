@@ -62,7 +62,7 @@ def document_xml_paste(documentId):
     return rv   
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/move", methods=["POST"])
-def document_xml_paste(documentId):
+def document_xml_move(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -73,7 +73,7 @@ def document_xml_paste(documentId):
     return rv   
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/modifyData", methods=["PUT"])
-def document_xml_paste(documentId):
+def document_xml_modify(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
