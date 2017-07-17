@@ -99,7 +99,7 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) =
 
   return state.set(screenIndex, {
     ...screen,
-    regions: screen.regions.set(regionIndex, region1).insert(regionIndex, region2)
+    regions: screen.regions.set(regionIndex, region1).push(region2)
   });
 });
 
