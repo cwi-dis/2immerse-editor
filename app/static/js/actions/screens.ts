@@ -1,4 +1,3 @@
-import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
 
 export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
@@ -44,7 +43,7 @@ function undoLastSplit(screenId: string): UNDO_LAST_SPLIT {
   };
 }
 
-export interface ScreenActions extends ActionCreatorsMapObject {
+export interface ScreenActions {
   addDevice: (type: "personal" | "communal") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;

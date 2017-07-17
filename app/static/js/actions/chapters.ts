@@ -1,4 +1,3 @@
-import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
@@ -52,7 +51,7 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   };
 }
 
-export interface ChapterActions extends ActionCreatorsMapObject {
+export interface ChapterActions {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
