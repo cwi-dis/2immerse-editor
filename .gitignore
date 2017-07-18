@@ -16,4 +16,6 @@ build/
 tests/report/
 bundle.js
 bundle.js.map
+landing_page.js
+landing_page.js.map
 test_*_tmp.xml
