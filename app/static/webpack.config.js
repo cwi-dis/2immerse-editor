@@ -1,10 +1,13 @@
 const webpack = require("webpack");
 
 module.exports = {
-  entry: "./js/components/main.tsx",
+  entry: {
+    bundle: "./js/components/main.tsx",
+    landing_page: "./js/landing_page.ts"
+  },
   output: {
-    path: __dirname,
-    filename: 'js/bundle.js'
+    path: __dirname + "/js",
+    filename: "[name].js"
   },
   devtool: "source-map",
   resolve: {
