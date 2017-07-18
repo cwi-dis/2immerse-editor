@@ -9,11 +9,9 @@ interface ApplicationProps {
 class Layout extends React.Component<ApplicationProps, {}> {
   public render() {
     return (
-      <div>
+      <div className="wrapper">
         <MenuBar/>
-        <div className="columns" style={{margin: 10}}>
-          {React.cloneElement(this.props.children, Object.assign({}, this.props))}
-        </div>
+        {React.cloneElement(this.props.children, Object.assign({}, this.props))}
       </div>
     );
   }
