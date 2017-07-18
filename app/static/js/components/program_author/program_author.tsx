@@ -18,10 +18,12 @@ interface ProgramAuthorState {
 }
 
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
-  private stageWrapper: any;
-  private readonly boxSize: Coords = [200, 120];
+  private readonly defaultBoxSize: Coords = [200, 120];
   private readonly boxMargin: Coords = [40, 70];
-  private canvasWidth = window.innerWidth - 50;
+  private readonly canvasWidth = window.innerWidth - 50;
+
+  private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
+  private stageWrapper: any;
 
   constructor(props: ApplicationState & ChapterActions) {
     super(props);
@@ -111,10 +113,12 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
 
   private adjustBoxWidth() {
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
-    const treeWidth = this.boxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
+    const treeWidth = this.defaultBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
     if (treeWidth >= window.innerWidth) {
       this.boxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
+    } else {
+      this.boxSize[0] = this.defaultBoxSize[0];
     }
   }
 
