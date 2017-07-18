@@ -35,35 +35,33 @@ class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, L
     const communalScreens = screens.filter((screen) => screen.type === "communal");
 
     return (
-      <div className="column" style={{overflow: "scroll"}}>
-        <div className="content">
-          <h3>Layout Designer</h3>
+      <div className="content">
+        <h3>Layout Designer</h3>
 
-          <div className="block">
-            <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addDevice.bind(null, "communal")}>Add communal device</a>
-            <a className="button is-info" onClick={this.props.addDevice.bind(null, "personal")}>Add personal device</a>
-          </div>
+        <div className="block">
+          <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addDevice.bind(null, "communal")}>Add communal device</a>
+          <a className="button is-info" onClick={this.props.addDevice.bind(null, "personal")}>Add personal device</a>
+        </div>
 
-          <br/>
+        <br/>
 
-          <div className="columns">
-            <ScreenContainer title="Communal Device"
-                             screens={communalScreens}
-                             numColumns={8}
-                             screenWidth={this.state.communalScreenWidth * 3 / 4}
-                             colRef={(el) => this.communalColumn = el}
-                             removeDevice={this.props.removeDevice}
-                             splitRegion={this.props.splitRegion}
-                             undoLastSplit={this.props.undoLastSplit} />
-            <ScreenContainer title="Personal Devices"
-                             screens={personalScreens}
-                             numColumns={4}
-                             screenWidth={this.state.personalScreenWidth * 3 / 8}
-                             colRef={(el) => this.personalColumn = el}
-                             removeDevice={this.props.removeDevice}
-                             splitRegion={this.props.splitRegion}
-                             undoLastSplit={this.props.undoLastSplit} />
-          </div>
+        <div className="columns">
+          <ScreenContainer title="Communal Device"
+                            screens={communalScreens}
+                            numColumns={8}
+                            screenWidth={this.state.communalScreenWidth * 3 / 4}
+                            colRef={(el) => this.communalColumn = el}
+                            removeDevice={this.props.removeDevice}
+                            splitRegion={this.props.splitRegion}
+                            undoLastSplit={this.props.undoLastSplit} />
+          <ScreenContainer title="Personal Devices"
+                            screens={personalScreens}
+                            numColumns={4}
+                            screenWidth={this.state.personalScreenWidth * 3 / 8}
+                            colRef={(el) => this.personalColumn = el}
+                            removeDevice={this.props.removeDevice}
+                            splitRegion={this.props.splitRegion}
+                            undoLastSplit={this.props.undoLastSplit} />
         </div>
       </div>
     );

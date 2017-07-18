@@ -153,18 +153,16 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
     const treeOffset = this.getTreeOffset(chapters);
 
     return (
-      <div className="column">
-        <div className="content">
-          <h3>Author Program</h3>
-          <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
-            <Layer>
-              {this.drawChapterTree(chapters, treeOffset)}
-              <Rect fill="#262626" strokeWidth={0}
-                    x={0} y={0}
-                    width={this.canvasWidth} height={treeOffset[1] - 1} />
-            </Layer>
-          </Stage>
-        </div>
+      <div className="content">
+        <h3>Author Program</h3>
+        <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
+          <Layer>
+            {this.drawChapterTree(chapters, treeOffset)}
+            <Rect fill="#262626" strokeWidth={0}
+                  x={0} y={0}
+                  width={this.canvasWidth} height={treeOffset[1] - 1} />
+          </Layer>
+        </Stage>
       </div>
     );
   }
