@@ -2,16 +2,36 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
+import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
 
 interface ScreenProps {
   screenInfo: ScreenModel;
   width: number;
   removeDevice: () => void;
   splitRegion: (id: string, orientation: "horizontal" | "vertical", position: number) => void;
+  undoLastSplit: () => void;
 }
 
-class Screen extends React.Component<ScreenProps, {}> {
+interface ScreenState {
+  contextMenu: {
+    visible: boolean,
+    x: number,
+    y: number,
+  };
+}
+
+class Screen extends React.Component<ScreenProps, ScreenState> {
   private canvas: HTMLCanvasElement;
+
+  constructor(props: ScreenProps) {
+    super(props);
+
+    this.state = {
+      contextMenu: {
+        visible: false, x: 0, y: 0
+      }
+    };
+  }
 
   private drawRegions() {
     const {width, height} = this.canvas;
@@ -55,16 +75,16 @@ class Screen extends React.Component<ScreenProps, {}> {
     }
   }
 
-  private getCanvasClickPosition(clickEvent: MouseEvent) {
+  private getCanvasClickPosition(pageX: number, pageY: number) {
     return [
-      clickEvent.pageX - this.canvas.offsetLeft,
-      clickEvent.pageY - this.canvas.offsetTop
+      pageX - this.canvas.offsetLeft,
+      pageY - this.canvas.offsetTop
     ];
   }
 
-  private handleCanvasClick(orientation: "horizontal" | "vertical", e: MouseEvent) {
-    e.preventDefault();
-    const [x, y] = this.getCanvasClickPosition(e);
+  private splitRegion(orientation: "horizontal" | "vertical") {
+    const {x: pageX, y: pageY} = this.state.contextMenu;
+    const [x, y] = this.getCanvasClickPosition(pageX, pageY);
     const clickedRegion = this.getClickedRegion(x / this.canvas.width, y / this.canvas.height);
 
     if (clickedRegion) {
@@ -73,8 +93,19 @@ class Screen extends React.Component<ScreenProps, {}> {
     }
   }
 
+  private handleCanvasClick(ev: MouseEvent) {
+    this.setState({
+      contextMenu: {
+        visible: true,
+        x: ev.pageX,
+        y: ev.pageY
+      }
+    });
+  }
+
   public render() {
     const screen = this.props.screenInfo;
+    const { contextMenu } = this.state;
 
     const { width } = this.props;
     const computedHeight = (screen.orientation === "landscape")
@@ -83,6 +114,16 @@ class Screen extends React.Component<ScreenProps, {}> {
 
     return (
       <div>
+        <ContextMenu {...contextMenu} onItemClicked={() => {
+          this.setState({contextMenu: {visible: false, x: 0, y: 0}});
+        }}>
+          <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
+          <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
+          <ContextMenuDivider />
+          <ContextMenuEntry name="Undo last split" callback={this.props.undoLastSplit.bind(this)} />
+          <ContextMenuDivider />
+          <ContextMenuEntry name="Cancel" callback={() => {}} />
+        </ContextMenu>
         <p>
           Name: {screen.name}<br/>
           Orientation: {screen.orientation}<br/>
@@ -90,8 +131,7 @@ class Screen extends React.Component<ScreenProps, {}> {
             remove
           </span>
         </p>
-        <canvas onClick={this.handleCanvasClick.bind(this, "vertical")}
-                onContextMenu={this.handleCanvasClick.bind(this, "horizontal")}
+        <canvas onClick={this.handleCanvasClick.bind(this)}
                 ref={(el) => this.canvas = el}
                 height={computedHeight}
                 width={width}

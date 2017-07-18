@@ -7,30 +7,22 @@ import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
 
+import { ChapterActions } from "../../actions/chapters";
+
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
-
-interface ProgramAuthorProps {
-  addChapterBefore: (accessPath: Array<number>) => void;
-  addChapterAfter: (accessPath: Array<number>) => void;
-  addChapterChild: (accessPath: Array<number>) => void;
-  renameChapter: (accessPath: Array<number>, name: string) => void;
-}
 
 interface ProgramAuthorState {
   stage: KonvaStage | null;
 }
 
-type CombinedProps = ApplicationState & ProgramAuthorProps;
-
-class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
+class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private stageWrapper: any;
   private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [20, 70];
-  private boxHotArea = 20;
+  private boxMargin: [number, number] = [40, 70];
   private canvasWidth = window.innerWidth - 50;
 
-  constructor(props: CombinedProps) {
+  constructor(props: ApplicationState & ChapterActions) {
     super(props);
 
     this.state = {
@@ -38,17 +30,17 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
     };
   }
 
-  private handleBoxClick(accessPath: Array<number>, topLeft: [number, number], size: [number, number]): void {
-    const bottomRight = [topLeft[0] + size[0], topLeft[1] + size[1]];
-    const {x, y} = this.state.stage!.getPointerPosition();
+  private handleBoxClick(accessPath: Array<number>): void {
+    alert("Move along, nothing to see here yet");
+  }
 
-    if (x <= topLeft[0] + this.boxHotArea) {
-      this.props.addChapterBefore(accessPath);
-    } else if (x >= bottomRight[0] - this.boxHotArea) {
-      this.props.addChapterAfter(accessPath);
-    } else if (y >= bottomRight[1] - this.boxHotArea) {
-      this.props.addChapterChild(accessPath);
+  private handleRemoveClick(accessPath: Array<number>): void {
+    if (accessPath.length === 1 && accessPath[0] === 0 && this.props.chapters.count() === 1) {
+      alert("Root node cannot be removed");
+      return;
     }
+
+    this.props.removeChapter(accessPath);
   }
 
   private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
@@ -61,6 +53,16 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
 
   private handleMasterLabelClick(accessPath: Array<number>): void {
     alert("Move along, nothing to see here");
+  }
+
+  private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
+    if (handlePosition === "left") {
+      this.props.addChapterBefore(accessPath);
+    } else if (handlePosition === "right") {
+      this.props.addChapterAfter(accessPath);
+    } else {
+      this.props.addChapterChild(accessPath);
+    }
   }
 
   private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
@@ -84,7 +86,9 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
                      nameLabelClick={this.handleLabelClick.bind(this)}
-                     masterLabelClick={this.handleMasterLabelClick.bind(this)} />
+                     masterLabelClick={this.handleMasterLabelClick.bind(this)}
+                     addChapterClick={this.handleAddChapterClick.bind(this)}
+                     removeChapterClick={this.handleRemoveClick.bind(this)} />
       ].concat(
         this.drawChapterTree(
           chapter.get("children")!,
@@ -157,7 +161,7 @@ class ProgramAuthor extends React.Component<CombinedProps, ProgramAuthorState> {
               {this.drawChapterTree(chapters, treeOffset)}
               <Rect fill="#262626" strokeWidth={0}
                     x={0} y={0}
-                    width={this.canvasWidth} height={treeOffset[1]} />
+                    width={this.canvasWidth} height={treeOffset[1] - 1} />
             </Layer>
           </Stage>
         </div>

@@ -1,7 +1,8 @@
-import { bindActionCreators, Dispatch } from "redux";
+import { ActionCreatorsMapObject, bindActionCreators, Dispatch } from "redux";
 import { connect } from "react-redux";
 
-import { actionCreators } from "../actions";
+import * as chapterActions from "../actions/chapters";
+import * as screenActions from "../actions/screens";
 
 import Layout from "./layout";
 import { ApplicationState } from "../store";
@@ -14,7 +15,10 @@ function mapStateToProps(state: ApplicationState): ApplicationState {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
-  return bindActionCreators(actionCreators, dispatch);
+  return bindActionCreators(Object.assign({} as ActionCreatorsMapObject,
+    chapterActions.actionCreators,
+    screenActions.actionCreators
+  ), dispatch);
 }
 
 const App = connect(mapStateToProps, mapDispatchToProps)(Layout);

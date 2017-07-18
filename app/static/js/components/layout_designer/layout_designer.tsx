@@ -1,26 +1,19 @@
 import * as React from "react";
 
 import { ApplicationState } from "../../store";
+import { ScreenActions } from "../../actions/screens";
 import ScreenContainer from "./screen_container";
-
-interface LayoutDesignerProps {
-  addDevice: (type: "personal" | "communal") => void;
-  removeDevice: (id: string) => void;
-  splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => void;
-}
-
-type CombinedProps = ApplicationState & LayoutDesignerProps;
 
 interface LayoutDesignerState {
   personalScreenWidth: number;
   communalScreenWidth: number;
 }
 
-class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState> {
+class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, LayoutDesignerState> {
   private communalColumn: HTMLDivElement;
   private personalColumn: HTMLDivElement;
 
-  constructor(props: CombinedProps) {
+  constructor(props: ApplicationState & ScreenActions) {
     super(props);
 
     this.state = {
@@ -60,14 +53,16 @@ class LayoutDesigner extends React.Component<CombinedProps, LayoutDesignerState>
                              screenWidth={this.state.communalScreenWidth * 3 / 4}
                              colRef={(el) => this.communalColumn = el}
                              removeDevice={this.props.removeDevice}
-                             splitRegion={this.props.splitRegion} />
+                             splitRegion={this.props.splitRegion}
+                             undoLastSplit={this.props.undoLastSplit} />
             <ScreenContainer title="Personal Devices"
                              screens={personalScreens}
                              numColumns={4}
                              screenWidth={this.state.personalScreenWidth * 3 / 8}
                              colRef={(el) => this.personalColumn = el}
                              removeDevice={this.props.removeDevice}
-                             splitRegion={this.props.splitRegion} />
+                             splitRegion={this.props.splitRegion}
+                             undoLastSplit={this.props.undoLastSplit} />
           </div>
         </div>
       </div>

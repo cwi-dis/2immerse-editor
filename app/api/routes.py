@@ -15,11 +15,11 @@ def api_verb(verb):
     except AttributeError:
         abort(404)
     return func()
-    
+
 @app.route(API_ROOT + "/document", methods=["GET", "POST"])
 def document():
     return api.document()
-    
+
 #
 # Per-document commands, load and save and such
 #
@@ -31,14 +31,14 @@ def document_instance(documentId):
     except KeyError:
         abort(404)
     return document.index()
-    
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/<string:verb>")
 def document_instance_verb(documentId, verb):
     try:
         document = api.documents[documentId]
     except KeyError:
         abort(404)
-    try:    
+    try:
         func = getattr(document, verb)
     except AttributeError:
         abort(404)
@@ -59,7 +59,7 @@ def document_xml_paste(documentId):
     xml = document.xml()
     assert xml
     rv = xml.copy(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
-    return rv   
+    return rv
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/move", methods=["POST"])
 def document_xml_move(documentId):
@@ -70,7 +70,7 @@ def document_xml_move(documentId):
     xml = document.xml()
     assert xml
     rv = xml.move(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
-    return rv   
+    return rv
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/modifyData", methods=["PUT"])
 def document_xml_modify(documentId):
@@ -81,7 +81,7 @@ def document_xml_modify(documentId):
     xml = document.xml()
     assert xml
     rv = xml.modifyData(path=request.args['path'], data=request.args['data'])
-    return rv   
+    return rv
 
 
 #
@@ -101,7 +101,7 @@ def document_events_get(documentId):
     events = document.events()
     assert events
     rv = events.get()
-    return Response(json.dumps(rv), mimetype="application/json")    
+    return Response(json.dumps(rv), mimetype="application/json")
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/trigger", methods=["POST"])
 def document_events_trigger(documentId, id):
@@ -163,7 +163,7 @@ def put_layout_document(documentId):
         abort(404)
     serve = document.serve()
     assert serve
-    layoutJSON = request.get_data() # Gets raw data, without parsing
+    layoutJSON = request.get_data()  # Gets raw data, without parsing
     _ = json.loads(layoutJSON)  # Assure it is actually json
     serve.put_layout(layoutJSON)
     return ''
@@ -179,4 +179,3 @@ def get_client_document(documentId):
     docRoot = '%s/document/%s/serve/' % (API_ROOT, documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json')
     return Response(config, mimetype="application/json")
-    
