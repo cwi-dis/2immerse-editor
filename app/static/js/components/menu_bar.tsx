@@ -4,14 +4,14 @@ import { Link } from "react-router";
 class MenuBar extends React.Component<{}, {}> {
   public render() {
     return (
-      <div className="columns menubar">
-        <div className="column is-2 is-offset-3">
+      <div className="menubar">
+        <div>
           <Link to="/" activeStyle={{color: "#319aee"}}>Design Layout</Link>
         </div>
-        <div className="column is-2">
+        <div>
           <Link to="/masters" activeStyle={{color: "#319aee"}}>Manage Masters</Link>
         </div>
-        <div className="column is-2">
+        <div>
           <Link to="/program" activeStyle={{color: "#319aee"}}>Author Program</Link>
         </div>
       </div>

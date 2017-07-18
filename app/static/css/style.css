@@ -20,6 +20,7 @@ html, body {
 
 .sidebar {
   width: 300px;
+  border-left: 2px solid #161616;
 }
 
 .content {
@@ -32,6 +33,15 @@ html, body {
   border-bottom: 2px solid #161616;
   text-align: center;
   margin-top: 5px;
+  margin-bottom: 0;
+
+  display: flex;
+  justify-content: center;
+}
+
+.menubar div {
+  width: 274px;
+  padding: 12px;
 }
 
 .menubar * a {
