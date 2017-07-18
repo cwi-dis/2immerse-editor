@@ -3,6 +3,7 @@ import { List } from "immutable";
 import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
+import { Coords } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
@@ -18,8 +19,8 @@ interface ProgramAuthorState {
 
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private stageWrapper: any;
-  private baseBoxSize: [number, number] = [200, 120];
-  private boxMargin: [number, number] = [40, 70];
+  private baseBoxSize: Coords = [200, 120];
+  private boxMargin: Coords = [40, 70];
   private canvasWidth = window.innerWidth - 50;
 
   constructor(props: ApplicationState & ChapterActions) {
@@ -130,7 +131,7 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
     return defaultCanvasHeight;
   }
 
-  private getTreeOffset(chapters: List<Chapter>): [number, number] {
+  private getTreeOffset(chapters: List<Chapter>): Coords {
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
     const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
