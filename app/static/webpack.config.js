@@ -6,7 +6,7 @@ module.exports = {
     landing_page: "./js/landing_page.ts"
   },
   output: {
-    path: __dirname + "/js",
+    path: __dirname + "/dist",
     filename: "[name].js"
   },
   devtool: "source-map",
