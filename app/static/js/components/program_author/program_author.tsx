@@ -19,8 +19,8 @@ interface ProgramAuthorState {
 
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private stageWrapper: any;
-  private baseBoxSize: Coords = [200, 120];
-  private boxMargin: Coords = [40, 70];
+  private readonly boxSize: Coords = [200, 120];
+  private readonly boxMargin: Coords = [40, 70];
   private canvasWidth = window.innerWidth - 50;
 
   constructor(props: ApplicationState & ChapterActions) {
@@ -77,13 +77,13 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
       const [x, y] = startPos;
 
       const leafNodes = countLeafNodes(chapter);
-      const boxWidth = leafNodes * this.baseBoxSize[0] + (leafNodes - 1) * this.boxMargin[0];
+      const boxWidth = leafNodes * this.boxSize[0] + (leafNodes - 1) * this.boxMargin[0];
       const currentPath = accessPath.concat(i);
       const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
 
       let rects = [
         <ChapterNode key={`group.${currentPath}`} stage={stage} chapter={chapter}
-                     position={[x, y]} size={[boxWidth, this.baseBoxSize[1]]}
+                     position={[x, y]} size={[boxWidth, this.boxSize[1]]}
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
                      nameLabelClick={this.handleLabelClick.bind(this)}
@@ -93,12 +93,12 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
       ].concat(
         this.drawChapterTree(
           chapter.get("children")!,
-          [x, y + this.baseBoxSize[1] + this.boxMargin[1]],
+          [x, y + this.boxSize[1] + this.boxMargin[1]],
           currentPath
         )
       ).concat(
         <NodeConnectors nodeCount={chapters.count()} currentIndex={i}
-                        position={[x, y]} boxSize={[boxWidth, this.baseBoxSize[1]]}
+                        position={[x, y]} boxSize={[boxWidth, this.boxSize[1]]}
                         margins={this.boxMargin} hasChildren={hasChildren}
                         key={`connectors.${currentPath}`} />
       );
@@ -111,18 +111,18 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
 
   private adjustBoxWidth() {
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
-    const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
+    const treeWidth = this.boxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
     if (treeWidth >= window.innerWidth) {
-      this.baseBoxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
+      this.boxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
     }
   }
 
   private adjustCanvasHeight(chapters: List<Chapter>) {
-    const defaultCanvasHeight = this.baseBoxSize[1] * 2 + this.boxMargin[1] * 2;
+    const defaultCanvasHeight = this.boxSize[1] * 2 + this.boxMargin[1] * 2;
 
     const treeHeight = getTreeHeight(chapters);
-    const neededCanvasHeight = treeHeight * this.baseBoxSize[1] + treeHeight * this.boxMargin[1];
+    const neededCanvasHeight = treeHeight * this.boxSize[1] + treeHeight * this.boxMargin[1];
 
     if (neededCanvasHeight > defaultCanvasHeight) {
       return neededCanvasHeight;
@@ -133,7 +133,7 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
 
   private getTreeOffset(chapters: List<Chapter>): Coords {
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
-    const treeWidth = this.baseBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
+    const treeWidth = this.boxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
     const xOffset = this.canvasWidth / 2 - treeWidth / 2;
 
