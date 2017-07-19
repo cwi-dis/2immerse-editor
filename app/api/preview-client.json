@@ -1,0 +1,40 @@
+{
+	"controllerOptions": {
+		"longFormConsoleLogging": true, 
+		"defaultLogLevel": "trace", 
+		"deviceIdPrefix": "tv", 
+		"showUserErrorMessageUI": true, 
+		"networkLogLevel": "trace", 
+		"deviceIdNamespace": "ts-tv"
+	}, 
+	"description": "Live Preview", 
+	"serviceUrlPreset": "aws_edge",
+	"layoutService": "http://127.0.0.1:8000/layout/v3",
+	"websocketService": "http://127.0.0.1:3000/",
+	"timelineService": "http://127.0.0.1:8001/timeline/v1",
+	 "variations": [
+	 	{
+	 		"description": "Live Preview", 
+	 		"type": "select", 
+	 		"options": [
+	 			{
+	 				"content": {
+	 					"serviceInput": {
+	 						"timeline": "filled-in-dynamically", 
+	 						"layout": "filled-in-dynamically"
+	 					}
+	 				},
+	 				"description": "Live Preview", 
+	 				"name": "Live Preview"
+	 			}
+	 		], 
+	 		"name": "Live Preview"
+	 	}
+	], 
+	"debugOptions": {
+		"debugComponent": true, 
+		"devLogging": true, 
+		"failurePlaceholders": true
+	}, 
+	"mode": "tv"
+}

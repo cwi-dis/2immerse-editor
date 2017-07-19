@@ -7,6 +7,7 @@ import copy
 import xml.etree.ElementTree as ET
 import re
 import threading
+import os
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -660,43 +661,12 @@ class DocumentServe:
         rawLayoutElement.text = layoutJSON
         
     def get_client(self, timeline, layout):
-        clientDoc = dict(
-            description="Live Preview",
-            mode="tv",
-            serviceUrlPreset="aws_edge",
-            controllerOptions=dict(
-                deviceIdPrefix="tv",
-                deviceIdNamespace="ts-tv",
-                defaultLogLevel="trace",
-                networkLogLevel="trace",
-                longFormConsoleLogging=True,
-                showUserErrorMessageUI=True,
-                ),
-            debugOptions=dict(
-                debugComponent=True,
-                devLogging=True,
-                failurePlaceholders=True,
-                ),
-            variations=[
-                dict(
-                    name="Live Preview",
-                    description="Live Preview",
-                    type="select",
-                    options=[
-                        dict(
-                            name="Live Preview",
-                            description="Live Preview",
-                            content=dict(
-                                serviceInput=dict(
-                                    layout=layout,
-                                    timeline=timeline,
-                                    ),                            
-                                ),
-                        ),
-                    ],
-                    ),
-                ],
-            )
+        clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
+        clientDoc = json.load(open(clientDocPath))
+        clientDoc['variations'][0]['options'][0]['content']['serviceInput'] = dict(
+                layout=layout,
+                timeline=timeline,
+                )
         return json.dumps(clientDoc)
 
     @synchronized
