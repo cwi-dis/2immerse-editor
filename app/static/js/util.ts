@@ -14,6 +14,33 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
 
+export function makeRequest(method: "GET" | "POST", url: string): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.response);
+      } else {
+        reject({
+          status: xhr.status,
+          statusText: xhr.statusText
+        });
+      }
+    };
+
+    xhr.onerror = () => {
+      reject({
+        status: xhr.status,
+        statusText: xhr.statusText
+      });
+    };
+
+    xhr.send();
+  });
+}
+
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
 }
