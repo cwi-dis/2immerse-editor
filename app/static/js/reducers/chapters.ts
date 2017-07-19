@@ -85,4 +85,11 @@ actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTE
   return state.deleteIn(keyPath);
 });
 
+actionHandler.addHandler("ASSIGN_MASTER", (state, action: actions.ASSIGN_MASTER) => {
+  const { accessPath, masterId } = action.payload;
+  const keyPath = generateChapterKeyPath(accessPath).push("masterLayouts");
+
+  return state.updateIn(keyPath, (masters) => masters.push(masterId));
+});
+
 export default actionHandler.getReducer();
