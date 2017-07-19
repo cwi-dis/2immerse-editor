@@ -4,13 +4,16 @@
   <title>2-IMMERSE</title>
   <script type="text/javascript" src="{{url_for('static', filename='dist/landing_page.js') + '?key=' + key}}"></script>
   <style>
-    .wrapper {
-      width:545px;
-      margin:45px auto 0 auto;
+    .buttons {
+      display:flex;
+      flex-direction:row;
+      justify-content:center;
+
+      margin-top:45px;
     }
 
     .button {
-      width:250px!important;
+      width:250px;
       margin:10px;
     }
 
@@ -23,7 +26,7 @@
 </head>
 <body>
   <h1 class="caption title is-1">2-IMMERSE Authoring Platform</h1>
-  <div class="wrapper">
+  <div class="buttons">
     <a class="button is-info is-medium" href="/editor">Preproduction Authoring</a>
     <a class="button is-info is-medium" href="#">Live Triggering</a>
   </div>
