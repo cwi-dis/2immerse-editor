@@ -20,11 +20,15 @@ def hash_file(path):
     return h.hexdigest()
 
 
+BUNDLE_HASH = hash_file("./app/static/dist/bundle.js")
+LANDINGPAGE_HASH = hash_file("./app/static/dist/landing_page.js")
+
+
 @app.route("/")
 def landing_page():
-    return render_template("landing_page.html")
+    return render_template("landing_page.html", key=BUNDLE_HASH)
 
 
 @app.route("/editor")
 def editor():
-    return render_template("editor.html")
+    return render_template("editor.html", key=LANDINGPAGE_HASH)
