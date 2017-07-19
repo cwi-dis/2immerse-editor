@@ -4,12 +4,19 @@ import * as shortid from "shortid";
 import { ActionHandler } from "../util";
 import * as actions from "../actions/masters";
 
+interface ComponentPlacement {
+  screen: string;
+  region: string;
+  component: any;
+}
+
 export interface MasterAttributes {
   id: string;
   name: string;
+  placedComponents?: List<ComponentPlacement>;
 }
 
-export class Master extends Record<MasterAttributes>({id: "", name: ""}) {
+export class Master extends Record<MasterAttributes>({id: "", name: "", placedComponents: List()}) {
   constructor(params?: MasterAttributes) {
     params ? super(params) : super();
   }
