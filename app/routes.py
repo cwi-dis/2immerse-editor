@@ -32,3 +32,9 @@ def landing_page():
 @app.route("/editor")
 def editor():
     return render_template("editor.html", key=LANDINGPAGE_HASH)
+
+
+@app.route("/version")
+def version():
+    with open("./.git/refs/heads/master", "r") as master:
+        return master.read().replace("\n", "")
