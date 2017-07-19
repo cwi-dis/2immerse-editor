@@ -25,7 +25,10 @@ This will download and build all the images and install the application code.
 
 ### Frontend Setup
 
-Since the application uses TypeScript and React, we also need to setup the
+All of the following steps only apply if you want to actually do any frontend
+development. If you're not planning to touch the frontend in any way, you can
+ignore this entire section as `docker-compose` takes care of this process for
+you. Since the application uses TypeScript and React, we also need to setup the
 frontend build-chain. First off, make sure you have `npm` installed. Then,
 install `webpack` globally by running
 
@@ -58,15 +61,14 @@ yarn install
 webpack
 ```
 
-This will install all
-the application dependencies into a new folder `node_modules/`. Finally, simply
-run `webpack` in the `app/static/` folder to generate the application bundle.
-The bundle needs to be regenerated every time you perform changes to the
-frontend code.
+This will install all the application dependencies into a new folder
+`node_modules/`. Finally, simply run `webpack` in the `app/static/` folder to
+generate the application bundle.  The bundle needs to be regenerated every time
+you perform changes to the frontend code.
 
 ## Running the application
 
-After you're done with the setup, in the toplevel directory, call
+After you're done with the setup, in the top-level directory, call
 
 ```
 docker-compose up
