@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords } from "../../util";
+import { Coords, getRandomInt } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 import { countLeafNodes, getTreeHeight } from "../../util";
@@ -55,7 +55,7 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
   }
 
   private handleMasterLabelClick(accessPath: Array<number>): void {
-    alert("Move along, nothing to see here");
+    this.props.assignMaster(accessPath, `potato_${getRandomInt()}`);
   }
 
   private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
