@@ -51,12 +51,24 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   };
 }
 
+export type ASSIGN_MASTER = PayloadAction<"ASSIGN_MASTER", {accessPath: Array<number>, masterId: string}>;
+function assignMaster(accessPath: Array<number>, masterId: string): ASSIGN_MASTER {
+  return {
+    type: "ASSIGN_MASTER",
+    payload: {
+      accessPath,
+      masterId
+    }
+  };
+}
+
 export interface ChapterActions {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
+  assignMaster: (accessPath: Array<number>, masterId: string) => ASSIGN_MASTER;
 }
 
 export const actionCreators: ChapterActions = {
@@ -64,5 +76,6 @@ export const actionCreators: ChapterActions = {
   addChapterAfter,
   addChapterChild,
   renameChapter,
-  removeChapter
+  removeChapter,
+  assignMaster
 };

@@ -1,6 +1,6 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
-import { ActionHandler, findById } from "../util";
+import { ActionHandler, findById, generateChapterKeyPath } from "../util";
 import * as actions from "../actions/chapters";
 
 type MasterId = string;
@@ -37,10 +37,7 @@ actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPT
   });
 
   const updatedChildren = list.insert(insertIndex, new Chapter({id: shortid.generate()}));
-
-  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
-    return path.concat([i, "children"]);
-  }, []));
+  const keyPath = generateChapterKeyPath(accessPath).pop();
 
   return state.updateIn(keyPath, () => updatedChildren);
 });
@@ -57,20 +54,14 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: actions.ADD_CHAPTE
 
   const newChapter = new Chapter({id: shortid.generate()});
   const updatedChildren = (insertIndex >= list.count()) ? list.push(newChapter) : list.insert(insertIndex + 1, newChapter);
-
-  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
-    return path.concat([i, "children"]);
-  }, []));
+  const keyPath = generateChapterKeyPath(accessPath).pop();
 
   return state.updateIn(keyPath, () => updatedChildren);
 });
 
 actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: actions.ADD_CHAPTER_CHILD) => {
   const { accessPath } = action.payload;
-
-  const keyPath = List(accessPath.slice(0, accessPath.length).reduce((path: Array<string | number>, i) => {
-    return path.concat([i, "children"]);
-  }, []));
+  const keyPath = generateChapterKeyPath(accessPath).push("children");
 
   const newChapter = new Chapter({
     id: shortid.generate(),
@@ -82,22 +73,23 @@ actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: actions.ADD_CHAPTE
 
 actionHandler.addHandler("RENAME_CHAPTER", (state, action: actions.RENAME_CHAPTER) => {
   const { accessPath, name } = action.payload;
-
-  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
-    return path.concat([i, "children"]);
-  }, [])).push(accessPath[accessPath.length - 1], "name");
+  const keyPath = generateChapterKeyPath(accessPath).push("name");
 
   return state.updateIn(keyPath, () => name);
 });
 
 actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTER) => {
   const { accessPath } = action.payload;
-
-  const keyPath = List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
-    return path.concat([i, "children"]);
-  }, [])).push(accessPath[accessPath.length - 1]);
+  const keyPath = generateChapterKeyPath(accessPath);
 
   return state.deleteIn(keyPath);
+});
+
+actionHandler.addHandler("ASSIGN_MASTER", (state, action: actions.ASSIGN_MASTER) => {
+  const { accessPath, masterId } = action.payload;
+  const keyPath = generateChapterKeyPath(accessPath).push("masterLayouts");
+
+  return state.updateIn(keyPath, (masters) => masters.push(masterId));
 });
 
 export default actionHandler.getReducer();

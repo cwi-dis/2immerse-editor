@@ -18,6 +18,12 @@ export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>
   return collection.findEntry((value: T) => value.id === id)!;
 }
 
+export function generateChapterKeyPath(accessPath: Array<number>): List<number | string> {
+  return List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
+    return path.concat([i, "children"]);
+  }, [])).push(accessPath[accessPath.length - 1]);
+}
+
 export function getRandomInt(min: number = 0, max: number = 10) {
   min = Math.ceil(min);
   max = Math.floor(max);

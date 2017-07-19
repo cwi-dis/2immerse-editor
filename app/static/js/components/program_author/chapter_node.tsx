@@ -139,7 +139,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
               onMouseEnter={() => stage.container().style.cursor = "pointer" }
               onMouseLeave={() => stage.container().style.cursor = "default" }
               onClick={this.props.masterLabelClick.bind(null, currentPath)}
-              fill="#FFFFFF" fontSize={12} fontStyle="italic"
+              fill="#777777" fontSize={12} fontStyle="italic"
               key={`masters.${chapter.get("id")}`} />
       </Group>
     );
