@@ -1,13 +1,15 @@
 import { combineReducers } from "redux";
 import { routerReducer } from "react-router-redux";
 
-import screens from "./screens";
 import chapters from "./chapters";
+import masters from "./masters";
+import screens from "./screens";
 
 const rootReducer = combineReducers({
-  screens,
   chapters,
-  routing: routerReducer
+  masters,
+  routing: routerReducer,
+  screens,
 });
 
 export default rootReducer;

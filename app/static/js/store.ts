@@ -3,12 +3,14 @@ import { syncHistoryWithStore } from "react-router-redux";
 import { hashHistory } from "react-router";
 
 import rootReducer from "./reducers/index";
-import { ScreenState } from "./reducers/screens";
 import { ChapterState } from "./reducers/chapters";
+import { MasterState } from "./reducers/masters";
+import { ScreenState } from "./reducers/screens";
 
 export interface ApplicationState {
-  screens: ScreenState;
   chapters: ChapterState;
+  masters: MasterState;
+  screens: ScreenState;
 };
 
 const store = createStore(
