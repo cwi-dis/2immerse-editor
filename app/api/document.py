@@ -627,6 +627,14 @@ class DocumentServe:
         self.callbacks = []
         
     @synchronized
+    def _nextGeneration(self):
+        rootElt = self.tree.getroot()
+        gen = rootElt.get(NS_AUTH("generation"), 0)
+        gen += 1
+        rootElt.set(NS_AUTH("generation", gen))
+        return gen
+        
+    @synchronized
     def get_timeline(self):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
@@ -698,10 +706,11 @@ class DocumentServe:
         self.document.forwardHandler = self
             
     def forward(self, operations):
+        gen = self._nextGeneration()
         toRemove = []
         for callback in self.callbacks:
             try:
-                r = requests.post(callback, json=operations)
+                r = requests.put(callback, json=dict(generation=gen, operations=operations))
                 r.raise_for_status()
             except requests.exceptions.RequestException:
                 toRemove.append(callback)
