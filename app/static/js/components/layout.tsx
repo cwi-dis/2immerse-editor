@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import CurrentVersion from "./current_version";
 import MenuBar from "./menu_bar";
 
 interface ApplicationProps {
@@ -10,8 +11,9 @@ class Layout extends React.Component<ApplicationProps, {}> {
   public render() {
     return (
       <div className="wrapper">
-        <MenuBar/>
+        <MenuBar />
         {React.cloneElement(this.props.children, Object.assign({}, this.props))}
+        <CurrentVersion />
       </div>
     );
   }
