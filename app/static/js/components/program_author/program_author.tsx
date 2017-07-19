@@ -20,7 +20,7 @@ interface ProgramAuthorState {
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private readonly defaultBoxSize: Coords = [200, 120];
   private readonly boxMargin: Coords = [40, 70];
-  private readonly canvasWidth = window.innerWidth - 50;
+  private readonly canvasWidth = window.innerWidth - 40;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
   private stageWrapper: any;
