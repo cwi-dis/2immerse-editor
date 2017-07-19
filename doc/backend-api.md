@@ -55,7 +55,26 @@ The endpoint at `/api/v1/document/<documentId>/serve/` serves things like timeli
 - `layout.json` layout server document (mimetype `application/json`).
 - `layout.json` (PUT) replaces the layout server data in the document. This is a temporary call.
 - `client.json` client-api configuration document (mimetype `application/json`). 
+- `addcallback` (POST) register for callbacks on document changes. Arguments:
+	- `url` the fully qualified URL to which callbacks are made. Callbacks are `POST`ed with an `application/json` list of objects that signal which changes have been made to the document (see below).
+
+The _addcallback_ method is probably temporary. There needs to be a websocket or something, or at the very least document changes need to be version-numbered, so that the backend and the change consumer don't get out of sync.
 
 ## trigger tool calls
 
 The endpoint at `/api/v1/document/<documentId>/events` is meant for the live triggering tool. Its API and data structures are described in [live\_tool\_support.md](live_tool_support.md).
+
+
+## document changes
+
+Each high level edit operation (through the trigger tool calls, the xml calls or the authoring tool calls) results in a sequence of low-level edit operations. This sequence can then be forwarded to other copies of the document (which will then be updated to be the same as the original).
+
+The edit operations are a list of JSON objects, with the following key/value pairs:
+
+- `verb` string, one of `"add"`, `"delete"` or `"change"`.
+- `path` string, an XPath expression uniquely pointing at a single element in the document. This is the element to be deleted or changed, or relative to which the new element is added.
+- `where` string. For the _add_ operation, the relative position (with respect to the element pointed at by _path_) the new element is inserted. Can be `"after"` for next sibling, or `"begin"` for first child.
+- `data` string containing XML document fragment. For the _add_ operation, the element (and descendents) to be added to the document.
+- `attrs` string containing JSON object. For the _change_ operation, key/value pairs for the attributes to be set on the element. Must be a complete set of attributes (i.e. all current attributes will be removed).
+
+The current implementation (and design) is clunky, and probably depends on sender and receiver being Python code using _elementtree_ as the DOM storage, how it encodes namespaces in attribute keys and possibly on the specific set of xml namespace prefixes in use.

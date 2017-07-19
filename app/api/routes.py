@@ -179,3 +179,15 @@ def get_client_document(documentId):
     docRoot = '%s/document/%s/serve/' % (API_ROOT, documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json')
     return Response(config, mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/addcallback", methods=["POST"])
+def set_callback(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    serve.setCallback(request.args['url'])
+    return ''
+
