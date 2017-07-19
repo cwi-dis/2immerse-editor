@@ -7,7 +7,7 @@ import store, { history } from "../store";
 
 import App from "./app";
 import LayoutDesigner from "./layout_designer/layout_designer";
-import MasterManager from "./master_manager";
+import MasterManager from "./master_manager/master_manager";
 import ProgramAuthor from "./program_author/program_author";
 
 import "bulma/css/bulma.css";

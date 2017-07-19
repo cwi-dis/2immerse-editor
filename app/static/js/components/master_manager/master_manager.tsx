@@ -8,7 +8,9 @@ class MasterManager extends React.Component<{}, {}> {
           <h3>Manage Masters</h3>
         </div>
         <div className="sidebar">
-          <h3>Sidebar</h3>
+          <div className="content">
+            <h3>Sidebar</h3>
+          </div>
         </div>
       </div>
     );
