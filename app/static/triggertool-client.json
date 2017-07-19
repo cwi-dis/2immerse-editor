@@ -1,0 +1,149 @@
+{
+	"description": "Trigger tool client: standalone",
+	"mode": "standalone",
+	"controllerOptions": {
+		"deviceIdPrefix": "standalone",
+		"deviceIdNamespace": "tt-standalone",
+		"defaultLogLevel": "trace",
+		"networkLogLevel": "trace",
+		"longFormConsoleLogging": true,
+		"showUserErrorMessageUI": true
+	},
+	"setupComponent": {
+		"componentId": "trigger-tool",
+		"config": {
+			"url": "https://origin.platform.2immerse.eu/dmapp-components/trigger-tool-client/trigger-tool-client.html",
+			"class": "TriggerToolClientDMAppComponent"
+		},
+		"layout": {
+			"size": {
+				"width": "100%",
+				"height": "100%"
+			},
+			"position": {
+				"x": 0,
+				"y": 0
+			}
+		},
+		"parameters": {
+		}
+	},
+	"debugOptions": {
+		"debugComponent": true,
+		"devLogging": true,
+		"failurePlaceholders": true
+	},
+	"variations": [
+		{
+			"name": "input",
+			"description": "Select input",
+			"type": "select",
+			"required": true,
+			"options": [
+				{
+					"name": "doc",
+					"description": "backend (at /api/v1) + test_events.xml",
+					"content": {
+						"setupComponent": {
+							"parameters": {
+								"serviceUrl": "/api/v1",
+								"newDocumentUrl": "https://origin.platform.2immerse.eu/sandbox/jgr/test_events.xml"
+							}
+						}
+					}
+				},
+				{
+					"name": "doc at localhost",
+					"description": "backend (at http://localhost:8008/api/v1) + test_events.xml",
+					"content": {
+						"setupComponent": {
+							"parameters": {
+								"serviceUrl": "http://localhost:8008/api/v1",
+								"newDocumentUrl": "https://origin.platform.2immerse.eu/sandbox/jgr/test_events.xml"
+							}
+						}
+					}
+				},
+				{
+					"name": "test",
+					"description": "static test triggers",
+					"content": {
+						"setupComponent": {
+							"parameters": {
+								"testTriggers": [
+									{
+										"name": "FOO",
+										"id": "foo",
+										"trigger": true,
+										"parameters": [
+											{
+												"name": "A",
+												"parameter": "a",
+												"type": "string",
+												"value": "asdf"
+											},
+											{
+												"name": "B",
+												"parameter": "b",
+												"type": "const",
+												"value": "qwerty"
+											},
+											{
+												"name": "C",
+												"parameter": "c",
+												"type": "bool"
+											},
+											{
+												"name": "D",
+												"parameter": "d",
+												"type": "url",
+												"value": "http://example.com/"
+											}
+										]
+									},
+									{
+										"name": "BAR",
+										"id": "bar",
+										"modify": true,
+										"parameters": [
+											{
+												"name": "foobar",
+												"parameter": "fb",
+												"type": "string",
+												"value": "asdf"
+											}
+										]
+									}
+								]
+							}
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "nodebug",
+			"description": "Disable debug",
+			"type": "optional",
+			"content": {
+				"debugOptions": {
+					"debugComponent": false,
+					"devLogging": false,
+					"failurePlaceholders": false
+				}
+			}
+		},
+		{
+			"name": "localcomp",
+			"description": "Local component",
+			"type": "optional",
+			"content": {
+				"setupComponent": {
+					"config": {
+						"url": "./dist/trigger-tool-client/trigger-tool-client.html"
+					}
+				}
+			}
+		}
+	]
+}
