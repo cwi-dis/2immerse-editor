@@ -6,6 +6,10 @@
   version "2.0.48"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-2.0.48.tgz#7e2868c3ad73d83c482f1d68f148c4fdc79c8a79"
 
+"@types/randomcolor@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@types/randomcolor/-/randomcolor-0.4.3.tgz#66bf69fdf43ea7b73ae4c378f660442c8e236e93"
+
 "@types/react-dom@^15.3.2":
   version "15.5.0"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.0.tgz#7f4fb9613d4051141773242f7b6b5f1a46b34bd9"
@@ -2017,6 +2021,10 @@ randombytes@^2.0.0, randombytes@^2.0.1:
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.0.5.tgz#dc009a246b8d09a177b4b7a0ae77bc570f4b1b79"
   dependencies:
     safe-buffer "^5.1.0"
+
+randomcolor@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/randomcolor/-/randomcolor-0.5.3.tgz#7f90f2f2a7f6d5a52232161eeaeeaea9ac3b5815"
 
 rc@^1.1.7:
   version "1.2.1"
