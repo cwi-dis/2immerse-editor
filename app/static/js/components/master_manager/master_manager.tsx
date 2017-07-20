@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
+import DMAppcContainer from "./dmappc_container";
 
 class MasterManager extends React.Component<ApplicationState & MasterActions, {}> {
   private addMaster() {
@@ -39,9 +40,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, {}
               })}
             </div>
           </div>
-          <div style={{height: "50%", borderTop: "1px solid #161616", padding: 10}}>
-            DMApp Components
-          </div>
+          <DMAppcContainer />
         </div>
       </div>
     );
