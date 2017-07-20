@@ -10,6 +10,10 @@ Toplevel api is at endpoint `/api/v1`, accepts following calls:
   Returns the `documentId` for the new document.
   
 - GET, returns  all _documentId_ as a JSON list.
+- `triggertool-client.json` Returns the client-api config document to run the triggertool. One argument:
+	- `newDocumentUrl` The URL of the (xml) authoring document to open.
+- `triggertool` Convenience method: returns a http-redirect for the client-api, with its `inputDocument` argument pointing to _triggertool-client.json_ endpoint described above. This should launch the trigger tool in one step. Argument:
+	- `newDocumentUrl` The URL of the (xml) authoring document to open.
 
 ## per-document calls
 
@@ -54,7 +58,8 @@ The endpoint at `/api/v1/document/<documentId>/serve/` serves things like timeli
 - `timeline.xml` timeline server document (mimetype `application/xml`).
 - `layout.json` layout server document (mimetype `application/json`).
 - `layout.json` (PUT) replaces the layout server data in the document. This is a temporary call.
-- `client.json` client-api configuration document (mimetype `application/json`). 
+- `client.json` client-api configuration document (mimetype `application/json`). One optional argument:
+	- `base` The URL of a base _client.json_ configuration document. Use this to select different timeline/layout server instances.
 - `addcallback` (POST) register for callbacks on document changes. Arguments:
 	- `url` the fully qualified URL to which callbacks are made. Callbacks are `PUT` with an `application/json` object that signal which changes have been made to the document (see below).
 
@@ -64,6 +69,11 @@ The _addcallback_ method is probably temporary. There needs to be a websocket or
 
 The endpoint at `/api/v1/document/<documentId>/events` is meant for the live triggering tool. Its API and data structures are described in [live\_tool\_support.md](live_tool_support.md).
 
+## preview player calls
+
+The endpoint at `/api/v1/document/<documentId>/preview` is a convenience endpoint that starts a 2immerse player for the current document (it returns a http-redirect to client-api, with the `inputDocument` parameter pointing to _serve/client.json_, described above). One optional argument:
+
+	- `base` the URL of a base _client.json_ configuration document. Use this to select different timeline/layout server instances.
 
 ## document changes
 

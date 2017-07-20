@@ -660,9 +660,13 @@ class DocumentServe:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
         rawLayoutElement.text = layoutJSON
         
-    def get_client(self, timeline, layout):
-        clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
-        clientDoc = json.load(open(clientDocPath))
+    def get_client(self, timeline, layout, base=None):
+        if base:
+            clientDocData = urllib.urlopen(base).read()
+        else:
+            clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
+            clientDocData = open(clientDocPath).read()
+        clientDoc = json.loads(clientDocData)
         clientDoc['serviceInput'] = dict(
                 layout=layout,
                 timeline=timeline,
