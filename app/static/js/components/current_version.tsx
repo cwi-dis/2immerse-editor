@@ -36,7 +36,10 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
     if (this.state.hash !== "") {
       return (
         <div style={style}>
-          Current version: {this.state.hash}
+          Current version:&nbsp;
+          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://github.com/cwi-dis/2immerse-editor/commit/${this.state.hash}`}>
+            {this.state.hash}
+          </a>
         </div>
       );
     } else {
