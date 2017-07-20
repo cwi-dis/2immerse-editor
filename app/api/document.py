@@ -663,7 +663,7 @@ class DocumentServe:
     def get_client(self, timeline, layout):
         clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
         clientDoc = json.load(open(clientDocPath))
-        clientDoc['variations'][0]['options'][0]['content']['serviceInput'] = dict(
+        clientDoc['serviceInput'] = dict(
                 layout=layout,
                 timeline=timeline,
                 )

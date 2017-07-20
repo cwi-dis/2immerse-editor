@@ -16,8 +16,8 @@
 			"class": "TriggerToolClientDMAppComponent"
 		},
 		"parameters": {
-			"serviceUrl": "/api/v1",
-			"newDocumentUrl": "https://origin.platform.2immerse.eu/sandbox/jgr/test_events.xml"
+			"serviceUrl": "http://flauwte.dis.cwi.nl:8008/api/v1",
+			"newDocumentUrl": "https://origin.platform.2immerse.eu/dmapps/technical-samples/300-events/timeline.xml"
 		},
 		"layout": {
 			"size": {

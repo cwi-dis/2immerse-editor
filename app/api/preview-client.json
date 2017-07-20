@@ -9,28 +9,16 @@
 	}, 
 	"description": "Live Preview", 
 	"serviceUrlPreset": "aws_edge",
-	"layoutService": "http://127.0.0.1:8000/layout/v3",
-	"websocketService": "http://127.0.0.1:3000/",
-	"timelineService": "http://127.0.0.1:8001/timeline/v1",
-	 "variations": [
-	 	{
-	 		"description": "Live Preview", 
-	 		"type": "select", 
-	 		"options": [
-	 			{
-	 				"content": {
-	 					"serviceInput": {
-	 						"timeline": "filled-in-dynamically", 
-	 						"layout": "filled-in-dynamically"
-	 					}
-	 				},
-	 				"description": "Live Preview", 
-	 				"name": "Live Preview"
-	 			}
-	 		], 
-	 		"name": "Live Preview"
-	 	}
-	], 
+	"serviceUrls" : {
+		"layoutService": "http://flauwte.dis.cwi.nl:8000/layout/v3",
+		"websocketService": "http://flauwte.dis.cwi.nl:3000/",
+		"timelineService": "http://flauwte.dis.cwi.nl:8001/timeline/v1"
+	},
+	"serviceInput": {
+		"timeline": "filled-in-dynamically", 
+		"layout": "filled-in-dynamically"
+	},
+
 	"debugOptions": {
 		"debugComponent": true, 
 		"devLogging": true, 
