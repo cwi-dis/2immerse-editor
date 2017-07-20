@@ -10,6 +10,7 @@
     "webpack": "^2.6.1"
   },
   "dependencies": {
+    "@types/randomcolor": "^0.4.3",
     "@types/react": "^15.0.28",
     "@types/react-dom": "^15.3.2",
     "@types/react-redux": "^4.4.38",
@@ -19,6 +20,7 @@
     "bulma": "^0.4.2",
     "immutable": "4.0.0-rc.1",
     "konva": "^1.6.3",
+    "randomcolor": "^0.5.3",
     "react": "^15.6.0",
     "react-dom": "^15.6.0",
     "react-konva": "https://github.com/troeggla/react-konva",
