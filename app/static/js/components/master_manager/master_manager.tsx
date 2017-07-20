@@ -20,22 +20,27 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, {}
           <p>Move along, nothing to see here yet!</p>
         </div>
         <div className="sidebar">
-          <div className="content">
-            <button style={{width: "100%"}}
-                    className="button is-info"
-                    onClick={this.addMaster.bind(this)}>
-              Add new master layout
-            </button>
+          <div style={{display: "flex", flexDirection: "column", height: "50%"}}>
+            <div style={{padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
+              <button style={{width: "100%"}}
+                      className="button is-info"
+                      onClick={this.addMaster.bind(this)}>
+                Add new master layout
+              </button>
+            </div>
 
-            <div style={{marginTop: 30, color: "#E2E2E2"}}>
+            <div style={{color: "#E2E2E2", flexGrow: 1, overflowY: "scroll"}}>
               {this.props.masters.map((master, i) => {
                 return (
-                  <div style={{width: "100%", marginTop: 10, paddingBottom: 10, borderBottom: "1px solid #555555", cursor: "pointer"}}>
+                  <div key={`master.${i}`} style={{width: "100%", marginTop: 10, padding: "0 10px 10px 10px", borderBottom: "1px solid #333333", cursor: "pointer"}}>
                     {i + 1}. {master.name}
                   </div>
                 );
               })}
             </div>
+          </div>
+          <div style={{height: "50%", borderTop: "1px solid #161616", padding: 10}}>
+            DMApp Components
           </div>
         </div>
       </div>
