@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import re
 import threading
 import os
+import requests
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -632,7 +633,7 @@ class DocumentServe:
         rootElt = self.tree.getroot()
         gen = rootElt.get(NS_AUTH("generation"), 0)
         gen += 1
-        rootElt.set(NS_AUTH("generation", gen))
+        rootElt.set(NS_AUTH("generation"), gen)
         return gen
         
     @synchronized
