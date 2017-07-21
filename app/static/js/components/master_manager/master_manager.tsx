@@ -21,25 +21,24 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, {}
           <p>Move along, nothing to see here yet!</p>
         </div>
         <div className="sidebar">
-          <div style={{display: "flex", flexDirection: "column", height: "50%"}}>
-            <div style={{padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
-              <button style={{width: "100%"}}
-                      className="button is-info"
-                      onClick={this.addMaster.bind(this)}>
-                Add new master layout
-              </button>
-            </div>
-
-            <div style={{color: "#E2E2E2", flexGrow: 1, overflowY: "scroll"}}>
-              {this.props.masters.map((master, i) => {
-                return (
-                  <div key={`master.${i}`} style={{width: "100%", marginTop: 10, padding: "0 10px 10px 10px", borderBottom: "1px solid #333333", cursor: "pointer"}}>
-                    {i + 1}. {master.name}
-                  </div>
-                );
-              })}
-            </div>
+          <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
+            <button style={{width: "100%"}}
+                    className="button is-info"
+                    onClick={this.addMaster.bind(this)}>
+              Add new master layout
+            </button>
           </div>
+
+          <div style={{overflowY: "scroll", color: "#E2E2E2", height: "calc(50% - 65px)"}}>
+            {this.props.masters.map((master, i) => {
+              return (
+                <div key={`master.${i}`} style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
+                  {i + 1}. {master.name}
+                </div>
+              );
+            })}
+          </div>
+
           <DMAppcContainer />
         </div>
       </div>

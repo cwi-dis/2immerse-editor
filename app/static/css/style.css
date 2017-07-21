@@ -5,12 +5,13 @@ html, body {
 
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .wrapper {
   display:flex;
   flex-direction:column;
-  min-height:100vh;
+  height:100vh;
 }
 
 .columnlayout {
@@ -25,6 +26,8 @@ html, body {
 
 .content {
   padding: 10px 20px 0 20px;
+  overflow-y: scroll;
+  height: calc(100vh - 58px);
 }
 
 .menubar {
