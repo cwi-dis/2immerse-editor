@@ -61,13 +61,11 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     let formData: FormData | undefined;
 
     if (this.fileInput && this.fileInput.files) {
-      console.log("file upload");
       const document = this.fileInput.files.item(0);
 
       formData = new FormData();
       formData.append("document", document, document.name);
     } else if (this.urlInput && this.urlInput.value) {
-      console.log("url request");
       submitUrl += `?url=${this.urlInput.value}`;
     }
 
@@ -81,33 +79,46 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
   public render() {
     const { selectedMethod } = this.state;
+    const boxStyle: React.CSSProperties = {
+      width: "30vw",
+      margin: "15% auto 0 auto",
+      backgroundColor: "#EFEFEF",
+      padding: 25,
+      borderRadius: 15,
+      boxShadow: "0 0 25px #555555"
+    };
 
     return (
-      <div style={{color: "#FFFFFF"}}>
-        <form onSubmit={this.submitForm.bind(this)}>
-          <div className="select">
-            <select value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
-              <option value="upload">File upload</option>
-              <option value="url">URL</option>
-            </select>
+      <div style={boxStyle}>
+        <form className="column" onSubmit={this.submitForm.bind(this)}>
+          <div className="field">
+            <label className="label">Upload method</label>
+            <div className="control">
+              <div className="select is-fullwidth">
+                <select value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
+                  <option value="upload">File upload&emsp;&emsp;</option>
+                  <option value="url">URL</option>
+                </select>
+              </div>
+            </div>
           </div>
           { (selectedMethod === "url") ?
             <div className="field">
               <label className="label">Document URL</label>
               <div className="control">
-                <input className="input" ref={(e) => this.urlInput = e} type="text" placeholder="URL" />
+                <input className="input" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
               </div>
             </div> :
             <div className="field">
               <label className="label">File</label>
               <div className="control">
-                <input className="input" ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+                <input className="input" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
               </div>
             </div>
           }
-          <div className="field">
+          <div className="field" style={{marginTop: 25}}>
             <div className="control">
-              <input type="submit" className="button" />
+              <input type="submit" value="Continue" className="button is-info" />
             </div>
           </div>
         </form>
