@@ -2,8 +2,9 @@ const webpack = require("webpack");
 
 module.exports = {
   entry: {
-    bundle: "./js/editor/components/main.tsx",
-    landing_page: "./js/landing_page/index.ts"
+    editor: "./js/editor/components/main.tsx",
+    landing_page: "./js/landing_page/index.ts",
+    trigger: "./js/trigger/main.tsx"
   },
   output: {
     path: __dirname + "/dist",
