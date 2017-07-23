@@ -1,4 +1,4 @@
-from flask import jsonify, Response, request
+from flask import abort, jsonify, Response, request
 import uuid
 import document
 
@@ -20,13 +20,15 @@ class API:
             documentId = uuid.uuid4()
             doc = document.Document()
 
-            if request.files and request.files["document"]:
+            if 'url' in request.args:
+                doc.load(request.args['url'])
+            elif request.files and request.files["document"]:
                 docstream = request.files["document"].stream
                 doc.loadXml(docstream.read())
             elif request.data:
                 doc.loadXml(request.data)
-            elif 'url' in request.args:
-                doc.load(request.args['url'])
+            else:
+                abort(400)
 
             self.documents[documentId] = doc
 
