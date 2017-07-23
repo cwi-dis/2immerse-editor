@@ -1,10 +1,35 @@
 import * as React from "react";
+import DocumentChooser from "./document_chooser";
 
-class App extends React.Component<{}, {}> {
+interface AppState {
+  documentId: string | null;
+}
+
+class App extends React.Component<{}, AppState> {
+  constructor() {
+    super();
+
+    this.state = {
+      documentId: null
+    };
+  }
+
+  private assignDocumentId(documentId: string) {
+    this.setState({
+      documentId
+    });
+  }
+
   public render() {
-    return (
-      <p>Hello World</p>
-    );
+    if (this.state.documentId) {
+      return (
+        <p>Hello World</p>
+      );
+    } else {
+      return (
+        <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />
+      );
+    }
   }
 }
 
