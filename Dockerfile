@@ -12,11 +12,17 @@ RUN apt-get install -y yarn
 
 RUN npm install --global webpack
 
-RUN mkdir /code
-WORKDIR /code
+RUN mkdir -p /code/app/static/
 
-ADD . /code/
+ADD requirements.txt /code/
+ADD app/static/package.json /code/app/static/
+ADD app/static/yarn.lock /code/app/static/
+
+WORKDIR /code
 
 RUN pip install -r requirements.txt
 RUN cd app/static; yarn install
+
+ADD . /code/
+
 RUN cd app/static; webpack
