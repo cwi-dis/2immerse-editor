@@ -71,8 +71,9 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       submitUrl += `?url=${this.urlInput.value}`;
     }
 
-    submitAjaxForm(submitUrl, formData).then((documentId) => {
-      console.log("Document ID:", documentId);
+    submitAjaxForm(submitUrl, formData).then((data) => {
+      const { documentId } = JSON.parse(data);
+      this.props.assignDocumentId(documentId);
     }).catch((err) => {
       console.error("Submission error:", err);
     });

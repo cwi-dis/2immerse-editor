@@ -23,7 +23,7 @@ class App extends React.Component<{}, AppState> {
   public render() {
     if (this.state.documentId) {
       return (
-        <p>Hello World</p>
+        <p>Hello World: {this.state.documentId}</p>
       );
     } else {
       return (
