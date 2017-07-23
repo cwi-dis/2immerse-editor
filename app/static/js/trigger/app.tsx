@@ -1,5 +1,7 @@
 import * as React from "react";
+
 import DocumentChooser from "./document_chooser";
+import TriggerClient from "./trigger_client";
 
 interface AppState {
   documentId: string | null;
@@ -23,7 +25,7 @@ class App extends React.Component<{}, AppState> {
   public render() {
     if (this.state.documentId) {
       return (
-        <p>Hello World: {this.state.documentId}</p>
+        <TriggerClient documentId={this.state.documentId} />
       );
     } else {
       return (
