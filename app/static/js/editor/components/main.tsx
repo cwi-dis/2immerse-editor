@@ -11,7 +11,7 @@ import MasterManager from "./master_manager/master_manager";
 import ProgramAuthor from "./program_author/program_author";
 
 import "bulma/css/bulma.css";
-import "../../css/style.css";
+import "../../../css/style.css";
 
 window.onload = () => {
   render(

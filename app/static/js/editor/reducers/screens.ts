@@ -1,9 +1,8 @@
 import { List } from "immutable";
 import * as shortid from "shortid";
 
-import { Coords } from "../util";
 import * as actions from "../actions/screens";
-import { ActionHandler, findById, getRandomInt } from "../util";
+import { ActionHandler, Coords, findById, getRandomInt } from "../util";
 
 export type ScreenState = List<Screen>;
 

@@ -3,10 +3,9 @@ import { List } from "immutable";
 import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords, getRandomInt } from "../../util";
+import { Coords, countLeafNodes, getRandomInt, getTreeHeight } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
-import { countLeafNodes, getTreeHeight } from "../../util";
 
 import { ChapterActions } from "../../actions/chapters";
 
