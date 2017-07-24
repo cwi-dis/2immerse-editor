@@ -60,6 +60,30 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
     });
   }
 
+  private renderInputField(params: EventParams): JSX.Element | null {
+    switch (params.type) {
+    case "duration":
+    case "time":
+      return <input className="input is-info"
+                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    type="number"
+                    defaultValue="0"
+                    min="0" />;
+    case "string":
+      return <input className="input is-info"
+                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    type="text" />;
+    case "url":
+      return <input className="input is-info"
+                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    type="url" />;
+    case "const":
+      return <b>{params.value}</b>;
+    default:
+      return null;
+    }
+  }
+
   public render() {
     const { event } = this.props;
 
@@ -76,11 +100,7 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
                     {capitalize(params.name)}
                   </td>
                   <td style={{width: "50%"}}>
-                    <input className="input is-info"
-                           ref={(e) => this.paramElements.push([params.parameter, e])}
-                           type="number"
-                           defaultValue="0"
-                           min="0" />
+                    {this.renderInputField(params)}
                   </td>
                 </tr>
               );
