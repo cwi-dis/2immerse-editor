@@ -3,20 +3,6 @@ import * as React from "react";
 import DocumentChooser from "./document_chooser";
 import TriggerClient from "./trigger_client";
 
-function parseQueryString(): Map<string, string> {
-  let dict = new Map<string, string>();
-  const [_, query] = window.location.href.split("?");
-
-  if (query) {
-    query.split("&").forEach((pair) => {
-      const [key, val] = pair.split("=");
-      dict.set(key, val);
-    });
-  }
-
-  return dict;
-}
-
 interface AppState {
   documentId: string | null;
 }
@@ -26,7 +12,7 @@ class App extends React.Component<{}, AppState> {
     super();
 
     this.state = {
-      documentId: (parseQueryString().has("clear")) ? null : localStorage.getItem("documentId")
+      documentId: localStorage.getItem("documentId")
     };
   }
 
@@ -38,11 +24,19 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
+  private clearSession() {
+    localStorage.removeItem("documentId");
+
+    this.setState({
+      documentId: null
+    });
+  }
+
   public render() {
     const { documentId } = this.state;
 
     if (documentId) {
-      return <TriggerClient documentId={documentId} />;
+      return <TriggerClient documentId={documentId} clearSession={this.clearSession.bind(this)} />;
     } else {
       return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />;
     }

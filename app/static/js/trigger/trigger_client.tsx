@@ -6,6 +6,7 @@ import EventContainer from "./event_container";
 
 interface TriggerClientProps {
   documentId: string;
+  clearSession: () => void;
 }
 
 export interface EventParams {
@@ -115,7 +116,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             <a href={downloadUrl} download="document.xml" style={{marginRight: 15}} className="button is-info">
               Save Document
             </a>
-            <button style={{marginRight: 15}} className="button is-warning">Clear Session</button>
+            <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
+              Clear Session
+            </button>
           </div>
         </div>
 

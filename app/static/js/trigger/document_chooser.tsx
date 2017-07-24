@@ -85,7 +85,6 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       backgroundColor: "#EFEFEF",
       padding: 25,
       borderRadius: 15,
-      boxShadow: "0 0 25px #555555"
     };
 
     return (
