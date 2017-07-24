@@ -5,17 +5,23 @@ interface TriggerClientProps {
   documentId: string;
 }
 
-interface Trigger {
+export interface EventParams {
+  name: string;
+  parameter: string;
+  type: string;
+}
+
+export interface Event {
   trigger: boolean;
   modify: boolean;
   id: string;
-  parameters: Array<any>;
+  parameters: Array<EventParams>;
   name: string;
 }
 
 interface TriggerClientState {
-  abstractTriggers: Array<Trigger>;
-  instantiatedTriggers: Array<any>;
+  abstractEvents: Array<Event>;
+  instantiatedEvents: Array<any>;
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
@@ -23,8 +29,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     super(props);
 
     this.state = {
-      abstractTriggers: [],
-      instantiatedTriggers: []
+      abstractEvents: [],
+      instantiatedEvents: []
     };
   }
 
@@ -33,7 +39,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
     makeRequest("GET", url).then((data) => {
       this.setState({
-        abstractTriggers: JSON.parse(data)
+        abstractEvents: JSON.parse(data)
       });
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
@@ -43,9 +49,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   public render() {
     return (
       <div style={{color: "#FFFFFF"}}>
-        {this.state.abstractTriggers.map((trigger: Trigger, i) => {
+        {this.state.abstractEvents.map((event: Event, i) => {
           return (
-            <p>{trigger.id} => {trigger.name}</p>
+            <p>{event.id} => {event.name}</p>
           );
         })}
       </div>
