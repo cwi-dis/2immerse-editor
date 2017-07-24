@@ -30,6 +30,7 @@ interface TriggerClientState {
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
   pageIsLoading: boolean;
+  fetchError?: {status: number, statusText: string};
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
@@ -75,7 +76,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
       this.setState({
-        pageIsLoading: false
+        pageIsLoading: false,
+        fetchError: err
       });
     });
   }
@@ -113,6 +115,28 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       return (
         <div className="content">
           <div className="loader" style={{marginTop: "15%"}} />
+        </div>
+      );
+    } else if (this.state.fetchError) {
+      const { status, statusText } = this.state.fetchError;
+
+      return (
+        <div className="content" style={{width: "50vw", margin: "15% auto"}}>
+          <article className="message is-danger">
+            <div className="message-header">
+              <p><strong>ERROR</strong>!</p>
+            </div>
+            <div className="message-body" style={{backgroundColor: "#555555", color: "#FFFFFF"}}>
+              An error occurred while trying to fetch events for the document with
+              the ID <i>{this.props.documentId}</i>:
+
+              <div style={{margin: 25, fontWeight: "bold", textAlign: "center"}}>
+                {statusText} (HTTP error {status})
+              </div>
+
+              Try to clear the session and start over.
+            </div>
+          </article>
         </div>
       );
     } else {
