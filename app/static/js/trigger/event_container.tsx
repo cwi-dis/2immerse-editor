@@ -15,16 +15,24 @@ interface EventContainerProps {
 }
 
 interface EventContainerState {
-  params: List<[string, string | undefined]>;
+  params: List<EventParams>;
 }
+
+const paramDefaults: {[key: string]: string} = {
+  duration: "0",
+  time: "0",
+  string: "",
+  url: ""
+};
 
 class EventContainer extends React.Component<EventContainerProps, EventContainerState> {
   constructor(props: EventContainerProps) {
     super(props);
 
     this.state = {
-      params: List(props.event.parameters.map<[string, string | undefined]>((param) => {
-        return [param.parameter, param.value];
+      params: List(props.event.parameters.map((param) => {
+        param.value = param.value ? param.value : paramDefaults[param.type];
+        return param;
       }))
     };
   }
@@ -42,10 +50,10 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   }
 
   private collectParams(): List<{parameter: string, value: string}> {
-    return this.state.params.map(([param, value]) => {
+    return this.state.params.map((param) => {
       return {
-        parameter: param,
-        value: value!
+        parameter: param.parameter,
+        value: param.value!
       };
     });
   }
@@ -71,7 +79,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
   private updateParamField(i: number, ev: React.ChangeEvent<HTMLInputElement>) {
     let currentValue = this.state.params.get(i)!;
-    currentValue[1] = ev.target.value;
+    currentValue.value = ev.target.value;
 
     this.setState({
       params: this.state.params.set(i, currentValue)
@@ -85,21 +93,21 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       return <input className="input is-info"
                     onChange={this.updateParamField.bind(this, i)}
                     type="number"
-                    value={this.state.params.get(i)![1] || "0"}
+                    value={this.state.params.get(i)!.value}
                     min="0" />;
     case "string":
       return <input className="input is-info"
                     onChange={this.updateParamField.bind(this, i)}
-                    value={this.state.params.get(i)![1] || ""}
+                    value={this.state.params.get(i)!.value}
                     type="text" />;
     case "url":
       return <input className="input is-info"
                     onChange={this.updateParamField.bind(this, i)}
-                    value={this.state.params.get(i)![1] || ""}
+                    value={this.state.params.get(i)!.value}
                     type="url" />;
     case "const":
       return <input className="input"
-                    defaultValue={this.state.params.get(i)![1]}
+                    defaultValue={this.state.params.get(i)!.value}
                     type="string"
                     disabled />;
     default:
@@ -116,14 +124,14 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
         <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
           <tbody>
-            {event.parameters.map((params, i) => {
+            {this.state.params.map((param, i) => {
               return (
                 <tr key={i}>
                   <td style={{width: "50%", verticalAlign: "middle"}}>
-                    {capitalize(params.name)}
+                    {capitalize(param.name)}
                   </td>
                   <td style={{width: "50%"}}>
-                    {this.renderInputField(params, i)}
+                    {this.renderInputField(param, i)}
                   </td>
                 </tr>
               );

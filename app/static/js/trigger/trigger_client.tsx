@@ -53,7 +53,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     if (this.state.activeTab === "abstract") {
       return this.state.abstractEvents.map((event: Event, i) => {
         return (
-          <EventContainer key={i}
+          <EventContainer key={`abstract.${i}`}
                           documentId={this.props.documentId}
                           event={event}
                           onTriggered={this.fetchEvents.bind(this, true)} />
@@ -62,7 +62,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     } else {
       return this.state.instantiatedEvents.map((event: Event, i) => {
         return (
-          <EventContainer key={i}
+          <EventContainer key={`instantiated.${i}`}
                           documentId={this.props.documentId}
                           event={event} />
         );
