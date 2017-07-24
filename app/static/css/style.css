@@ -68,3 +68,12 @@ html, body {
   border-bottom-color: #E2E2E2;
   color: #E2E2E2;
 }
+
+.table {
+  background-color: transparent;
+  color: #E2E2E2;
+}
+
+.content table tr:hover {
+  background-color: transparent;
+}
