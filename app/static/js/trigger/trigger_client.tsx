@@ -34,6 +34,7 @@ interface TriggerClientState {
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private tabLabel: HTMLSpanElement;
+  private handlerAttached: boolean = false;
 
   constructor(props: TriggerClientProps) {
     super(props);
@@ -82,11 +83,29 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   public componentDidMount() {
     this.fetchEvents();
 
-    this.tabLabel.addEventListener("animationend", () => {
-      this.setState({
-        flashTab: false
+    if (this.tabLabel) {
+      console.log("attaching event handler");
+
+      this.handlerAttached = true;
+      this.tabLabel.addEventListener("animationend", () => {
+        this.setState({
+          flashTab: false
+        });
       });
-    });
+    }
+  }
+
+  public componentDidUpdate() {
+    if (this.tabLabel && !this.handlerAttached) {
+      console.log("attaching event handler");
+
+      this.handlerAttached = true;
+      this.tabLabel.addEventListener("animationend", () => {
+        this.setState({
+          flashTab: false
+        });
+      });
+    }
   }
 
   private renderMainContent(): JSX.Element {
