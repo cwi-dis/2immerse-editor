@@ -101,6 +101,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   public render() {
     const { activeTab, abstractEvents, instantiatedEvents } = this.state;
+    const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
     return (
       <div>
@@ -111,7 +112,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
-            <button style={{marginRight: 15}} className="button is-info">Save</button>
+            <a href={downloadUrl} download="document.xml" style={{marginRight: 15}} className="button is-info">
+              Save Document
+            </a>
             <button style={{marginRight: 15}} className="button is-warning">Clear Session</button>
           </div>
         </div>
