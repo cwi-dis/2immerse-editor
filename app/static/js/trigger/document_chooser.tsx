@@ -33,13 +33,14 @@ interface DocumentChooserProps {
 }
 
 interface DocumentChooserState {
-  selectedMethod: "upload" | "url";
+  selectedMethod: "upload" | "url" | "id";
   isLoading: boolean;
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
   private fileInput: HTMLInputElement;
   private urlInput: HTMLInputElement;
+  private idInput: HTMLInputElement;
 
   constructor(props: DocumentChooserProps) {
     super(props);
@@ -70,6 +71,9 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       formData.append("document", document, document.name);
     } else if (this.urlInput && this.urlInput.value) {
       submitUrl += `?url=${this.urlInput.value}`;
+    } else if (this.idInput && this.idInput.value) {
+      this.props.assignDocumentId(this.idInput.value);
+      return;
     }
 
     this.setState({
@@ -111,6 +115,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
                 <select className="is-info" value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
                   <option value="upload">File upload&emsp;&emsp;</option>
                   <option value="url">URL</option>
+                  <option value="id">Document ID</option>
                 </select>
               </div>
             </div>
@@ -121,11 +126,19 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
               <div className="control">
                 <input className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
               </div>
-            </div> :
+            </div>
+           : (selectedMethod === "upload") ?
             <div className="field">
               <label className="label">File</label>
               <div className="control">
                 <input className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+              </div>
+            </div>
+           :
+            <div className="field">
+              <label className="label">Document ID</label>
+              <div className="control">
+                <input className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
               </div>
             </div>
           }
