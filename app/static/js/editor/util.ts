@@ -14,7 +14,7 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
 
-export function makeRequest(method: "GET" | "POST", url: string): Promise<string> {
+export function makeRequest(method: "GET" | "POST" | "PUT", url: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
