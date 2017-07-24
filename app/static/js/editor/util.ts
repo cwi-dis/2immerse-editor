@@ -14,8 +14,11 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
 
+type PromiseResolve = (data: string) => void;
+type PromiseReject = (err: {status: number, statusText: string}) => void;
+
 export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: any, contentType?: string): Promise<string> {
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<string>((resolve: PromiseResolve, reject: PromiseReject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
 
