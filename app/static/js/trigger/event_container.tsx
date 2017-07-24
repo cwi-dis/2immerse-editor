@@ -78,7 +78,11 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
                     ref={(e) => this.paramElements.push([params.parameter, e])}
                     type="url" />;
     case "const":
-      return <b>{params.value}</b>;
+      return <input className="input"
+                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    value={params.value}
+                    type="string"
+                    disabled />;
     default:
       return null;
     }

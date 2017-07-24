@@ -613,24 +613,32 @@ class DocumentEvents:
     @edit
     def modify(self, id, parameters):
         element = self.document.idMap.get(id)
-        if element == None:
+
+        if element is None:
             abort(404, 'No such xml:id: %s' % id)
+
         allElements = set()
+
         for par in parameters:
             path, attr, value = self._getParameter(par)
             e = element.find(path, NAMESPACES)
-            if e == None:
+
+            if e is None:
                 abort(400, 'No element matches XPath %s' % path)
+
             e.set(attr, value)
             allElements.add(e)
+
         for e in allElements:
             self.document._elementChanged(e)
+
 
 class DocumentAuthoring:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+
 
 class DocumentServe:
     def __init__(self, document):
