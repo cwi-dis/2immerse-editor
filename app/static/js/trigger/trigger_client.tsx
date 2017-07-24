@@ -53,27 +53,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     });
   }
 
-  private renderActiveTab(): Array<JSX.Element> {
-    if (this.state.activeTab === "abstract") {
-      return this.state.abstractEvents.map((event: Event, i) => {
-        return (
-          <EventContainer key={`abstract.${i}`}
-                          documentId={this.props.documentId}
-                          event={event}
-                          onTriggered={this.fetchEvents.bind(this, true)} />
-        );
-      });
-    } else {
-      return this.state.instantiatedEvents.map((event: Event, i) => {
-        return (
-          <EventContainer key={`instantiated.${i}`}
-                          documentId={this.props.documentId}
-                          event={event} />
-        );
-      });
-    }
-  }
-
   private fetchEvents(flash = false) {
     const url = `/api/v1/document/${this.props.documentId}/events`;
     console.log("updating events");
@@ -110,8 +89,62 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     });
   }
 
+  private renderMainContent(): JSX.Element {
+    if (this.state.pageIsLoading) {
+      return (
+        <div className="content">
+          <div className="loader" style={{marginTop: "15%"}} />
+        </div>
+      );
+    } else {
+      const { activeTab, abstractEvents, instantiatedEvents } = this.state;
+
+      return (
+        <div>
+          <div className="tabs is-centered" style={{marginTop: 15}}>
+            <ul>
+              <li className={classNames({"is-active": activeTab === "abstract"})}>
+                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
+              </li>
+              <li className={classNames({"is-active": activeTab === "instantiated"})}>
+                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
+                  <span ref={(e) => this.tabLabel = e} className={classNames({"pulse-animation": this.state.flashTab})}>
+                    Triggered Events ({instantiatedEvents.length})
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="content" style={{height: "calc(100vh - 160px)"}}>
+            {this.renderActiveTab()}
+          </div>
+        </div>
+      );
+    }
+  }
+
+  private renderActiveTab(): Array<JSX.Element> {
+    if (this.state.activeTab === "abstract") {
+      return this.state.abstractEvents.map((event: Event, i) => {
+        return (
+          <EventContainer key={`abstract.${i}`}
+                          documentId={this.props.documentId}
+                          event={event}
+                          onTriggered={this.fetchEvents.bind(this, true)} />
+        );
+      });
+    } else {
+      return this.state.instantiatedEvents.map((event: Event, i) => {
+        return (
+          <EventContainer key={`instantiated.${i}`}
+                          documentId={this.props.documentId}
+                          event={event} />
+        );
+      });
+    }
+  }
+
   public render() {
-    const { activeTab, abstractEvents, instantiatedEvents } = this.state;
     const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
     return (
@@ -133,23 +166,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         </div>
 
         <div className="container" style={{width: "60vw", height: "calc(100vh - 80px)"}}>
-          <div className="tabs is-centered" style={{marginTop: 15}}>
-            <ul>
-              <li className={classNames({"is-active": activeTab === "abstract"})}>
-                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
-              </li>
-              <li className={classNames({"is-active": activeTab === "instantiated"})}>
-                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
-                  <span ref={(e) => this.tabLabel = e} className={classNames({"pulse-animation": this.state.flashTab})}>
-                    Triggered Events ({instantiatedEvents.length})
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="content" style={{height: "calc(100vh - 160px)"}}>
-            {this.renderActiveTab()}
-          </div>
+          {this.renderMainContent()}
         </div>
       </div>
     );
