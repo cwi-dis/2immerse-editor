@@ -93,8 +93,8 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
           <div className="field">
             <label className="label">Upload method</label>
             <div className="control">
-              <div className="select is-fullwidth">
-                <select value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
+              <div className="select is-fullwidth is-info">
+                <select className="is-info" value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
                   <option value="upload">File upload&emsp;&emsp;</option>
                   <option value="url">URL</option>
                 </select>
@@ -105,13 +105,13 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
             <div className="field">
               <label className="label">Document URL</label>
               <div className="control">
-                <input className="input" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
+                <input className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
               </div>
             </div> :
             <div className="field">
               <label className="label">File</label>
               <div className="control">
-                <input className="input" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+                <input className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
               </div>
             </div>
           }
