@@ -1,6 +1,7 @@
 import * as React from "react";
-import { makeRequest } from "../editor/util";
+import * as classNames from "classnames";
 
+import { makeRequest } from "../editor/util";
 import EventContainer from "./event_container";
 
 interface TriggerClientProps {
@@ -22,6 +23,7 @@ export interface Event {
 }
 
 interface TriggerClientState {
+  activeTab: "abstract" | "instantiated";
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
 }
@@ -31,9 +33,32 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     super(props);
 
     this.state = {
+      activeTab: "abstract",
       abstractEvents: [],
       instantiatedEvents: []
     };
+  }
+
+  private changeActiveTab(nextTab: "abstract" | "instantiated") {
+    this.setState({
+      activeTab: nextTab
+    });
+  }
+
+  private renderActiveTab(): Array<JSX.Element> {
+    if (this.state.activeTab === "abstract") {
+      return this.state.abstractEvents.map((event: Event, i) => {
+        return (
+          <EventContainer key={i} event={event} />
+        );
+      });
+    } else {
+      return this.state.instantiatedEvents.map((event: Event, i) => {
+        return (
+          <EventContainer key={i} event={event} />
+        );
+      });
+    }
   }
 
   public componentDidMount() {
@@ -49,14 +74,22 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public render() {
+    const { activeTab, abstractEvents, instantiatedEvents } = this.state;
+
     return (
       <div className="container" style={{width: "60vw"}}>
+        <div className="tabs is-centered" style={{marginTop: 15}}>
+          <ul>
+            <li className={classNames({"is-active": activeTab === "abstract"})}>
+              <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
+            </li>
+            <li className={classNames({"is-active": activeTab === "instantiated"})}>
+              <a onClick={this.changeActiveTab.bind(this, "instantiated")}>Triggered Events ({instantiatedEvents.length})</a>
+            </li>
+          </ul>
+        </div>
         <div className="content">
-          {this.state.abstractEvents.map((event: Event, i) => {
-            return (
-              <EventContainer key={i} event={event} />
-            );
-          })}
+          {this.renderActiveTab()}
         </div>
       </div>
     );

@@ -10,7 +10,7 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
     const { event } = this.props;
 
     return (
-      <div style={{margin: "0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
+      <div style={{margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
         <h3>{event.name}</h3>
         {event.parameters.map((event, i) => {
           return (
