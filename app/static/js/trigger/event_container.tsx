@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 import { List } from "immutable";
 
 import { makeRequest } from "../editor/util";
@@ -15,6 +16,7 @@ interface EventContainerProps {
 }
 
 interface EventContainerState {
+  isLoading: boolean;
   params: List<EventParams>;
 }
 
@@ -30,6 +32,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     super(props);
 
     this.state = {
+      isLoading: false,
       params: List(props.event.parameters.map((param) => {
         param.value = param.value ? param.value : paramDefaults[param.type];
         return param;
@@ -68,12 +71,24 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const data = JSON.stringify(this.collectParams());
 
     console.log("Launching event at url", url, "with data", data);
+    this.setState({
+      isLoading: true
+    });
 
     makeRequest(requestMethod, url, data, "application/json").then((data) => {
       console.log("success");
+
+      this.setState({
+        isLoading: false
+      });
+
       this.props.onTriggered && this.props.onTriggered();
     }).catch((err) => {
       console.log("error:", err);
+
+      this.setState({
+        isLoading: false
+      });
     });
   }
 
@@ -149,7 +164,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
           <div className="level-right">
             <div className="level-item">
-              <button className="button is-info" onClick={this.launchEvent.bind(this)}>
+              <button className={classNames("button", "is-info", {"is-loading": this.state.isLoading})} onClick={this.launchEvent.bind(this)}>
                 {event.modify ? "Modify" : "Trigger"}
               </button>
             </div>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 
 function submitAjaxForm(submitUrl: string, formData?: FormData): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -33,6 +34,7 @@ interface DocumentChooserProps {
 
 interface DocumentChooserState {
   selectedMethod: "upload" | "url";
+  isLoading: boolean;
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
@@ -43,6 +45,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     super(props);
 
     this.state = {
+      isLoading: false,
       selectedMethod: "upload"
     };
   }
@@ -69,11 +72,22 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       submitUrl += `?url=${this.urlInput.value}`;
     }
 
+    this.setState({
+      isLoading: true
+    });
+
     submitAjaxForm(submitUrl, formData).then((data) => {
+      this.setState({
+        isLoading: false
+      });
+
       const { documentId } = JSON.parse(data);
       this.props.assignDocumentId(documentId);
     }).catch((err) => {
       console.error("Submission error:", err);
+      this.setState({
+        isLoading: false
+      });
     });
   }
 
@@ -101,7 +115,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
               </div>
             </div>
           </div>
-          { (selectedMethod === "url") ?
+          {(selectedMethod === "url") ?
             <div className="field">
               <label className="label">Document URL</label>
               <div className="control">
@@ -117,7 +131,9 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
           }
           <div className="field" style={{marginTop: 25}}>
             <div className="control">
-              <input type="submit" value="Continue" className="button is-info" />
+              <button className={classNames("button", "is-info", {"is-loading": this.state.isLoading})}>
+                Continue
+              </button>
             </div>
           </div>
         </form>
