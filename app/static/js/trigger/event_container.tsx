@@ -1,4 +1,6 @@
 import * as React from "react";
+
+import { makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 
 function capitalize(str: string) {
@@ -28,6 +30,30 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
     }
 
     return `${parameters.length} parameters`;
+  }
+
+  private collectParams(): Array<{parameter: string, value: string}> {
+    return this.paramElements.map(([param, el]) => {
+      return {
+        parameter: param,
+        value: el.value
+      };
+    });
+  }
+
+  private launchEvent() {
+    const { event, documentId } = this.props;
+
+    const url = `/api/v1/document/${documentId}/events/${event.id}/trigger`;
+    const data = JSON.stringify(this.collectParams());
+
+    console.log("Launching event at url", url, "with data", data);
+
+    makeRequest("POST", url, data, "application/json").then((data) => {
+      console.log("success");
+    }).catch((err) => {
+      console.log("error:", err);
+    });
   }
 
   public render() {
@@ -65,9 +91,10 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
               {this.countParams()}
             </p>
           </div>
+
           <div className="level-right">
             <div className="level-item">
-              <button className="button is-info">Trigger</button>
+              <button className="button is-info" onClick={this.launchEvent.bind(this)}>Trigger</button>
             </div>
           </div>
         </div>
