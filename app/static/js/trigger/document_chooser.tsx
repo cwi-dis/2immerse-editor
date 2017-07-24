@@ -10,6 +10,7 @@ interface DocumentChooserProps {
 interface DocumentChooserState {
   selectedMethod: "upload" | "url" | "id";
   isLoading: boolean;
+  ajaxError?: {status: number, statusText: string};
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
@@ -63,9 +64,9 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       const { documentId } = JSON.parse(data);
       this.props.assignDocumentId(documentId);
     }).catch((err) => {
-      console.error("Submission error:", err);
       this.setState({
-        isLoading: false
+        isLoading: false,
+        ajaxError: err
       });
     });
   }
@@ -82,6 +83,16 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
     return (
       <div style={boxStyle}>
+        {(this.state.ajaxError) ?
+          <div className="notification is-danger">
+            <p>
+              Could not complete request:&emsp;
+              <i>{this.state.ajaxError.statusText} (HTTP Error {this.state.ajaxError.status})</i>
+            </p>
+          </div>
+         : ""
+        }
+
         <form className="column" onSubmit={this.submitForm.bind(this)}>
           <div className="field">
             <label className="label">Upload method</label>
