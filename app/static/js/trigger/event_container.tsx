@@ -1,4 +1,5 @@
 import * as React from "react";
+import { List } from "immutable";
 
 import { makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
@@ -13,12 +14,19 @@ interface EventContainerProps {
   onTriggered?: () => void;
 }
 
-class EventContainer extends React.Component<EventContainerProps, {}> {
-  private paramElements: Array<[string, HTMLInputElement]>;
+interface EventContainerState {
+  params: List<[string, string | undefined]>;
+}
 
+class EventContainer extends React.Component<EventContainerProps, EventContainerState> {
   constructor(props: EventContainerProps) {
     super(props);
-    this.paramElements = [];
+
+    this.state = {
+      params: List(props.event.parameters.map<[string, string | undefined]>((param) => {
+        return [param.parameter, param.value];
+      }))
+    };
   }
 
   private countParams(): string {
@@ -33,13 +41,11 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
     return `${parameters.length} parameters`;
   }
 
-  private collectParams(): Array<{parameter: string, value: string}> {
-    this.paramElements = this.paramElements.filter(([_, el]) => el !== null);
-
-    return this.paramElements.map(([param, el]) => {
+  private collectParams(): List<{parameter: string, value: string}> {
+    return this.state.params.map(([param, value]) => {
       return {
         parameter: param,
-        value: el.value
+        value: value!
       };
     });
   }
@@ -60,27 +66,37 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
     });
   }
 
-  private renderInputField(params: EventParams): JSX.Element | null {
+  private updateParamField(i: number, ev: React.ChangeEvent<HTMLInputElement>) {
+    let currentValue = this.state.params.get(i)!;
+    currentValue[1] = ev.target.value;
+
+    this.setState({
+      params: this.state.params.set(i, currentValue)
+    });
+  }
+
+  private renderInputField(params: EventParams, i: number): JSX.Element | null {
     switch (params.type) {
     case "duration":
     case "time":
       return <input className="input is-info"
-                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    onChange={this.updateParamField.bind(this, i)}
                     type="number"
-                    defaultValue="0"
+                    value={this.state.params.get(i)![1] || "0"}
                     min="0" />;
     case "string":
       return <input className="input is-info"
-                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    onChange={this.updateParamField.bind(this, i)}
+                    value={this.state.params.get(i)![1] || ""}
                     type="text" />;
     case "url":
       return <input className="input is-info"
-                    ref={(e) => this.paramElements.push([params.parameter, e])}
+                    onChange={this.updateParamField.bind(this, i)}
+                    value={this.state.params.get(i)![1] || ""}
                     type="url" />;
     case "const":
       return <input className="input"
-                    ref={(e) => this.paramElements.push([params.parameter, e])}
-                    value={params.value}
+                    defaultValue={this.state.params.get(i)![1]}
                     type="string"
                     disabled />;
     default:
@@ -104,7 +120,7 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
                     {capitalize(params.name)}
                   </td>
                   <td style={{width: "50%"}}>
-                    {this.renderInputField(params)}
+                    {this.renderInputField(params, i)}
                   </td>
                 </tr>
               );
