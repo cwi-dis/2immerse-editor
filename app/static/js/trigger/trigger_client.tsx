@@ -32,6 +32,8 @@ interface TriggerClientState {
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
+  private tabLabel: HTMLSpanElement;
+
   constructor(props: TriggerClientProps) {
     super(props);
 
@@ -83,13 +85,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       });
 
       if (flash) {
-        this.setState({flashTab: true});
-
-        setTimeout(() => {
-          this.setState({
-            flashTab: false
-          });
-        }, 200);
+        this.setState({
+          flashTab: true}
+        );
       }
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
@@ -98,6 +96,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   public componentDidMount() {
     this.fetchEvents();
+
+    this.tabLabel.addEventListener("animationend", () => {
+      this.setState({
+        flashTab: false
+      });
+    });
   }
 
   public render() {
@@ -128,8 +132,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               <li className={classNames({"is-active": activeTab === "abstract"})}>
                 <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
               </li>
-              <li className={classNames({"is-active": activeTab === "instantiated" || this.state.flashTab})}>
-                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>Triggered Events ({instantiatedEvents.length})</a>
+              <li className={classNames({"is-active": activeTab === "instantiated"})}>
+                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
+                  <span ref={(e) => this.tabLabel = e} className={classNames({"pulse-animation": this.state.flashTab})}>
+                    Triggered Events ({instantiatedEvents.length})
+                  </span>
+                </a>
               </li>
             </ul>
           </div>
