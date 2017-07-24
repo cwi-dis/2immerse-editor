@@ -14,7 +14,7 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
 
-export function makeRequest(method: "GET" | "POST" | "PUT", url: string): Promise<string> {
+export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: any, contentType?: string): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
@@ -37,7 +37,11 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string): Promis
       });
     };
 
-    xhr.send();
+    if (contentType) {
+      xhr.setRequestHeader("Content-Type", contentType);
+    }
+
+    xhr.send(data);
   });
 }
 
