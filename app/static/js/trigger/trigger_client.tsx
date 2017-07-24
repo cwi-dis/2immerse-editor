@@ -1,6 +1,8 @@
 import * as React from "react";
 import { makeRequest } from "../editor/util";
 
+import EventContainer from "./event_container";
+
 interface TriggerClientProps {
   documentId: string;
 }
@@ -48,12 +50,14 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   public render() {
     return (
-      <div style={{color: "#FFFFFF"}}>
-        {this.state.abstractEvents.map((event: Event, i) => {
-          return (
-            <p>{event.id} => {event.name}</p>
-          );
-        })}
+      <div className="container" style={{width: "60vw"}}>
+        <div className="content">
+          {this.state.abstractEvents.map((event: Event, i) => {
+            return (
+              <EventContainer key={i} event={event} />
+            );
+          })}
+        </div>
       </div>
     );
   }
