@@ -49,7 +49,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     if (this.state.activeTab === "abstract") {
       return this.state.abstractEvents.map((event: Event, i) => {
         return (
-          <EventContainer key={i} documentId={this.props.documentId} event={event} />
+          <EventContainer key={i}
+                          documentId={this.props.documentId}
+                          event={event}
+                          onTriggered={this.fetchEvents.bind(this)} />
         );
       });
     } else {
@@ -61,8 +64,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
-  public componentDidMount() {
+  private fetchEvents() {
     const url = `/api/v1/document/${this.props.documentId}/events`;
+    console.log("updating events");
 
     makeRequest("GET", url).then((data) => {
       const events: Array<Event> = JSON.parse(data);
@@ -74,6 +78,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
     });
+  }
+
+  public componentDidMount() {
+    this.fetchEvents();
   }
 
   public render() {
@@ -91,7 +99,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </li>
           </ul>
         </div>
-        <div className="content">
+        <div className="content" style={{paddingBottom: 70}}>
           {this.renderActiveTab()}
         </div>
       </div>
