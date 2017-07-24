@@ -25,6 +25,7 @@ export interface Event {
 
 interface TriggerClientState {
   activeTab: "abstract" | "instantiated";
+  flashTab: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
 }
@@ -35,6 +36,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
     this.state = {
       activeTab: "abstract",
+      flashTab: false,
       abstractEvents: [],
       instantiatedEvents: []
     };
@@ -53,7 +55,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <EventContainer key={i}
                           documentId={this.props.documentId}
                           event={event}
-                          onTriggered={this.fetchEvents.bind(this)} />
+                          onTriggered={this.fetchEvents.bind(this, true)} />
         );
       });
     } else {
@@ -67,7 +69,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
-  private fetchEvents() {
+  private fetchEvents(flash = false) {
     const url = `/api/v1/document/${this.props.documentId}/events`;
     console.log("updating events");
 
@@ -78,6 +80,16 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         abstractEvents: events.filter((ev) => ev.trigger),
         instantiatedEvents: events.filter((ev) => ev.modify)
       });
+
+      if (flash) {
+        this.setState({flashTab: true});
+
+        setTimeout(() => {
+          this.setState({
+            flashTab: false
+          });
+        }, 200);
+      }
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
     });
@@ -97,7 +109,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             <li className={classNames({"is-active": activeTab === "abstract"})}>
               <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
             </li>
-            <li className={classNames({"is-active": activeTab === "instantiated"})}>
+            <li className={classNames({"is-active": activeTab === "instantiated" || this.state.flashTab})}>
               <a onClick={this.changeActiveTab.bind(this, "instantiated")}>Triggered Events ({instantiatedEvents.length})</a>
             </li>
           </ul>
