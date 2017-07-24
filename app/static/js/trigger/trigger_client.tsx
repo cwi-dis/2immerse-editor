@@ -12,6 +12,7 @@ export interface EventParams {
   name: string;
   parameter: string;
   type: string;
+  value?: string;
 }
 
 export interface Event {
@@ -58,7 +59,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     } else {
       return this.state.instantiatedEvents.map((event: Event, i) => {
         return (
-          <EventContainer key={i} documentId={this.props.documentId} event={event} />
+          <EventContainer key={i}
+                          documentId={this.props.documentId}
+                          event={event} />
         );
       });
     }
