@@ -77,3 +77,17 @@ html, body {
 .content table tr:hover {
   background-color: transparent;
 }
+
+.pulse-animation {
+  animation: pulse 400ms 2;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    color: #4A4A4A;
+  }
+
+  50% {
+    color: #319AEE;
+  }
+}
