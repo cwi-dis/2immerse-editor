@@ -10,6 +10,7 @@ function capitalize(str: string) {
 interface EventContainerProps {
   documentId: string;
   event: Event;
+  onTriggered?: () => void;
 }
 
 class EventContainer extends React.Component<EventContainerProps, {}> {
@@ -51,6 +52,7 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
 
     makeRequest("POST", url, data, "application/json").then((data) => {
       console.log("success");
+      this.props.onTriggered && this.props.onTriggered();
     }).catch((err) => {
       console.log("error:", err);
     });
@@ -65,15 +67,15 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
 
         <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
           <tbody>
-            {event.parameters.map((event, i) => {
+            {event.parameters.map((params, i) => {
               return (
                 <tr key={i}>
                   <td style={{width: "50%", verticalAlign: "middle"}}>
-                    {capitalize(event.name)}
+                    {capitalize(params.name)}
                   </td>
                   <td style={{width: "50%"}}>
                     <input className="input is-info"
-                           ref={(e) => this.paramElements.push([event.parameter, e])}
+                           ref={(e) => this.paramElements.push([params.parameter, e])}
                            type="number"
                            defaultValue="0"
                            min="0" />
