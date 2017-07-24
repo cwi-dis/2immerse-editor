@@ -34,6 +34,8 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
   }
 
   private collectParams(): Array<{parameter: string, value: string}> {
+    this.paramElements = this.paramElements.filter(([_, el]) => el !== null);
+
     return this.paramElements.map(([param, el]) => {
       return {
         parameter: param,
