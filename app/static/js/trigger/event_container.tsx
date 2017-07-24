@@ -6,6 +6,20 @@ interface EventContainerProps {
 }
 
 class EventContainer extends React.Component<EventContainerProps, {}> {
+  private paramElements: Array<HTMLInputElement>;
+
+  private countParams(): string {
+    const { parameters } = this.props.event;
+
+    if (parameters.length === 0) {
+      return "No parameters";
+    } else if (parameters.length === 1) {
+      return "1 parameter";
+    }
+
+    return `${parameters.length} parameters`;
+  }
+
   public render() {
     const { event } = this.props;
 
@@ -20,7 +34,12 @@ class EventContainer extends React.Component<EventContainerProps, {}> {
           );
         })}
         <div className="level">
-          <div className="level-left"></div>
+          <div className="level-left">
+            <p className="level-item" style={{color: "#999999", fontStyle: "italic", fontSize: 14}}>
+              {(event.modify) ? "Modifiable. " : ""}
+              {this.countParams()}
+            </p>
+          </div>
           <div className="level-right">
             <div className="level-item">
               <button className="button is-info">Trigger</button>
