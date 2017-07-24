@@ -103,19 +103,33 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     const { activeTab, abstractEvents, instantiatedEvents } = this.state;
 
     return (
-      <div className="container" style={{width: "60vw"}}>
-        <div className="tabs is-centered" style={{marginTop: 15}}>
-          <ul>
-            <li className={classNames({"is-active": activeTab === "abstract"})}>
-              <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
-            </li>
-            <li className={classNames({"is-active": activeTab === "instantiated" || this.state.flashTab})}>
-              <a onClick={this.changeActiveTab.bind(this, "instantiated")}>Triggered Events ({instantiatedEvents.length})</a>
-            </li>
-          </ul>
+      <div>
+        <div className="level" style={{width: "100vw", height: 60, borderBottom: "2px solid #161616"}}>
+          <div className="level-left">
+            <p style={{marginLeft: 15}}>
+              <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
+            </p>
+          </div>
+          <div className="level-right">
+            <button style={{marginRight: 15}} className="button is-info">Save</button>
+            <button style={{marginRight: 15}} className="button is-warning">Clear Session</button>
+          </div>
         </div>
-        <div className="content" style={{paddingBottom: 70}}>
-          {this.renderActiveTab()}
+
+        <div className="container" style={{width: "60vw", height: "calc(100vh - 80px)"}}>
+          <div className="tabs is-centered" style={{marginTop: 15}}>
+            <ul>
+              <li className={classNames({"is-active": activeTab === "abstract"})}>
+                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
+              </li>
+              <li className={classNames({"is-active": activeTab === "instantiated" || this.state.flashTab})}>
+                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>Triggered Events ({instantiatedEvents.length})</a>
+              </li>
+            </ul>
+          </div>
+          <div className="content" style={{height: "calc(100vh - 160px)"}}>
+            {this.renderActiveTab()}
+          </div>
         </div>
       </div>
     );

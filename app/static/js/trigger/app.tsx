@@ -39,14 +39,12 @@ class App extends React.Component<{}, AppState> {
   }
 
   public render() {
-    if (this.state.documentId) {
-      return (
-        <TriggerClient documentId={this.state.documentId} />
-      );
+    const { documentId } = this.state;
+
+    if (documentId) {
+      return <TriggerClient documentId={documentId} />;
     } else {
-      return (
-        <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />
-      );
+      return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />;
     }
   }
 }
