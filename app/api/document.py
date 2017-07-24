@@ -561,23 +561,28 @@ class DocumentEvents:
             parValue = parameter['value']
         except KeyError:
             abort(400, 'Missing parameter and/or value')
+
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
-            abort(400, 'Unsupported parameter XPath: %s' % parPath )
+            abort(400, 'Unsupported parameter XPath: %s' % parPath)
+
         path = match.group(1)
         attr = match.group(2)
+
         if ':' in attr:
             ns, rest = attr.split(':')
             namespace = NAMESPACES[ns]
             attr = '{%s}%s' % (namespace, rest)
-        return path, attr, parValue
 
+        return path, attr, parValue
 
     @edit
     def trigger(self, id, parameters):
         element = self.document.idMap.get(id)
-        if element == None:
+
+        if element is None:
             abort(404, 'No such xml:id: %s' % id)
+
         if False:
             # Cannot get above starting point with elementTree:-(
             newParentPath = element.get(NS_TRIGGER('target'), '..')
@@ -586,17 +591,23 @@ class DocumentEvents:
             tmp = self.document._getParent(element)
             newParent = self.document._getParent(tmp)
 
-        assert newParent != None
+        assert newParent is not None
+
         newElement = copy.deepcopy(element)
         self.document._afterCopy(newElement)
+
         for par in parameters:
             path, attr, value = self._getParameter(par)
             e = newElement.find(path, NAMESPACES)
-            if e == None:
+
+            if e is None:
                 abort(400, 'No element matches XPath %s' % path)
+
             e.set(attr, value)
+
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
+
         return newElement.get(NS_XML('id'))
 
     @edit

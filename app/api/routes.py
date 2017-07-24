@@ -47,7 +47,7 @@ def triggertool_client():
     if newDocumentUrl:
         clientDoc['setupComponent']['parameters']['newDocumentUrl'] = newDocumentUrl
     return Response(json.dumps(clientDoc), mimetype="application/json")
-    
+
 @app.route(API_ROOT + "/triggertool")
 def triggertool():
     clientDocUrl = urlparse.urljoin(request.base_url, API_ROOT + "/triggertool-client.json")
@@ -57,7 +57,7 @@ def triggertool():
     clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html#?inputDocument=" + clientDocUrl
     print 'xxxjack return', clientApiUrl
     return redirect(clientApiUrl)
-    
+
 #
 # Per-document commands, load and save and such
 #
@@ -147,12 +147,16 @@ def document_events_trigger(documentId, id):
         document = api.documents[documentId]
     except KeyError:
         abort(404)
+
     events = document.events()
     assert events
+
     parameters = request.get_json()
-    if type(parameters) != type([]):
+    if not isinstance(parameters, list):
         abort(405)
+
     events.trigger(id, parameters)
+
     return ''
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
@@ -161,12 +165,16 @@ def document_events_modify(documentId, id):
         document = api.documents[documentId]
     except KeyError:
         abort(404)
+
     events = document.events()
     assert events
+
     parameters = request.get_json()
-    if type(parameters) != type([]):
+    if not isinstance(parameters, list):
         abort(405)
+
     events.modify(id, parameters)
+
     return ''
 
 #
