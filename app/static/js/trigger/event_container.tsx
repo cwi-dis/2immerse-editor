@@ -53,12 +53,15 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   private launchEvent() {
     const { event, documentId } = this.props;
 
-    const url = `/api/v1/document/${documentId}/events/${event.id}/trigger`;
+    const endpoint = event.modify ? "modify" : "trigger";
+    const requestMethod = event.modify ? "PUT" : "POST";
+
+    const url = `/api/v1/document/${documentId}/events/${event.id}/${endpoint}`;
     const data = JSON.stringify(this.collectParams());
 
     console.log("Launching event at url", url, "with data", data);
 
-    makeRequest("POST", url, data, "application/json").then((data) => {
+    makeRequest(requestMethod, url, data, "application/json").then((data) => {
       console.log("success");
       this.props.onTriggered && this.props.onTriggered();
     }).catch((err) => {
@@ -138,7 +141,9 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
           <div className="level-right">
             <div className="level-item">
-              <button className="button is-info" onClick={this.launchEvent.bind(this)}>Trigger</button>
+              <button className="button is-info" onClick={this.launchEvent.bind(this)}>
+                {event.modify ? "Modify" : "Trigger"}
+              </button>
             </div>
           </div>
         </div>
