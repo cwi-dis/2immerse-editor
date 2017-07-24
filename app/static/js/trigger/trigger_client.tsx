@@ -29,6 +29,7 @@ interface TriggerClientState {
   flashTab: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
+  pageIsLoading: boolean;
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
@@ -41,7 +42,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       activeTab: "abstract",
       flashTab: false,
       abstractEvents: [],
-      instantiatedEvents: []
+      instantiatedEvents: [],
+      pageIsLoading: true
     };
   }
 
@@ -81,16 +83,20 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
       this.setState({
         abstractEvents: events.filter((ev) => ev.trigger),
-        instantiatedEvents: events.filter((ev) => ev.modify)
+        instantiatedEvents: events.filter((ev) => ev.modify),
+        pageIsLoading: false
       });
 
       if (flash) {
         this.setState({
-          flashTab: true}
-        );
+          flashTab: true
+        });
       }
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
+      this.setState({
+        pageIsLoading: false
+      });
     });
   }
 
