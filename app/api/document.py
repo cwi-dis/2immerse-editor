@@ -69,7 +69,8 @@ def edit(method):
         with self.lock:
             self.document._startListening()
             rv = method(self, *args, **kwargs)
-        self.document._stopListening()
+            toForward = self.document._stopListening()
+        self.document._forwardToOthers(toForward)
         return rv
     return wrapper
 
@@ -258,12 +259,16 @@ class Document:
         if self.forwardHandler:
             self.editManager = EditManager(self)
 
+    @synchronized
     def _stopListening(self):
         commands = None
         with self.lock:
             if self.editManager:
                 commands = self.editManager.commit()
                 self.editManager = None
+        return commands
+        
+    def _forwardToOthers(self, commands):
         if commands:
             assert self.forwardHandler
             self.forwardHandler.forward(commands)
@@ -288,7 +293,8 @@ class Document:
                     self.xml().modifyAttributes(path=path, attrs=attrs, mimetype='application/json')
                 else:
                     assert 0, 'Unknown forward() verb: %s' % cmd
-        self._stopListening()
+            toForward = self._stopListening()
+        self._forwardToOthers(toForward)
 
     @synchronized
     def loadXml(self, data):
@@ -645,14 +651,14 @@ class DocumentServe:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
-        self.callbacks = []
+        self.callbacks = set()
 
     @synchronized
     def _nextGeneration(self):
         rootElt = self.tree.getroot()
-        gen = rootElt.get(NS_AUTH("generation"), 0)
+        gen = int(rootElt.get(NS_AUTH("generation"), 0))
         gen += 1
-        rootElt.set(NS_AUTH("generation"), gen)
+        rootElt.set(NS_AUTH("generation"), str(gen))
         return gen
 
     @synchronized
@@ -695,8 +701,7 @@ class DocumentServe:
 
     @synchronized
     def setCallback(self, url):
-        if not url in self.callbacks:
-            self.callbacks.append(url)
+        self.callbacks.add(url)
         self.document.forwardHandler = self
 
     def forward(self, operations):
@@ -707,6 +712,7 @@ class DocumentServe:
                 r = requests.put(callback, json=dict(generation=gen, operations=operations))
                 r.raise_for_status()
             except requests.exceptions.RequestException:
+                print 'PUT failed:', callback # xxxjack need better error message:-)
                 toRemove.append(callback)
         for callback in toRemove:
-            self.callbacks.remove(toRemove)
+            self.callbacks.discard(callback)
