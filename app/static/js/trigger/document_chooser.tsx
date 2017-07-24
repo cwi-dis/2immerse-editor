@@ -1,32 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-function submitAjaxForm(submitUrl: string, formData?: FormData): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", submitUrl);
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(xhr.response);
-      } else {
-        reject({
-          status: xhr.status,
-          statusText: xhr.statusText
-        });
-      }
-    };
-
-    xhr.onerror = () => {
-      reject({
-        status: xhr.status,
-        statusText: xhr.statusText
-      });
-    };
-
-    xhr.send(formData);
-  });
-}
+import { makeRequest } from "../editor/util";
 
 interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
@@ -80,7 +55,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       isLoading: true
     });
 
-    submitAjaxForm(submitUrl, formData).then((data) => {
+    makeRequest("POST", submitUrl, formData).then((data) => {
       this.setState({
         isLoading: false
       });
