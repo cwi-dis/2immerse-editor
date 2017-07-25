@@ -9,10 +9,12 @@ interface TriggerClientProps {
   clearSession: () => void;
 }
 
+export type ParamTypes = "duration" | "time" | "string" | "url" | "const";
+
 export interface EventParams {
   name: string;
   parameter: string;
-  type: string;
+  type: ParamTypes;
   value?: string;
 }
 

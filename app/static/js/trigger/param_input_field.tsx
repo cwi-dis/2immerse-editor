@@ -1,7 +1,8 @@
 import * as React from "react";
+import { ParamTypes } from "./trigger_client";
 
 interface ParamInputFieldProps {
-  type: string;
+  type: ParamTypes;
   value: string;
 
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void;
