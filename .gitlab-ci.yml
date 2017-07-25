@@ -74,10 +74,8 @@ edge_docs:
   image: alpine:3.5
   before_script:
     - apk add --no-cache nodejs python python-dev py-pip
-    - npm -q install -g raml2html
     - pip install awscli
   script:
-    - raml2html -i api/$CI_PROJECT_NAME.raml -o api/index.html
     - aws s3 sync api/ s3://origin.platform.2immerse.eu/docs/$CI_PROJECT_NAME/latest/
   tags:
     - 2immerse
@@ -91,10 +89,8 @@ release_docs:
   image: alpine:3.5
   before_script:
     - apk add --no-cache nodejs python python-dev py-pip
-    - npm -q install -g raml2html
     - pip install awscli
   script:
-    - raml2html -i api/$CI_PROJECT_NAME.raml -o api/index.html
     - aws s3 sync api/ s3://origin.platform.2immerse.eu/docs/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME/
   tags:
     - 2immerse
