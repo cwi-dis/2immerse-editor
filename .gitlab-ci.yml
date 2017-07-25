@@ -2,7 +2,6 @@
 stages:
   - build
   - deploy
-  - docs
 
 # Builds the latest code then auto-deploy
 edge:
@@ -67,33 +66,3 @@ deploy_edge:
     - docker
   only:
     - develop
-
-# Deploys documentation for edge releases
-edge_docs:
-  stage: docs
-  image: alpine:3.5
-  before_script:
-    - apk add --no-cache nodejs python python-dev py-pip
-    - pip install awscli
-  script:
-    - aws s3 sync api/ s3://origin.platform.2immerse.eu/docs/$CI_PROJECT_NAME/latest/
-  tags:
-    - 2immerse
-    - docker
-  only:
-    - develop
-
-# Deploys documentation for tagged releases
-release_docs:
-  stage: docs
-  image: alpine:3.5
-  before_script:
-    - apk add --no-cache nodejs python python-dev py-pip
-    - pip install awscli
-  script:
-    - aws s3 sync api/ s3://origin.platform.2immerse.eu/docs/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME/
-  tags:
-    - 2immerse
-    - docker
-  only:
-    - tags
