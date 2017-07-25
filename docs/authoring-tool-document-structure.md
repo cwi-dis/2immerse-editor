@@ -1,3 +1,8 @@
++++
+title = "Document Structure"
+weight = 3
++++
+
 # Document structure for authoring tool
 
 Here are some preliminary ideas on the in-core document structure for the authoring tool.

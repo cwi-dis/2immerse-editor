@@ -1,3 +1,8 @@
++++
+title = "Live Editing"
+weight = 3
++++
+
 # Support for the live editing tool
 
 The basic principle behind the live editing - or triggering - tool is that the timeline document has pre-edited snippets for various events that can happen. These snippets can then be inserted into the timeline document, possibly after filling in some parameters. These snippets are called _events_, because that term seems to be closest to how television producers or directors think of them (even though the name has the disadvantage that it already means many different things in the technical domain).

@@ -1,3 +1,8 @@
++++
+title = "Proposed actions and state tree"
+weight = 3
++++
+
 # Global application state
 
 screens:
