@@ -199,13 +199,19 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
-            <a href={downloadUrl}
-               download="document.xml"
-               style={{marginRight: 15}}
-               className="button is-info"
-               disabled={this.state.fetchError !== undefined}>
-              Save Document
-            </a>
+            {this.state.fetchError === undefined ?
+              <a href={downloadUrl}
+                 download="document.xml"
+                 style={{marginRight: 15}}
+                 className={classNames("button", "is-info")}>
+                Save Document
+              </a> :
+              <a style={{marginRight: 15}}
+                 className={classNames("button", "is-info")}
+                 disabled>
+                Save Document
+              </a>
+            }
             <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
               Clear Session
             </button>
