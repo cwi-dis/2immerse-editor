@@ -4,6 +4,7 @@ import { List } from "immutable";
 
 import { makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
+import ParamInputField from "./param_input_field";
 
 function capitalize(str: string) {
   return str.slice(0, 1).toUpperCase() + str.slice(1);
@@ -101,35 +102,6 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     });
   }
 
-  private renderInputField(params: EventParams, i: number): JSX.Element | null {
-    switch (params.type) {
-    case "duration":
-    case "time":
-      return <input className="input is-info"
-                    onChange={this.updateParamField.bind(this, i)}
-                    type="number"
-                    value={this.state.params.get(i)!.value}
-                    min="0" />;
-    case "string":
-      return <input className="input is-info"
-                    onChange={this.updateParamField.bind(this, i)}
-                    value={this.state.params.get(i)!.value}
-                    type="text" />;
-    case "url":
-      return <input className="input is-info"
-                    onChange={this.updateParamField.bind(this, i)}
-                    value={this.state.params.get(i)!.value}
-                    type="url" />;
-    case "const":
-      return <input className="input"
-                    defaultValue={this.state.params.get(i)!.value}
-                    type="string"
-                    disabled />;
-    default:
-      return null;
-    }
-  }
-
   public render() {
     const { event } = this.props;
 
@@ -146,7 +118,9 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                     {capitalize(param.name)}
                   </td>
                   <td style={{width: "50%"}}>
-                    {this.renderInputField(param, i)}
+                    <ParamInputField type={param.type}
+                                     value={this.state.params.get(i)!.value!}
+                                     onChange={this.updateParamField.bind(this, i)} />
                   </td>
                 </tr>
               );
