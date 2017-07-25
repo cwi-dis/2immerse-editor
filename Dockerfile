@@ -26,3 +26,6 @@ RUN cd app/static; yarn install
 ADD . /code/
 
 RUN cd app/static; webpack
+
+EXPOSE 8000
+CMD ["python", "run.py"]
