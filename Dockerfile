@@ -1,6 +1,10 @@
 FROM python:2.7
 
 ENV PYTHONUNBUFFERED 1
+ENV TINI_VERSION v0.15.0
+
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
@@ -26,6 +30,8 @@ RUN cd app/static; yarn install
 ADD . /code/
 
 RUN cd app/static; webpack
+
+ENTRYPOINT ["/tini", "--"]
 
 EXPOSE 8000
 CMD ["python", "run.py"]
