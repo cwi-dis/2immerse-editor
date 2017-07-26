@@ -18,6 +18,7 @@ interface EventContainerProps {
 
 interface EventContainerState {
   isLoading: boolean;
+  flashButton: boolean;
   params: List<EventParams>;
 }
 
@@ -34,6 +35,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     this.state = {
       isLoading: false,
+      flashButton: false,
       params: List(props.event.parameters.map((param) => {
         param.value = param.value ? param.value : paramDefaults[param.type];
         return param;
@@ -80,7 +82,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       console.log("success");
 
       this.setState({
-        isLoading: false
+        isLoading: false,
+        flashButton: true
       });
 
       this.props.onTriggered && this.props.onTriggered();
@@ -104,6 +107,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
   public render() {
     const { event } = this.props;
+    const { params, isLoading, flashButton } = this.state;
 
     return (
       <div style={{margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
@@ -111,7 +115,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
         <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
           <tbody>
-            {this.state.params.map((param, i) => {
+            {params.map((param, i) => {
               return (
                 <tr key={i}>
                   <td style={{width: "50%", verticalAlign: "middle"}}>
@@ -119,7 +123,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                   </td>
                   <td style={{width: "50%"}}>
                     <ParamInputField type={param.type}
-                                     value={this.state.params.get(i)!.value!}
+                                     value={params.get(i)!.value!}
                                      onChange={this.updateParamField.bind(this, i)} />
                   </td>
                 </tr>
@@ -138,7 +142,9 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
           <div className="level-right">
             <div className="level-item">
-              <button className={classNames("button", "is-info", {"is-loading": this.state.isLoading})} onClick={this.launchEvent.bind(this)}>
+              <button className={classNames("button", "is-info", {"is-loading": isLoading, "button-pulse": flashButton})}
+                      onClick={this.launchEvent.bind(this)}
+                      onAnimationEnd={() => this.setState({flashButton: false})}>
                 {event.modify ? "Modify" : "Trigger"}
               </button>
             </div>
