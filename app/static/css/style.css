@@ -92,6 +92,20 @@ html, body {
   }
 }
 
+.button-pulse {
+  animation: buttonpulse ease-out 400ms 1;
+}
+
+@keyframes buttonpulse {
+  0%, 100% {
+    background-color: #3273dc;
+  }
+
+  50% {
+    background-color: #23d160;
+  }
+}
+
 .loader, .loader:after {
   border-radius: 50%;
   width: 5em;
