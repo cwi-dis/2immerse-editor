@@ -2,7 +2,7 @@ from flask import render_template, abort
 from hashlib import sha256
 
 from app import app
-from util import hash_file, get_head_revision
+from util import hash_file, get_head_revision, get_current_branch
 import api.routes
 
 
@@ -34,4 +34,5 @@ def trigger():
 
 @app.route("/version")
 def version():
-    return get_head_revision()
+    branch = get_current_branch()
+    return branch + "/" + get_head_revision(branch)
