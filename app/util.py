@@ -16,6 +16,11 @@ def hash_file(path):
     return h.hexdigest()
 
 
+def get_current_branch():
+    with open("./.git/HEAD", "r") as headfile:
+        return headfile.read().strip().split("/")[-1]
+
+
 def get_head_revision(branch="master"):
     with open("./.git/refs/heads/" + branch, "r") as revfile:
         return revfile.read().replace("\n", "")
