@@ -92,17 +92,31 @@ html, body {
   }
 }
 
-.button-pulse {
-  animation: buttonpulse ease-out 400ms 1;
+.button-pulse-success {
+  animation: buttonpulse-success ease-out 400ms 1;
 }
 
-@keyframes buttonpulse {
+@keyframes buttonpulse-success {
   0%, 100% {
     background-color: #3273dc;
   }
 
   50% {
     background-color: #23d160;
+  }
+}
+
+.button-pulse-error {
+  animation: buttonpulse-error ease-out 400ms 2;
+}
+
+@keyframes buttonpulse-error {
+  0%, 100% {
+    background-color: #3273dc;
+  }
+
+  50% {
+    background-color: #FF3860;
   }
 }
 
