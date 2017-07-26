@@ -18,7 +18,8 @@ interface EventContainerProps {
 
 interface EventContainerState {
   isLoading: boolean;
-  flashButton: boolean;
+  flashSuccess: boolean;
+  flashError: boolean;
   params: List<EventParams>;
 }
 
@@ -35,7 +36,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     this.state = {
       isLoading: false,
-      flashButton: false,
+      flashSuccess: false,
+      flashError: false,
       params: List(props.event.parameters.map((param) => {
         param.value = param.value ? param.value : paramDefaults[param.type];
         return param;
@@ -83,7 +85,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
       this.setState({
         isLoading: false,
-        flashButton: true
+        flashSuccess: true
       });
 
       this.props.onTriggered && this.props.onTriggered();
@@ -91,7 +93,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       console.log("error:", err);
 
       this.setState({
-        isLoading: false
+        isLoading: false,
+        flashError: true
       });
     });
   }
@@ -107,7 +110,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
   public render() {
     const { event } = this.props;
-    const { params, isLoading, flashButton } = this.state;
+    const { params, isLoading, flashSuccess, flashError } = this.state;
 
     return (
       <div style={{margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
@@ -142,9 +145,12 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
           <div className="level-right">
             <div className="level-item">
-              <button className={classNames("button", "is-info", {"is-loading": isLoading, "button-pulse": flashButton})}
+              <button className={classNames(
+                                   "button",
+                                   "is-info",
+                                   {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
                       onClick={this.launchEvent.bind(this)}
-                      onAnimationEnd={() => this.setState({flashButton: false})}>
+                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
                 {event.modify ? "Modify" : "Trigger"}
               </button>
             </div>
