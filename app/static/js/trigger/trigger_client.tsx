@@ -36,9 +36,6 @@ interface TriggerClientState {
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
-  private tabLabel: HTMLSpanElement;
-  private handlerAttached: boolean = false;
-
   constructor(props: TriggerClientProps) {
     super(props);
 
@@ -86,30 +83,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   public componentDidMount() {
     this.fetchEvents();
-
-    if (this.tabLabel) {
-      console.log("attaching event handler");
-
-      this.handlerAttached = true;
-      this.tabLabel.addEventListener("animationend", () => {
-        this.setState({
-          flashTab: false
-        });
-      });
-    }
-  }
-
-  public componentDidUpdate() {
-    if (this.tabLabel && !this.handlerAttached) {
-      console.log("attaching event handler");
-
-      this.handlerAttached = true;
-      this.tabLabel.addEventListener("animationend", () => {
-        this.setState({
-          flashTab: false
-        });
-      });
-    }
   }
 
   private renderMainContent(): JSX.Element {
@@ -153,7 +126,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
               <li className={classNames({"is-active": activeTab === "instantiated"})}>
                 <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
-                  <span ref={(e) => this.tabLabel = e} className={classNames({"pulse-animation": this.state.flashTab})}>
+                  <span onAnimationEnd={() => this.setState({flashTab: false})} className={classNames({"pulse-animation": this.state.flashTab})}>
                     Triggered Events ({instantiatedEvents.length})
                   </span>
                 </a>
