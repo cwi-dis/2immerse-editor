@@ -31,6 +31,10 @@ ADD . /code/
 
 RUN cd app/static; webpack
 
+RUN rm -r app/static/node_modules
+RUN npm uninstall -g webpack
+RUN apt-get remove -y yarn nodejs
+
 ENTRYPOINT ["/tini", "--"]
 
 EXPOSE 8000

@@ -23,4 +23,4 @@ def get_current_branch():
 
 def get_head_revision(branch="master"):
     with open("./.git/refs/heads/" + branch, "r") as revfile:
-        return revfile.read().replace("\n", "")
+        return revfile.read().strip()

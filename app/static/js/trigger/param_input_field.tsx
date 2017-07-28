@@ -37,6 +37,6 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
   default:
     return <div>Parameter type not recognised</div>;
   }
-}
+};
 
 export default ParamInputField;
