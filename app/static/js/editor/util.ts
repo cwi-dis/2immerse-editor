@@ -1,4 +1,7 @@
 import { Collection, List } from "immutable";
+import { ThunkAction } from "redux-thunk";
+
+import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
 
 export type Coords = [number, number];
@@ -13,6 +16,8 @@ export interface BasicAction<T extends string> extends Action {
 export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
+
+export type AsyncAction<R> = ThunkAction<R, ApplicationState, void>;
 
 type PromiseResolve = (data: string) => void;
 type PromiseReject = (err: {status: number, statusText: string}) => void;
