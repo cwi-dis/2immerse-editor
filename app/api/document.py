@@ -9,6 +9,7 @@ import re
 import threading
 import os
 import requests
+import globalSettings
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -693,9 +694,17 @@ class DocumentServe:
             clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
             clientDocData = open(clientDocPath).read()
         clientDoc = json.loads(clientDocData)
+        # 
+        # We do substitution manually, for now. May want to use a templating system at some point.
+        #
         clientDoc['serviceInput'] = dict(
                 layout=layout,
                 timeline=timeline,
+                )
+        clientDoc['serviceUrls'] = dict(
+                layoutService=globalSettings.layoutService,
+                websocketService=globalSettings.websocketService,
+                timelineService=globalSettings.timelineService,
                 )
         return json.dumps(clientDoc)
 
