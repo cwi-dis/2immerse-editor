@@ -15,10 +15,6 @@ Toplevel api is at endpoint `/api/v1`, accepts following calls:
   Returns the `documentId` for the new document.
   
 - GET, returns  all _documentId_ as a JSON list.
-- `triggertool-client.json` Returns the client-api config document to run the triggertool. One argument:
-	- `newDocumentUrl` The URL of the (xml) authoring document to open.
-- `triggertool` Convenience method: returns a http-redirect for the client-api, with its `inputDocument` argument pointing to _triggertool-client.json_ endpoint described above. This should launch the trigger tool in one step. Argument:
-	- `newDocumentUrl` The URL of the (xml) authoring document to open.
 
 ## per-document calls
 

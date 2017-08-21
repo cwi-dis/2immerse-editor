@@ -35,29 +35,6 @@ def api_verb(verb):
 def document():
     return api.document()
 
-@app.route(API_ROOT + "/triggertool-client.json")
-def triggertool_client():
-    """Serves a client.json settings document that will let client-api run the trigger tool
-    frontend using this server as a backend."""
-    clientDocPath = os.path.join(os.path.dirname(__file__), 'triggertool-client.json')
-    clientDoc = json.load(open(clientDocPath))
-    # Setup our API root and optionally the URL of the document to load.
-    clientDoc['setupComponent']['parameters']['serviceUrl'] = urlparse.urljoin(request.base_url, API_ROOT)
-    newDocumentUrl = request.args.get('newDocumentUrl')
-    if newDocumentUrl:
-        clientDoc['setupComponent']['parameters']['newDocumentUrl'] = newDocumentUrl
-    return Response(json.dumps(clientDoc), mimetype="application/json")
-
-@app.route(API_ROOT + "/triggertool")
-def triggertool():
-    clientDocUrl = urlparse.urljoin(request.base_url, API_ROOT + "/triggertool-client.json")
-    newDocumentUrl = request.args.get('newDocumentUrl')
-    if newDocumentUrl:
-        clientDocUrl += '?' + urllib.urlencode(dict(newDocumentUrl=newDocumentUrl))
-    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html#?inputDocument=" + clientDocUrl
-    print 'xxxjack return', clientApiUrl
-    return redirect(clientApiUrl)
-
 #
 # Per-document commands, load and save and such
 #
