@@ -10,7 +10,7 @@
 	"description": "Live Preview", 
 	"serviceUrlPreset": "aws_edge",
 	"serviceUrls" : {
-		"layoutService": "https://layout-edge.platform.2immerse.eu/layout/v3",
+		"layoutService": "https://layout-service-edge.platform.2immerse.eu/layout/v3",
 		"websocketService": "https://websocket-service-edge.platform.2immerse.eu/",
 		"timelineService": "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
 	},
