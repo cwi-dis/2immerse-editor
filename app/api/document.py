@@ -11,6 +11,10 @@ import os
 import requests
 import globalSettings
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class NameSpace:
     def __init__(self, namespace, url):
         self.namespace = namespace
