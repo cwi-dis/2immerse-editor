@@ -5,6 +5,7 @@ import json
 import os
 import urlparse
 import urllib
+import globalSettings
 
 #
 # Disable CORS problems
@@ -225,7 +226,7 @@ def get_preview(documentId):
     base = request.args.get('base')
     if base:
         clientDocUrl += '?' + urllib.urlencode(dict(base=base))
-    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html#?inputDocument=" + clientDocUrl
+    clientApiUrl = "%s#?inputDocument=%s" % (globalSettings.clientApiUrl, clientDocUrl)
     print 'xxxjack return', clientApiUrl
     return redirect(clientApiUrl)
 
