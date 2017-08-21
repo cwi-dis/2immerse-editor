@@ -10,9 +10,9 @@
 	"description": "Live Preview", 
 	"serviceUrlPreset": "aws_edge",
 	"serviceUrls" : {
-		"layoutService": "http://flauwte.dis.cwi.nl:8000/layout/v3",
-		"websocketService": "http://flauwte.dis.cwi.nl:3000/",
-		"timelineService": "http://flauwte.dis.cwi.nl:8001/timeline/v1"
+		"layoutService": "https://layout-edge.platform.2immerse.eu/layout/v3",
+		"websocketService": "https://websocket-service-edge.platform.2immerse.eu/",
+		"timelineService": "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
 	},
 	"serviceInput": {
 		"timeline": "filled-in-dynamically", 
