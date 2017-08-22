@@ -6,6 +6,9 @@ import os
 import urlparse
 import urllib
 import globalSettings
+from app import myLogging
+
+myLogging.install(globalSettings.noKibana, globalSettings.logLevel)
 
 #
 # Disable CORS problems
@@ -205,6 +208,7 @@ def get_client_document(documentId):
 
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'))
     return Response(config, mimetype="application/json")
+    
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/addcallback", methods=["POST"])
 def set_callback(documentId):
     try:
@@ -213,7 +217,7 @@ def set_callback(documentId):
         abort(404)
     serve = document.serve()
     assert serve
-    serve.setCallback(request.args['url'])
+    serve.setCallback(**request.args)
     return ''
 
 #

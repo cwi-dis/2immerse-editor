@@ -11,6 +11,10 @@ import os
 import requests
 import globalSettings
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 class NameSpace:
     def __init__(self, namespace, url):
         self.namespace = namespace
@@ -109,7 +113,8 @@ class EditManager:
         return rv
 
 class Document:
-    def __init__(self):
+    def __init__(self, documentId):
+        self.documentId = documentId
         # The whole document, as an elementtree
         self.tree = None
         self.documentElement = None # Nasty trick to work around elementtree XPath incompleteness
@@ -125,6 +130,9 @@ class Document:
         self.xmlHandler = None
         self.lock = threading.RLock()
         self.editManager = None
+        self.logger = logger
+        self.loggerExtra = dict(subSource='document', documentID=documentId)
+        self.logger.info('created document %s' % documentId)
 
     @synchronized
     def index(self):
@@ -275,6 +283,7 @@ class Document:
             self.forwardHandler.forward(commands)
 
     def forward(self, commands):
+        self.logger.debug('forward %d commands' % len(commands), extra=self.loggerExtra)
         with self.lock:
             self._startListening()
             for command in commands:
@@ -299,6 +308,7 @@ class Document:
 
     @synchronized
     def loadXml(self, data):
+        self.logger.info('load xml (%d bytes)' % len(data), extra=self.loggerExtra)
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
@@ -306,6 +316,7 @@ class Document:
 
     @synchronized
     def load(self, url):
+        self.logger.info('load: %s' % url, extra=self.loggerExtra)
         fp = urllib2.urlopen(url)
         self.tree = ET.parse(fp)
         self._documentLoaded()
@@ -313,6 +324,7 @@ class Document:
 
     @synchronized
     def save(self, url):
+        self.logger.info('save: %s' % url, extra=self.loggerExtra)
         p = urlparse.urlparse(url)
         assert p.scheme == 'file'
         filename = urllib.url2pathname(p.path)
@@ -409,9 +421,13 @@ class DocumentXml:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.logger = self.document.logger
+        self.loggerExtra = dict(self.document.loggerExtra)
+        self.loggerExtra['subSource'] = 'document.xml'
 
     @synchronized
     def paste(self, path, where, tag=None, data='', mimetype='application/x-python-object'):
+        self.logger.info('paste(%s,%s,%s,...)' % (path, where, tag), extra=self.loggerExtra)
         #
         # where should it go?
         #
@@ -464,6 +480,7 @@ class DocumentXml:
 
     @synchronized
     def cut(self, path, mimetype='application/x-python-object'):
+        self.logger.info('cut(%s)' % (path), extra=self.loggerExtra)
         element = self.document._getElement(path)
         parent = self.document._getParent(element)
         parent.remove(element)
@@ -472,11 +489,13 @@ class DocumentXml:
 
     @synchronized
     def get(self, path, mimetype='application/x-python-object'):
+        self.logger.info('get(%s,%s,%s)' % (path), extra=self.loggerExtra)
         element = self.document._getElement(path)
         return self.document._fromET(element, mimetype)
 
     @edit
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
+        self.logger.info('modifyAttributes(%s, ...)' % (path), extra=self.loggerExtra)
         element = self.document._getElement(path)
         if mimetype == 'application/x-python-object':
             pass
@@ -498,6 +517,7 @@ class DocumentXml:
 
     @synchronized
     def modifyData(self, path, data):
+        self.logger.info('modifyData(%s, ...)' % (path), extra=self.loggerExtra)
         element = self.document._getElement(path)
         if data == None:
             element.text = None
@@ -509,6 +529,7 @@ class DocumentXml:
 
     @edit
     def copy(self, path, where, sourcepath):
+        self.logger.info('copy(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
         element = self.document._getElement(path)
         sourceElement = self.document._getElement(sourcepath)
         newElement = copy.deepcopy(sourceElement)
@@ -518,6 +539,7 @@ class DocumentXml:
 
     @edit
     def move(self, path, where, sourcepath):
+        self.logger.info('move(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
         element = self.document._getElement(path)
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
@@ -528,6 +550,9 @@ class DocumentEvents:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.logger = self.document.logger
+        self.loggerExtra = dict(self.document.loggerExtra)
+        self.loggerExtra['subSource'] = 'document.events'
 
     @synchronized
     def get(self):
@@ -540,6 +565,7 @@ class DocumentEvents:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
             rv.append(self._getDescription(elt, trigger=False))
+        self.logger.info('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.loggerExtra)
         return rv
 
     @synchronized
@@ -585,6 +611,7 @@ class DocumentEvents:
 
     @edit
     def trigger(self, id, parameters):
+        self.logger.info('trigger(%s, ...)' % (id), extra=self.loggerExtra)
         element = self.document.idMap.get(id)
 
         if element is None:
@@ -619,6 +646,7 @@ class DocumentEvents:
 
     @edit
     def modify(self, id, parameters):
+        self.logger.info('modify(%s, ...)' % (id), extra=self.loggerExtra)
         element = self.document.idMap.get(id)
 
         if element is None:
@@ -645,6 +673,9 @@ class DocumentAuthoring:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.logger = self.document.logger
+        self.loggerExtra = dict(self.document.loggerExtra)
+        self.loggerExtra['subSource'] = 'document.authoring'
 
 
 class DocumentServe:
@@ -653,6 +684,9 @@ class DocumentServe:
         self.tree = document.tree
         self.lock = self.document.lock
         self.callbacks = set()
+        self.logger = self.document.logger
+        self.loggerExtra = dict(self.document.loggerExtra)
+        self.loggerExtra['subSource'] = 'document.serve'
 
     @synchronized
     def _nextGeneration(self):
@@ -666,6 +700,7 @@ class DocumentServe:
     def get_timeline(self):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
+        self.logger.info('serving timeline.xml document', extra=self.loggerExtra)
         return ET.tostring(self.tree.getroot())
 
     @synchronized
@@ -674,6 +709,7 @@ class DocumentServe:
         At the moment, the layout document JSON representation is stored in a toplevel
         au:rawLayout element. This will change when the authoring tool starts modifying the
         layout document data."""
+        self.logger.info('serving layout.json document', extra=self.loggerExtra)
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
             abort(404, 'No :au:rawLayout element in document')
@@ -682,12 +718,14 @@ class DocumentServe:
     @synchronized
     def put_layout(self, layoutJSON):
         """Temporary method, stores the raw layout document data in the authoring document."""
+        self.logger.info('storing layout.json document', extra=self.loggerExtra)
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
         rawLayoutElement.text = layoutJSON
 
     def get_client(self, timeline, layout, base=None):
+        self.logger.info('serving client.json document', extra=self.loggerExtra)
         if base:
             clientDocData = urllib.urlopen(base).read()
         else:
@@ -709,11 +747,19 @@ class DocumentServe:
         return json.dumps(clientDoc)
 
     @synchronized
-    def setCallback(self, url):
+    def setCallback(self, url, contextID=None):
+        if contextID:
+            if hasattr(self.document.loggerExtra, 'contextID'):
+                self.logger.info('overriding contextID with %s' % contextID)
+                self.document.loggerExtra['contextID'] = contextID
+                self.loggerExtra['contextID'] = contextID
+                # xxxjack should we also update other accessor objects?
+        self.logger.info('setCallback(%s)' % url, extra=self.loggerExtra)
         self.callbacks.add(url)
         self.document.forwardHandler = self
 
     def forward(self, operations):
+        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callback)), extra=self.loggerExtra)
         gen = self._nextGeneration()
         toRemove = []
         for callback in self.callbacks:
@@ -724,4 +770,5 @@ class DocumentServe:
                 print 'PUT failed:', callback # xxxjack need better error message:-)
                 toRemove.append(callback)
         for callback in toRemove:
+            self.logger.info('removeCallback(%s)'%callback, extra=self.loggerExtra)
             self.callbacks.discard(callback)
