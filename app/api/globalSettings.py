@@ -14,7 +14,7 @@ logLevel = 'DEBUG'
 
 # Enable this (and fill in the right IP address) to run all services locally.
 # DO NOT CHECK IN, please......
-if False:
+if True:
     layoutService = "http://flauwte.dis.cwi.nl:8000/layout/v3"
     websocketService = "http://flauwte.dis.cwi.nl:3000/"
     timelineService = "http://flauwte.dis.cwi.nl:8001/timeline/v1"

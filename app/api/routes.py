@@ -217,7 +217,7 @@ def set_callback(documentId):
         abort(404)
     serve = document.serve()
     assert serve
-    serve.setCallback(**request.args)
+    serve.setCallback(url=request.args.get('url'), contextID=request.args.get('contextID', None))
     return ''
 
 #

@@ -759,7 +759,7 @@ class DocumentServe:
         self.document.forwardHandler = self
 
     def forward(self, operations):
-        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callback)), extra=self.loggerExtra)
+        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
         gen = self._nextGeneration()
         toRemove = []
         for callback in self.callbacks:
