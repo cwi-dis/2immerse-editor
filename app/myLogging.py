@@ -1,4 +1,6 @@
 import logging
+import datetime
+import time
 
 logging.basicConfig()
 
@@ -10,9 +12,11 @@ class MyFormatter(logging.Formatter):
 
     def format(self, record):
         contextID = None
-        dmappID = None
+        documentID = None
         if hasattr(record, 'contextID'):
             contextID = record.contextID
+        if hasattr(record, 'documentID'):
+            documentID = record.documentID
         source = "AuthoringService"
         level = record.levelname
         subSource = record.module
@@ -32,7 +36,7 @@ class MyFormatter(logging.Formatter):
         if contextID:
             rvList.append('contextID:%s' % contextID)
         if documentID:
-            rvList.append('documentID:%s' % dmappID)
+            rvList.append('documentID:%s' % documentID)
         if hasattr(record, 'xpath'):
             rvList.append('xpath:%s ' % repr(record.xpath))
         if hasattr(record, 'dmappcID'):
@@ -51,11 +55,12 @@ class MyLoggerAdapter(logging.LoggerAdapter):
 		return msg, kwargs
 
 def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
+    print 'xxxjack installing logger...'
     if noKibana:
         global MyFormatter
         MyFormatter = logging.Formatter
     if logLevel:
-        for ll in args.logLevel.split(','):
+        for ll in logLevel.split(','):
             if ':' in ll:
                 loggerToModify = logging.getLogger(ll.split(':')[0])
                 newLevel = getattr(logging, ll.split(':')[1])
@@ -66,4 +71,21 @@ def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
     
     rootLogger = logging.getLogger()
     rootLogger.handlers[0].setFormatter(MyFormatter())
+    rootLogger.debug('Logger installed, level >= DEBUG')
+    rootLogger.info('Logger installed, level >= INFO')
+    rootLogger.warn('Logger installed, level >= WARN')
+    tmpLogger = logging.getLogger('foobar')
+    tmpLogger.debug('Foobar logger DEBUG')
 
+# Make stdout unbuffered
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)
+
+import sys
+sys.stdout = Unbuffered(sys.stdout)

@@ -18,7 +18,7 @@ class API:
     def document(self):
         if request.method == 'POST':
             documentId = uuid.uuid4()
-            doc = document.Document()
+            doc = document.Document(documentId)
 
             if 'url' in request.args:
                 doc.load(request.args['url'])
