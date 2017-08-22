@@ -744,6 +744,7 @@ class DocumentServe:
                 websocketService=globalSettings.websocketService,
                 timelineService=globalSettings.timelineService,
                 )
+        clientDoc['mode'] = globalSettings.mode
         return json.dumps(clientDoc)
 
     @synchronized
