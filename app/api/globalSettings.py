@@ -10,7 +10,7 @@ timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v
 clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
 
 noKibana = False
-logLevel = 'INFO'
+logLevel = 'DEBUG'
 
 # Enable this (and fill in the right IP address) to run all services locally.
 # DO NOT CHECK IN, please......
