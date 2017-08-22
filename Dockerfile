@@ -1,10 +1,6 @@
 FROM python:2.7
 
 ENV PYTHONUNBUFFERED 1
-ENV TINI_VERSION v0.15.0
-
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
@@ -34,8 +30,6 @@ RUN cd app/static; webpack
 RUN rm -r app/static/node_modules
 RUN npm uninstall -g webpack
 RUN apt-get remove -y yarn nodejs
-
-ENTRYPOINT ["/tini", "--"]
 
 EXPOSE 8000
 CMD ["python", "run.py"]
