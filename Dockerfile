@@ -21,6 +21,7 @@ ADD app/static/yarn.lock /code/app/static/
 WORKDIR /code
 
 RUN pip install -r requirements.txt
+RUN echo "${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}" > REVISION
 RUN cd app/static; yarn install
 
 ADD . /code/
