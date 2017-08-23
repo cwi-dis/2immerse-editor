@@ -25,7 +25,7 @@ def get_current_branch():
             branch = revfile.read().strip().split("/")[0]
 
             if not branch:
-                raise Exception("Could not determine branch")
+                raise IOError("Could not determine branch")
 
             return branch
 
@@ -39,6 +39,6 @@ def get_head_revision(branch="master"):
             revision = revfile.read().strip().split("/")[1]
 
             if not revision:
-                raise Exception("Could not determine revision")
+                raise IOError("Could not determine revision")
 
             return revision
