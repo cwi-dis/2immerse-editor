@@ -37,12 +37,16 @@ class App extends React.Component<{}, AppState> {
 
   public componentDidMount() {
     const queryData = parseQueryString(location.hash);
+    console.log("hash:", location.hash);
+    console.log("parsed hash:", queryData);
 
     if (queryData.has("url")) {
       const submitUrl = `/api/v1/document?url=${queryData.get("url")}`;
+      console.log("submitting to:", submitUrl);
 
       makeRequest("POST", submitUrl).then((data) => {
         const { documentId } = JSON.parse(data);
+        console.log("got document id:", documentId);
 
         location.hash = "";
         this.assignDocumentId(documentId);
