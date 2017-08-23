@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 
 import { makeRequest } from "../editor/util";
 import EventContainer from "./event_container";
+import PreviewLauncher from "./preview_launcher";
 
 interface TriggerClientProps {
   documentId: string;
@@ -28,6 +29,7 @@ export interface Event {
 
 interface TriggerClientState {
   activeTab: "abstract" | "instantiated";
+  showPreviewModal: boolean;
   flashTab: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
@@ -41,6 +43,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
     this.state = {
       activeTab: "abstract",
+      showPreviewModal: false,
       flashTab: false,
       abstractEvents: [],
       instantiatedEvents: [],
@@ -163,6 +166,27 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
+  private renderPreviewModal() {
+    if (!this.state.showPreviewModal) {
+      return;
+    }
+
+    console.log("rendering preview");
+
+    return (
+      <div className="modal is-active">
+        <div className="modal-background"></div>
+        <div className="modal-content">
+          <PreviewLauncher documentId={this.props.documentId}
+                           optionClicked={() => this.setState({showPreviewModal: false})} />
+        </div>
+        <button className="modal-close is-large"
+                onClick={() => this.setState({showPreviewModal: false})}>
+        </button>
+      </div>
+    );
+  }
+
   public render() {
     const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
@@ -197,6 +221,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         <div className="container" style={{width: "60vw", height: "calc(100vh - 80px)"}}>
           {this.renderMainContent()}
         </div>
+
+        {this.renderPreviewModal()}
       </div>
     );
   }
