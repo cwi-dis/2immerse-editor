@@ -96,6 +96,21 @@ export function getTreeHeight(chapters: List<Chapter>): number {
   }).max()!;
 }
 
+export function parseQueryString(query: string): Map<string, string> {
+  let result = new Map<string, string>();
+
+  query.split("&").filter((pair) => {
+    const [key, val] = pair.split("=");
+
+    result.set(
+      key.replace(/[^a-zA-Z0-9_-]/g, ""),
+      val
+    );
+  });
+
+  return result;
+}
+
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
