@@ -26,9 +26,14 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
     const previewUrl = this.getPreviewUrl();
 
     return (
-      <div>
-        <canvas ref={(el) => this.qrCanvas = el}></canvas>
-        <a href={previewUrl} target="_blank">Open preview in new tab</a>
+      <div className="box">
+        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}} ref={(el) => this.qrCanvas = el}></canvas>
+        <br/>
+        <a style={{display: "block", margin: "0 auto 0 auto"}}
+           className="button is-info" href={previewUrl}
+           target="_blank">
+          Open preview in new tab
+        </a>
       </div>
     );
   }
