@@ -126,7 +126,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
               <li className={classNames({"is-active": activeTab === "instantiated"})}>
                 <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
-                  <span onAnimationEnd={() => this.setState({flashTab: false})} className={classNames({"pulse-animation": this.state.flashTab})}>
+                  <span onAnimationEnd={() => this.setState({flashTab: false})}
+                        className={classNames({"pulse-animation": this.state.flashTab})}>
                     Triggered Events ({instantiatedEvents.length})
                   </span>
                 </a>
