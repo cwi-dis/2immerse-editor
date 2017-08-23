@@ -102,10 +102,12 @@ export function parseQueryString(query: string): Map<string, string> {
   query.split("&").filter((pair) => {
     const [key, val] = pair.split("=");
 
-    result.set(
-      key.replace(/[^a-zA-Z0-9_-]/g, ""),
-      val
-    );
+    if (key.length > 0) {
+      result.set(
+        key.replace(/[^a-zA-Z0-9_-]/g, ""),
+        val
+      );
+    }
   });
 
   return result;
