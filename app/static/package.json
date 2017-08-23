@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/classnames": "^2.2.0",
+    "@types/qrcode": "^0.8.0",
     "@types/randomcolor": "^0.4.3",
     "@types/react": "^15.0.28",
     "@types/react-dom": "^15.3.2",
@@ -22,6 +23,7 @@
     "classnames": "^2.2.5",
     "immutable": "4.0.0-rc.1",
     "konva": "^1.6.3",
+    "qrcode": "^0.9.0",
     "randomcolor": "^0.5.3",
     "react": "^15.6.0",
     "react-dom": "^15.6.0",
