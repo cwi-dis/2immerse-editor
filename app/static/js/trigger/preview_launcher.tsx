@@ -3,6 +3,7 @@ import * as QRCode from "qrcode";
 
 interface PreviewLauncherProps {
   documentId: string;
+  optionClicked: () => void;
 }
 
 class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
@@ -31,7 +32,8 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
         <br/>
         <a style={{display: "block", margin: "0 auto 0 auto"}}
            className="button is-info" href={previewUrl}
-           target="_blank">
+           target="_blank"
+           onClick={this.props.optionClicked.bind(this)}>
           Open preview in new tab
         </a>
       </div>
