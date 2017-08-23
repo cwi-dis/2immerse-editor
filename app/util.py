@@ -17,10 +17,28 @@ def hash_file(path):
 
 
 def get_current_branch():
-    with open("./.git/HEAD", "r") as headfile:
-        return headfile.read().strip().split("/")[-1]
+    try:
+        with open("./.git/HEAD", "r") as headfile:
+            return headfile.read().strip().split("/")[-1]
+    except:
+        with open("./REVISION", "r") as revfile:
+            branch = revfile.read().strip().split("/")[0]
+
+            if not branch:
+                raise "Could not determine branch"
+
+            return branch
 
 
 def get_head_revision(branch="master"):
-    with open("./.git/refs/heads/" + branch, "r") as revfile:
-        return revfile.read().strip()
+    try:
+        with open("./.git/refs/heads/" + branch, "r") as revfile:
+            return revfile.read().strip()
+    except:
+        with open("./REVISION", "r") as revfile:
+            revision = revfile.read().strip().split("/")[1]
+
+            if not revision:
+                raise "Could not determine revision"
+
+            return revision
