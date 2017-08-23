@@ -199,6 +199,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
+            <a style={{marginRight: 15}}
+               className={classNames("button", "is-info")}
+               onClick={() => this.setState({ showPreviewModal: true })}>
+              Launch Preview
+            </a>
             {this.state.fetchError === undefined ?
               <a href={downloadUrl}
                  download="document.xml"
