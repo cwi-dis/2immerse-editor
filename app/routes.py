@@ -39,3 +39,8 @@ def version():
         return branch + "/" + get_head_revision(branch)
     except:
         return "Could not determine HEAD revision"
+
+
+@app.route("/healthcheck")
+def healthcheck():
+    return ("", 204)
