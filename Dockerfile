@@ -6,16 +6,13 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
-RUN apt-get update
-RUN apt-get install -y nodejs yarn
-
+RUN apt-get update && apt-get install -y nodejs yarn
 RUN npm install --global webpack
 
 RUN mkdir -p /code/app/static/
 
 ADD requirements.txt /code/
-ADD app/static/package.json /code/app/static/
-ADD app/static/yarn.lock /code/app/static/
+ADD app/static/package.json app/static/yarn.lock /code/app/static/
 
 WORKDIR /code
 
