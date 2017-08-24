@@ -35,8 +35,7 @@ def trigger():
 @app.route("/version")
 def version():
     try:
-        branch = get_current_branch()
-        return branch + "/" + get_head_revision(branch)
+        return get_head_revision()
     except:
         return "Could not determine HEAD revision"
 

@@ -34,13 +34,13 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
     };
 
     if (this.state.hash !== "") {
-      const [_, hash] = this.state.hash.split("/");
+      const hash = this.state.hash
 
       return (
         <div style={style}>
           Current version:&nbsp;
           <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://github.com/cwi-dis/2immerse-editor/commit/${hash}`}>
-            {this.state.hash}
+            {hash}
           </a>
         </div>
       );
