@@ -39,7 +39,7 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
       return (
         <div style={style}>
           Current version:&nbsp;
-          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://github.com/cwi-dis/2immerse-editor/commit/${hash}`}>
+          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/${hash}`}>
             {hash}
           </a>
         </div>
