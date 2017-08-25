@@ -12,8 +12,7 @@ import json
 import uuid
 
 
-class Test(unittest.TestCase):
-
+class TestEvents(unittest.TestCase):
     def _buildUrl(self, extra=''):
         myUrl = urlparse.urljoin(
             'file:', urllib.pathname2url(os.path.abspath(__file__))
@@ -30,13 +29,16 @@ class Test(unittest.TestCase):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
+
         return d
 
     def test_get(self):
         d = self._createDocument()
         oldCount = d._count()
+
         e = d.events()
         allEvents = e.get()
+
         self.assertEqual(len(allEvents), 4)
         self.assertEqual(d._count(), oldCount)
 
@@ -49,6 +51,7 @@ class Test(unittest.TestCase):
         self.assertTrue(newId)
         self.assertNotEqual(newId, 'event1')
         self.assertEqual(d._count(), oldCount + 3)
+
         newId2 = e.trigger('event1', [])
         self.assertTrue(newId2)
         self.assertNotEqual(newId2, 'event1')
@@ -58,8 +61,10 @@ class Test(unittest.TestCase):
         newDocUrl = self._buildUrl('_aftertrigger_tmp')
         goodDocUrl = self._buildUrl('_aftertrigger')
         d.save(newDocUrl)
+
         oldData = urllib.urlopen(goodDocUrl).read()
         newData = urllib.urlopen(newDocUrl).read()
+
         self.assertEqual(newData, oldData)
 
     def test_modify(self):
@@ -73,8 +78,10 @@ class Test(unittest.TestCase):
         newDocUrl = self._buildUrl('_aftermodify_tmp')
         goodDocUrl = self._buildUrl('_aftermodify')
         d.save(newDocUrl)
+
         oldData = urllib.urlopen(goodDocUrl).read()
         newData = urllib.urlopen(newDocUrl).read()
+
         self.assertEqual(newData, oldData)
 
     def test_triggerParameter(self):
@@ -82,7 +89,11 @@ class Test(unittest.TestCase):
         oldCount = d._count()
         e = d.events()
 
-        newId = e.trigger('event2', [dict(parameter='./tl:sleep/@tl:dur', value='42')])
+        newId = e.trigger(
+            'event2',
+            [dict(parameter='./tl:sleep/@tl:dur', value='42')]
+        )
+
         self.assertTrue(newId)
         self.assertNotEqual(newId, 'event2')
         self.assertEqual(d._count(), oldCount + 5)
@@ -90,8 +101,10 @@ class Test(unittest.TestCase):
         newDocUrl = self._buildUrl('_aftertriggerparameter_tmp')
         goodDocUrl = self._buildUrl('_aftertriggerparameter')
         d.save(newDocUrl)
+
         oldData = urllib.urlopen(goodDocUrl).read()
         newData = urllib.urlopen(newDocUrl).read()
+
         self.assertEqual(newData, oldData)
 
     def test_modifyParameter(self):
@@ -108,10 +121,11 @@ class Test(unittest.TestCase):
         newDocUrl = self._buildUrl('_aftermodifyparameter_tmp')
         goodDocUrl = self._buildUrl('_aftermodifyparameter')
         d.save(newDocUrl)
+
         oldData = urllib.urlopen(goodDocUrl).read()
         newData = urllib.urlopen(newDocUrl).read()
         self.assertEqual(newData, oldData)
 
+
 if __name__ == '__main__':
     unittest.main()
-

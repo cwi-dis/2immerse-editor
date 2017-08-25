@@ -24,7 +24,7 @@ DOCUMENT = """
 DOCUMENT_COUNT = 9
 
 
-class Test(unittest.TestCase):
+class TestDocument(unittest.TestCase):
     def _buildUrl(self, extra=''):
         myUrl = urlparse.urljoin(
             'file:',
@@ -47,34 +47,42 @@ class Test(unittest.TestCase):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
+
         self.assertEqual(d._count(), DOCUMENT_COUNT)
 
     def test_saveDocument(self):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
+
         newDocUrl = self._buildUrl('_tmp')
         d.save(newDocUrl)
+
         oldData = urllib.urlopen(docUrl).read().strip()
         newData = urllib.urlopen(newDocUrl).read().strip()
+
         self.assertEqual(newData, oldData)
 
     def test_xpath(self):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
+
         for e in d.tree.getroot().iter():
             p = d._getXPath(e)
             e2 = d._getElement(p)
+
             self.assertIs(e, e2)
 
     def test_xpath_namespaces(self):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl('_namespaces')
         d.load(docUrl)
+
         for e in d.tree.getroot().iter():
             p = d._getXPath(e)
             e2 = d._getElement(p)
+
             self.assertIs(e, e2)
 
 

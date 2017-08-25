@@ -12,8 +12,7 @@ import json
 import uuid
 
 
-class Test(unittest.TestCase):
-
+class TestForward(unittest.TestCase):
     def _buildUrl(self, extra=''):
         myUrl = urlparse.urljoin(
             'file:', urllib.pathname2url(os.path.abspath(__file__))
@@ -30,6 +29,7 @@ class Test(unittest.TestCase):
         d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
+
         return d
 
     def test_create(self):
@@ -42,10 +42,11 @@ class Test(unittest.TestCase):
         copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
+
         newData = urllib.urlopen(newDocUrl).read()
         copyData = urllib.urlopen(copyDocUrl).read()
-        self.assertEqual(newData, copyData)
 
+        self.assertEqual(newData, copyData)
 
     def test_trigger(self):
         d = self._createDocument()
@@ -59,6 +60,7 @@ class Test(unittest.TestCase):
         self.assertNotEqual(newId, 'event1')
         self.assertEqual(d._count(), oldCount + 3)
         self.assertEqual(dCopy._count(), oldCount + 3)
+
         newId2 = e.trigger('event1', [])
         self.assertTrue(newId2)
         self.assertNotEqual(newId2, 'event1')
@@ -70,8 +72,10 @@ class Test(unittest.TestCase):
         copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
+
         newData = urllib.urlopen(newDocUrl).read()
         copyData = urllib.urlopen(copyDocUrl).read()
+
         self.assertEqual(newData, copyData)
 
     def test_modify(self):
@@ -89,8 +93,10 @@ class Test(unittest.TestCase):
         copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
+
         newData = urllib.urlopen(newDocUrl).read()
         copyData = urllib.urlopen(copyDocUrl).read()
+
         self.assertEqual(newData, copyData)
 
     def test_triggerParameter(self):
@@ -100,7 +106,10 @@ class Test(unittest.TestCase):
         oldCount = d._count()
         e = d.events()
 
-        newId = e.trigger('event2', [dict(parameter='./tl:sleep/@tl:dur', value='42')])
+        newId = e.trigger(
+            'event2',
+            [dict(parameter='./tl:sleep/@tl:dur', value='42')]
+        )
         self.assertTrue(newId)
         self.assertNotEqual(newId, 'event2')
         self.assertEqual(d._count(), oldCount + 5)
@@ -110,8 +119,10 @@ class Test(unittest.TestCase):
         copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
+
         newData = urllib.urlopen(newDocUrl).read()
         copyData = urllib.urlopen(copyDocUrl).read()
+
         self.assertEqual(newData, copyData)
 
     def test_modifyParameter(self):
@@ -132,10 +143,12 @@ class Test(unittest.TestCase):
         copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
+
         newData = urllib.urlopen(newDocUrl).read()
         copyData = urllib.urlopen(copyDocUrl).read()
+
         self.assertEqual(newData, copyData)
+
 
 if __name__ == '__main__':
     unittest.main()
-
