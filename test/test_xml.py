@@ -25,9 +25,17 @@ DOCUMENT_COUNT=9
 class Test(unittest.TestCase):
 
     def _buildUrl(self, extra=''):
-        myUrl = urlparse.urljoin('file:', urllib.pathname2url(os.path.abspath(__file__)))
-        docUrl = urlparse.urljoin(myUrl, 'test_document%s.xml'%extra)
+        myUrl = urlparse.urljoin(
+            'file:', urllib.pathname2url(os.path.abspath(__file__))
+        )
+
+        docUrl = urlparse.urljoin(
+            myUrl,
+            "fixtures/test_document%s.xml" % (extra)
+        )
+
         return docUrl
+
     def SKIP_test_get_xml_absolute(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())

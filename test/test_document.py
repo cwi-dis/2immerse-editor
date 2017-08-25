@@ -29,7 +29,11 @@ class Test(unittest.TestCase):
             'file:',
             urllib.pathname2url(os.path.abspath(__file__))
         )
-        docUrl = urlparse.urljoin(myUrl, 'test_document%s.xml' % (extra))
+
+        docUrl = urlparse.urljoin(
+            myUrl,
+            "fixtures/test_document%s.xml" % (extra)
+        )
 
         return docUrl
 

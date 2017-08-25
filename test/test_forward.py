@@ -14,8 +14,15 @@ import json
 class Test(unittest.TestCase):
 
     def _buildUrl(self, extra=''):
-        myUrl = urlparse.urljoin('file:', urllib.pathname2url(os.path.abspath(__file__)))
-        docUrl = urlparse.urljoin(myUrl, 'test_events%s.xml'%extra)
+        myUrl = urlparse.urljoin(
+            'file:', urllib.pathname2url(os.path.abspath(__file__))
+        )
+
+        docUrl = urlparse.urljoin(
+            myUrl,
+            "fixtures/test_events%s.xml" % (extra)
+        )
+
         return docUrl
 
     def _createDocument(self):
