@@ -489,7 +489,7 @@ class DocumentXml:
 
     @synchronized
     def get(self, path, mimetype='application/x-python-object'):
-        self.logger.info('get(%s,%s,%s)' % (path), extra=self.loggerExtra)
+        self.logger.info('get(%s)' % (path), extra=self.loggerExtra)
         element = self.document._getElement(path)
         return self.document._fromET(element, mimetype)
 
