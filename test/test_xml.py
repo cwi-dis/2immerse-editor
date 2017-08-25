@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
         result = d.get('/testDocument/first/firstChild2', 'application/xml')
         self.assertEqual(result.strip(), '<firstChild2 attr="value"/>')
         self.assertEqual(d._count(), DOCUMENT_COUNT)
-        
+
     def test_get_xml(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -37,7 +37,7 @@ class Test(unittest.TestCase):
         result = x.get('first/firstChild2', 'application/xml')
         self.assertEqual(result.strip(), '<firstChild2 attr="value" />')
         self.assertEqual(d._count(), DOCUMENT_COUNT)
-        
+
     def test_get_json(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
         result = json.loads(result)
         self.assertEqual(result, dict(attr="value"))
         self.assertEqual(d._count(), DOCUMENT_COUNT)
-        
+
     def test_put_xml(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -57,7 +57,7 @@ class Test(unittest.TestCase):
         grandData = x.get('third/thirdChild/thirdGrandChild', 'application/json')
         grandData = json.loads(grandData)
         self.assertEqual(grandData, dict(depth="3"))
-        
+
     def test_put_json(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -68,7 +68,7 @@ class Test(unittest.TestCase):
         grandData = x.get('third/thirdChild', 'application/json')
         grandData = json.loads(grandData)
         self.assertEqual(grandData, dict(depth="2"))
-        
+
     def test_put_where(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -82,7 +82,7 @@ class Test(unittest.TestCase):
         thirdData = x.get('third', 'application/xml')
         thirdData = thirdData.strip()
         self.assertEqual(thirdData, '<third><third1 /><third2 /><third3 /><third4 /><third5 /></third>')
-        
+
     def test_move(self):
         d = document.Document()
         d.loadXml(DOCUMENT.strip())
@@ -108,9 +108,9 @@ class Test(unittest.TestCase):
         secondData = secondData.strip()
         self.assertEqual(secondData, '<second><second1 /><second3 /><second2 /><second1 /><second3 /></second>')
         self.assertEqual(d._count(), DOCUMENT_COUNT+2)
-        
-        
+
+
 
 if __name__ == '__main__':
     unittest.main()
-    
+
