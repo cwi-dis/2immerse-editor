@@ -9,6 +9,7 @@ import urlparse
 import urllib
 import os
 import json
+import uuid
 
 DOCUMENT = """
 <testDocument>
@@ -38,18 +39,18 @@ class Test(unittest.TestCase):
         return docUrl
 
     def test_createDocument(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         d.loadXml(DOCUMENT.strip())
         self.assertEqual(d._count(), DOCUMENT_COUNT)
 
     def test_createDocument2(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
         self.assertEqual(d._count(), DOCUMENT_COUNT)
 
     def test_saveDocument(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
         newDocUrl = self._buildUrl('_tmp')
@@ -59,7 +60,7 @@ class Test(unittest.TestCase):
         self.assertEqual(newData, oldData)
 
     def test_xpath(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
         for e in d.tree.getroot().iter():
@@ -68,7 +69,7 @@ class Test(unittest.TestCase):
             self.assertIs(e, e2)
 
     def test_xpath_namespaces(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl('_namespaces')
         d.load(docUrl)
         for e in d.tree.getroot().iter():

@@ -9,6 +9,7 @@ import urllib
 import urlparse
 import os
 import json
+import uuid
 
 
 class Test(unittest.TestCase):
@@ -26,7 +27,7 @@ class Test(unittest.TestCase):
         return docUrl
 
     def _createDocument(self):
-        d = document.Document()
+        d = document.Document(uuid.uuid4())
         docUrl = self._buildUrl()
         d.load(docUrl)
         return d
