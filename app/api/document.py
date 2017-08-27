@@ -208,10 +208,18 @@ class Document:
     def _afterCopy(self, elt):
         """Adjust element attributes (xml:id and tt:name) after a copy.
         Makes them unique. Does not insert them into the datastructures yet: the element is expected
-        to be currently out-of-tree."""
+        to be currently out-of-tree.
+        Also insert a tls:state="new" attribute, to make tls:state non-empty, so the new element
+        will be picked up when building the list of modifyable elements.
+        """
         for e in elt.iter():
             id = e.get(NS_XML('id'))
-            if not id: continue
+            if not id:
+                # For the outer element we always add an id
+                if e == elt:
+                    id = 'new'
+                else:
+                    continue
             while id in self.idMap:
                 match = FIND_ID_INDEX.match(id)
                 if match:
@@ -222,7 +230,7 @@ class Document:
 
             e.set(NS_XML('id'), id)
         # Specific to tt: events
-        name = elt.get(NS_TRIGGER('name'))
+        name = elt.get(NS_TRIGGER('name'), 'New')
         if name:
             while name in self.nameSet:
                 match = FIND_NAME_INDEX.match(name)
@@ -232,6 +240,8 @@ class Document:
                 else:
                     name = name + ' (1)'
             elt.set(NS_TRIGGER('name'), name)
+        # Flag the new element as being newly copied (so it'll show up in the active list)
+        elt.set(NS_TIMELINE_INTERNAL("state"), "new")
 
     @synchronized
     def events(self):
@@ -531,7 +541,9 @@ class DocumentXml:
     def copy(self, path, where, sourcepath):
         self.logger.info('copy(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
         element = self.document._getElement(path)
+        # Get the original
         sourceElement = self.document._getElement(sourcepath)
+        # Make a deep copy
         newElement = copy.deepcopy(sourceElement)
         self.document._afterCopy(newElement)
         # newElement._setroot(None)
@@ -570,6 +582,7 @@ class DocumentEvents:
 
     @synchronized
     def _getDescription(self, elt, trigger):
+        # xxxjack should move to ElementDelegate
         parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
         parameters = []
@@ -589,6 +602,7 @@ class DocumentEvents:
 
     @synchronized
     def _getParameter(self, parameter):
+        # xxxjack should move to ElementDelegate
         try:
             parPath = parameter['parameter']
             parValue = parameter['value']
@@ -759,13 +773,26 @@ class DocumentServe:
         self.callbacks.add(url)
         self.document.forwardHandler = self
 
+    @synchronized
+    def setDocumentState(self, documentState):
+        for eltId, eltState in documentState.items():
+            elt = self.document._getElement(eltId)
+            if not elt:
+                self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.loggerExtra)
+                continue
+            changed = False # elt.delegate.elementStateChanged(eltState)
+            if changed:
+                self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.loggerExtra)
+                
     def forward(self, operations):
         self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
         gen = self._nextGeneration()
         toRemove = []
         for callback in self.callbacks:
             try:
-                r = requests.put(callback, json=dict(generation=gen, operations=operations))
+                args = dict(generation=gen, operations=operations)
+                # xxxjack for the first successful one, add updateState=True
+                r = requests.put(callback, json=args)
                 r.raise_for_status()
             except requests.exceptions.RequestException:
                 print 'PUT failed:', callback # xxxjack need better error message:-)
