@@ -77,13 +77,9 @@ export function countLeafNodes(chapter: Chapter): number {
     return 1;
   }
 
-  let leafNodeCount = 0;
-
-  children.forEach((childChapter: Chapter) => {
-    leafNodeCount += countLeafNodes(childChapter);
-  });
-
-  return leafNodeCount;
+  return children.reduce((leafNodeCount, childChapter: Chapter) => {
+    return leafNodeCount + countLeafNodes(childChapter);
+  }, 0);
 }
 
 export function getTreeHeight(chapters: List<Chapter>): number {
