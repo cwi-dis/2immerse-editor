@@ -82,7 +82,11 @@ actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTE
   const { accessPath } = action.payload;
   const keyPath = generateChapterKeyPath(accessPath);
 
-  return state.deleteIn(keyPath);
+  const children = state.getIn(keyPath.push("children"));
+  const parentPath = keyPath.butLast();
+
+  return state.deleteIn(keyPath)
+              .updateIn(parentPath, (chapters) => chapters.concat(children));
 });
 
 actionHandler.addHandler("ASSIGN_MASTER", (state, action: actions.ASSIGN_MASTER) => {

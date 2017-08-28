@@ -6,8 +6,8 @@ import { makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
 
-function capitalize(str: string) {
-  return str.slice(0, 1).toUpperCase() + str.slice(1);
+function capitalize(str: string): string {
+  return str[0].toUpperCase() + str.slice(1);
 }
 
 interface EventContainerProps {
