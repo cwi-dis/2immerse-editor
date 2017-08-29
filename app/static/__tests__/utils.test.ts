@@ -64,4 +64,52 @@ describe("Utility function getTreeHeight()", () => {
     expect(util.getTreeHeight(tree)).toBe(4);
   });
 });
+
+describe("Utility function countLeafNodes()", () => {
+  it("should return 1 on a single node", () => {
+    const tree = new Chapter({id: "chapter0"});
+    expect(util.countLeafNodes(tree)).toBe(1);
+  });
+
+  it("should return 1 on a tree with a single branch", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1", children: List([
+          new Chapter({id: "chapter1.1.1.1"})
+        ])})
+      ])})
+    ])});
+
+    expect(util.countLeafNodes(tree)).toBe(1);
+  });
+
+  it("should return the number of leaf nodes with branches of the same length", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1"}),
+        new Chapter({id: "chapter1.1.2"})
+      ])})
+    ])});
+
+    expect(util.countLeafNodes(tree)).toBe(2);
+  });
+
+  it("should return the number of leaf nodes with branches of different length", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1", children: List([
+          new Chapter({id: "chapter1.1.1.1", children: List([
+            new Chapter({id: "chapter1.1.1.1.1", children: List([
+              new Chapter({id: "chapter1.1.1.1.1.1"}),
+              new Chapter({id: "chapter1.1.1.1.1.2"}),
+            ])})
+          ])}),
+          new Chapter({id: "chapter1.1.1.2"})
+        ])}),
+        new Chapter({id: "chapter1.1.2"})
+      ])})
+    ])});
+
+    expect(util.countLeafNodes(tree)).toBe(4);
+  });
 });
