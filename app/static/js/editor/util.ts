@@ -1,4 +1,4 @@
-import { Collection, List } from "immutable";
+import { Collection, List, Map } from "immutable";
 import { ThunkAction } from "redux-thunk";
 
 import { ApplicationState } from "./store";
@@ -93,13 +93,13 @@ export function getTreeHeight(chapters: List<Chapter>): number {
 }
 
 export function parseQueryString(query: string): Map<string, string> {
-  let result = new Map<string, string>();
+  let result = Map<string, string>();
 
   query.split("&").filter((pair) => {
     const [key, val] = pair.split("=");
 
     if (key.length > 0) {
-      result.set(
+      result = result.set(
         key.replace(/[^a-zA-Z0-9_-]/g, ""),
         val
       );
