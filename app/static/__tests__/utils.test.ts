@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import { List } from "immutable";
+import { List, Map } from "immutable";
 import * as util from "../js/editor/util";
 import { Chapter } from "../js/editor/reducers/chapters";
 
@@ -111,5 +111,50 @@ describe("Utility function countLeafNodes()", () => {
     ])});
 
     expect(util.countLeafNodes(tree)).toBe(4);
+  });
+});
+
+describe("Utility function parseQueryString()", () => {
+  it("should return an empty map on empty string", () => {
+    expect(util.parseQueryString("")).toEqual(Map<string, string>());
+  });
+
+  it("should parse a single key-value pair", () => {
+    const expected = Map<string, string>([["key", "value"]]);
+
+    expect(
+      util.parseQueryString("key=value")
+    ).toEqual(expected);
+  });
+
+  it("should ignore values with empty keys", () => {
+    expect(util.parseQueryString("=value")).toEqual(Map());
+    expect(util.parseQueryString("=value1&=value2")).toEqual(Map());
+
+    expect(
+      util.parseQueryString("=value1&key2=value2&=value3")
+    ).toEqual(
+      Map<string, string>([["key2", "value2"]])
+      );
+  });
+
+  it("should assign undefined to keys without value", () => {
+    expect(
+      util.parseQueryString("key")
+    ).toEqual(Map([["key", undefined]]));
+
+    expect(
+      util.parseQueryString("key1&key2")
+    ).toEqual(Map([["key1", undefined], ["key2", undefined]]));
+  });
+
+  it("should assign empty string to keys with empty value", () => {
+    expect(
+      util.parseQueryString("key=")
+    ).toEqual(Map([["key", ""]]));
+
+    expect(
+      util.parseQueryString("key1=&key2=")
+    ).toEqual(Map([["key1", ""], ["key2", ""]]));
   });
 });
