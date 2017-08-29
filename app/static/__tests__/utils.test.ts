@@ -116,7 +116,7 @@ describe("Utility function countLeafNodes()", () => {
 
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
-    expect(util.parseQueryString("")).toEqual(Map<string, string>());
+    expect(util.parseQueryString("")).toEqual(Map());
   });
 
   it("should parse a single key-value pair", () => {
@@ -124,6 +124,42 @@ describe("Utility function parseQueryString()", () => {
 
     expect(
       util.parseQueryString("key=value")
+    ).toEqual(expected);
+  });
+
+  it("should parse multiple key-value pairs", () => {
+    const expected = Map<string, string>([
+      ["key1", "value1"],
+      ["key2", "value2"],
+      ["key3", "value3"],
+    ]);
+
+    expect(
+      util.parseQueryString("key1=value1&key2=value2&key3=value3")
+    ).toEqual(expected);
+  });
+
+  it("should parse all values as strings", () => {
+    const expected = Map<string, string>([
+      ["key1", "value1"],
+      ["key2", "42"],
+      ["key3", "0.123"],
+    ]);
+
+    expect(
+      util.parseQueryString("key1=value1&key2=42&key3=0.123")
+    ).toEqual(expected);
+  });
+
+  it("should decode URI-encoded values", () => {
+    const expected = Map<string, string>([
+      ["key1", "spam&eggs"],
+      ["key2", "ham, spam & eggs"],
+      ["key3", "answer=42"],
+    ]);
+
+    expect(
+      util.parseQueryString("key1=spam%26eggs&key2=ham%2C%20spam%20%26%20eggs&key3=answer%3D42")
     ).toEqual(expected);
   });
 

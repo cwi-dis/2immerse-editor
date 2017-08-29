@@ -101,7 +101,7 @@ export function parseQueryString(query: string): Map<string, string> {
     if (key.length > 0) {
       result = result.set(
         key.replace(/[^a-zA-Z0-9_-]/g, ""),
-        val
+        (val) ? decodeURIComponent(val) : val
       );
     }
   });
