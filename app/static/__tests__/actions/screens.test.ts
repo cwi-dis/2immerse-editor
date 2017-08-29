@@ -24,4 +24,42 @@ describe("Screen actions", () => {
 
     expect(actionCreators.addDevice("personal")).toEqual(expected);
   });
+
+  it("should create a REMOVE_DEVICE action with the given ID", () => {
+    const expected = {
+      type: "REMOVE_DEVICE",
+      payload: {
+        id: "screenID"
+      }
+    };
+
+    expect(actionCreators.removeDevice("screenID")).toEqual(expected);
+  });
+
+  it("should create an UNDO_LAST_SPLIT action with the given ID", () => {
+    const expected = {
+      type: "UNDO_LAST_SPLIT",
+      payload: {
+        screenId: "screenID"
+      }
+    };
+
+    expect(actionCreators.undoLastSplit("screenID")).toEqual(expected);
+  });
+
+  it("should create a SPLIT_REGION action with the given arguments", () => {
+    const expected = {
+      type: "SPLIT_REGION",
+      payload: {
+        screenId: "screenID",
+        regionId: "regionID",
+        orientation: "horizontal",
+        position: 0.5
+      }
+    };
+
+    expect(
+      actionCreators.splitRegion("screenID", "regionID", "horizontal", 0.5)
+    ).toEqual(expected);
+  });
 });
