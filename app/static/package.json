@@ -3,6 +3,21 @@
   "author": "Thomas Röggla",
   "license": "BSD-2-Clause",
   "version": "0.1.0",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
   "devDependencies": {
     "@types/jest": "^20.0.8",
     "css-loader": "^0.28.4",
