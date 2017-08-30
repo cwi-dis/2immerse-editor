@@ -120,23 +120,21 @@ type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
   private initialState: T;
-  private handlers: {[key: string]: ActionHandlerFunction<T>};
+  private handlers: Map<string, ActionHandlerFunction<T>>;
 
   constructor(initialState: T) {
     this.initialState = initialState;
-    this.handlers = {};
+    this.handlers = Map();
   }
 
   public addHandler(action: string, fn: ActionHandlerFunction<T>) {
-    this.handlers[action] = fn;
+    this.handlers = this.handlers.set(action, fn);
   }
 
   public getReducer(): ActionHandlerFunction<T> {
     return (state: T = this.initialState, action: Action) => {
-      for (const key in this.handlers) {
-        if (key === action.type) {
-          return this.handlers[key](state, action);
-        }
+      if (this.handlers.has(action.type)) {
+        return this.handlers.get(action.type)!(state, action);
       }
 
       return state;
