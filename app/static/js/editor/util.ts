@@ -92,16 +92,19 @@ export function getTreeHeight(chapters: List<Chapter>): number {
   }).max()!;
 }
 
-export function parseQueryString(query: string): Map<string, string> {
-  let result = Map<string, string>();
+export function parseQueryString(query: string): Map<string, string | undefined> {
+  let result = Map<string, string | undefined>();
 
   query.split("&").filter((pair) => {
     const [key, val] = pair.split("=");
 
-    if (key.length > 0) {
+    const sanitisedKey = key.replace(/[^a-zA-Z0-9_-]/g, "");
+    const sanitisedVal = (val) ? decodeURIComponent(val) : val;
+
+    if (sanitisedKey.length > 0) {
       result = result.set(
-        key.replace(/[^a-zA-Z0-9_-]/g, ""),
-        (val) ? decodeURIComponent(val) : val
+        sanitisedKey,
+        sanitisedVal
       );
     }
   });

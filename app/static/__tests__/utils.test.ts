@@ -193,4 +193,24 @@ describe("Utility function parseQueryString()", () => {
       util.parseQueryString("key1=&key2=")
     ).toEqual(Map([["key1", ""], ["key2", ""]]));
   });
+
+  it("should use the last value if multiple keys with the same name are given", () => {
+    expect(
+      util.parseQueryString("key=ham&key=spam&key=eggs")
+    ).toEqual(Map([["key", "eggs"]]));
+  });
+
+  it("should strip non-alphanumeric characters in keys", () => {
+    expect(
+      util.parseQueryString("?key1=value1&$key2@=value2&*^$#=value3")
+    ).toEqual(Map([["key1", "value1"], ["key2", "value2"]]));
+  });
+
+  it("should not remote hyphens and underscores from keys", () => {
+    expect(
+      util.parseQueryString("?key-1=value1&k_ey2=value2&k-e_y-3=value3")
+    ).toEqual(Map([
+      ["key-1", "value1"], ["k_ey2", "value2"], ["k-e_y-3", "value3"]
+    ]));
+  });
 });
