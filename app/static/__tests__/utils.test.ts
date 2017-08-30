@@ -316,3 +316,16 @@ describe("The ActionHandler class", () => {
     })
   });
 });
+
+describe("Utility function makeRequest()", () => {
+  it("should reject when given a non-existent address", () => {
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("GET", "http://does-not.exist/hopefully")
+    ).rejects.toEqual({
+      status: 0,
+      statusText: ""
+    });
+  });
+});
