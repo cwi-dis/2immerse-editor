@@ -214,3 +214,29 @@ describe("Utility function parseQueryString()", () => {
     ]));
   });
 });
+
+describe("Utility function getChapterKeyPath()", () => {
+  it("should return an empty list when given an empty access path", () => {
+    expect(util.generateChapterKeyPath([])).toEqual(List());
+  });
+
+  it("should return the same value when passed an access path with a single value", () => {
+    expect(util.generateChapterKeyPath([0])).toEqual(List([0]));
+  });
+
+  it("should return a list with a single 'children' element when given an access path with two values", () => {
+    expect(
+      util.generateChapterKeyPath([0, 0])
+    ).toEqual(
+      List([0, "children", 0])
+    );
+  });
+
+  it("should return a list with multiple 'children' elements when given a longer access path", () => {
+    expect(
+      util.generateChapterKeyPath([0, 0, 1, 2])
+    ).toEqual(
+      List([0, "children", 0, "children", 1, "children", 2])
+    );
+  });
+});
