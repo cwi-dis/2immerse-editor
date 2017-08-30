@@ -20,11 +20,11 @@ export class Chapter extends Record<ChapterAttributes>({id: "", name: null, mast
 
 export type ChapterState = List<Chapter>;
 
-const initialChapters: List<Chapter> = List([
+export const initialState: List<Chapter> = List([
   new Chapter({id: shortid.generate()})
 ]);
 
-const actionHandler = new ActionHandler<ChapterState>(initialChapters);
+const actionHandler = new ActionHandler<ChapterState>(initialState);
 
 actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPTER_BEFORE) => {
   const { accessPath } = action.payload;
