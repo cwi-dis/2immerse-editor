@@ -58,6 +58,10 @@ export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>
 }
 
 export function generateChapterKeyPath(accessPath: Array<number>): List<number | string> {
+  if (accessPath.length === 0) {
+    return List();
+  }
+
   return List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
     return path.concat([i, "children"]);
   }, [])).push(accessPath[accessPath.length - 1]);
