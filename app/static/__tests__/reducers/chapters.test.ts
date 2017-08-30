@@ -131,4 +131,33 @@ describe("Chapters reducer", () => {
     expect(firstLevel.get(1)).toBeInstanceOf(Chapter);
     expect(firstLevel.get(2)).toBe(state.get(0).children.get(1));
   });
+
+  it("should rename an existing chapter on RENAME_CHAPTER", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "RENAME_CHAPTER", payload: { accessPath: [0], name: "new name" }} as any
+    )
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).name).toEqual("new name");
+  });
+
+  it("should assign a master layout to a chapter on ASSIGN_MASTER", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
+    )
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
+    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
+  });
 });
