@@ -274,6 +274,19 @@ describe("Chapters reducer", () => {
     expect(transformedState.get(0).children).toEqual(List());
   });
 
+  it("should remove the root node on REMOVE_CHAPTER", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1"})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_CHAPTER", payload: { accessPath: [0] }} as any
+    );
+
+    expect(transformedState).toEqual(List());
+  });
+
   it("should remove a node and attach its children to the parent on REMOVE_CHAPTER", () => {
     const state: ChapterState = List([
       new Chapter({id: "chapter1", children: List([
