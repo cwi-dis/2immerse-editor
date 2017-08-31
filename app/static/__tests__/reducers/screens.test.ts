@@ -59,4 +59,32 @@ describe("Screens reducer", () => {
       reducer(state, { type: "" })
     ).toEqual(state);
   });
+
+  it("should add a new personal screen to the end of the list on ADD_DEVICE", () => {
+    const state = reducer(List(), { type: "ADD_DEVICE", payload: { type: "personal" }} as any);
+
+    expect(state.count()).toEqual(1);
+
+    expect(state.get(0).type).toEqual("personal");
+    expect(state.get(0).orientation).toEqual("portrait");
+
+    expect(state.get(0).regions.count()).toEqual(1);
+
+    expect(state.get(0).regions.get(0).position).toEqual([0, 0]);
+    expect(state.get(0).regions.get(0).size).toEqual([1, 1]);
+  });
+
+  it("should add a new communal screen to the end of the list on ADD_DEVICE", () => {
+    const state = reducer(List(), { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+
+    expect(state.count()).toEqual(1);
+
+    expect(state.get(0).type).toEqual("communal");
+    expect(state.get(0).orientation).toEqual("landscape");
+
+    expect(state.get(0).regions.count()).toEqual(1);
+
+    expect(state.get(0).regions.get(0).position).toEqual([0, 0]);
+    expect(state.get(0).regions.get(0).size).toEqual([1, 1]);
+  });
 });
