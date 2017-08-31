@@ -3,6 +3,40 @@
 import { List } from "immutable";
 import reducer, { Chapter, ChapterState, initialState } from "../../js/editor/reducers/chapters";
 
+describe("Chapter class", () => {
+  it("should instantiate a new object with the default attributes", () => {
+    const chapter = new Chapter();
+
+    expect(chapter.id).toEqual("");
+    expect(chapter.name).toEqual(null);
+    expect(chapter.masterLayouts).toEqual(List());
+    expect(chapter.children).toEqual(List());
+  });
+
+  it("should instantiate a new object with some given attributes", () => {
+    const chapter = new Chapter({id: "chapter1", name: "chapter name"});
+
+    expect(chapter.id).toEqual("chapter1");
+    expect(chapter.name).toEqual("chapter name");
+    expect(chapter.masterLayouts).toEqual(List());
+    expect(chapter.children).toEqual(List());
+  });
+
+  it("should instantiate a new object with all given attributes", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      name: "another chapter name",
+      masterLayouts: List(["masterLayout"]),
+      children: List([new Chapter({id: "chapter1.1"})])
+    });
+
+    expect(chapter.id).toEqual("chapter1");
+    expect(chapter.name).toEqual("another chapter name");
+    expect(chapter.masterLayouts).toEqual(List(["masterLayout"]));
+    expect(chapter.children).toEqual(List([new Chapter({id: "chapter1.1"})]));
+  });
+});
+
 describe("Chapters reducer", () => {
   it("should return the initial state on an unknown action", () => {
     expect(
