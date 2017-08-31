@@ -21,7 +21,7 @@ describe("Master class", () => {
   });
 
   it("should instantiate a new object with all given attributes", () => {
-    const chapter = new Master({
+    const master = new Master({
       id: "master1",
       name: "another master name",
       placedComponents: List([{
@@ -31,11 +31,11 @@ describe("Master class", () => {
       }]),
     });
 
-    expect(chapter.id).toEqual("master1");
-    expect(chapter.name).toEqual("another master name");
+    expect(master.id).toEqual("master1");
+    expect(master.name).toEqual("another master name");
 
-    expect(chapter.placedComponents.count()).toEqual(1);
-    expect(chapter.placedComponents.get(0).screen).toEqual("screen1");
+    expect(master.placedComponents.count()).toEqual(1);
+    expect(master.placedComponents.get(0).screen).toEqual("screen1");
   });
 });
 
