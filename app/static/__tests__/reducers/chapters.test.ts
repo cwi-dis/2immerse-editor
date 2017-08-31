@@ -258,4 +258,65 @@ describe("Chapters reducer", () => {
     expect(chapterChildren.get(0).children.count()).toEqual(1);
     expect(chapterChildren.get(0).children.get(0).id).toEqual("chapter1.1");
   });
+
+  it("should remove a leaf node on REMOVE_CHAPTER", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 0] }} as any
+    );
+
+    expect(transformedState.get(0).children).toEqual(List());
+  });
+
+  it("should remove a node and attach its children to the parent on REMOVE_CHAPTER", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1", children: List([
+          new Chapter({id: "chapter1.1.1"})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 0] }} as any
+    );
+
+    expect(transformedState.get(0).children.count()).toEqual(1);
+    expect(transformedState.get(0).children.get(0).id).toEqual("chapter1.1.1");
+    expect(transformedState.get(0).children.get(0).children).toEqual(List());
+  });
+
+  it("should remove a node and attach its children to the parent at the right position on REMOVE_CHAPTER", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"}),
+        new Chapter({id: "chapter1.2", children: List([
+          new Chapter({id: "chapter1.2.1"}),
+          new Chapter({id: "chapter1.2.2"})
+        ])}),
+        new Chapter({id: "chapter1.3"}),
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 1] }} as any
+    );
+    const chapterChildren = transformedState.get(0).children;
+
+    expect(chapterChildren.count()).toEqual(4);
+
+    expect(chapterChildren.get(1).id).toEqual("chapter1.2.1");
+    expect(chapterChildren.get(2).id).toEqual("chapter1.2.2");
+
+    expect(chapterChildren.get(1).children).toEqual(List());
+    expect(chapterChildren.get(2).children).toEqual(List());
+  });
 });
