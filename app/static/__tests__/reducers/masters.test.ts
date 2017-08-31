@@ -38,3 +38,41 @@ describe("Master class", () => {
     expect(chapter.placedComponents.get(0).screen).toEqual("screen1");
   });
 });
+
+describe("Masters reducer", () => {
+  it("should return the initial state on an unknown action", () => {
+    const initialState = List();
+
+    expect(
+      reducer(undefined, { type: "" })
+    ).toEqual(initialState);
+  });
+
+  it("should return the given state on an unknown action", () => {
+    const state: MasterState = List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ]);
+
+    expect(
+      reducer(state, { type: "" })
+    ).toEqual(state);
+  });
+
+  it("should append a new master layout to the list on ADD_MASTER_LAYOUT", () => {
+    const state: MasterState = List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_MASTER_LAYOUT", payload: { name: "Master Layout 3" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(3);
+    expect(transformedState.get(2)).toBeInstanceOf(Master);
+    expect(transformedState.get(2).name).toEqual("Master Layout 3");
+    expect(transformedState.get(2).placedComponents).toEqual(List());
+  });
+});
