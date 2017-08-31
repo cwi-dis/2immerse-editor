@@ -143,6 +143,30 @@ describe("Chapters reducer", () => {
     expect(transformedState.get(1)).toBeInstanceOf(Chapter);
   });
 
+  it("should add a chapter after the existing one on ADD_CHAPTER_AFTER with out of bounds index", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState1 = reducer(
+      state,
+      { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [1] }} as any
+    )
+
+    expect(transformedState1.count()).toEqual(2);
+    expect(transformedState1.get(0)).toBe(state.get(0));
+    expect(transformedState1.get(1)).toBeInstanceOf(Chapter);
+
+    const transformedState2 = reducer(
+      state,
+      { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [10] }} as any
+    )
+
+    expect(transformedState2.count()).toEqual(2);
+    expect(transformedState2.get(0)).toBe(state.get(0));
+    expect(transformedState2.get(1)).toBeInstanceOf(Chapter);
+  });
+
   it("should add a chapter after the first one on a deeper level on ADD_CHAPTER_AFTER", () => {
     const state: ChapterState = List([
       new Chapter({id: "chapter1", children: List([
