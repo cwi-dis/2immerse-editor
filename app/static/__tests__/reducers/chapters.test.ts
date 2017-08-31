@@ -218,4 +218,44 @@ describe("Chapters reducer", () => {
     expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
     expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
   });
+
+  it("should add a new node as child of a leaf node on ADD_CHAPTER_CHILD", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_CHAPTER_CHILD", payload: { accessPath: [0, 0] }} as any
+    );
+    const chapterChildren = transformedState.get(0).children.get(0).children;
+
+    expect(chapterChildren.count()).toEqual(1);
+    expect(chapterChildren.get(0)).toBeInstanceOf(Chapter);
+    expect(chapterChildren.get(0).children).toEqual(List());
+  });
+
+  it("should insert a new node between two existing nodes on ADD_CHAPTER_CHILD", () => {
+    const state: ChapterState = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_CHAPTER_CHILD", payload: { accessPath: [0] }} as any
+    );
+
+    expect(transformedState.get(0).id).toEqual("chapter1");
+
+    const chapterChildren = transformedState.get(0).children;
+    expect(chapterChildren.count()).toEqual(1);
+    expect(chapterChildren.get(0)).toBeInstanceOf(Chapter);
+
+    expect(chapterChildren.get(0).children.count()).toEqual(1);
+    expect(chapterChildren.get(0).children.get(0).id).toEqual("chapter1.1");
+  });
 });
