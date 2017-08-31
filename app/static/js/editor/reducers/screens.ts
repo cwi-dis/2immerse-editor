@@ -1,4 +1,4 @@
-import { List } from "immutable";
+import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
 import * as actions from "../actions/screens";
@@ -15,12 +15,26 @@ export interface ScreenRegion {
   zIndex?: number;
 }
 
-export interface Screen {
+export interface ScreenAttributes {
   id: string;
   name: string;
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
   regions: List<ScreenRegion>;
+}
+
+const defaultScreenParams: ScreenAttributes = {
+  id: "",
+  name: "",
+  type: "communal",
+  orientation: "landscape",
+  regions: List()
+};
+
+export class Screen extends Record<ScreenAttributes>(defaultScreenParams) {
+  constructor(params?: ScreenAttributes) {
+    params ? super(params) : super();
+  }
 }
 
 function createNewScreen(type: "communal" | "personal"): Screen {
@@ -31,13 +45,13 @@ function createNewScreen(type: "communal" | "personal"): Screen {
     splitFrom: [null]
   };
 
-  return {
+  return new Screen({
     id: shortid.generate(),
     name: type + " " + getRandomInt(),
     type: type,
     orientation: (type === "communal") ? "landscape" : "portrait",
     regions: List([rootRegion])
-  };
+  });
 }
 
 function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
