@@ -14,8 +14,8 @@ describe("Screens reducer", () => {
 
   it("should return the given state on an unknown action", () => {
     const state: ScreenState = List([
-      { id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()} as Screen,
-      { id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()} as Screen
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
     ]);
 
     expect(
