@@ -62,7 +62,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_BEFORE", payload: { accessPath: [0] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(2);
     expect(transformedState.get(0)).toBeInstanceOf(Chapter);
@@ -78,7 +78,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_BEFORE", payload: { accessPath: [1] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(3);
 
@@ -98,7 +98,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_BEFORE", payload: { accessPath: [0, 1] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(1);
 
@@ -119,7 +119,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [0] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(3);
 
@@ -136,7 +136,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [0] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(2);
     expect(transformedState.get(0)).toBe(state.get(0));
@@ -151,7 +151,7 @@ describe("Chapters reducer", () => {
     const transformedState1 = reducer(
       state,
       { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [1] }} as any
-    )
+    );
 
     expect(transformedState1.count()).toEqual(2);
     expect(transformedState1.get(0)).toBe(state.get(0));
@@ -160,7 +160,7 @@ describe("Chapters reducer", () => {
     const transformedState2 = reducer(
       state,
       { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [10] }} as any
-    )
+    );
 
     expect(transformedState2.count()).toEqual(2);
     expect(transformedState2.get(0)).toBe(state.get(0));
@@ -178,7 +178,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [0, 0] }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(1);
 
@@ -198,7 +198,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "RENAME_CHAPTER", payload: { accessPath: [0], name: "new name" }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(1);
     expect(transformedState.get(0).name).toEqual("new name");
@@ -212,7 +212,7 @@ describe("Chapters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
-    )
+    );
 
     expect(transformedState.count()).toEqual(1);
     expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
