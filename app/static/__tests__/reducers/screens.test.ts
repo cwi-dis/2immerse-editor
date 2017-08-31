@@ -102,4 +102,74 @@ describe("Screens reducer", () => {
     expect(transformedState.count()).toEqual(1);
     expect(transformedState.get(0).id).toEqual("screen2");
   });
+
+  it("should split the root region horizontally on SPLIT_REGION", () => {
+    let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+    const rootRegion = state.get(0).regions.get(0);
+
+    state = reducer(
+      state, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: state.get(0).id,
+          regionId: rootRegion.id,
+          position: 0.5,
+          orientation: "horizontal"
+        }
+      } as any
+    );
+
+    const regions = state.get(0).regions;
+
+    expect(regions.count()).toEqual(2);
+
+    expect(regions.get(0).id).toEqual(rootRegion.id);
+    expect(regions.get(0).splitFrom.length).toEqual(2);
+    expect(regions.get(0).splitFrom[0]).toBeNull();
+    expect(regions.get(0).splitFrom[1]).toEqual(regions.get(1).id);
+    expect(regions.get(0).splitDirection).toBeUndefined();
+    expect(regions.get(0).position).toEqual([0, 0]);
+    expect(regions.get(0).size).toEqual([1, 0.5]);
+
+    expect(regions.get(1).splitFrom.length).toEqual(1);
+    expect(regions.get(1).splitFrom[0]).toEqual(rootRegion.id);
+    expect(regions.get(1).splitDirection).toEqual("horizontal");
+    expect(regions.get(1).position).toEqual([0, 0.5]);
+    expect(regions.get(1).size).toEqual([1, 0.5]);
+  });
+
+  it("should split the root region vertically on SPLIT_REGION", () => {
+    let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+    const rootRegion = state.get(0).regions.get(0);
+
+    state = reducer(
+      state, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: state.get(0).id,
+          regionId: rootRegion.id,
+          position: 0.5,
+          orientation: "vertical"
+        }
+      } as any
+    );
+
+    const regions = state.get(0).regions;
+
+    expect(regions.count()).toEqual(2);
+
+    expect(regions.get(0).id).toEqual(rootRegion.id);
+    expect(regions.get(0).splitFrom.length).toEqual(2);
+    expect(regions.get(0).splitFrom[0]).toBeNull();
+    expect(regions.get(0).splitFrom[1]).toEqual(regions.get(1).id);
+    expect(regions.get(0).splitDirection).toBeUndefined();
+    expect(regions.get(0).position).toEqual([0, 0]);
+    expect(regions.get(0).size).toEqual([0.5, 1]);
+
+    expect(regions.get(1).splitFrom.length).toEqual(1);
+    expect(regions.get(1).splitFrom[0]).toEqual(rootRegion.id);
+    expect(regions.get(1).splitDirection).toEqual("vertical");
+    expect(regions.get(1).position).toEqual([0.5, 0]);
+    expect(regions.get(1).size).toEqual([0.5, 1]);
+  });
 });
