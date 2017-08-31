@@ -87,4 +87,19 @@ describe("Screens reducer", () => {
     expect(state.get(0).regions.get(0).position).toEqual([0, 0]);
     expect(state.get(0).regions.get(0).size).toEqual([1, 1]);
   });
+
+  it("should remove a screen on REMOVE_DEVICE", () => {
+    const state: ScreenState = List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_DEVICE", payload: { id: "screen1" } } as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).id).toEqual("screen2");
+  });
 });
