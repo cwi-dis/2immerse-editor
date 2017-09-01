@@ -1,6 +1,8 @@
 /// <reference types="jest" />
 
 import { List, Map } from "immutable";
+import * as XHRmock from "xhr-mock";
+
 import * as util from "../js/editor/util";
 import { Chapter } from "../js/editor/reducers/chapters";
 
@@ -318,14 +320,93 @@ describe("The ActionHandler class", () => {
 });
 
 describe("Utility function makeRequest()", () => {
-  it("should reject when given a non-existent address", () => {
+  it("should reject with empty response when given a non-existent address", () => {
+    XHRmock.setup();
+
+    XHRmock.get("http://does-not.exist", (req, res) => {
+      return null;
+    });
+
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("GET", "http://does-not.exist/hopefully")
+      util.makeRequest("GET", "http://does-not.exist")
     ).rejects.toEqual({
       status: 0,
       statusText: ""
     });
+  });
+
+  it("should reject with HTTP error and message on error", () => {
+    XHRmock.setup();
+
+    XHRmock.get("http://triggers-some.error", (req, res) => {
+      return res.status(400).statusText("Bad Request");
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("GET", "http://triggers-some.error")
+    ).rejects.toEqual({
+      status: 400,
+      statusText: "Bad Request"
+    });
+  });
+
+  it("should resolve with HTTP status and body on HTTP status 200", () => {
+    XHRmock.setup();
+
+    XHRmock.get("http://should-return.success", (req, res) => {
+      return res.status(200).body("Success");
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("GET", "http://should-return.success")
+    ).resolves.toEqual("Success");
+  });
+
+  it("should resolve with HTTP status and body on HTTP status 200", () => {
+    XHRmock.setup();
+
+    XHRmock.get("http://should-return.success", (req, res) => {
+      return res.status(204);
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("GET", "http://should-return.success")
+    ).resolves.toEqual("");
+  });
+
+  it("should properly set the Content-Type request header", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-return.success", (req, res) => {
+      return res.status(200).body(req.header("Content-Type"));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-return.success", "", "image/png")
+    ).resolves.toEqual("image/png");
+  });
+
+  it("should send the given data to the server", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-send.data", (req, res) => {
+      return res.status(200).body(req.body());
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-send.data", "hello world")
+    ).resolves.toEqual("hello world");
   });
 });
