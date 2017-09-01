@@ -334,6 +334,8 @@ describe("Utility function makeRequest()", () => {
     ).rejects.toEqual({
       status: 0,
       statusText: ""
+    }).then(() => {
+      XHRmock.teardown();
     });
   });
 
@@ -351,6 +353,8 @@ describe("Utility function makeRequest()", () => {
     ).rejects.toEqual({
       status: 400,
       statusText: "Bad Request"
+    }).then(() => {
+      XHRmock.teardown();
     });
   });
 
@@ -365,7 +369,9 @@ describe("Utility function makeRequest()", () => {
 
     return expect(
       util.makeRequest("GET", "http://should-return.success")
-    ).resolves.toEqual("Success");
+    ).resolves.toEqual("Success").then(() => {
+      XHRmock.teardown();
+    });
   });
 
   it("should resolve with HTTP status and body on HTTP status 200", () => {
@@ -379,7 +385,9 @@ describe("Utility function makeRequest()", () => {
 
     return expect(
       util.makeRequest("GET", "http://should-return.success")
-    ).resolves.toEqual("");
+    ).resolves.toEqual("").then(() => {
+      XHRmock.teardown();
+    });
   });
 
   it("should properly set the Content-Type request header", () => {
@@ -393,7 +401,9 @@ describe("Utility function makeRequest()", () => {
 
     return expect(
       util.makeRequest("POST", "http://should-return.success", "", "image/png")
-    ).resolves.toEqual("image/png");
+    ).resolves.toEqual("image/png").then(() => {
+      XHRmock.teardown();
+    });
   });
 
   it("should send the given data to the server", () => {
@@ -407,6 +417,8 @@ describe("Utility function makeRequest()", () => {
 
     return expect(
       util.makeRequest("POST", "http://should-send.data", "hello world")
-    ).resolves.toEqual("hello world");
+    ).resolves.toEqual("hello world").then(() => {
+      XHRmock.teardown();
+    });
   });
 });
