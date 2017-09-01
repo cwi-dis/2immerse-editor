@@ -452,6 +452,10 @@ describe("Utility function getRandomInt()", () => {
     expect(util.getRandomInt.bind(null, 20)).toThrow();
   });
 
+  it("should always return 10 with a minimum of 10 without a maximum given", () => {
+    expect(util.getRandomInt(10)).toEqual(10);
+  });
+
   it("should return values in the given range", () => {
     const [min, max] = [10, 50];
     const originalRandom = Math.random;
@@ -467,5 +471,22 @@ describe("Utility function getRandomInt()", () => {
     const rand = util.getRandomInt(min, max);
     expect(rand).toBeGreaterThanOrEqual(min);
     expect(rand).toBeLessThan(max);
+  });
+
+  it("should return values between the given min and 9 with only a minimum given which is < 10", () => {
+    const min = 5
+    const originalRandom = Math.random;
+
+    Math.random = () => 0;
+    expect(util.getRandomInt(min)).toEqual(min);
+
+    Math.random = () => 0.999999999999;
+    expect(util.getRandomInt(min)).toEqual(9);
+
+    Math.random = originalRandom;
+
+    const rand = util.getRandomInt(min);
+    expect(rand).toBeGreaterThanOrEqual(min);
+    expect(rand).toBeLessThan(10);
   });
 });
