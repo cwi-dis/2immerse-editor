@@ -68,6 +68,10 @@ export function generateChapterKeyPath(accessPath: Array<number>): List<number |
 }
 
 export function getRandomInt(min: number = 0, max: number = 10) {
+  if (min > max) {
+    throw new Error("min must not be larger than max");
+  }
+
   min = Math.ceil(min);
   max = Math.floor(max);
 
