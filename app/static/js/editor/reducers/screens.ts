@@ -143,14 +143,13 @@ actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SP
       ];
     }
 
-    return state.set(screenIndex, {
-      ...screen,
-      regions: screen.regions.set(parentRegionIndex, {
+    return state.set(screenIndex,
+      screen.set("regions", screen.regions.set(parentRegionIndex, {
         ...parentRegion,
         splitFrom: [parentRegion.splitFrom[0]],
         size: newSize
-      }).pop()
-    });
+      }).pop())
+    );
   }
 
   return state;
