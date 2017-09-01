@@ -75,4 +75,35 @@ describe("Masters reducer", () => {
     expect(transformedState.get(2).name).toEqual("Master Layout 3");
     expect(transformedState.get(2).placedComponents).toEqual(List());
   });
+
+  it("should remove an existing master layout on REMOVE_MASTER_LAYOUT", () => {
+    const state: MasterState = List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_MASTER_LAYOUT", payload: { masterId: "masterId2" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0)).toBeInstanceOf(Master);
+    expect(transformedState.get(0).id).toEqual("masterId1");
+  });
+
+  it("should return the state unchanges on REMOVE_MASTER_LAYOUT when using an non-existent ID", () => {
+    const state: MasterState = List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_MASTER_LAYOUT", payload: { masterId: "masterId3" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(2);
+    expect(transformedState).toBe(state);
+  });
 });
