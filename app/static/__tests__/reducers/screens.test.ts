@@ -289,4 +289,19 @@ describe("Screens reducer", () => {
     expect(regions.get(3).splitFrom[0]).toEqual(rootRegion.id);
     expect(regions.get(3).splitDirection).toEqual("horizontal");
   });
+
+  it("should return the state untransformed if there are no splits on UNDO_LAST_SPLIT", () => {
+    const state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+
+    const transformedState = reducer(
+      state, {
+        type: "UNDO_LAST_SPLIT",
+        payload: {
+          screenId: state.get(0).id,
+        }
+      } as any
+    );
+
+    expect(transformedState).toBe(state);
+  });
 });
