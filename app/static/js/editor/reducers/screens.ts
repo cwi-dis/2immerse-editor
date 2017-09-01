@@ -114,10 +114,9 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) =
 
   const [region1, region2] = splitRegion(region, position, orientation);
 
-  return state.set(screenIndex, {
-    ...screen,
-    regions: screen.regions.set(regionIndex, region1).push(region2)
-  });
+  return state.set(screenIndex,
+    screen.set("regions", screen.regions.set(regionIndex, region1).push(region2))
+  );
 });
 
 actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SPLIT) => {

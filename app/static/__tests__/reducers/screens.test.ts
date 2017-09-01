@@ -226,6 +226,41 @@ describe("Screens reducer", () => {
     expect(regions.get(2).size).toEqual([0.3, 1]);
   });
 
+  it("should maintain the type of elements on the state as Screen on SPLIT_REGION", () => {
+    let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+    const rootRegion = state.get(0).regions.get(0);
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+
+    state = reducer(
+      state, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: state.get(0).id,
+          regionId: rootRegion.id,
+          position: 0.5,
+          orientation: "vertical"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+
+    state = reducer(
+      state, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: state.get(0).id,
+          regionId: rootRegion.id,
+          position: 0.2,
+          orientation: "vertical"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+  });
+
   it("should always add new splits to the end of the list on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
     const rootRegion = state.get(0).regions.get(0);
