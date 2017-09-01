@@ -325,7 +325,7 @@ describe("Screens reducer", () => {
     expect(regions.get(3).splitDirection).toEqual("horizontal");
   });
 
-  it("should return the state untransformed if there are no splits on UNDO_LAST_SPLIT", () => {
+  it("should return the state untransformed on UNDO_LAST_SPLIT if there are no splits", () => {
     const state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
 
     const transformedState = reducer(
@@ -338,5 +338,127 @@ describe("Screens reducer", () => {
     );
 
     expect(transformedState).toBe(state);
+  });
+
+  it("should return to the initial state on UNDO_LAST_SPLIT after undoing all splits", () => {
+    const initialState = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+
+    let state = reducer(
+      initialState, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: initialState.get(0).id,
+          regionId: initialState.get(0).regions.get(0).id,
+          position: 0.5,
+          orientation: "horizontal"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.get(0).regions.count()).toEqual(2);
+
+    state = reducer(
+      state, {
+        type: "UNDO_LAST_SPLIT",
+        payload: {
+          screenId: state.get(0).id,
+        }
+      } as any
+    );
+
+    expect(state.get(0).regions.count()).toEqual(1);
+    expect(state).toEqual(initialState);
+  });
+
+  it("should return to the initial state on UNDO_LAST_SPLIT after undoing all splits with only vertical splits", () => {
+    const initialState = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+
+    let state = reducer(
+      initialState, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: initialState.get(0).id,
+          regionId: initialState.get(0).regions.get(0).id,
+          position: 0.5,
+          orientation: "vertical"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.get(0).regions.count()).toEqual(2);
+
+    state = reducer(
+      state, {
+        type: "UNDO_LAST_SPLIT",
+        payload: {
+          screenId: state.get(0).id,
+        }
+      } as any
+    );
+
+    expect(state.get(0).regions.count()).toEqual(1);
+    expect(state).toEqual(initialState);
+  });
+
+  it("should return to the initial state on UNDO_LAST_SPLIT after undoing all splits with mixed splits", () => {
+    const initialState = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+
+    let state = reducer(
+      initialState, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: initialState.get(0).id,
+          regionId: initialState.get(0).regions.get(0).id,
+          position: 0.5,
+          orientation: "vertical"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.get(0).regions.count()).toEqual(2);
+
+    state = reducer(
+      state, {
+        type: "SPLIT_REGION",
+        payload: {
+          screenId: initialState.get(0).id,
+          regionId: initialState.get(0).regions.get(0).id,
+          position: 0.2,
+          orientation: "horizontal"
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.get(0).regions.count()).toEqual(3);
+
+    state = reducer(
+      state, {
+        type: "UNDO_LAST_SPLIT",
+        payload: {
+          screenId: state.get(0).id,
+        }
+      } as any
+    );
+
+    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.get(0).regions.count()).toEqual(2);
+
+    state = reducer(
+      state, {
+        type: "UNDO_LAST_SPLIT",
+        payload: {
+          screenId: state.get(0).id,
+        }
+      } as any
+    );
+
+    expect(state.get(0).regions.count()).toEqual(1);
+    expect(state.get(0).regions.get(0).splitFrom.length).toEqual(1);
+    expect(state.get(0).regions.get(0).splitFrom[0]).toBeNull();
+    expect(state).toEqual(initialState);
   });
 });
