@@ -103,6 +103,22 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).id).toEqual("screen2");
   });
 
+  it("should return state unchanged on REMOVE_DEVICE if screen is not found", () => {
+    const state: ScreenState = List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_DEVICE", payload: { id: "screen3" } } as any
+    );
+
+    expect(transformedState.count()).toEqual(2);
+    expect(transformedState.get(0).id).toEqual("screen1");
+    expect(transformedState.get(1).id).toEqual("screen2");
+  });
+
   it("should split the root region horizontally on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
     const rootRegion = state.get(0).regions.get(0);

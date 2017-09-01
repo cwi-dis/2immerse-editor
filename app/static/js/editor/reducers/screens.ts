@@ -101,9 +101,13 @@ actionHandler.addHandler("ADD_DEVICE", (state, action: actions.ADD_DEVICE) => {
 
 actionHandler.addHandler("REMOVE_DEVICE", (state, action: actions.REMOVE_DEVICE) => {
   const { id } = action.payload;
-  const [index] = findById(state, id);
+  const result = findById(state, id);
 
-  return state.delete(index);
+  if (!result) {
+    return state;
+  }
+
+  return state.delete(result[0]);
 });
 
 actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) => {
