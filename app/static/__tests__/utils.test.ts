@@ -422,3 +422,50 @@ describe("Utility function makeRequest()", () => {
     });
   });
 });
+
+describe("Utility function getRandomInt()", () => {
+  it("should always return the same number if min is equal to max", () => {
+    expect(util.getRandomInt(5, 5)).toEqual(5);
+  });
+
+  it("should throw an error if min is greater than max", () => {
+    expect(util.getRandomInt.bind(null, 10, 5)).toThrow();
+  });
+
+  it("should return values between 0 and 9 by default", () => {
+    const originalRandom = Math.random;
+
+    Math.random = () => 0;
+    expect(util.getRandomInt()).toEqual(0);
+
+    Math.random = () => 0.999999999999;
+    expect(util.getRandomInt()).toEqual(9);
+
+    Math.random = originalRandom;
+
+    const rand = util.getRandomInt();
+    expect(rand).toBeGreaterThanOrEqual(0);
+    expect(rand).toBeLessThan(10);
+  });
+
+  it("should throw an error if the given minimum is larger than 10 without a maximum given", () => {
+    expect(util.getRandomInt.bind(null, 20)).toThrow();
+  });
+
+  it("should return values in the given range", () => {
+    const [min, max] = [10, 50];
+    const originalRandom = Math.random;
+
+    Math.random = () => 0;
+    expect(util.getRandomInt(min, max)).toEqual(min);
+
+    Math.random = () => 0.999999999999;
+    expect(util.getRandomInt(min, max)).toEqual(max - 1);
+
+    Math.random = originalRandom;
+
+    const rand = util.getRandomInt(min, max);
+    expect(rand).toBeGreaterThanOrEqual(min);
+    expect(rand).toBeLessThan(max);
+  });
+});
