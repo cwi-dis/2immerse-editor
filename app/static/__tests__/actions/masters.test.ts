@@ -15,7 +15,7 @@ describe("Master actions", () => {
     expect(actionCreators.addMasterLayout("master name 1")).toEqual(expected);
   });
 
-  it("should create an REMOVE_MASTER_LAYOUT action", () => {
+  it("should create a REMOVE_MASTER_LAYOUT action", () => {
     const expected: actionTypes.REMOVE_MASTER_LAYOUT = {
       type: "REMOVE_MASTER_LAYOUT",
       payload: {

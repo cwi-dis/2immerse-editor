@@ -92,7 +92,7 @@ describe("Masters reducer", () => {
     expect(transformedState.get(0).id).toEqual("masterId1");
   });
 
-  it("should return the state unchanges on REMOVE_MASTER_LAYOUT when using an non-existent ID", () => {
+  it("should return the state unchanged on REMOVE_MASTER_LAYOUT when using a non-existent ID", () => {
     const state: MasterState = List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
       new Master({ id: "masterId2", name: "Master Layout 2" })
