@@ -5,7 +5,15 @@ interface CurrentVersionState {
   hash: string;
 }
 
-class CurrentVersion extends React.Component<{}, CurrentVersionState> {
+interface CurrentVersionProps {
+  commitUrl?: string;
+}
+
+class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersionState> {
+  public static defaultProps: CurrentVersionProps = {
+    commitUrl: "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/"
+  };
+
   constructor() {
     super();
 
@@ -39,7 +47,7 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
       return (
         <div style={style}>
           Current version:&nbsp;
-          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/${hash}`}>
+          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${hash}`}>
             {hash}
           </a>
         </div>
