@@ -1,11 +1,11 @@
 import * as React from "react";
 import { makeRequest } from "../util";
 
-interface CurrentVersionState {
+export interface CurrentVersionState {
   hash: string;
 }
 
-interface CurrentVersionProps {
+export interface CurrentVersionProps {
   commitUrl?: string;
 }
 
@@ -27,6 +27,8 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
       this.setState({
         hash
       });
+    }).catch(() => {
+      console.error("Could not retrieve commit hash");
     });
   }
 
