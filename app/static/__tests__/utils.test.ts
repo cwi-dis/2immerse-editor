@@ -252,7 +252,7 @@ describe("The ActionHandler class", () => {
       reducers(undefined, {type: "SOME_ACTION"})
     ).toEqual({
       key: "value"
-    })
+    });
   });
 
   it("should return the given state when no handlers are installed", () => {
@@ -263,7 +263,7 @@ describe("The ActionHandler class", () => {
       reducers({key: "some application state"}, {type: "SOME_ACTION"})
     ).toEqual({
       key: "some application state"
-    })
+    });
   });
 
   it("should return the state untransformed when an unknown action is passed", () => {
@@ -279,7 +279,7 @@ describe("The ActionHandler class", () => {
       reducers({key: "some application state"}, {type: "SOME_OTHER_ACTION"})
     ).toEqual({
       key: "some application state"
-    })
+    });
   });
 
   it("should transform the state when an action matching a handler is passed", () => {
@@ -295,7 +295,7 @@ describe("The ActionHandler class", () => {
       reducers({key: "some application state"}, {type: "SOME_ACTION"})
     ).toEqual({
       key: "transformed value"
-    })
+    });
   });
 
   it("should give the last handler precedence if mulitple handlers for the same action are installed", () => {
@@ -315,7 +315,7 @@ describe("The ActionHandler class", () => {
       reducers({key: "some application state"}, {type: "SOME_ACTION"})
     ).toEqual({
       key: "another transformed value"
-    })
+    });
   });
 });
 
@@ -474,7 +474,7 @@ describe("Utility function getRandomInt()", () => {
   });
 
   it("should return values between the given min and 9 with only a minimum given which is < 10", () => {
-    const min = 5
+    const min = 5;
     const originalRandom = Math.random;
 
     Math.random = () => 0;
