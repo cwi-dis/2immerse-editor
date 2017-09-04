@@ -200,16 +200,16 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           </div>
           <div className="level-right">
             {this.state.fetchError === undefined ?
-              <a style={{marginRight: 15}}
+              <button style={{marginRight: 15}}
                 className={classNames("button", "is-info")}
                 onClick={() => this.setState({ showPreviewModal: true })}>
                 Launch Preview
-              </a> :
-              <a style={{marginRight: 15}}
+              </button> :
+              <button style={{marginRight: 15}}
                  className={classNames("button", "is-info")}
-                 disabled>
+                 disabled={true}>
                 Launch Preview
-              </a>
+              </button>
             }
             {this.state.fetchError === undefined ?
               <a href={downloadUrl}
@@ -218,11 +218,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                  className={classNames("button", "is-info")}>
                 Save Document
               </a> :
-              <a style={{marginRight: 15}}
+              <button style={{marginRight: 15}}
                  className={classNames("button", "is-info")}
-                 disabled>
+                 disabled={true}>
                 Save Document
-              </a>
+              </button>
             }
             <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
               Clear Session

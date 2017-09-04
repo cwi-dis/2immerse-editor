@@ -7,7 +7,7 @@ interface PreviewLauncherProps {
 }
 
 class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
-  private qrCanvas: HTMLCanvasElement;
+  private qrCanvas: HTMLCanvasElement | null;
 
   private getPreviewUrl(): string {
     return `${location.protocol}//${location.host}/api/v1/document/${this.props.documentId}/preview`;

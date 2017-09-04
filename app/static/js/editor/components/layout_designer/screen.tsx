@@ -21,7 +21,7 @@ interface ScreenState {
 }
 
 class Screen extends React.Component<ScreenProps, ScreenState> {
-  private canvas: HTMLCanvasElement;
+  private canvas: HTMLCanvasElement | null;
 
   constructor(props: ScreenProps) {
     super(props);
@@ -34,9 +34,9 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
   }
 
   private drawRegions() {
-    const {width, height} = this.canvas;
+    const {width, height} = this.canvas!;
     const screen = this.props.screenInfo;
-    const context = this.canvas.getContext("2d");
+    const context = this.canvas!.getContext("2d");
 
     if (context) {
       context.fillStyle = "white";
@@ -77,18 +77,18 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
 
   private getCanvasClickPosition(pageX: number, pageY: number) {
     return [
-      pageX - this.canvas.offsetLeft,
-      pageY - this.canvas.offsetTop
+      pageX - this.canvas!.offsetLeft,
+      pageY - this.canvas!.offsetTop
     ];
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
     const {x: pageX, y: pageY} = this.state.contextMenu;
     const [x, y] = this.getCanvasClickPosition(pageX, pageY);
-    const clickedRegion = this.getClickedRegion(x / this.canvas.width, y / this.canvas.height);
+    const clickedRegion = this.getClickedRegion(x / this.canvas!.width, y / this.canvas!.height);
 
     if (clickedRegion) {
-      const splitPosition = (orientation === "horizontal") ? y / this.canvas.height : x / this.canvas.width;
+      const splitPosition = (orientation === "horizontal") ? y / this.canvas!.height : x / this.canvas!.width;
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
     }
   }

@@ -42,7 +42,7 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     };
 
     if (this.state.hash !== "") {
-      const hash = this.state.hash
+      const { hash } = this.state;
 
       return (
         <div style={style}>
