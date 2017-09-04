@@ -3,6 +3,7 @@ import { makeRequest } from "../util";
 
 export interface CurrentVersionState {
   hash: string;
+  fetchError: boolean;
 }
 
 export interface CurrentVersionProps {
@@ -18,7 +19,8 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     super();
 
     this.state = {
-      hash: ""
+      hash: "",
+      fetchError: false
     };
   }
 
@@ -28,7 +30,9 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
         hash
       });
     }).catch(() => {
-      console.error("Could not retrieve commit hash");
+      this.setState({
+        fetchError: true
+      });
     });
   }
 
@@ -43,7 +47,7 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
       color: "#999999"
     };
 
-    if (this.state.hash !== "") {
+    if (this.state.hash !== "" && !this.state.fetchError) {
       const { hash } = this.state;
 
       return (
