@@ -24,7 +24,7 @@
     "css-loader": "^0.28.4",
     "react-test-renderer": "^15.6.1",
     "style-loader": "^0.18.2",
-    "ts-jest": "^20.0.10",
+    "ts-jest": "^21.0.0",
     "ts-loader": "^2.1.0",
     "webpack": "^2.6.1",
     "xhr-mock": "^1.9.1"
@@ -45,7 +45,7 @@
     "classnames": "^2.2.5",
     "enzyme": "^2.9.1",
     "immutable": "4.0.0-rc.1",
-    "jest": "^20.0.4",
+    "jest": "^21.0.1",
     "konva": "^1.6.3",
     "qrcode": "^0.9.0",
     "randomcolor": "^0.5.3",
