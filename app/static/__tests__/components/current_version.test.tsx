@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 
 import * as React from "react";
-import { mount, shallow } from "enzyme";
+import { mount } from "enzyme";
 import { stub } from "sinon";
 
 import * as util from "../../js/editor/util";

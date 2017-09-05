@@ -21,12 +21,12 @@
   },
   "devDependencies": {
     "@types/jest": "^20.0.8",
-    "css-loader": "^0.28.4",
+    "css-loader": "^0.28.7",
     "react-test-renderer": "^15.6.1",
     "style-loader": "^0.18.2",
     "ts-jest": "^21.0.0",
-    "ts-loader": "^2.1.0",
-    "webpack": "^2.6.1",
+    "ts-loader": "^2.3.4",
+    "webpack": "^3.5.5",
     "xhr-mock": "^1.9.1"
   },
   "dependencies": {
