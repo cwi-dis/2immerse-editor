@@ -41,6 +41,7 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
       <div onMouseOver={() => this.setState({selected: true})}
            onMouseOut={() => this.setState({selected: false})}
            onClick={callback}
+           className="entry"
            style={style}>
         {name}
       </div>
