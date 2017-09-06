@@ -1,6 +1,7 @@
 # Define stage - these run in order specified below
 stages:
   - build
+  - test
   - deploy
 
 # Builds the latest code then auto-deploy
@@ -50,6 +51,18 @@ branches:
   except:
     - develop
     - master
+
+test_edge:
+  stage: test
+  image: docker:latest
+  script:
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd test; python -m unittest discover'
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static; jest --bail'
+  tags:
+    - 2immerse
+    - docker
+  only:
+    - develop
 
 # Deploys the latest docker image to edge and notifies GitLab
 deploy_edge:
