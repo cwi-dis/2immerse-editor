@@ -1,7 +1,6 @@
 # Define stage - these run in order specified below
 stages:
   - build
-  - test
   - deploy
 
 # Builds the latest code then auto-deploy
@@ -26,6 +25,8 @@ tag:
   script:
     - echo "${CI_COMMIT_REF_NAME}/${CI_COMMIT_SHA}" > ./REVISION
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME .
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd test; python -m unittest discover'
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static; jest --bail'
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
   tags:
@@ -51,18 +52,6 @@ branches:
   except:
     - develop
     - master
-
-test_edge:
-  stage: test
-  image: docker:latest
-  script:
-    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd test; python -m unittest discover'
-    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static; jest --bail'
-  tags:
-    - 2immerse
-    - docker
-  only:
-    - develop
 
 # Deploys the latest docker image to edge and notifies GitLab
 deploy_edge:
