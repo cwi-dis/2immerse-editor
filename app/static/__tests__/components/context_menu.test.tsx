@@ -68,6 +68,22 @@ describe("Component <ContextMenu />", () => {
 
     expect(contextMenu.html()).toEqual(before);
   });
+
+  it("should trigger the entry's and the ContextMenu's callback when an entry is clicked", () => {
+    const onClick = spy();
+    const onItemClick = spy();
+
+    const contextMenu = mount(
+      <ContextMenu visible={true} x={0} y={0} onItemClicked={onItemClick}>
+        <ContextMenuEntry name="Some entry" callback={onClick} />
+      </ContextMenu>
+    );
+
+    contextMenu.find(".entry").first().simulate("click");
+
+    expect(onClick.calledOnce).toBeTruthy();
+    expect(onItemClick.calledOnce).toBeTruthy();
+  });
 });
 
 describe("Component <ContextMenuEntry />", () => {
@@ -147,6 +163,16 @@ describe("Component <ContextMenuEntry />", () => {
 
     container.simulate("mouseout");
     expect(container.props().style).toEqual(beforeStyle);
+  });
+
+  it("should trigger the element's callback when clicked", () => {
+    const onClick = spy();
+    const contextMenuEntry = mount(
+      <ContextMenuEntry name="Some entry" callback={onClick} />
+    );
+
+    contextMenuEntry.find("div").first().simulate("click");
+    expect(onClick.calledOnce).toBeTruthy();
   });
 });
 
