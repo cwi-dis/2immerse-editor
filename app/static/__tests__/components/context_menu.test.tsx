@@ -149,3 +149,16 @@ describe("Component <ContextMenuEntry />", () => {
     expect(container.props().style).toEqual(beforeStyle);
   });
 });
+
+describe("Component <ContextMenuDivider />", () => {
+  it("should render a divider", () => {
+    const contextMenuDivider = mount(<ContextMenuDivider />);
+    const container = contextMenuDivider.find("div").first();
+
+    expect(container.props().className).toEqual("divider");
+
+    expect(container.props().style.borderTop).toEqual("1px solid #BBBBBB");
+    expect(container.props().style.width).toEqual("100%");
+    expect(container.props().style.height).toEqual(2);
+  });
+});
