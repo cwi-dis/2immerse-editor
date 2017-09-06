@@ -25,9 +25,7 @@ ADD . /code/
 RUN cd app/static && \
     webpack
 
-RUN rm -r app/static/node_modules && \
-    cd app/static; npm install --only=dev && \
-    npm uninstall -g webpack && \
+RUN npm uninstall -g webpack && \
     apt-get remove -y yarn
 
 EXPOSE 8000
