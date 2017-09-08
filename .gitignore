@@ -19,3 +19,4 @@ test_*_tmp.xml
 .vscode/
 REVISION
 coverage/
+.coverage
