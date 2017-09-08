@@ -35,14 +35,17 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 
 	- `name`: Human-readable name for the trigger (only for the UI).
 	- `verb`: Human-readable string for the UI to put in the trigger or modify button. Probably defaults to _Trigger_ or _Modify_.
+	- `previewUrl`: optional URL of an image that can be used as a preview icon, so the trigger tool operator can quickly distinguish the various triggerable events.
+	- `longdesc`: optional text that is shown to the trigger tool operator to help understand what the intention of this trigger is.
 	- `id`: trigger identity, to be passed to the `trigger` call later.
 	- `trigger`: (boolean) true if this item can be passed to `trigger` currently.
 	- `modify`: (boolean) true if this item can be passed to `modify` currently. Note that exactly one of `trigger` and `notify` will be true for any event.
-	- `parameters`: list of paremeters, of the form:
+	- `parameters`: list of parameters, of the form:
 		- `name`: Human-readable name for the parameter (only for the UI).
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
 		- `type`: type of the parameter (string), see below.
 		- `value`: optional default value.
+		- `required`: if true, this parameter must be filled in by the tool operator before the trigger/modify button is enabled.
 - `trigger` (method `POST`) triggers a triggerable item. Returns a success indicator. The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings)
@@ -71,7 +74,7 @@ We may want a callback mechanism so the timeline service (or production tool bac
 
 The events will be `<tl:par>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`. 
 
-An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted).
+An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= required= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted), `tt:longdesc` and `tt:previewUrl`.
 
 There is a second set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (which is probably a different set of parameters than those for _trigger_).
 
