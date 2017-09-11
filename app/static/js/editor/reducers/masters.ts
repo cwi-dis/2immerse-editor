@@ -1,7 +1,7 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
-import { ActionHandler } from "../util";
+import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/masters";
 
 interface ComponentPlacement {
@@ -34,6 +34,17 @@ actionHandler.addHandler("ADD_MASTER_LAYOUT", (state, action: actions.ADD_MASTER
     id: shortid.generate(),
     name
   }));
+});
+
+actionHandler.addHandler("REMOVE_MASTER_LAYOUT", (state, action: actions.REMOVE_MASTER_LAYOUT) => {
+  const { masterId } = action.payload;
+  const result = findById(state, masterId);
+
+  if (!result) {
+    return state;
+  }
+
+  return state.delete(result[0]);
 });
 
 export default actionHandler.getReducer();

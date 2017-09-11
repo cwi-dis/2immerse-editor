@@ -1,15 +1,12 @@
-import sys
-from os.path import dirname, join, realpath
-
-sys.path.append(join(dirname(realpath(__file__)), "../app/api"))
-
 import unittest
-import document
 import urllib
 import urlparse
 import os
 import json
 import uuid
+
+import pretest
+import document
 
 
 class TestEvents(unittest.TestCase):

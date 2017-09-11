@@ -1,31 +1,21 @@
-FROM python:2.7
-
-ENV PYTHONUNBUFFERED 1
-
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
-
-RUN apt-get update && apt-get install -y nodejs yarn
-RUN npm install --global webpack
+FROM troeggla/flask-node:latest
 
 RUN mkdir -p /code/app/static/
 
 ADD requirements.txt /code/
 ADD app/static/package.json app/static/yarn.lock /code/app/static/
 
-WORKDIR /code
-
-RUN pip install -r requirements.txt
-RUN cd app/static; yarn install
+RUN pip install -r requirements.txt && \
+    cd app/static && \
+    yarn install
 
 ADD . /code/
 
-RUN cd app/static; webpack
+RUN cd app/static && \
+    webpack
 
-RUN rm -r app/static/node_modules
-RUN npm uninstall -g webpack
-RUN apt-get remove -y yarn nodejs
+RUN npm uninstall -g webpack && \
+    apt-get remove -y yarn
 
 EXPOSE 8000
 CMD ["python", "run.py"]

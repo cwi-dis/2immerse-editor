@@ -319,6 +319,7 @@ class Document:
     @synchronized
     def loadXml(self, data):
         self.logger.info('load xml (%d bytes)' % len(data), extra=self.loggerExtra)
+        self.url = None
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
@@ -327,6 +328,7 @@ class Document:
     @synchronized
     def load(self, url):
         self.logger.info('load: %s' % url, extra=self.loggerExtra)
+        self.url = url
         fp = urllib2.urlopen(url)
         self.tree = ET.parse(fp)
         self._documentLoaded()
@@ -592,12 +594,25 @@ class DocumentEvents:
                 pData['type'] = p.get(NS_TRIGGER('type'))
             if NS_TRIGGER('value') in p.attrib:
                 pData['value'] = p.get(NS_TRIGGER('value'))
+            if NS_TRIGGER('required') in p.attrib:
+                required = p.get(NS_TRIGGER('required'))
+                if required and required != 'false':
+                    pData['required'] = True
             parameters.append(pData)
         name = elt.get(NS_TRIGGER('name'))
         idd = elt.get(NS_XML('id'))
         rv = dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
-        if NS_TRIGGER("verb") in elt:
+        if NS_TRIGGER("verb") in elt.attrib:
             rv["verb"] = elt.get(NS_TRIGGER("verb"))
+        if NS_TRIGGER("previewUrl") in elt.attrib:
+            previewUrl = elt.get(NS_TRIGGER("previewUrl"))
+            if previewUrl and self.document.url:
+                previewUrl = urllib.basejoin(self.document.url, previewUrl)
+            if previewUrl:
+                rv["previewUrl"] = previewUrl
+        if NS_TRIGGER("longdesc") in elt.attrib:
+            rv["longdesc"] = elt.get(NS_TRIGGER("longdesc"))
+            
         return rv
 
     @synchronized
@@ -608,7 +623,6 @@ class DocumentEvents:
             parValue = parameter['value']
         except KeyError:
             abort(400, 'Missing parameter and/or value')
-
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
             abort(400, 'Unsupported parameter XPath: %s' % parPath)

@@ -1,16 +1,26 @@
 import * as React from "react";
 import { makeRequest } from "../util";
 
-interface CurrentVersionState {
+export interface CurrentVersionState {
   hash: string;
+  fetchError: boolean;
 }
 
-class CurrentVersion extends React.Component<{}, CurrentVersionState> {
+export interface CurrentVersionProps {
+  commitUrl?: string;
+}
+
+class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersionState> {
+  public static defaultProps: CurrentVersionProps = {
+    commitUrl: "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/"
+  };
+
   constructor() {
     super();
 
     this.state = {
-      hash: ""
+      hash: "",
+      fetchError: false
     };
   }
 
@@ -18,6 +28,10 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
     makeRequest("GET", "/version").then((hash) => {
       this.setState({
         hash
+      });
+    }).catch(() => {
+      this.setState({
+        fetchError: true
       });
     });
   }
@@ -33,13 +47,13 @@ class CurrentVersion extends React.Component<{}, CurrentVersionState> {
       color: "#999999"
     };
 
-    if (this.state.hash !== "") {
-      const hash = this.state.hash
+    if (this.state.hash !== "" && !this.state.fetchError) {
+      const { hash } = this.state;
 
       return (
         <div style={style}>
           Current version:&nbsp;
-          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/${hash}`}>
+          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${hash}`}>
             {hash}
           </a>
         </div>

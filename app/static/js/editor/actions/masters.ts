@@ -10,10 +10,22 @@ function addMasterLayout(name: string): ADD_MASTER_LAYOUT {
   };
 }
 
+export type REMOVE_MASTER_LAYOUT = PayloadAction<"REMOVE_MASTER_LAYOUT", {masterId: string}>;
+function removeMasterLayout(masterId: string): REMOVE_MASTER_LAYOUT {
+  return {
+    type: "REMOVE_MASTER_LAYOUT",
+    payload: {
+      masterId
+    }
+  };
+}
+
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
+  removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
 }
 
 export const actionCreators: MasterActions = {
-  addMasterLayout
+  addMasterLayout,
+  removeMasterLayout
 };

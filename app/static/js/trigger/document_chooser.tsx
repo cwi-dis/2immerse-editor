@@ -14,9 +14,9 @@ interface DocumentChooserState {
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
-  private fileInput: HTMLInputElement;
-  private urlInput: HTMLInputElement;
-  private idInput: HTMLInputElement;
+  private fileInput: HTMLInputElement | null;
+  private urlInput: HTMLInputElement | null;
+  private idInput: HTMLInputElement | null;
 
   constructor(props: DocumentChooserProps) {
     super(props);

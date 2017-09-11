@@ -3,7 +3,7 @@ import * as React from "react";
 export type ContextMenuDivider = React.SFC<{}>;
 export const ContextMenuDivider: ContextMenuDivider = (props) => {
   return (
-    <div style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}}></div>
+    <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}}></div>
   );
 };
 
@@ -41,6 +41,7 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
       <div onMouseOver={() => this.setState({selected: true})}
            onMouseOut={() => this.setState({selected: false})}
            onClick={callback}
+           className="entry"
            style={style}>
         {name}
       </div>

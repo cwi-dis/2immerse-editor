@@ -7,7 +7,7 @@ interface PreviewLauncherProps {
 }
 
 class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
-  private qrCanvas: HTMLCanvasElement;
+  private qrCanvas: HTMLCanvasElement | null;
 
   private getPreviewUrl(): string {
     return `${location.protocol}//${location.host}/api/v1/document/${this.props.documentId}/preview`;
@@ -28,7 +28,9 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, {}> {
 
     return (
       <div className="box">
-        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}} ref={(el) => this.qrCanvas = el}></canvas>
+        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
+                ref={(el) => this.qrCanvas = el}>
+        </canvas>
         <br/>
         <a style={{display: "block", margin: "0 auto 0 auto"}}
            className="button is-info" href={previewUrl}

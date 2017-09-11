@@ -1,4 +1,4 @@
-import { Collection, List } from "immutable";
+import { Collection, List, Map } from "immutable";
 import { ThunkAction } from "redux-thunk";
 
 import { ApplicationState } from "./store";
@@ -53,17 +53,33 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
   });
 }
 
+export function capitalize(str: string): string {
+  if (str.length === 0) {
+    return str;
+  }
+
+  return str[0].toUpperCase() + str.slice(1);
+}
+
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
 }
 
 export function generateChapterKeyPath(accessPath: Array<number>): List<number | string> {
+  if (accessPath.length === 0) {
+    return List();
+  }
+
   return List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
     return path.concat([i, "children"]);
   }, [])).push(accessPath[accessPath.length - 1]);
 }
 
 export function getRandomInt(min: number = 0, max: number = 10) {
+  if (min > max) {
+    throw new Error("min must not be larger than max");
+  }
+
   min = Math.ceil(min);
   max = Math.floor(max);
 
@@ -77,13 +93,9 @@ export function countLeafNodes(chapter: Chapter): number {
     return 1;
   }
 
-  let leafNodeCount = 0;
-
-  children.forEach((childChapter: Chapter) => {
-    leafNodeCount += countLeafNodes(childChapter);
-  });
-
-  return leafNodeCount;
+  return children.reduce((leafNodeCount, childChapter: Chapter) => {
+    return leafNodeCount + countLeafNodes(childChapter);
+  }, 0);
 }
 
 export function getTreeHeight(chapters: List<Chapter>): number {
@@ -96,16 +108,19 @@ export function getTreeHeight(chapters: List<Chapter>): number {
   }).max()!;
 }
 
-export function parseQueryString(query: string): Map<string, string> {
-  let result = new Map<string, string>();
+export function parseQueryString(query: string): Map<string, string | undefined> {
+  let result = Map<string, string | undefined>();
 
   query.split("&").filter((pair) => {
     const [key, val] = pair.split("=");
 
-    if (key.length > 0) {
-      result.set(
-        key.replace(/[^a-zA-Z0-9_-]/g, ""),
-        val
+    const sanitisedKey = key.replace(/[^a-zA-Z0-9_-]/g, "");
+    const sanitisedVal = (val) ? decodeURIComponent(val) : val;
+
+    if (sanitisedKey.length > 0) {
+      result = result.set(
+        sanitisedKey,
+        sanitisedVal
       );
     }
   });
@@ -117,23 +132,21 @@ type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
   private initialState: T;
-  private handlers: {[key: string]: ActionHandlerFunction<T>};
+  private handlers: Map<string, ActionHandlerFunction<T>>;
 
   constructor(initialState: T) {
     this.initialState = initialState;
-    this.handlers = {};
+    this.handlers = Map();
   }
 
   public addHandler(action: string, fn: ActionHandlerFunction<T>) {
-    this.handlers[action] = fn;
+    this.handlers = this.handlers.set(action, fn);
   }
 
   public getReducer(): ActionHandlerFunction<T> {
     return (state: T = this.initialState, action: Action) => {
-      for (const key in this.handlers) {
-        if (key === action.type) {
-          return this.handlers[key](state, action);
-        }
+      if (this.handlers.has(action.type)) {
+        return this.handlers.get(action.type)!(state, action);
       }
 
       return state;

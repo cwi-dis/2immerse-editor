@@ -1,4 +1,4 @@
-import { List } from "immutable";
+import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
 import * as actions from "../actions/screens";
@@ -15,12 +15,26 @@ export interface ScreenRegion {
   zIndex?: number;
 }
 
-export interface Screen {
+export interface ScreenAttributes {
   id: string;
   name: string;
   type: "personal" | "communal";
   orientation: "portrait" | "landscape";
   regions: List<ScreenRegion>;
+}
+
+const defaultScreenParams: ScreenAttributes = {
+  id: "",
+  name: "",
+  type: "communal",
+  orientation: "landscape",
+  regions: List()
+};
+
+export class Screen extends Record<ScreenAttributes>(defaultScreenParams) {
+  constructor(params?: ScreenAttributes) {
+    params ? super(params) : super();
+  }
 }
 
 function createNewScreen(type: "communal" | "personal"): Screen {
@@ -31,13 +45,13 @@ function createNewScreen(type: "communal" | "personal"): Screen {
     splitFrom: [null]
   };
 
-  return {
+  return new Screen({
     id: shortid.generate(),
     name: type + " " + getRandomInt(),
     type: type,
     orientation: (type === "communal") ? "landscape" : "portrait",
     regions: List([rootRegion])
-  };
+  });
 }
 
 function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizontal" | "vertical"): [ScreenRegion, ScreenRegion] {
@@ -87,9 +101,13 @@ actionHandler.addHandler("ADD_DEVICE", (state, action: actions.ADD_DEVICE) => {
 
 actionHandler.addHandler("REMOVE_DEVICE", (state, action: actions.REMOVE_DEVICE) => {
   const { id } = action.payload;
-  const [index] = findById(state, id);
+  const result = findById(state, id);
 
-  return state.delete(index);
+  if (!result) {
+    return state;
+  }
+
+  return state.delete(result[0]);
 });
 
 actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) => {
@@ -100,10 +118,9 @@ actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) =
 
   const [region1, region2] = splitRegion(region, position, orientation);
 
-  return state.set(screenIndex, {
-    ...screen,
-    regions: screen.regions.set(regionIndex, region1).push(region2)
-  });
+  return state.set(screenIndex,
+    screen.set("regions", screen.regions.set(regionIndex, region1).push(region2))
+  );
 });
 
 actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SPLIT) => {
@@ -130,14 +147,13 @@ actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SP
       ];
     }
 
-    return state.set(screenIndex, {
-      ...screen,
-      regions: screen.regions.set(parentRegionIndex, {
+    return state.set(screenIndex,
+      screen.set("regions", screen.regions.set(parentRegionIndex, {
         ...parentRegion,
         splitFrom: [parentRegion.splitFrom[0]],
         size: newSize
-      }).pop()
-    });
+      }).pop())
+    );
   }
 
   return state;
