@@ -490,3 +490,25 @@ describe("Utility function getRandomInt()", () => {
     expect(rand).toBeLessThan(10);
   });
 });
+
+describe("Utility function capitalize()", () => {
+  it("should capitalise a lowercase string", () => {
+    expect(util.capitalize("hello")).toEqual("Hello");
+  });
+
+  it("should should return an already capitalised string unchanged", () => {
+    expect(util.capitalize("Hello")).toEqual("Hello");
+  });
+
+  it("should not change an all-caps string", () => {
+    expect(util.capitalize("HELLO")).toEqual("HELLO");
+  });
+
+  it("should capitalise a single letter", () => {
+    expect(util.capitalize("a")).toEqual("A");
+  });
+
+  it("should simply return an empty string", () => {
+    expect(util.capitalize("")).toEqual("");
+  });
+});
