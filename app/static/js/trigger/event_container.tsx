@@ -2,13 +2,9 @@ import * as React from "react";
 import * as classNames from "classnames";
 import { List } from "immutable";
 
-import { makeRequest } from "../editor/util";
+import { capitalize, makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
-
-function capitalize(str: string): string {
-  return str[0].toUpperCase() + str.slice(1);
-}
 
 interface EventContainerProps {
   documentId: string;

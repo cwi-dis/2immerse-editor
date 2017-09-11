@@ -53,6 +53,10 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
   });
 }
 
+export function capitalize(str: string): string {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
 }
