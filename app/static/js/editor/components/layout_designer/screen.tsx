@@ -131,7 +131,7 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
           </span>
         </p>
         <div onClickCapture={this.handleCanvasClick.bind(this)}>
-          <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+          <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e} style={{display: "table", margin: "0 auto"}}>
             <Layer>
               <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
               {this.renderRegions(width, computedHeight)}
