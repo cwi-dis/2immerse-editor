@@ -220,6 +220,20 @@ def set_callback(documentId):
     serve.setCallback(url=request.args.get('url'), contextID=request.args.get('contextID', None))
     return ''
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/updatedocstate", methods=["PUT"])
+def update_document_state(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    documentState = request.get_json()
+    if not isinstance(documentState, dict):
+        abort(405)
+    serve.setDocumentState(documentState)
+    return ''
+
 #
 # Preview player redirect
 #

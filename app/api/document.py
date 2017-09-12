@@ -656,6 +656,7 @@ class DocumentEvents:
         assert newParent is not None
 
         newElement = copy.deepcopy(element)
+        newElement.set(NS_TRIGGER("wantstatus"), "true")
         self.document._afterCopy(newElement)
 
         for par in parameters:
@@ -669,7 +670,7 @@ class DocumentEvents:
 
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
-
+        
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -789,6 +790,7 @@ class DocumentServe:
 
     @synchronized
     def setDocumentState(self, documentState):
+        self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.loggerExtra)
         for eltId, eltState in documentState.items():
             elt = self.document._getElement(eltId)
             if not elt:
@@ -802,12 +804,16 @@ class DocumentServe:
         self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
         gen = self._nextGeneration()
         toRemove = []
+        wantStateUpdates = True
         for callback in self.callbacks:
             try:
                 args = dict(generation=gen, operations=operations)
-                # xxxjack for the first successful one, add updateState=True
+                # for the first successful one, add updateState=True
+                if wantStateUpdates:
+                    args['wantStateUpdates'] = True
                 r = requests.put(callback, json=args)
                 r.raise_for_status()
+                wantStateUpdates = False
             except requests.exceptions.RequestException:
                 print 'PUT failed:', callback # xxxjack need better error message:-)
                 toRemove.append(callback)
