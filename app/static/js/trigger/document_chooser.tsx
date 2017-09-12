@@ -23,15 +23,20 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
   constructor(props: DocumentChooserProps) {
     super(props);
 
+    const selectedMethod = localStorage.getItem("selectedMethod") as InputMethod;
+
     this.state = {
       isLoading: false,
-      selectedMethod: "upload"
+      selectedMethod: selectedMethod || "upload"
     };
   }
 
   private methodUpdated(ev: any) {
+    const selectedMethod = ev.target.value;
+    localStorage.setItem("selectedMethod", selectedMethod);
+
     this.setState({
-      selectedMethod: ev.target.value
+      selectedMethod
     });
   }
 
@@ -49,6 +54,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       formData.append("document", document, document.name);
     } else if (this.urlInput && this.urlInput.value) {
       submitUrl += `?url=${this.urlInput.value}`;
+      localStorage.setItem("urlDefault", this.urlInput.value);
     } else if (this.idInput && this.idInput.value) {
       this.props.assignDocumentId(this.idInput.value);
       return;
@@ -83,6 +89,8 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       borderRadius: 15,
     };
 
+    const urlDefaultValue = localStorage.getItem("urlDefault");
+
     return (
       <div style={boxStyle}>
         {(this.state.ajaxError) ?
@@ -112,21 +120,21 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
             <div className="field">
               <label className="label">Document URL</label>
               <div className="control">
-                <input className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
+                <input key="url" className="input is-info" defaultValue={urlDefaultValue || undefined} required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
               </div>
             </div>
            : (selectedMethod === "upload") ?
             <div className="field">
               <label className="label">File</label>
               <div className="control">
-                <input className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+                <input key="upload" className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
               </div>
             </div>
            :
             <div className="field">
               <label className="label">Document ID</label>
               <div className="control">
-                <input className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
+                <input key="id" className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
               </div>
             </div>
           }
