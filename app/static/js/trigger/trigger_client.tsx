@@ -39,6 +39,7 @@ interface TriggerClientState {
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private pollingFrequency: number = 2000;
+  private pollingInterval: NodeJS.Timer;
 
   constructor(props: TriggerClientProps) {
     super(props);
@@ -89,9 +90,13 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   public componentDidMount() {
     this.fetchEvents();
 
-    setInterval(() => {
+    this.pollingInterval = setInterval(() => {
       this.fetchEvents();
     }, this.pollingFrequency);
+  }
+
+  public componentWillUnmount() {
+    clearInterval(this.pollingInterval);
   }
 
   private renderMainContent(): JSX.Element {
