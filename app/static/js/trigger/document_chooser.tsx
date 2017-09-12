@@ -7,8 +7,10 @@ interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
 }
 
+type InputMethod = "upload" | "url" | "id";
+
 interface DocumentChooserState {
-  selectedMethod: "upload" | "url" | "id";
+  selectedMethod: InputMethod;
   isLoading: boolean;
   ajaxError?: {status: number, statusText: string};
 }
