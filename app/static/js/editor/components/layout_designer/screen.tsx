@@ -1,10 +1,12 @@
 import * as React from "react";
+import { Layer, Rect, Stage, Group, Line } from "react-konva";
+import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState } from "../../store";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
 
-interface ScreenProps {
+export interface ScreenProps {
   screenInfo: ScreenModel;
   width: number;
   removeDevice: () => void;
@@ -21,7 +23,7 @@ interface ScreenState {
 }
 
 class Screen extends React.Component<ScreenProps, ScreenState> {
-  private canvas: HTMLCanvasElement | null;
+  private stageWrapper: any;
 
   constructor(props: ScreenProps) {
     super(props);
@@ -33,31 +35,23 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
     };
   }
 
-  private drawRegions() {
-    const {width, height} = this.canvas!;
-    const screen = this.props.screenInfo;
-    const context = this.canvas!.getContext("2d");
+  private renderRegions(width: number, height: number) {
+    const {regions} = this.props.screenInfo;
 
-    if (context) {
-      context.fillStyle = "white";
-      context.strokeStyle = "black";
-      context.fillRect(0, 0, width, height);
+    return (
+      <Group>
+        {regions.map((region, i) => {
+          const [x, y] = region.position;
+          const [w, h] = region.size;
 
-      screen.regions.forEach((region) => {
-        const [x, y] = region.position;
-        const [w, h] = region.size;
-
-        context.strokeRect(x * width, y * height, w * width, h * height);
-      });
-    }
-  }
-
-  public componentDidUpdate() {
-    this.drawRegions();
-  }
-
-  public componentDidMount() {
-    this.drawRegions();
+          return (
+            <Rect x={x * width} y={y * height}
+                  width={w * width} height={h * height}
+                  fill="transparent" stroke="black" key={i} />
+          );
+        })}
+      </Group>
+    );
   }
 
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
@@ -76,19 +70,24 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
   }
 
   private getCanvasClickPosition(pageX: number, pageY: number) {
+    const stage: KonvaStage = this.stageWrapper.getStage();
+    const {offsetLeft, offsetTop} = stage.container();
+
     return [
-      pageX - this.canvas!.offsetLeft,
-      pageY - this.canvas!.offsetTop
+      pageX - offsetLeft,
+      pageY - offsetTop
     ];
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
+    const stage: KonvaStage = this.stageWrapper.getStage();
+
     const {x: pageX, y: pageY} = this.state.contextMenu;
     const [x, y] = this.getCanvasClickPosition(pageX, pageY);
-    const clickedRegion = this.getClickedRegion(x / this.canvas!.width, y / this.canvas!.height);
+    const clickedRegion = this.getClickedRegion(x / stage.width(), y / stage.height());
 
     if (clickedRegion) {
-      const splitPosition = (orientation === "horizontal") ? y / this.canvas!.height : x / this.canvas!.width;
+      const splitPosition = (orientation === "horizontal") ? y / stage.height() : x / stage.width();
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
     }
   }
@@ -131,12 +130,14 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
             remove
           </span>
         </p>
-        <canvas onClick={this.handleCanvasClick.bind(this)}
-                ref={(el) => this.canvas = el}
-                height={computedHeight}
-                width={width}
-                style={{display: "block", margin: "0 auto"}}>
-        </canvas>
+        <div onClickCapture={this.handleCanvasClick.bind(this)}>
+          <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+            <Layer>
+              <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
+              {this.renderRegions(width, computedHeight)}
+            </Layer>
+          </Stage>
+        </div>
         <br/>
       </div>
     );

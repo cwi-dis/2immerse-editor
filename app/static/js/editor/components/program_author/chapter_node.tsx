@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Stage, Group, Rect, Text, Line } from "react-konva";
+import { Group, Rect, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { Coords } from "../../util";

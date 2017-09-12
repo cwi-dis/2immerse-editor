@@ -5,7 +5,6 @@ html, body {
 
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 .wrapper {
@@ -26,8 +25,8 @@ html, body {
 
 .content {
   padding: 10px 20px 0 20px;
-  overflow-y: scroll;
-  height: calc(100vh - 58px);
+  height: 100vh;
+  margin-top: 58px;
 }
 
 .menubar {
@@ -35,11 +34,18 @@ html, body {
   font-size: 18px;
   border-bottom: 2px solid #161616;
   text-align: center;
-  margin-top: 5px;
+  padding-top: 5px;
   margin-bottom: 0;
 
   display: flex;
   justify-content: center;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: #262626;
 }
 
 .menubar div {
