@@ -109,47 +109,54 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { params, isLoading, flashSuccess, flashError } = this.state;
 
     return (
-      <div style={{margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
-        <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
-        {(event.longdesc) ? <p>{event.longdesc}</p> : null}
+      <div style={{display: "flex", margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
+        <div style={{width: 100, height: 100, margin: "0 15px 0 0", border: "1px solid #555555"}}>
+          {(event.previewUrl)
+            ? <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />
+            : <p style={{fontSize: 12, textAlign: "center", marginTop: 40, fontStyle: "italic"}}>no icon</p>}
+        </div>
+        <div style={{flexGrow: 1}}>
+          <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
+          {(event.longdesc) && <p>{event.longdesc}</p>}
 
-        <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
-          <tbody>
-            {params.map((param, i) => {
-              return (
-                <tr key={i}>
-                  <td style={{width: "50%", verticalAlign: "middle"}}>
-                    {capitalize(param.name)}
-                  </td>
-                  <td style={{width: "50%"}}>
-                    <ParamInputField type={param.type}
-                                     value={params.get(i)!.value!}
-                                     onChange={this.updateParamField.bind(this, i)} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+          <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
+            <tbody>
+              {params.map((param, i) => {
+                return (
+                  <tr key={i}>
+                    <td style={{width: "50%", verticalAlign: "middle"}}>
+                      {capitalize(param.name)}
+                    </td>
+                    <td style={{width: "50%"}}>
+                      <ParamInputField type={param.type}
+                                      value={params.get(i)!.value!}
+                                      onChange={this.updateParamField.bind(this, i)} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
 
-        <div className="level">
-          <div className="level-left">
-            <p className="level-item" style={{color: "#999999", fontStyle: "italic", fontSize: 14}}>
-              {(event.modify) ? "Modifiable. " : ""}
-              {this.countParams()}
-            </p>
-          </div>
+          <div className="level">
+            <div className="level-left">
+              <p className="level-item" style={{color: "#999999", fontStyle: "italic", fontSize: 14}}>
+                {(event.modify) ? "Modifiable. " : ""}
+                {this.countParams()}
+              </p>
+            </div>
 
-          <div className="level-right">
-            <div className="level-item">
-              <button className={classNames(
-                                   "button",
-                                   "is-info",
-                                   {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                      onClick={this.launchEvent.bind(this)}
-                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
-                {event.modify ? "Modify" : "Trigger"}
-              </button>
+            <div className="level-right">
+              <div className="level-item">
+                <button className={classNames(
+                                    "button",
+                                    "is-info",
+                                    {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                        onClick={this.launchEvent.bind(this)}
+                        onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
+                  {event.modify ? "Modify" : "Trigger"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

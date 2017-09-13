@@ -25,7 +25,8 @@ export interface Event {
   id: string;
   parameters: Array<EventParams>;
   name: string;
-  longdesc: string;
+  longdesc?: string;
+  previewUrl?: string;
 }
 
 interface TriggerClientState {
