@@ -4,6 +4,7 @@ import * as classNames from "classnames";
 import { makeRequest } from "../editor/util";
 import EventContainer from "./event_container";
 import PreviewLauncher from "./preview_launcher";
+import ErrorMessage from "./error_message";
 
 interface TriggerClientProps {
   documentId: string;
@@ -112,23 +113,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const { status, statusText } = this.state.fetchError;
 
       return (
-        <div className="content" style={{width: "50vw", margin: "15% auto"}}>
-          <article className="message is-danger">
-            <div className="message-header">
-              <p><strong>ERROR</strong>!</p>
-            </div>
-            <div className="message-body" style={{backgroundColor: "#555555", color: "#FFFFFF"}}>
-              An error occurred while trying to fetch events for the document with
-              the ID <i>{this.props.documentId}</i>:
-
-              <div style={{margin: 25, fontWeight: "bold", textAlign: "center"}}>
-                {statusText} (HTTP error {status})
-              </div>
-
-              Try to clear the session and start over.
-            </div>
-          </article>
-        </div>
+        <ErrorMessage status={status}
+                      statusText={statusText}
+                      documentId={this.props.documentId} />
       );
     } else {
       const { activeTab, abstractEvents, instantiatedEvents } = this.state;
@@ -138,7 +125,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <div className="tabs is-centered" style={{marginTop: 15}}>
             <ul>
               <li className={classNames({"is-active": activeTab === "abstract"})}>
-                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
+                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({abstractEvents.length})</a>
               </li>
               <li className={classNames({"is-active": activeTab === "instantiated"})}>
                 <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
