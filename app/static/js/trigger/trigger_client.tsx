@@ -150,7 +150,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
             </ul>
           </div>
-          <div className="content" style={{marginTop: 0, overflowY: "scroll"}}>
+          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 170px)"}}>
             {this.renderActiveTab()}
           </div>
         </div>
