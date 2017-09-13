@@ -111,6 +111,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     return (
       <div style={{margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
         <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
+        {(event.longdesc) ? <p>{event.longdesc}</p> : null}
 
         <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
           <tbody>
