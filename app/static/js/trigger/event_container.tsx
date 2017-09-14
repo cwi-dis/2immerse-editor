@@ -104,6 +104,16 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     });
   }
 
+  private getButtonLabel(): string {
+    const { event } = this.props;
+
+    if (event.modify) {
+      return (event.modVerb) ? event.modVerb : "Modify";
+    } else {
+      return (event.verb) ? event.verb : "Trigger";
+    }
+  }
+
   public render() {
     const { event } = this.props;
     const { params, isLoading, flashSuccess, flashError } = this.state;
@@ -152,7 +162,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                                     {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
                         onClick={this.launchEvent.bind(this)}
                         onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
-                  {event.modify ? "Modify" : "Trigger"}
+                  {this.getButtonLabel()}
                 </button>
               </div>
             </div>

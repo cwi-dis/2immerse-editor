@@ -28,6 +28,8 @@ export interface Event {
   name: string;
   longdesc?: string;
   previewUrl?: string;
+  verb?: string;
+  modVerb?: string;
 }
 
 interface TriggerClientState {
