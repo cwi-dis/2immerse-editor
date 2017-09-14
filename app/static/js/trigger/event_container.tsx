@@ -110,10 +110,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     return (
       <div style={{display: "flex", margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
-        <div style={{width: 100, height: 100, margin: "0 15px 0 0", border: "1px solid #555555"}}>
-          {(event.previewUrl)
-            ? <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />
-            : <p style={{fontSize: 12, textAlign: "center", marginTop: 40, fontStyle: "italic"}}>no icon</p>}
+        <div style={{width: 100, height: 100, margin: "0 15px 0 0", border: "1px solid #555555", backgroundColor: "#222222"}}>
+          {(event.previewUrl) && <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />}
         </div>
         <div style={{flexGrow: 1}}>
           <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
