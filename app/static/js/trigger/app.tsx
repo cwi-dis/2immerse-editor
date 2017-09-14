@@ -29,6 +29,7 @@ class App extends React.Component<{}, AppState> {
 
   private clearSession() {
     localStorage.removeItem("documentId");
+    location.hash = "";
 
     this.setState({
       documentId: null
