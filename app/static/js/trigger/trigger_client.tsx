@@ -1,9 +1,10 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest } from "../editor/util";
+import { makeRequest, parseQueryString } from "../editor/util";
 import EventContainer from "./event_container";
 import PreviewLauncher from "./preview_launcher";
+import ErrorMessage from "./error_message";
 
 interface TriggerClientProps {
   documentId: string;
@@ -27,6 +28,8 @@ export interface Event {
   name: string;
   longdesc?: string;
   previewUrl?: string;
+  verb?: string;
+  modVerb?: string;
 }
 
 interface TriggerClientState {
@@ -57,6 +60,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   private changeActiveTab(nextTab: "abstract" | "instantiated") {
+    const query = parseQueryString(location.hash).set("activeTab", nextTab);
+    location.hash = query.entrySeq().map(([k, v]) => `${k}=${v}`).join("&");
+
     this.setState({
       activeTab: nextTab
     });
@@ -90,6 +96,18 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public componentDidMount() {
+    const query = parseQueryString(location.hash);
+
+    if (query.has("activeTab")) {
+      const activeTab = query.get("activeTab");
+
+      if (activeTab === "abstract" || activeTab === "instantiated") {
+        this.setState({
+          activeTab: activeTab
+        });
+      }
+    }
+
     this.fetchEvents();
 
     this.pollingInterval = setInterval(() => {
@@ -112,23 +130,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const { status, statusText } = this.state.fetchError;
 
       return (
-        <div className="content" style={{width: "50vw", margin: "15% auto"}}>
-          <article className="message is-danger">
-            <div className="message-header">
-              <p><strong>ERROR</strong>!</p>
-            </div>
-            <div className="message-body" style={{backgroundColor: "#555555", color: "#FFFFFF"}}>
-              An error occurred while trying to fetch events for the document with
-              the ID <i>{this.props.documentId}</i>:
-
-              <div style={{margin: 25, fontWeight: "bold", textAlign: "center"}}>
-                {statusText} (HTTP error {status})
-              </div>
-
-              Try to clear the session and start over.
-            </div>
-          </article>
-        </div>
+        <ErrorMessage status={status}
+                      statusText={statusText}
+                      documentId={this.props.documentId} />
       );
     } else {
       const { activeTab, abstractEvents, instantiatedEvents } = this.state;
@@ -138,7 +142,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <div className="tabs is-centered" style={{marginTop: 15}}>
             <ul>
               <li className={classNames({"is-active": activeTab === "abstract"})}>
-                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({this.state.abstractEvents.length})</a>
+                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({abstractEvents.length})</a>
               </li>
               <li className={classNames({"is-active": activeTab === "instantiated"})}>
                 <a onClick={this.changeActiveTab.bind(this, "instantiated")}>

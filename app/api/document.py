@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import re
 import threading
 import os
+import time
 import requests
 import globalSettings
 
@@ -413,7 +414,7 @@ class Document:
         return rv
 
     @synchronized
-    def _getElement(self, path):
+    def _getElementByPath(self, path):
         if path == '/':
             # Findall implements bare / paths incorrectly
             positions = []
@@ -428,6 +429,9 @@ class Document:
         element = positions[0]
         return element
 
+    def _getElementByID(self, id):
+        return self.idMap.get(id)
+        
 class DocumentXml:
     def __init__(self, document):
         self.document = document
@@ -443,7 +447,7 @@ class DocumentXml:
         #
         # where should it go?
         #
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         #
         # what should go there?
         #
@@ -493,7 +497,7 @@ class DocumentXml:
     @synchronized
     def cut(self, path, mimetype='application/x-python-object'):
         self.logger.info('cut(%s)' % (path), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         parent = self.document._getParent(element)
         parent.remove(element)
         self.document._elementDeleted(element)
@@ -502,13 +506,13 @@ class DocumentXml:
     @synchronized
     def get(self, path, mimetype='application/x-python-object'):
         self.logger.info('get(%s)' % (path), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         return self.document._fromET(element, mimetype)
 
     @edit
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
         self.logger.info('modifyAttributes(%s, ...)' % (path), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         if mimetype == 'application/x-python-object':
             pass
         elif mimetype == 'application/json':
@@ -530,7 +534,7 @@ class DocumentXml:
     @synchronized
     def modifyData(self, path, data):
         self.logger.info('modifyData(%s, ...)' % (path), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         if data == None:
             element.text = None
             element.tail = None
@@ -542,9 +546,9 @@ class DocumentXml:
     @edit
     def copy(self, path, where, sourcepath):
         self.logger.info('copy(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         # Get the original
-        sourceElement = self.document._getElement(sourcepath)
+        sourceElement = self.document._getElementByPath(sourcepath)
         # Make a deep copy
         newElement = copy.deepcopy(sourceElement)
         self.document._afterCopy(newElement)
@@ -554,7 +558,7 @@ class DocumentXml:
     @edit
     def move(self, path, where, sourcepath):
         self.logger.info('move(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
-        element = self.document._getElement(path)
+        element = self.document._getElementByPath(path)
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
@@ -571,7 +575,7 @@ class DocumentEvents:
     @synchronized
     def get(self):
         exprTriggerable = './/tt:events/tl:par[@tt:name]'
-        exprModifyable = './/tl:par/tl:par[@tt:name]'
+        exprModifyable = './/tl:par/tl:par[@tt:name][@tls:state]'
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
         rv = []
@@ -717,6 +721,9 @@ class DocumentServe:
         self.loggerExtra = dict(self.document.loggerExtra)
         self.loggerExtra['subSource'] = 'document.serve'
 
+    def _now(self):
+        return time.time()
+        
     @synchronized
     def _nextGeneration(self):
         rootElt = self.tree.getroot()
@@ -792,14 +799,46 @@ class DocumentServe:
     def setDocumentState(self, documentState):
         self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.loggerExtra)
         for eltId, eltState in documentState.items():
-            elt = self.document._getElement(eltId)
+            elt = self.document._getElementByID(eltId)
             if not elt:
                 self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.loggerExtra)
                 continue
-            changed = False # elt.delegate.elementStateChanged(eltState)
+            changed = self._elementStateChanged(elt, eltState)
             if changed:
                 self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.loggerExtra)
                 
+    def _elementStateChanged(self, elt, eltState):
+        """Timeline service has sent new state for this element. Return True if anything has changed."""
+        newState = eltState[NS_TIMELINE_INTERNAL("state")]
+        if newState == 'idle':
+            newState = None
+        newProgress = eltState[NS_TIMELINE_INTERNAL("progress")]
+        if newProgress:
+            newEpoch = self._now() - float(newProgress)
+        else:
+            newEpoch = None
+        oldState = elt.get(NS_TIMELINE_INTERNAL("state"))
+        oldEpoch = elt.get(NS_TIMELINE_INTERNAL("epoch"))
+        if oldEpoch:
+            oldEpoch = float(oldEpoch)
+        def almostEqual(t1, t2):
+            if not t1 and not t2:
+                return True
+            if not t1 or not t2:
+                return t1 == t2
+            return abs(t1-t2) < 0.1
+        if oldState == newState and almostEqual(oldEpoch, newEpoch):
+            return False
+        if newState:
+            elt.set(NS_TIMELINE_INTERNAL("state"), newState)
+        else:
+            elt.attrib.pop(NS_TIMELINE_INTERNAL("state"))
+        if newEpoch:
+            elt.set(NS_TIMELINE_INTERNAL("epoch"), str(newEpoch))
+        else:
+            elt.attrib.pop(NS_TIMELINE_INTERNAL("epoch"))
+        return True
+         
     def forward(self, operations):
         self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
         gen = self._nextGeneration()
