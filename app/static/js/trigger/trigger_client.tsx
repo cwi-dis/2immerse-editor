@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest } from "../editor/util";
+import { makeRequest, parseQueryString } from "../editor/util";
 import EventContainer from "./event_container";
 import PreviewLauncher from "./preview_launcher";
 import ErrorMessage from "./error_message";
@@ -60,6 +60,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   private changeActiveTab(nextTab: "abstract" | "instantiated") {
+    const query = parseQueryString(location.hash).set("activeTab", nextTab);
+    location.hash = query.entrySeq().map(([k, v]) => `${k}=${v}`).join("&");
+
     this.setState({
       activeTab: nextTab
     });
@@ -93,6 +96,18 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public componentDidMount() {
+    const query = parseQueryString(location.hash);
+
+    if (query.has("activeTab")) {
+      const activeTab = query.get("activeTab");
+
+      if (activeTab === "abstract" || activeTab === "instantiated") {
+        this.setState({
+          activeTab: activeTab
+        });
+      }
+    }
+
     this.fetchEvents();
 
     this.pollingInterval = setInterval(() => {
