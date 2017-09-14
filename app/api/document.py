@@ -206,7 +206,7 @@ class Document:
         if self.editManager:
             self.editManager.change(elt)
 
-    def _afterCopy(self, elt):
+    def _afterCopy(self, elt, triggerAttributes=False):
         """Adjust element attributes (xml:id and tt:name) after a copy.
         Makes them unique. Does not insert them into the datastructures yet: the element is expected
         to be currently out-of-tree.
@@ -217,7 +217,7 @@ class Document:
             id = e.get(NS_XML('id'))
             if not id:
                 # For the outer element we always add an id
-                if e == elt:
+                if e == elt and triggerAttributes:
                     id = 'new'
                 else:
                     continue
@@ -231,18 +231,19 @@ class Document:
 
             e.set(NS_XML('id'), id)
         # Specific to tt: events
-        name = elt.get(NS_TRIGGER('name'), 'New')
-        if name:
-            while name in self.nameSet:
-                match = FIND_NAME_INDEX.match(name)
-                if match:
-                    num = int(match.group(2))
-                    name = match.group(1) + ' (' + str(num+1) + ')'
-                else:
-                    name = name + ' (1)'
-            elt.set(NS_TRIGGER('name'), name)
-        # Flag the new element as being newly copied (so it'll show up in the active list)
-        elt.set(NS_TIMELINE_INTERNAL("state"), "new")
+        if triggerAttributes:
+            name = elt.get(NS_TRIGGER('name'), 'New')
+            if name:
+                while name in self.nameSet:
+                    match = FIND_NAME_INDEX.match(name)
+                    if match:
+                        num = int(match.group(2))
+                        name = match.group(1) + ' (' + str(num+1) + ')'
+                    else:
+                        name = name + ' (1)'
+                elt.set(NS_TRIGGER('name'), name)
+            # Flag the new element as being newly copied (so it'll show up in the active list)
+            elt.set(NS_TIMELINE_INTERNAL("state"), "new")
 
     @synchronized
     def events(self):
@@ -661,7 +662,7 @@ class DocumentEvents:
 
         newElement = copy.deepcopy(element)
         newElement.set(NS_TRIGGER("wantstatus"), "true")
-        self.document._afterCopy(newElement)
+        self.document._afterCopy(newElement, triggerAttributes=True)
 
         for par in parameters:
             path, attr, value = self._getParameter(par)

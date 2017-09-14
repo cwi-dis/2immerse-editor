@@ -2,6 +2,7 @@
   xmlns:tl="http://jackjansen.nl/timelines"
   xmlns:tim="http://jackjansen.nl/2immerse"
   xmlns:tic="http://jackjansen.nl/2immerse/component"
+  xmlns:tls="http://jackjansen.nl/timelines/internal"
   xmlns:tlcheck="http://jackjansen.nl/timelines/check"
   xmlns:tt="http://jackjansen.nl/2immerse/livetrigger"
   title="Test the live triggering tool">
@@ -42,7 +43,7 @@
         </tt:events>
       </tl:par>
 
-    <tl:par xml:id="event4" tt:name="test 5 second splash after 5 seconds">
+    <tl:par xml:id="event4" tt:name="test 5 second splash after 5 seconds" tls:state="new">
         <tl:sleep tl:dur="10"/>
         <tl:seq>
             <tl:sleep tl:dur="5"/>

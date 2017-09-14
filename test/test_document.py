@@ -67,7 +67,7 @@ class TestDocument(unittest.TestCase):
 
         for e in d.tree.getroot().iter():
             p = d._getXPath(e)
-            e2 = d._getElement(p)
+            e2 = d._getElementByPath(p)
 
             self.assertIs(e, e2)
 
@@ -78,7 +78,7 @@ class TestDocument(unittest.TestCase):
 
         for e in d.tree.getroot().iter():
             p = d._getXPath(e)
-            e2 = d._getElement(p)
+            e2 = d._getElementByPath(p)
 
             self.assertIs(e, e2)
 
