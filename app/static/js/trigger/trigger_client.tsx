@@ -25,6 +25,8 @@ export interface Event {
   id: string;
   parameters: Array<EventParams>;
   name: string;
+  longdesc?: string;
+  previewUrl?: string;
 }
 
 interface TriggerClientState {
@@ -39,7 +41,7 @@ interface TriggerClientState {
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private pollingFrequency: number = 2000;
-  private pollingInterval: NodeJS.Timer;
+  private pollingInterval: any;
 
   constructor(props: TriggerClientProps) {
     super(props);
@@ -148,7 +150,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
             </ul>
           </div>
-          <div className="content" style={{height: "calc(100vh - 160px)"}}>
+          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 170px)"}}>
             {this.renderActiveTab()}
           </div>
         </div>
@@ -241,7 +243,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           </div>
         </div>
 
-        <div className="container" style={{width: "60vw", height: "calc(100vh - 80px)"}}>
+        <div style={{width: "60vw", height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
           {this.renderMainContent()}
         </div>
 
