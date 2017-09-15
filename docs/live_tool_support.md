@@ -74,7 +74,7 @@ We may want a callback mechanism so the timeline service (or production tool bac
 
 The events will be `<tl:par>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`. 
 
-An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= required= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted), `tt:longdesc` and `tt:previewUrl`.
+An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= required= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted), `tt:verb`, `tt:modVerb`, `tt:longdesc` and `tt:previewUrl`.
 
 There is a second set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (which is probably a different set of parameters than those for _trigger_).
 

@@ -607,8 +607,10 @@ class DocumentEvents:
         name = elt.get(NS_TRIGGER('name'))
         idd = elt.get(NS_XML('id'))
         rv = dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
-        if NS_TRIGGER("verb") in elt.attrib:
+        if trigger and NS_TRIGGER("verb") in elt.attrib:
             rv["verb"] = elt.get(NS_TRIGGER("verb"))
+        if not trigger and NS_TRIGGER("modVerb") in elt.attrib:
+            rv["verb"] = elt.get(NS_TRIGGER("modVerb"))
         if NS_TRIGGER("previewUrl") in elt.attrib:
             previewUrl = elt.get(NS_TRIGGER("previewUrl"))
             if previewUrl and self.document.url:
