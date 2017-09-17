@@ -764,6 +764,7 @@ class DocumentServe:
         rawLayoutElement.text = layoutJSON
 
     def get_client(self, timeline, layout, base=None):
+        """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.loggerExtra)
         if base:
             clientDocData = urllib.urlopen(base).read()
@@ -771,6 +772,16 @@ class DocumentServe:
             clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
             clientDocData = open(clientDocPath).read()
         clientDoc = json.loads(clientDocData)
+        #
+        # Next we override from the document (if overrides are present)
+        #
+        clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
+        print 'xxxjack found rawClient element'
+        if clientExtraElement != None and clientExtraElement.text:
+            clientExtra = json.loads(clientExtraElement.text)
+            print 'xxxjack rawClient extra data', clientExtra
+            for k, v in clientExtra.items():
+                clientDoc[k] = v
         # 
         # We do substitution manually, for now. May want to use a templating system at some point.
         #
@@ -783,8 +794,20 @@ class DocumentServe:
                 websocketService=globalSettings.websocketService,
                 timelineService=globalSettings.timelineService,
                 )
+        # Note that this should be user-settable, depending on this flag the preview will run
+        # in single-device (standalone) or TV mode.
         clientDoc['mode'] = globalSettings.mode
+        
         return json.dumps(clientDoc)
+
+    @synchronized
+    def put_client(self, clientJSON):
+        """Temporary method, store per-dmapp client.json settings in the authoring document"""
+        self.logger.info('storing additions to client.json document', extra=self.loggerExtra)
+        rawClientElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
+        if rawClientElement == None:
+            rawClientElement = ET.SubElement(self.tree.getroot(), 'au:rawClient')
+        rawClientElement.text = layoutJSON
 
     @synchronized
     def setCallback(self, url, contextID=None):
