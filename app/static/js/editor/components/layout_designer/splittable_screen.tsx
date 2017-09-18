@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Layer, Rect, Stage, Group } from "react-konva";
+import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
@@ -23,7 +23,7 @@ interface SplittableScreenState {
 }
 
 class SplittableScreen extends React.Component<SplittableScreenProps, SplittableScreenState> {
-  private stageWrapper: any;
+  private stageWrapper: Stage | null;
 
   constructor(props: SplittableScreenProps) {
     super(props);
@@ -51,6 +51,10 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   }
 
   private getCanvasClickPosition(pageX: number, pageY: number) {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
     const stage: KonvaStage = this.stageWrapper.getStage();
     const {offsetLeft, offsetTop} = stage.container();
 
@@ -61,6 +65,10 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
     const stage: KonvaStage = this.stageWrapper.getStage();
 
     const {x: pageX, y: pageY} = this.state.contextMenu;
