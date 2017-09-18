@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Layer, Rect, Stage, Group, Line } from "react-konva";
+import { Layer, Rect, Stage, Group } from "react-konva";
 
 import { Screen as ScreenModel } from "../reducers/screens";
 import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "./context_menu";

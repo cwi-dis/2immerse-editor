@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { List } from "immutable";
 import { Screen as ScreenModel } from "../../reducers/screens";
-import Screen from "./screen";
+import SplittableScreen from "./splittable_screen";
 
 interface ScreenContainerProps {
   screens: List<ScreenModel>;
@@ -21,7 +21,7 @@ const ScreenContainer: React.SFC<ScreenContainerProps> = (props) => {
       <h3 style={{textAlign: "center"}}>{props.title} ({props.screens.count()})</h3>
       <div>{props.screens.map((screen, i) => {
         return (
-          <Screen key={i}
+          <SplittableScreen key={i}
                   screenInfo={screen}
                   width={props.screenWidth}
                   removeDevice={props.removeDevice.bind(null, screen.id)}
