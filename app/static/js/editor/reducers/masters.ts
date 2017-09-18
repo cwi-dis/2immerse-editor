@@ -28,7 +28,7 @@ interface MasterStateAttributes {
   layouts: List<Master>;
 }
 
-export class MasterState extends Record<MasterStateAttributes>({ layouts: List() }) {
+export class MasterState extends Record<MasterStateAttributes>({ currentLayout: undefined, layouts: List() }) {
   constructor(params?: MasterStateAttributes) {
     params ? super(params) : super();
   }

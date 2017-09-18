@@ -112,4 +112,44 @@ describe("Masters reducer", () => {
     expect(transformedState.layouts.count()).toEqual(2);
     expect(transformedState).toBe(state);
   });
+
+  it("should update the key currentLayout on UPDATE_SELECTED_LAYOUT", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ])});
+
+    expect(state.currentLayout).toBeUndefined();
+
+    const transformedState = reducer(
+      state,
+      { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId1" }} as any
+    );
+
+    expect(transformedState.currentLayout.id).toEqual("masterId1");
+    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+  });
+
+  it("should return the state unchanged on UPDATE_SELECTED_LAYOUT when using a non-existent ID", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ])});
+
+    let transformedState = reducer(
+      state,
+      { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId1" }} as any
+    );
+
+    expect(transformedState.currentLayout.id).toEqual("masterId1");
+    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+
+    transformedState = reducer(
+      transformedState,
+      { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId3" }} as any
+    );
+
+    expect(transformedState.currentLayout.id).toEqual("masterId1");
+    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+  });
 });
