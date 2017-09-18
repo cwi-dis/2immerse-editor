@@ -25,6 +25,20 @@ app.after_request(add_cors_headers)
 API_ROOT = '/api/v1'
 
 #
+# Get externally accessible URL for an endpoint. Only call while inside a request.
+#
+def get_docRoot():
+    protoRP = request.headers.get('X-Forwarded-Proto')
+    if protoRP:
+        # We are running behind a reverse proxy. Construct base URL manually.
+        hostRP = request.headers.get('X-Forwarded-Host')
+        assert hostRP
+        docRoot = '%s://%s%s' % (protoRP, hostRP, API_ROOT)
+    else:
+        # We are running standalone. Trust http headers.
+        docRoot = urlparse.urljoin(request.base_url, API_ROOT)
+    return docRoot
+#
 # Global routes
 #
 @app.route(API_ROOT + "/<string:verb>")
@@ -203,14 +217,7 @@ def get_client_document(documentId):
         abort(404)
     serve = document.serve()
     assert serve
-    docRoot = '%s/document/%s/serve/' % (API_ROOT, documentId)
-    docRoot = urlparse.urljoin(request.base_url, docRoot)
-    print 'xxxjack base_url', request.base_url
-    print 'xxxjack X-Forwarded-For', request.headers.get('X-Forwarded-For')
-    print 'xxxjack X-Forwarded-Proto', request.headers.get('X-Forwarded-Proto')
-    print 'xxxjack X-Forwarded-Proto', request.headers.get('X-Forwarded-Proto')
-    print 'xxxjack X-Forwarded-Server', request.headers.get('X-Forwarded-Server')
-    print 'xxxjack all headers', request.headers()
+    docRoot = '%s/document/%s/serve/' % (get_docRoot(), documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'))
     return Response(config, mimetype="application/json")
     
@@ -258,7 +265,7 @@ def update_document_state(documentId):
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/preview")
 def get_preview(documentId):
-    clientDocUrl = urlparse.urljoin(request.base_url, API_ROOT + "/document/%s/serve/client.json" % documentId)
+    clientDocUrl = get_docRoot() + "/document/%s/serve/client.json" % documentId
     base = request.args.get('base')
     if base:
         clientDocUrl += '?' + urllib.urlencode(dict(base=base))
