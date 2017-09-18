@@ -2,9 +2,25 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
-import DMAppcContainer from "./dmappc_container";
+import { findById } from "../../util";
+import { Screen as ScreenModel } from "../../reducers/screens";
 
-class MasterManager extends React.Component<ApplicationState & MasterActions, {}> {
+import DMAppcContainer from "./dmappc_container";
+import Screen from "../screen";
+
+interface MasterManagerState {
+  currentScreen: ScreenModel | undefined;
+}
+
+class MasterManager extends React.Component<ApplicationState & MasterActions, MasterManagerState> {
+  public constructor(props: ApplicationState & MasterActions) {
+    super(props);
+
+    this.state = {
+      currentScreen: this.props.screens.first()
+    };
+  }
+
   private addMaster() {
     const masterName = prompt("Master layout name:");
 
@@ -13,12 +29,31 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, {}
     }
   }
 
+  private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
+    const screenId = e.currentTarget.value;
+    const [_, screen] = findById(this.props.screens, screenId);
+
+    if (screen) {
+      console.log("Found screen:", screen.toJS());
+      this.setState({
+        currentScreen: screen
+      });
+    } else {
+      console.error("Could not find screen with id", screenId);
+    }
+  }
+
   public render() {
+    const { currentScreen } = this.state;
+
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Manage Masters</h3>
-          <p>Move along, nothing to see here yet!</p>
+          <select onChange={this.updateSelectedScreen.bind(this)}>
+            {this.props.screens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
+          </select>
+          <br/>
         </div>
         <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
