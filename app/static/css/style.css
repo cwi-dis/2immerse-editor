@@ -28,6 +28,17 @@ html, body {
   padding: 10px 20px 0 20px;
 }
 
+.column-content h1, .column-content h2, .column-content h3, .column-content h4, .column-content h5, .column-content h6 {
+  color: #B1B1B1;
+  font-weight: 400;
+  line-height: 1.125;
+}
+
+.column-content h3 {
+  font-size: 1.5em;
+  margin-bottom: 0.6666em;
+}
+
 .content {
   padding: 10px 20px 0 20px;
   height: 100vh;
