@@ -24,7 +24,6 @@ export class Master extends Record<MasterAttributes>({id: "", name: "", placedCo
 }
 
 interface MasterStateAttributes {
-  currentScreen?: ScreenModel;
   currentLayout?: Master;
   layouts: List<Master>;
 }
