@@ -75,7 +75,11 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    console.log("element dropped at", e.pageX, e.pageY);
+
+    if (!this.props.masters.currentLayout) {
+      alert("Please create and select a master layout before assigning components");
+      return;
+    }
 
     if (!this.stageWrapper) {
       throw new Error("Stage ref is null");
@@ -84,10 +88,10 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     const stage: KonvaStage = this.stageWrapper.getStage();
 
     const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
-    const clickedRegion = this.getDropRegion(x / stage.width(), y / stage.height());
+    const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
 
-    if (clickedRegion) {
-      console.log("clicked region:", clickedRegion);
+    if (dropRegion) {
+      console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screen.id);
     } else {
       console.log("could not find region at", x, y);
     }
