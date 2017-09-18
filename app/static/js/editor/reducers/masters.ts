@@ -64,4 +64,15 @@ actionHandler.addHandler("REMOVE_MASTER_LAYOUT", (state, action: actions.REMOVE_
   });
 });
 
+actionHandler.addHandler("UPDATE_SELECTED_LAYOUT", (state, action: actions.UPDATE_SELECTED_LAYOUT) => {
+  const { masterId } = action.payload;
+  const result = findById(state.layouts, masterId);
+
+  if (!result) {
+    return state;
+  }
+
+  return state.set("currentLayout", result[1]);
+});
+
 export default actionHandler.getReducer();
