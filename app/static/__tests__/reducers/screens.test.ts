@@ -105,6 +105,11 @@ describe("Screens reducer", () => {
     expect(transformedState.previewScreens.get(0).id).toEqual("screen2");
   });
 
+  it("should initialise currentScreen to undefined", () => {
+    const state = reducer(undefined, { type: "" });
+    expect(state.currentScreen).toBeUndefined();
+  });
+
   it("should return state unchanged on REMOVE_DEVICE if screen is not found", () => {
     const state: ScreenState = new ScreenState({previewScreens: List([
       new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
@@ -478,5 +483,47 @@ describe("Screens reducer", () => {
     expect(state.previewScreens.get(0).regions.get(0).splitFrom.length).toEqual(1);
     expect(state.previewScreens.get(0).regions.get(0).splitFrom[0]).toBeNull();
     expect(state).toEqual(initialState);
+  });
+
+  it("should update the currentScreen property on UPDATE_SELECTED_SCREEN", () => {
+    const state: ScreenState = new ScreenState({previewScreens: List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ])});
+
+    expect(state.currentScreen).toBeUndefined();
+
+    const transformedState = reducer(
+      state,
+      { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen1" } } as any
+    );
+
+    expect(transformedState.currentScreen.id).toEqual("screen1");
+    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
+  });
+
+  it("should return the state unchanged on UPDATE_SELECTED_SCREEN when passing an unknown ID", () => {
+    const state: ScreenState = new ScreenState({previewScreens: List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ])});
+
+    expect(state.currentScreen).toBeUndefined();
+
+    let transformedState = reducer(
+      state,
+      { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen1" } } as any
+    );
+
+    expect(transformedState.currentScreen.id).toEqual("screen1");
+    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
+
+    transformedState = reducer(
+      transformedState,
+      { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen3" } } as any
+    );
+
+    expect(transformedState.currentScreen.id).toEqual("screen1");
+    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
   });
 });
