@@ -498,8 +498,7 @@ describe("Screens reducer", () => {
       { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen1" } } as any
     );
 
-    expect(transformedState.currentScreen.id).toEqual("screen1");
-    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
+    expect(transformedState.currentScreen).toEqual("screen1");
   });
 
   it("should return the state unchanged on UPDATE_SELECTED_SCREEN when passing an unknown ID", () => {
@@ -515,15 +514,13 @@ describe("Screens reducer", () => {
       { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen1" } } as any
     );
 
-    expect(transformedState.currentScreen.id).toEqual("screen1");
-    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
+    expect(transformedState.currentScreen).toEqual("screen1");
 
     transformedState = reducer(
       transformedState,
       { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen3" } } as any
     );
 
-    expect(transformedState.currentScreen.id).toEqual("screen1");
-    expect(transformedState.currentScreen).toBe(state.previewScreens.get(0));
+    expect(transformedState.currentScreen).toEqual("screen1");
   });
 });

@@ -126,8 +126,7 @@ describe("Masters reducer", () => {
       { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId1" }} as any
     );
 
-    expect(transformedState.currentLayout.id).toEqual("masterId1");
-    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+    expect(transformedState.currentLayout).toEqual("masterId1");
   });
 
   it("should return the state unchanged on UPDATE_SELECTED_LAYOUT when using a non-existent ID", () => {
@@ -141,16 +140,14 @@ describe("Masters reducer", () => {
       { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId1" }} as any
     );
 
-    expect(transformedState.currentLayout.id).toEqual("masterId1");
-    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+    expect(transformedState.currentLayout).toEqual("masterId1");
 
     transformedState = reducer(
       transformedState,
       { type: "UPDATE_SELECTED_LAYOUT", payload: { masterId: "masterId3" }} as any
     );
 
-    expect(transformedState.currentLayout.id).toEqual("masterId1");
-    expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
+    expect(transformedState.currentLayout).toEqual("masterId1");
   });
 
   it("should add component and region ID to the placedComponents key on ASSIGN_COMPONENT_TO_MASTER", () => {
