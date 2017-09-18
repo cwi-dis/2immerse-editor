@@ -83,6 +83,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
     const componentId = e.dataTransfer.getData("text/plain");
     const screen = this.props.screens.currentScreen!;
+    const master = this.props.masters.currentLayout!;
 
     if (!this.stageWrapper) {
       throw new Error("Stage ref is null");
@@ -95,6 +96,13 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
     if (dropRegion) {
       console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screen.id);
+
+      this.props.assignComponentToMaster(
+        master.id,
+        screen.id,
+        dropRegion.id,
+        componentId
+      );
     } else {
       console.log("could not find region at", x, y);
     }
