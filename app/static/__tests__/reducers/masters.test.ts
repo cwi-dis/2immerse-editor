@@ -41,7 +41,7 @@ describe("Master class", () => {
 
 describe("Masters reducer", () => {
   it("should return the initial state on an unknown action", () => {
-    const initialState = new MasterState({layouts: List()});
+    const initialState = new MasterState();
 
     expect(
       reducer(undefined, { type: "" })
