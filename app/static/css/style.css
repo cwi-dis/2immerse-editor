@@ -25,7 +25,8 @@ html, body {
 }
 
 .column-content {
-  padding: 10px 20px 0 20px;
+  padding: 10px 20px 20px 20px;
+  overflow: scroll;
 }
 
 .column-content h1, .column-content h2, .column-content h3, .column-content h4, .column-content h5, .column-content h6 {
