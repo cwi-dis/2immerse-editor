@@ -4,7 +4,6 @@ import * as shortid from "shortid";
 import * as actions from "../actions/screens";
 import { ActionHandler, Coords, findById, getRandomInt } from "../util";
 
-export type ScreenState = List<Screen>;
 
 export interface ScreenRegion {
   id: string;
@@ -33,6 +32,17 @@ const defaultScreenParams: ScreenAttributes = {
 
 export class Screen extends Record<ScreenAttributes>(defaultScreenParams) {
   constructor(params?: ScreenAttributes) {
+    params ? super(params) : super();
+  }
+}
+
+interface ScreenStateAttributes {
+  currentScreen?: Screen;
+  previewScreens: List<Screen>;
+}
+
+export class ScreenState extends Record<ScreenStateAttributes>({currentScreen: undefined, previewScreens: List()}) {
+  constructor(params?: ScreenStateAttributes) {
     params ? super(params) : super();
   }
 }
@@ -90,43 +100,49 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
   }];
 }
 
-const actionHandler = new ActionHandler<ScreenState>(List<Screen>());
+const actionHandler = new ActionHandler<ScreenState>(new ScreenState({previewScreens: List<Screen>()}));
 
 actionHandler.addHandler("ADD_DEVICE", (state, action: actions.ADD_DEVICE) => {
   const { type } = action.payload;
   const screen = createNewScreen(type);
 
-  return state.push(screen);
+  return state.update("previewScreens", (screens) => {
+    return screens.push(screen);
+  });
 });
 
 actionHandler.addHandler("REMOVE_DEVICE", (state, action: actions.REMOVE_DEVICE) => {
   const { id } = action.payload;
-  const result = findById(state, id);
+  const result = findById(state.previewScreens, id);
 
   if (!result) {
     return state;
   }
 
-  return state.delete(result[0]);
+  return state.update("previewScreens", (screens) => {
+    return screens.delete(result[0]);
+  });
 });
 
 actionHandler.addHandler("SPLIT_REGION", (state, action: actions.SPLIT_REGION) => {
   const {screenId, regionId, position, orientation} = action.payload;
 
-  const [screenIndex, screen] = findById(state, screenId);
+  const [screenIndex, screen] = findById(state.previewScreens, screenId);
   const [regionIndex, region] = findById(screen.regions, regionId);
 
   const [region1, region2] = splitRegion(region, position, orientation);
 
-  return state.set(screenIndex,
-    screen.set("regions", screen.regions.set(regionIndex, region1).push(region2))
-  );
+  return state.update("previewScreens", (screens) => {
+    return screens.set(screenIndex,
+      screen.set("regions", screen.regions.set(regionIndex, region1).push(region2))
+    );
+  });
 });
 
 actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SPLIT) => {
   const {screenId} = action.payload;
 
-  const [screenIndex, screen] = findById(state, screenId);
+  const [screenIndex, screen] = findById(state.previewScreens, screenId);
   const deleteRegion = screen.regions.last()!;
 
   if (deleteRegion.splitFrom.length === 1 && deleteRegion.splitFrom[0] !== null) {
@@ -147,13 +163,16 @@ actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SP
       ];
     }
 
-    return state.set(screenIndex,
-      screen.set("regions", screen.regions.set(parentRegionIndex, {
-        ...parentRegion,
-        splitFrom: [parentRegion.splitFrom[0]],
-        size: newSize
-      }).pop())
-    );
+
+    return state.update("previewScreens", (screens) => {
+      return screens.set(screenIndex,
+        screen.set("regions", screen.regions.set(parentRegionIndex, {
+          ...parentRegion,
+          splitFrom: [parentRegion.splitFrom[0]],
+          size: newSize
+        }).pop())
+      );
+    });
   }
 
   return state;
