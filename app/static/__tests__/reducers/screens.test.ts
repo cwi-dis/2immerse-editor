@@ -42,7 +42,7 @@ describe("Screen class", () => {
 
 describe("Screens reducer", () => {
   it("should return the initial state on an unknown action", () => {
-    const initialState = List();
+    const initialState = new ScreenState();
 
     expect(
       reducer(undefined, { type: "" })
@@ -50,10 +50,10 @@ describe("Screens reducer", () => {
   });
 
   it("should return the given state on an unknown action", () => {
-    const state: ScreenState = List([
+    const state: ScreenState = new ScreenState({previewScreens: List([
       new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
       new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
-    ]);
+    ])});
 
     expect(
       reducer(state, { type: "" })
@@ -61,73 +61,75 @@ describe("Screens reducer", () => {
   });
 
   it("should add a new personal screen to the end of the list on ADD_DEVICE", () => {
-    const state = reducer(List(), { type: "ADD_DEVICE", payload: { type: "personal" }} as any);
+    const state = reducer(new ScreenState({previewScreens: List()}), { type: "ADD_DEVICE", payload: { type: "personal" }} as any);
+    const { previewScreens } = state;
 
-    expect(state.count()).toEqual(1);
+    expect(previewScreens.count()).toEqual(1);
 
-    expect(state.get(0).type).toEqual("personal");
-    expect(state.get(0).orientation).toEqual("portrait");
+    expect(previewScreens.get(0).type).toEqual("personal");
+    expect(previewScreens.get(0).orientation).toEqual("portrait");
 
-    expect(state.get(0).regions.count()).toEqual(1);
+    expect(previewScreens.get(0).regions.count()).toEqual(1);
 
-    expect(state.get(0).regions.get(0).position).toEqual([0, 0]);
-    expect(state.get(0).regions.get(0).size).toEqual([1, 1]);
+    expect(previewScreens.get(0).regions.get(0).position).toEqual([0, 0]);
+    expect(previewScreens.get(0).regions.get(0).size).toEqual([1, 1]);
   });
 
   it("should add a new communal screen to the end of the list on ADD_DEVICE", () => {
-    const state = reducer(List(), { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+    const state = reducer(new ScreenState({previewScreens: List()}), { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
+    const { previewScreens } = state;
 
-    expect(state.count()).toEqual(1);
+    expect(previewScreens.count()).toEqual(1);
 
-    expect(state.get(0).type).toEqual("communal");
-    expect(state.get(0).orientation).toEqual("landscape");
+    expect(previewScreens.get(0).type).toEqual("communal");
+    expect(previewScreens.get(0).orientation).toEqual("landscape");
 
-    expect(state.get(0).regions.count()).toEqual(1);
+    expect(previewScreens.get(0).regions.count()).toEqual(1);
 
-    expect(state.get(0).regions.get(0).position).toEqual([0, 0]);
-    expect(state.get(0).regions.get(0).size).toEqual([1, 1]);
+    expect(previewScreens.get(0).regions.get(0).position).toEqual([0, 0]);
+    expect(previewScreens.get(0).regions.get(0).size).toEqual([1, 1]);
   });
 
   it("should remove a screen on REMOVE_DEVICE", () => {
-    const state: ScreenState = List([
+    const state: ScreenState = new ScreenState({previewScreens: List([
       new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
       new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
-    ]);
+    ])});
 
     const transformedState = reducer(
       state,
       { type: "REMOVE_DEVICE", payload: { id: "screen1" } } as any
     );
 
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).id).toEqual("screen2");
+    expect(transformedState.previewScreens.count()).toEqual(1);
+    expect(transformedState.previewScreens.get(0).id).toEqual("screen2");
   });
 
   it("should return state unchanged on REMOVE_DEVICE if screen is not found", () => {
-    const state: ScreenState = List([
+    const state: ScreenState = new ScreenState({previewScreens: List([
       new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
       new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
-    ]);
+    ])});
 
     const transformedState = reducer(
       state,
       { type: "REMOVE_DEVICE", payload: { id: "screen3" } } as any
     );
 
-    expect(transformedState.count()).toEqual(2);
-    expect(transformedState.get(0).id).toEqual("screen1");
-    expect(transformedState.get(1).id).toEqual("screen2");
+    expect(transformedState.previewScreens.count()).toEqual(2);
+    expect(transformedState.previewScreens.get(0).id).toEqual("screen1");
+    expect(transformedState.previewScreens.get(1).id).toEqual("screen2");
   });
 
   it("should split the root region horizontally on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
-    const rootRegion = state.get(0).regions.get(0);
+    const rootRegion = state.previewScreens.get(0).regions.get(0);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.5,
           orientation: "horizontal"
@@ -135,7 +137,7 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    const regions = state.get(0).regions;
+    const regions = state.previewScreens.get(0).regions;
 
     expect(regions.count()).toEqual(2);
 
@@ -156,13 +158,13 @@ describe("Screens reducer", () => {
 
   it("should split the root region vertically on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
-    const rootRegion = state.get(0).regions.get(0);
+    const rootRegion = state.previewScreens.get(0).regions.get(0);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.5,
           orientation: "vertical"
@@ -170,7 +172,7 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    const regions = state.get(0).regions;
+    const regions = state.previewScreens.get(0).regions;
 
     expect(regions.count()).toEqual(2);
 
@@ -191,13 +193,13 @@ describe("Screens reducer", () => {
 
   it("should split a nested region vertically on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
-    const rootRegion = state.get(0).regions.get(0);
+    const rootRegion = state.previewScreens.get(0).regions.get(0);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.5,
           orientation: "vertical"
@@ -209,7 +211,7 @@ describe("Screens reducer", () => {
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.2,
           orientation: "vertical"
@@ -217,7 +219,7 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    const regions = state.get(0).regions;
+    const regions = state.previewScreens.get(0).regions;
     expect(regions.count()).toEqual(3);
 
     expect(regions.get(0).id).toEqual(rootRegion.id);
@@ -244,15 +246,15 @@ describe("Screens reducer", () => {
 
   it("should maintain the type of elements on the state as Screen on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
-    const rootRegion = state.get(0).regions.get(0);
+    const rootRegion = state.previewScreens.get(0).regions.get(0);
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.5,
           orientation: "vertical"
@@ -260,13 +262,13 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.2,
           orientation: "vertical"
@@ -274,18 +276,18 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
   });
 
   it("should always add new splits to the end of the list on SPLIT_REGION", () => {
     let state = reducer(undefined, { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
-    const rootRegion = state.get(0).regions.get(0);
+    const rootRegion = state.previewScreens.get(0).regions.get(0);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.5,
           orientation: "horizontal"
@@ -297,7 +299,7 @@ describe("Screens reducer", () => {
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.25,
           orientation: "vertical"
@@ -309,7 +311,7 @@ describe("Screens reducer", () => {
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
           regionId: rootRegion.id,
           position: 0.125,
           orientation: "horizontal"
@@ -317,7 +319,7 @@ describe("Screens reducer", () => {
       } as any
     );
 
-    const regions = state.get(0).regions;
+    const regions = state.previewScreens.get(0).regions;
     expect(regions.count()).toEqual(4);
 
     expect(regions.get(0).id).toEqual(rootRegion.id);
@@ -348,7 +350,7 @@ describe("Screens reducer", () => {
       state, {
         type: "UNDO_LAST_SPLIT",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
         }
       } as any
     );
@@ -363,27 +365,27 @@ describe("Screens reducer", () => {
       initialState, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: initialState.get(0).id,
-          regionId: initialState.get(0).regions.get(0).id,
+          screenId: initialState.previewScreens.get(0).id,
+          regionId: initialState.previewScreens.get(0).regions.get(0).id,
           position: 0.5,
           orientation: "horizontal"
         }
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
-    expect(state.get(0).regions.count()).toEqual(2);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(2);
 
     state = reducer(
       state, {
         type: "UNDO_LAST_SPLIT",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
         }
       } as any
     );
 
-    expect(state.get(0).regions.count()).toEqual(1);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(1);
     expect(state).toEqual(initialState);
   });
 
@@ -394,27 +396,27 @@ describe("Screens reducer", () => {
       initialState, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: initialState.get(0).id,
-          regionId: initialState.get(0).regions.get(0).id,
+          screenId: initialState.previewScreens.get(0).id,
+          regionId: initialState.previewScreens.get(0).regions.get(0).id,
           position: 0.5,
           orientation: "vertical"
         }
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
-    expect(state.get(0).regions.count()).toEqual(2);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(2);
 
     state = reducer(
       state, {
         type: "UNDO_LAST_SPLIT",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
         }
       } as any
     );
 
-    expect(state.get(0).regions.count()).toEqual(1);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(1);
     expect(state).toEqual(initialState);
   });
 
@@ -425,56 +427,56 @@ describe("Screens reducer", () => {
       initialState, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: initialState.get(0).id,
-          regionId: initialState.get(0).regions.get(0).id,
+          screenId: initialState.previewScreens.get(0).id,
+          regionId: initialState.previewScreens.get(0).regions.get(0).id,
           position: 0.5,
           orientation: "vertical"
         }
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
-    expect(state.get(0).regions.count()).toEqual(2);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(2);
 
     state = reducer(
       state, {
         type: "SPLIT_REGION",
         payload: {
-          screenId: initialState.get(0).id,
-          regionId: initialState.get(0).regions.get(0).id,
+          screenId: initialState.previewScreens.get(0).id,
+          regionId: initialState.previewScreens.get(0).regions.get(0).id,
           position: 0.2,
           orientation: "horizontal"
         }
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
-    expect(state.get(0).regions.count()).toEqual(3);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(3);
 
     state = reducer(
       state, {
         type: "UNDO_LAST_SPLIT",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
         }
       } as any
     );
 
-    expect(state.get(0)).toBeInstanceOf(Screen);
-    expect(state.get(0).regions.count()).toEqual(2);
+    expect(state.previewScreens.get(0)).toBeInstanceOf(Screen);
+    expect(state.previewScreens.get(0).regions.count()).toEqual(2);
 
     state = reducer(
       state, {
         type: "UNDO_LAST_SPLIT",
         payload: {
-          screenId: state.get(0).id,
+          screenId: state.previewScreens.get(0).id,
         }
       } as any
     );
 
-    expect(state.get(0).regions.count()).toEqual(1);
-    expect(state.get(0).regions.get(0).splitFrom.length).toEqual(1);
-    expect(state.get(0).regions.get(0).splitFrom[0]).toBeNull();
+    expect(state.previewScreens.get(0).regions.count()).toEqual(1);
+    expect(state.previewScreens.get(0).regions.get(0).splitFrom.length).toEqual(1);
+    expect(state.previewScreens.get(0).regions.get(0).splitFrom[0]).toBeNull();
     expect(state).toEqual(initialState);
   });
 });
