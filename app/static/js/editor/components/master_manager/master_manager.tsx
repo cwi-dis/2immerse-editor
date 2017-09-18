@@ -81,6 +81,9 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
       return;
     }
 
+    const componentId = e.dataTransfer.getData("text/plain");
+    const screen = this.props.screens.currentScreen!;
+
     if (!this.stageWrapper) {
       throw new Error("Stage ref is null");
     }
