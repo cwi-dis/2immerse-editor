@@ -16,11 +16,11 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, {}
   public render() {
     return (
       <div className="columnlayout">
-        <div className="content" style={{flexGrow: 1}}>
+        <div className="column-content" style={{flexGrow: 1}}>
           <h3>Manage Masters</h3>
           <p>Move along, nothing to see here yet!</p>
         </div>
-        <div className="sidebar">
+        <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
             <button style={{width: "100%"}}
                     className="button is-info"
