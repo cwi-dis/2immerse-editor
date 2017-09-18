@@ -20,22 +20,12 @@ function removeMasterLayout(masterId: string): REMOVE_MASTER_LAYOUT {
   };
 }
 
-export type UPDATE_SELECTED_SCREEN = PayloadAction<"UPDATE_SELECTED_SCREEN", {screenId: string}>;
-function updateSelectedScreen(screenId: string): UPDATE_SELECTED_SCREEN {
-  return {
-    type: "UPDATE_SELECTED_SCREEN",
-    payload: {
-      screenId
-    }
-  };
-}
-
-export type UPDATE_SELECTED_LAYOUT = PayloadAction<"UPDATE_SELECTED_LAYOUT", {layoutId: string}>;
-function updateSelectedLayout(layoutId: string): UPDATE_SELECTED_LAYOUT {
+export type UPDATE_SELECTED_LAYOUT = PayloadAction<"UPDATE_SELECTED_LAYOUT", {masterId: string}>;
+function updateSelectedLayout(masterId: string): UPDATE_SELECTED_LAYOUT {
   return {
     type: "UPDATE_SELECTED_LAYOUT",
     payload: {
-      layoutId
+      masterId
     }
   };
 }
@@ -43,13 +33,11 @@ function updateSelectedLayout(layoutId: string): UPDATE_SELECTED_LAYOUT {
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
-  updateSelectedScreen: (screenId: string) => UPDATE_SELECTED_SCREEN;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
 }
 
 export const actionCreators: MasterActions = {
   addMasterLayout,
   removeMasterLayout,
-  updateSelectedScreen,
   updateSelectedLayout
 };

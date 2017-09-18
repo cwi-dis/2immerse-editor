@@ -43,16 +43,28 @@ function undoLastSplit(screenId: string): UNDO_LAST_SPLIT {
   };
 }
 
+export type UPDATE_SELECTED_SCREEN = PayloadAction<"UPDATE_SELECTED_SCREEN", {screenId: string}>;
+function updateSelectedScreen(screenId: string): UPDATE_SELECTED_SCREEN {
+  return {
+    type: "UPDATE_SELECTED_SCREEN",
+    payload: {
+      screenId
+    }
+  };
+}
+
 export interface ScreenActions {
   addDevice: (type: "personal" | "communal") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
+  updateSelectedScreen: (screenId: string) => UPDATE_SELECTED_SCREEN;
 }
 
 export const actionCreators: ScreenActions = {
   addDevice,
   removeDevice,
   splitRegion,
-  undoLastSplit
+  undoLastSplit,
+  updateSelectedScreen
 };
