@@ -152,4 +152,54 @@ describe("Masters reducer", () => {
     expect(transformedState.currentLayout.id).toEqual("masterId1");
     expect(transformedState.currentLayout.name).toEqual("Master Layout 1");
   });
+
+  it("should add component and region ID to the placedComponents key on ASSIGN_COMPONENT_TO_MASTER", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ])});
+
+    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+
+    const transformedState = reducer(
+      state,
+      { type: "ASSIGN_COMPONENT_TO_MASTER", payload: {
+        masterId: "masterId1",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component1"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+
+    expect(layout.placedComponents.count()).toEqual(1);
+    expect(layout.placedComponents.get(0).screen).toEqual("screen1");
+    expect(layout.placedComponents.get(0).region).toEqual("region1");
+    expect(layout.placedComponents.get(0).component).toEqual("component1");
+  });
+
+  it("should return the state unchanged on ASSIGN_COMPONENT_TO_MASTER with an unknown master ID", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1" }),
+      new Master({ id: "masterId2", name: "Master Layout 2" })
+    ])});
+
+    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+
+    const transformedState = reducer(
+      state,
+      { type: "ASSIGN_COMPONENT_TO_MASTER", payload: {
+        masterId: "masterId3",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component1"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+
+    expect(transformedState).toBe(state);
+    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+  });
 });
