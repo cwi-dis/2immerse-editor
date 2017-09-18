@@ -25,4 +25,26 @@ describe("Master actions", () => {
 
     expect(actionCreators.removeMasterLayout("master1")).toEqual(expected);
   });
+
+  it("should create a UPDATE_SELECTED_LAYOUT action", () => {
+    const expected: actionTypes.UPDATE_SELECTED_LAYOUT = {
+      type: "UPDATE_SELECTED_LAYOUT",
+      payload: {
+        layoutId: "layout1"
+      }
+    };
+
+    expect(actionCreators.updateSelectedLayout("layout1")).toEqual(expected);
+  });
+
+  it("should create a UPDATE_SELECTED_SCREEN action", () => {
+    const expected: actionTypes.UPDATE_SELECTED_SCREEN = {
+      type: "UPDATE_SELECTED_SCREEN",
+      payload: {
+        screenId: "screen1"
+      }
+    };
+
+    expect(actionCreators.updateSelectedScreen("screen1")).toEqual(expected);
+  });
 });
