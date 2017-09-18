@@ -2,23 +2,21 @@ import * as React from "react";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
+import { ScreenActions } from "../../actions/screens";
 import { findById } from "../../util";
 import { Screen as ScreenModel } from "../../reducers/screens";
+import { Master as MasterModel } from "../../reducers/masters";
 
 import DMAppcContainer from "./dmappc_container";
 import Screen from "../screen";
 
-interface MasterManagerState {
-  currentScreen: ScreenModel | undefined;
-}
+class MasterManager extends React.Component<ApplicationState & MasterActions & ScreenActions, {}> {
+  public componentDidMount() {
+    const { previewScreens } = this.props.screens;
 
-class MasterManager extends React.Component<ApplicationState & MasterActions, MasterManagerState> {
-  public constructor(props: ApplicationState & MasterActions) {
-    super(props);
-
-    this.state = {
-      currentScreen: this.props.screens.first()
-    };
+    if (!previewScreens.isEmpty()) {
+      this.props.updateSelectedScreen(previewScreens.first()!.id);
+    }
   }
 
   private addMaster() {
@@ -31,27 +29,20 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, Ma
 
   private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
     const screenId = e.currentTarget.value;
-    const [_, screen] = findById(this.props.screens, screenId);
-
-    if (screen) {
-      console.log("Found screen:", screen.toJS());
-      this.setState({
-        currentScreen: screen
-      });
-    } else {
-      console.error("Could not find screen with id", screenId);
-    }
+    this.props.updateSelectedScreen(screenId);
   }
 
   public render() {
-    const { currentScreen } = this.state;
+    const { layouts, currentLayout } = this.props.masters;
+    const { currentScreen, previewScreens } = this.props.screens;
+    console.log(this.props.screens);
 
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Manage Masters</h3>
           <select onChange={this.updateSelectedScreen.bind(this)}>
-            {this.props.screens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
+            {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
           </select>
           <br/><br/>
           {(currentScreen)
@@ -68,9 +59,13 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, Ma
           </div>
 
           <div style={{overflowY: "scroll", color: "#E2E2E2", height: "calc(50% - 65px)"}}>
-            {this.props.masters.map((master, i) => {
+            {layouts.map((master, i) => {
+              const bgColor = (currentLayout && currentLayout.id === master.id) ? "#555555" : "#353535";
+
               return (
-                <div key={`master.${i}`} style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
+                <div key={`master.${i}`}
+                     onDoubleClick={this.props.updateSelectedLayout.bind(this, master.id)}
+                     style={{backgroundColor: bgColor, width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
                   {i + 1}. {master.name}
                 </div>
               );
