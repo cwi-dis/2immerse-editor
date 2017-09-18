@@ -30,14 +30,29 @@ function updateSelectedLayout(masterId: string): UPDATE_SELECTED_LAYOUT {
   };
 }
 
+export type ASSIGN_COMPONENT_TO_MASTER = PayloadAction<"ASSIGN_COMPONENT_TO_MASTER", {masterId: string, screenId: string, regionId: string, componentId: string}>;
+function assignComponentToMaster(masterId: string, screenId: string, regionId: string, componentId: string): ASSIGN_COMPONENT_TO_MASTER {
+  return {
+    type: "ASSIGN_COMPONENT_TO_MASTER",
+    payload: {
+      masterId,
+      screenId,
+      regionId,
+      componentId
+    }
+  };
+}
+
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
+  assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;
 }
 
 export const actionCreators: MasterActions = {
   addMasterLayout,
   removeMasterLayout,
-  updateSelectedLayout
+  updateSelectedLayout,
+  assignComponentToMaster
 };

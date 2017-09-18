@@ -36,4 +36,20 @@ describe("Master actions", () => {
 
     expect(actionCreators.updateSelectedLayout("layout1")).toEqual(expected);
   });
+
+  it("should create a ASSIGN_COMPONENT_TO_MASTER action", () => {
+    const expected: actionTypes.ASSIGN_COMPONENT_TO_MASTER = {
+      type: "ASSIGN_COMPONENT_TO_MASTER",
+      payload: {
+        masterId: "layout1",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component1"
+      }
+    };
+
+    expect(
+      actionCreators.assignComponentToMaster("layout1", "screen1", "region1", "component1")
+    ).toEqual(expected);
+  });
 });
