@@ -37,7 +37,7 @@ export class Screen extends Record<ScreenAttributes>(defaultScreenParams) {
 }
 
 interface ScreenStateAttributes {
-  currentScreen?: Screen;
+  currentScreen?: string;
   previewScreens: List<Screen>;
 }
 
@@ -186,7 +186,7 @@ actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDAT
     return state;
   }
 
-  return state.set("currentScreen", result[1]);
+  return state.set("currentScreen", result[1].id);
 });
 
 export default actionHandler.getReducer();

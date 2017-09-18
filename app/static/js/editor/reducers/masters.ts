@@ -24,7 +24,7 @@ export class Master extends Record<MasterAttributes>({id: "", name: "", placedCo
 }
 
 interface MasterStateAttributes {
-  currentLayout?: Master;
+  currentLayout?: string;
   layouts: List<Master>;
 }
 
@@ -71,7 +71,7 @@ actionHandler.addHandler("UPDATE_SELECTED_LAYOUT", (state, action: actions.UPDAT
     return state;
   }
 
-  return state.set("currentLayout", result[1]);
+  return state.set("currentLayout", result[1].id);
 });
 
 actionHandler.addHandler("ASSIGN_COMPONENT_TO_MASTER", (state, action: actions.ASSIGN_COMPONENT_TO_MASTER) => {

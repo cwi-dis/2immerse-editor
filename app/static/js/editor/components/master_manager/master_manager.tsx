@@ -45,7 +45,9 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   }
 
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
-    const regions = this.props.screens.currentScreen!.regions;
+    const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
+    const [index] = findById(previewScreens, currentScreenId);
+    const regions = previewScreens.get(index)!.regions;
 
     const dropRegion = regions.findEntry((region) => {
       const topLeft = region.position;
@@ -82,8 +84,8 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     }
 
     const componentId = e.dataTransfer.getData("text/plain");
-    const screen = this.props.screens.currentScreen!;
-    const master = this.props.masters.currentLayout!;
+    const screenId = this.props.screens.currentScreen!;
+    const masterId = this.props.masters.currentLayout!;
 
     if (!this.stageWrapper) {
       throw new Error("Stage ref is null");
@@ -95,11 +97,11 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
 
     if (dropRegion) {
-      console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screen.id);
+      console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screenId);
 
       this.props.assignComponentToMaster(
-        master.id,
-        screen.id,
+        masterId,
+        screenId,
         dropRegion.id,
         componentId
       );
@@ -109,13 +111,16 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   }
 
   private renderScreen() {
-    const { currentScreen, previewScreens } = this.props.screens;
+    const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
 
-    if (!currentScreen) {
+
+    if (!currentScreenId) {
       return (
         <p>Please create one or more preview screens in the <i>Layout Designer</i> first</p>
       );
     }
+
+    const [_, currentScreen] = findById(previewScreens, currentScreenId);
 
     return (
       <div>
@@ -152,7 +157,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
           <div style={{overflowY: "scroll", color: "#E2E2E2", height: "calc(50% - 65px)"}}>
             {layouts.map((master, i) => {
-              const bgColor = (currentLayout && currentLayout.id === master.id) ? "#555555" : "#353535";
+              const bgColor = (currentLayout && currentLayout === master.id) ? "#555555" : "#353535";
 
               return (
                 <div key={`master.${i}`}
