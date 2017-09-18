@@ -27,7 +27,7 @@ describe("Master class", () => {
       placedComponents: List([{
         screen: "screen1",
         region: "region1",
-        component: "some component" 
+        component: "some component"
       }]),
     });
 
@@ -41,7 +41,7 @@ describe("Master class", () => {
 
 describe("Masters reducer", () => {
   it("should return the initial state on an unknown action", () => {
-    const initialState = List();
+    const initialState = new MasterState({layouts: List()});
 
     expect(
       reducer(undefined, { type: "" })
@@ -49,10 +49,10 @@ describe("Masters reducer", () => {
   });
 
   it("should return the given state on an unknown action", () => {
-    const state: MasterState = List([
+    const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
       new Master({ id: "masterId2", name: "Master Layout 2" })
-    ]);
+    ])});
 
     expect(
       reducer(state, { type: "" })
@@ -60,50 +60,50 @@ describe("Masters reducer", () => {
   });
 
   it("should append a new master layout to the list on ADD_MASTER_LAYOUT", () => {
-    const state: MasterState = List([
+    const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
       new Master({ id: "masterId2", name: "Master Layout 2" })
-    ]);
+    ])});
 
     const transformedState = reducer(
       state,
       { type: "ADD_MASTER_LAYOUT", payload: { name: "Master Layout 3" }} as any
     );
 
-    expect(transformedState.count()).toEqual(3);
-    expect(transformedState.get(2)).toBeInstanceOf(Master);
-    expect(transformedState.get(2).name).toEqual("Master Layout 3");
-    expect(transformedState.get(2).placedComponents).toEqual(List());
+    expect(transformedState.layouts.count()).toEqual(3);
+    expect(transformedState.layouts.get(2)).toBeInstanceOf(Master);
+    expect(transformedState.layouts.get(2).name).toEqual("Master Layout 3");
+    expect(transformedState.layouts.get(2).placedComponents).toEqual(List());
   });
 
   it("should remove an existing master layout on REMOVE_MASTER_LAYOUT", () => {
-    const state: MasterState = List([
+    const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
       new Master({ id: "masterId2", name: "Master Layout 2" })
-    ]);
+    ])});
 
     const transformedState = reducer(
       state,
       { type: "REMOVE_MASTER_LAYOUT", payload: { masterId: "masterId2" }} as any
     );
 
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0)).toBeInstanceOf(Master);
-    expect(transformedState.get(0).id).toEqual("masterId1");
+    expect(transformedState.layouts.count()).toEqual(1);
+    expect(transformedState.layouts.get(0)).toBeInstanceOf(Master);
+    expect(transformedState.layouts.get(0).id).toEqual("masterId1");
   });
 
   it("should return the state unchanged on REMOVE_MASTER_LAYOUT when using a non-existent ID", () => {
-    const state: MasterState = List([
+    const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
       new Master({ id: "masterId2", name: "Master Layout 2" })
-    ]);
+    ])});
 
     const transformedState = reducer(
       state,
       { type: "REMOVE_MASTER_LAYOUT", payload: { masterId: "masterId3" }} as any
     );
 
-    expect(transformedState.count()).toEqual(2);
+    expect(transformedState.layouts.count()).toEqual(2);
     expect(transformedState).toBe(state);
   });
 });
