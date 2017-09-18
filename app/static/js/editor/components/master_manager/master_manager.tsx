@@ -23,6 +23,14 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     }
   }
 
+  public componentDidUpdate() {
+    const { layouts } = this.props.masters;
+
+    if (layouts.count() === 1) {
+      this.props.updateSelectedLayout(layouts.first()!.id);
+    }
+  }
+
   private addMaster() {
     const masterName = prompt("Master layout name:");
 
