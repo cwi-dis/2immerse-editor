@@ -21,7 +21,7 @@ logLevel = 'DEBUG'
 
 # Enable this (and fill in the right IP address) to run all services locally.
 # DO NOT CHECK IN, please......
-if True:
+if False:
     # Settings for Jack's home machine
     layoutService = "http://192.168.1.10:8000/layout/v3"
     websocketService = "http://192.168.1.10:3000/"
