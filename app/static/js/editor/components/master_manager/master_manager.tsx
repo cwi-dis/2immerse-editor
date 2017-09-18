@@ -6,7 +6,7 @@ import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
 import { ScreenActions } from "../../actions/screens";
 import { findById } from "../../util";
-import { Screen as ScreenModel } from "../../reducers/screens";
+import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import { Master as MasterModel } from "../../reducers/masters";
 
 import DMAppcContainer from "./dmappc_container";
@@ -34,6 +34,35 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
     const screenId = e.currentTarget.value;
     this.props.updateSelectedScreen(screenId);
+  }
+
+  private getDropRegion(x: number, y: number): ScreenRegion | undefined {
+    const regions = this.props.screens.currentScreen!.regions;
+
+    const dropRegion = regions.findEntry((region) => {
+      const topLeft = region.position;
+      const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
+
+      return x >= topLeft[0] && x < bottomRight[0] && y >= topLeft[1] && y < bottomRight[1];
+    });
+
+    if (dropRegion) {
+      return dropRegion[1];
+    }
+  }
+
+  private getCanvasDropPosition(pageX: number, pageY: number) {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    const stage: KonvaStage = this.stageWrapper.getStage();
+    const {offsetLeft, offsetTop} = stage.container();
+
+    return [
+      pageX - offsetLeft,
+      pageY - offsetTop
+    ];
   }
 
   private renderScreen() {
