@@ -3,6 +3,7 @@ import * as shortid from "shortid";
 
 import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/masters";
+import { Screen as ScreenModel } from "./screens";
 
 interface ComponentPlacement {
   screen: string;
@@ -22,29 +23,45 @@ export class Master extends Record<MasterAttributes>({id: "", name: "", placedCo
   }
 }
 
-export type MasterState = List<Master>;
+interface MasterStateAttributes {
+  currentScreen?: ScreenModel;
+  currentLayout?: Master;
+  layouts: List<Master>;
+}
 
-const initialState: MasterState = List();
+export class MasterState extends Record<MasterStateAttributes>({ layouts: List() }) {
+  constructor(params?: MasterStateAttributes) {
+    params ? super(params) : super();
+  }
+}
+
+const initialState: MasterState = new MasterState({
+  layouts: List()
+});
 const actionHandler = new ActionHandler<MasterState>(initialState);
 
 actionHandler.addHandler("ADD_MASTER_LAYOUT", (state, action: actions.ADD_MASTER_LAYOUT) => {
   const { name } = action.payload;
 
-  return state.push(new Master({
-    id: shortid.generate(),
-    name
-  }));
+  return state.updateIn(["layouts"], (layouts) => {
+    return layouts.push(new Master({
+      id: shortid.generate(),
+      name
+    }));
+  });
 });
 
 actionHandler.addHandler("REMOVE_MASTER_LAYOUT", (state, action: actions.REMOVE_MASTER_LAYOUT) => {
   const { masterId } = action.payload;
-  const result = findById(state, masterId);
+  const result = findById(state.layouts, masterId);
 
   if (!result) {
     return state;
   }
 
-  return state.delete(result[0]);
+  return state.updateIn(["layouts"], (layouts) => {
+    return layouts.delete(result[0]);
+  });
 });
 
 export default actionHandler.getReducer();
