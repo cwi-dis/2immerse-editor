@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Layer, Rect, Stage, Group, Line } from "react-konva";
+import { Layer, Rect, Stage, Group } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { ApplicationState } from "../../store";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
+import Screen from "../screen";
 import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
 
-export interface ScreenProps {
+export interface SplittableScreenProps {
   screenInfo: ScreenModel;
   width: number;
   removeDevice: () => void;
@@ -14,7 +14,7 @@ export interface ScreenProps {
   undoLastSplit: () => void;
 }
 
-interface ScreenState {
+interface SplittableScreenState {
   contextMenu: {
     visible: boolean,
     x: number,
@@ -22,10 +22,10 @@ interface ScreenState {
   };
 }
 
-class Screen extends React.Component<ScreenProps, ScreenState> {
+class SplittableScreen extends React.Component<SplittableScreenProps, SplittableScreenState> {
   private stageWrapper: any;
 
-  constructor(props: ScreenProps) {
+  constructor(props: SplittableScreenProps) {
     super(props);
 
     this.state = {
@@ -33,25 +33,6 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
         visible: false, x: 0, y: 0
       }
     };
-  }
-
-  private renderRegions(width: number, height: number) {
-    const {regions} = this.props.screenInfo;
-
-    return (
-      <Group>
-        {regions.map((region, i) => {
-          const [x, y] = region.position;
-          const [w, h] = region.size;
-
-          return (
-            <Rect x={x * width} y={y * height}
-                  width={w * width} height={h * height}
-                  fill="transparent" stroke="black" key={i} />
-          );
-        })}
-      </Group>
-    );
   }
 
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
@@ -103,19 +84,16 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
   }
 
   public render() {
-    const screen = this.props.screenInfo;
+    const { width, screenInfo } = this.props;
     const { contextMenu } = this.state;
 
-    const { width } = this.props;
-    const computedHeight = (screen.orientation === "landscape")
-      ? 9 / 16 * width
-      : 16 / 9 * width;
+    const onContextMenuClick = () => {
+      this.setState({contextMenu: {visible: false, x: 0, y: 0}});
+    };
 
     return (
       <div>
-        <ContextMenu {...contextMenu} onItemClicked={() => {
-          this.setState({contextMenu: {visible: false, x: 0, y: 0}});
-        }}>
+        <ContextMenu {...contextMenu} onItemClicked={onContextMenuClick}>
           <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
           <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
           <ContextMenuDivider />
@@ -124,19 +102,16 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
           <ContextMenuEntry name="Cancel" callback={() => {}} />
         </ContextMenu>
         <p>
-          Name: {screen.name}<br/>
-          Orientation: {screen.orientation}<br/>
+          Name: {screenInfo.name}<br/>
+          Orientation: {screenInfo.orientation}<br/>
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>
             remove
           </span>
         </p>
-        <div onClickCapture={this.handleCanvasClick.bind(this)}>
-          <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e} style={{display: "table", margin: "0 auto"}}>
-            <Layer>
-              <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
-              {this.renderRegions(width, computedHeight)}
-            </Layer>
-          </Stage>
+        <div>
+          <div style={{display: "table", margin: "0 auto"}} onClickCapture={this.handleCanvasClick.bind(this)}>
+            <Screen width={width} screenInfo={screenInfo} assignStageRef={(e) => this.stageWrapper = e } />
+          </div>
         </div>
         <br/>
       </div>
@@ -144,4 +119,4 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
   }
 }
 
-export default Screen;
+export default SplittableScreen;
