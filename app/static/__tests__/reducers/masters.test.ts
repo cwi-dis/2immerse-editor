@@ -48,6 +48,13 @@ describe("Masters reducer", () => {
     ).toEqual(initialState);
   });
 
+  it("should initialise currentScreen and currentLayout to undefined", () => {
+    const state = reducer(undefined, {type: ""});
+
+    expect(state.currentLayout).toBeUndefined();
+    expect(state.currentScreen).toBeUndefined();
+  });
+
   it("should return the given state on an unknown action", () => {
     const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),
