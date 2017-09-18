@@ -109,7 +109,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   }
 
   private renderScreen() {
-    const { currentScreen } = this.props.screens;
+    const { currentScreen, previewScreens } = this.props.screens;
 
     if (!currentScreen) {
       return (
@@ -118,26 +118,27 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     }
 
     return (
-      <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-        <Screen width={500}
-                screenInfo={currentScreen}
-                assignStageRef={(e) => this.stageWrapper = e } />
+      <div>
+        <select className="select" defaultValue={currentScreen.id} onChange={this.updateSelectedScreen.bind(this)}>
+          {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
+        </select>
+        <br/><br/>
+        <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+          <Screen width={500}
+                  screenInfo={currentScreen}
+                  assignStageRef={(e) => this.stageWrapper = e } />
+        </div>
       </div>
     );
   }
 
   public render() {
     const { layouts, currentLayout } = this.props.masters;
-    const { currentScreen, previewScreens } = this.props.screens;
 
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Manage Masters</h3>
-          <select onChange={this.updateSelectedScreen.bind(this)}>
-            {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
-          </select>
-          <br/><br/>
           {this.renderScreen()}
         </div>
         <div className="column-sidebar">
