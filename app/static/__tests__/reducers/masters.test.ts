@@ -48,11 +48,10 @@ describe("Masters reducer", () => {
     ).toEqual(initialState);
   });
 
-  it("should initialise currentScreen and currentLayout to undefined", () => {
+  it("should initialise currentLayout to undefined", () => {
     const state = reducer(undefined, {type: ""});
 
     expect(state.currentLayout).toBeUndefined();
-    expect(state.currentScreen).toBeUndefined();
   });
 
   it("should return the given state on an unknown action", () => {

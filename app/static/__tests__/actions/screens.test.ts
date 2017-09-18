@@ -63,4 +63,15 @@ describe("Screen actions", () => {
       actionCreators.splitRegion("screenID", "regionID", "horizontal", 0.5)
     ).toEqual(expected);
   });
+
+  it("should create a UPDATE_SELECTED_SCREEN action with the given ID", () => {
+    const expected: actionTypes.UPDATE_SELECTED_SCREEN = {
+      type: "UPDATE_SELECTED_SCREEN",
+      payload: {
+        screenId: "screen1"
+      }
+    };
+
+    expect(actionCreators.updateSelectedScreen("screen1")).toEqual(expected);
+  });
 });
