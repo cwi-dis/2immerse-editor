@@ -30,7 +30,7 @@ class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, L
   }
 
   public render() {
-    const { screens } = this.props;
+    const { previewScreens: screens } = this.props.screens;
     const personalScreens = screens.filter((screen) => screen.type === "personal");
     const communalScreens = screens.filter((screen) => screen.type === "communal");
 
