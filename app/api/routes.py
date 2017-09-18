@@ -205,7 +205,12 @@ def get_client_document(documentId):
     assert serve
     docRoot = '%s/document/%s/serve/' % (API_ROOT, documentId)
     docRoot = urlparse.urljoin(request.base_url, docRoot)
-
+    print 'xxxjack base_url', request.base_url
+    print 'xxxjack X-Forwarded-For', request.headers.get('X-Forwarded-For')
+    print 'xxxjack X-Forwarded-Proto', request.headers.get('X-Forwarded-Proto')
+    print 'xxxjack X-Forwarded-Proto', request.headers.get('X-Forwarded-Proto')
+    print 'xxxjack X-Forwarded-Server', request.headers.get('X-Forwarded-Server')
+    print 'xxxjack all headers', request.headers()
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'))
     return Response(config, mimetype="application/json")
     

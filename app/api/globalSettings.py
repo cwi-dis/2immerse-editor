@@ -5,7 +5,7 @@
 #
 
 # URL for the preview player:
-clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
+clientApiUrl = "https://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
 
 # Mode in which the preview player runs (tv or standalone)
 mode = "standalone"
@@ -23,6 +23,7 @@ logLevel = 'DEBUG'
 # DO NOT CHECK IN, please......
 if False:
     # Settings for Jack's home machine
+    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
     layoutService = "http://192.168.1.10:8000/layout/v3"
     websocketService = "http://192.168.1.10:3000/"
     timelineService = "http://192.168.1.10:8001/timeline/v1"
@@ -30,6 +31,7 @@ if False:
     logLevel = 'DEBUG'
 if False:
     # Settings for Jack's work machine
+    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
     layoutService = "http://flauwte.dis.cwi.nl:8000/layout/v3"
     websocketService = "http://flauwte.dis.cwi.nl:3000/"
     timelineService = "http://flauwte.dis.cwi.nl:8001/timeline/v1"
