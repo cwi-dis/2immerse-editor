@@ -53,7 +53,10 @@ class MasterManager extends React.Component<ApplicationState & MasterActions, Ma
           <select onChange={this.updateSelectedScreen.bind(this)}>
             {this.props.screens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
           </select>
-          <br/>
+          <br/><br/>
+          {(currentScreen)
+            ? <Screen width={500} screenInfo={currentScreen} />
+            : <p>Please create one or more preview screens in the <i>Layout Designer</i> first</p>}
         </div>
         <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
