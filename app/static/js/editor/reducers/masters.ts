@@ -74,4 +74,23 @@ actionHandler.addHandler("UPDATE_SELECTED_LAYOUT", (state, action: actions.UPDAT
   return state.set("currentLayout", result[1]);
 });
 
+actionHandler.addHandler("ASSIGN_COMPONENT_TO_MASTER", (state, action: actions.ASSIGN_COMPONENT_TO_MASTER) => {
+  const { componentId, screenId, regionId, masterId } = action.payload;
+  const result = findById(state.layouts, masterId);
+
+  if (!result) {
+    return state;
+  }
+
+  const placement: ComponentPlacement = {
+    screen: screenId,
+    region: regionId,
+    component: componentId
+  };
+
+  return state.updateIn(["layouts", result[0], "placedComponents"], (placements: List<ComponentPlacement>) => {
+    return placements.push(placement);
+  });
+});
+
 export default actionHandler.getReducer();
