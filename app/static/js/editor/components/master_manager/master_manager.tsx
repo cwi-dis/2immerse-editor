@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Stage } from "react-konva";
+import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
@@ -11,6 +13,8 @@ import DMAppcContainer from "./dmappc_container";
 import Screen from "../screen";
 
 class MasterManager extends React.Component<ApplicationState & MasterActions & ScreenActions, {}> {
+  private stageWrapper: Stage | null;
+
   public componentDidMount() {
     const { previewScreens } = this.props.screens;
 
@@ -32,6 +36,22 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     this.props.updateSelectedScreen(screenId);
   }
 
+  private renderScreen() {
+    const { currentScreen } = this.props.screens;
+
+    if (!currentScreen) {
+      return (
+        <p>Please create one or more preview screens in the <i>Layout Designer</i> first</p>
+      );
+    }
+
+    return (
+      <Screen width={500}
+              screenInfo={currentScreen}
+              assignStageRef={(e) => this.stageWrapper = e } />
+    );
+  }
+
   public render() {
     const { layouts, currentLayout } = this.props.masters;
     const { currentScreen, previewScreens } = this.props.screens;
@@ -44,9 +64,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
             {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
           </select>
           <br/><br/>
-          {(currentScreen)
-            ? <Screen width={500} screenInfo={currentScreen} />
-            : <p>Please create one or more preview screens in the <i>Layout Designer</i> first</p>}
+          {this.renderScreen()}
         </div>
         <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
