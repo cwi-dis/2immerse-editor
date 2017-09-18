@@ -35,7 +35,6 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   public render() {
     const { layouts, currentLayout } = this.props.masters;
     const { currentScreen, previewScreens } = this.props.screens;
-    console.log(this.props.screens);
 
     return (
       <div className="columnlayout">
@@ -64,7 +63,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
               return (
                 <div key={`master.${i}`}
-                     onDoubleClick={this.props.updateSelectedLayout.bind(this, master.id)}
+                     onClick={this.props.updateSelectedLayout.bind(this, master.id)}
                      style={{backgroundColor: bgColor, width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
                   {i + 1}. {master.name}
                 </div>
