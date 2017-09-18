@@ -111,11 +111,13 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
       ? 9 / 16 * width
       : 16 / 9 * width;
 
+    const onContextMenuClick = () => {
+      this.setState({contextMenu: {visible: false, x: 0, y: 0}});
+    };
+
     return (
       <div>
-        <ContextMenu {...contextMenu} onItemClicked={() => {
-          this.setState({contextMenu: {visible: false, x: 0, y: 0}});
-        }}>
+        <ContextMenu {...contextMenu} onItemClicked={onContextMenuClick}>
           <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
           <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
           <ContextMenuDivider />
@@ -130,13 +132,15 @@ class Screen extends React.Component<ScreenProps, ScreenState> {
             remove
           </span>
         </p>
-        <div onClickCapture={this.handleCanvasClick.bind(this)}>
-          <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e} style={{display: "table", margin: "0 auto"}}>
-            <Layer>
-              <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
-              {this.renderRegions(width, computedHeight)}
-            </Layer>
-          </Stage>
+        <div>
+          <div style={{display: "table", margin: "0 auto"}} onClickCapture={this.handleCanvasClick.bind(this)}>
+            <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+              <Layer>
+                <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
+                {this.renderRegions(width, computedHeight)}
+              </Layer>
+            </Stage>
+          </div>
         </div>
         <br/>
       </div>
