@@ -16,9 +16,9 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   private stageWrapper: Stage | null;
 
   public componentDidMount() {
-    const { previewScreens } = this.props.screens;
+    const { previewScreens, currentScreen } = this.props.screens;
 
-    if (!previewScreens.isEmpty()) {
+    if (!previewScreens.isEmpty() && !currentScreen) {
       this.props.updateSelectedScreen(previewScreens.first()!.id);
     }
   }
