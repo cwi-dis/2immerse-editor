@@ -21,13 +21,7 @@ def get_current_branch():
         with open("./.git/HEAD", "r") as headfile:
             return headfile.read().strip().split("/")[-1]
     except:
-        with open("./REVISION", "r") as revfile:
-            branch = revfile.read().strip().split("/")[0]
-
-            if not branch:
-                raise IOError("Could not determine branch")
-
-            return branch
+        raise IOError("Could not determine branch")
 
 
 def get_head_revision():
