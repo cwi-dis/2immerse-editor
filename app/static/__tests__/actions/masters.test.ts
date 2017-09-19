@@ -52,4 +52,26 @@ describe("Master actions", () => {
       actionCreators.assignComponentToMaster("layout1", "screen1", "region1", "component1")
     ).toEqual(expected);
   });
+
+  it("should create a REMOVE_SCREEN_FROM_LAYOUTS action", () => {
+    const expected: actionTypes.REMOVE_SCREEN_FROM_LAYOUTS = {
+      type: "REMOVE_SCREEN_FROM_LAYOUTS",
+      payload: {
+        screenId: "screen1"
+      }
+    };
+
+    expect(actionCreators.removeScreenFromLayouts("screen1")).toEqual(expected);
+  });
+
+  it("should create a REMOVE_REGION_FROM_LAYOUTS action", () => {
+    const expected: actionTypes.REMOVE_REGION_FROM_LAYOUTS = {
+      type: "REMOVE_REGION_FROM_LAYOUTS",
+      payload: {
+        regionId: "region1"
+      }
+    };
+
+    expect(actionCreators.removeRegionFromLayouts("region1")).toEqual(expected);
+  });
 });
