@@ -30,15 +30,17 @@ def get_current_branch():
             return branch
 
 
-def get_head_revision(branch="master"):
+def get_head_revision():
     try:
+        branch = get_current_branch()
+
         with open("./.git/refs/heads/" + branch, "r") as revfile:
-            return revfile.read().strip()
+            return branch, revfile.read().strip()
     except:
         with open("./REVISION", "r") as revfile:
-            revision = revfile.read().strip().split("/")[1]
+            [branch, revision] = revfile.read().strip().split("/")
 
-            if not revision:
+            if not revision or not branch:
                 raise IOError("Could not determine revision")
 
-            return revision
+            return branch, revision
