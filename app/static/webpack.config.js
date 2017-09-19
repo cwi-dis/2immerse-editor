@@ -3,7 +3,7 @@ const webpack = require("webpack");
 module.exports = {
   entry: {
     editor: "./js/editor/components/main.tsx",
-    landing_page: "./js/landing_page/index.ts",
+    landing_page: "./js/landing_page/main.tsx",
     trigger: "./js/trigger/main.tsx"
   },
   output: {

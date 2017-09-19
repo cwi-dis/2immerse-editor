@@ -101,6 +101,25 @@ html, body {
   background-color: transparent;
 }
 
+.landingpage-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+  margin-top: 45px;
+}
+
+.landingpage-buttons .button {
+  width: 250px;
+  margin: 10px;
+}
+
+.landingpage-caption {
+  margin-top: 12%;
+  text-align: center;
+  color: #E2E2E2;
+}
+
 .pulse-animation {
   animation: pulse 400ms 2;
 }

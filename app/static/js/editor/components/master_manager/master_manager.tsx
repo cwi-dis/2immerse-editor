@@ -106,7 +106,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
         componentId
       );
     } else {
-      console.log("could not find region at", x, y);
+      console.error("could not find region at", x, y);
     }
   }
 
