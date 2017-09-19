@@ -1,8 +1,8 @@
-from flask import render_template, abort
+from flask import render_template, abort, jsonify
 from hashlib import sha256
 
 from app import app
-from util import hash_file, get_head_revision, get_current_branch
+from util import hash_file, get_head_revision
 import api.routes
 
 
@@ -38,7 +38,7 @@ def trigger():
 @app.route("/version")
 def version():
     try:
-        return get_head_revision()
+        return jsonify(get_head_revision())
     except:
         return "Could not determine HEAD revision"
 

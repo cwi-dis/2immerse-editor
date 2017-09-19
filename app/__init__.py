@@ -12,8 +12,7 @@ def print_version(out=sys.stderr):
     branch = 'unknown'
     revision = 'unknown'
     try:
-        branch = util.get_current_branch()
-        revision = util.get_head_revision(branch)
+        branch, revision = util.get_head_revision()
     except IOError:
         pass
     print >>out, '2immerse authoring tool backend, branch', branch, 'revision', revision
