@@ -111,4 +111,22 @@ actionHandler.addHandler("REMOVE_SCREEN_FROM_LAYOUTS", (state, action: actions.R
   });
 });
 
+actionHandler.addHandler("REMOVE_REGION_FROM_LAYOUTS", (state, action: actions.REMOVE_REGION_FROM_LAYOUTS) => {
+  const { regionId } = action.payload;
+
+  return state.update("layouts", (layouts) => {
+    return layouts.map((layout) => {
+      if (!layout.placedComponents) {
+        return layout;
+      }
+
+      return layout.update("placedComponents", (placements) => {
+        return placements!.filter((placement) => {
+          return placement.region !== regionId;
+        });
+      });
+    });
+  });
+});
+
 export default actionHandler.getReducer();
