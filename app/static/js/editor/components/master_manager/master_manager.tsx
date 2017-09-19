@@ -150,9 +150,9 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
       <div>
         <b>Placed components for {layout.name} ({layout.id}):</b>
         <div>
-          {layout.placedComponents!.sort().map((placement) => {
+          {layout.placedComponents!.sort().map((placement, i) => {
             return (
-              <p>&emsp;&emsp;Screen <i>{placement.screen}</i>, Region <i>{placement.region}</i>, Component <i>{placement.component}</i></p>
+              <p key={i}>&emsp;&emsp;Screen <i>{placement.screen}</i>, Region <i>{placement.region}</i>, Component <i>{placement.component}</i></p>
             );
           })}
         </div>

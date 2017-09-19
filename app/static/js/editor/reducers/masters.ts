@@ -93,4 +93,22 @@ actionHandler.addHandler("ASSIGN_COMPONENT_TO_MASTER", (state, action: actions.A
   });
 });
 
+actionHandler.addHandler("REMOVE_SCREEN_FROM_LAYOUTS", (state, action: actions.REMOVE_SCREEN_FROM_LAYOUTS) => {
+  const { screenId } = action.payload;
+
+  return state.update("layouts", (layouts) => {
+    return layouts.map((layout) => {
+      if (!layout.placedComponents) {
+        return layout;
+      }
+
+      return layout.update("placedComponents", (placements) => {
+        return placements!.filter((placement) => {
+          return placement.screen !== screenId;
+        });
+      });
+    });
+  });
+});
+
 export default actionHandler.getReducer();

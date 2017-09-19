@@ -186,7 +186,6 @@ actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDAT
   }
 
   const result = findById(state.previewScreens, screenId);
-
   if (!result) {
     return state;
   }
