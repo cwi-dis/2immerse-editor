@@ -26,7 +26,7 @@ if False:
     clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
     layoutService = "http://192.168.1.10:8000/layout/v3"
     websocketService = "http://192.168.1.10:3000/"
-    timelineService = "http://192.168.1.10:8001/timeline/v1"
+    timelineService = "http://192.168.1.10:8080/timeline/v1"
     noKibana=True
     logLevel = 'DEBUG'
 if False:
@@ -34,6 +34,6 @@ if False:
     clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
     layoutService = "http://flauwte.dis.cwi.nl:8000/layout/v3"
     websocketService = "http://flauwte.dis.cwi.nl:3000/"
-    timelineService = "http://flauwte.dis.cwi.nl:8001/timeline/v1"
+    timelineService = "http://flauwte.dis.cwi.nl:8080/timeline/v1"
     noKibana=True
     logLevel = 'DEBUG'
