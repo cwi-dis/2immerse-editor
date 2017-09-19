@@ -2,7 +2,8 @@ import * as React from "react";
 import { makeRequest } from "../util";
 
 export interface CurrentVersionState {
-  hash: string;
+  branch: string;
+  revision: string;
   fetchError: boolean;
 }
 
@@ -19,15 +20,19 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     super();
 
     this.state = {
-      hash: "",
+      branch: "",
+      revision: "",
       fetchError: false
     };
   }
 
   public componentDidMount() {
-    makeRequest("GET", "/version").then((hash) => {
+    makeRequest("GET", "/version").then((data) => {
+      const [branch, revision] = JSON.parse(data);
+
       this.setState({
-        hash
+        branch,
+        revision
       });
     }).catch(() => {
       this.setState({
@@ -37,6 +42,7 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
   }
 
   public render() {
+    const { branch, revision } = this.state;
     const style: React.CSSProperties = {
       position: "fixed",
       bottom: 0,
@@ -47,14 +53,12 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
       color: "#999999"
     };
 
-    if (this.state.hash !== "" && !this.state.fetchError) {
-      const { hash } = this.state;
-
+    if (branch !== "" && revision !== "" && !this.state.fetchError) {
       return (
         <div style={style}>
           Current version:&nbsp;
-          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${hash}`}>
-            {hash}
+          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${revision}`}>
+            {branch}/{revision}
           </a>
         </div>
       );
