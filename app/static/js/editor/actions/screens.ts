@@ -70,10 +70,13 @@ function removeDeviceAndUpdateMasters(id: string): AsyncAction<void> {
 function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
   return (dispatch, getState) => {
     const [_, screen] = findById(getState().screens.previewScreens, screenId);
-    const regionId = screen.regions.last()!.id;
 
-    dispatch(undoLastSplit(screenId));
-    dispatch(masterActionCreators.removeRegionFromLayouts(regionId));
+    if (screen.regions.count() > 1) {
+      const regionId = screen.regions.last()!.id;
+
+      dispatch(undoLastSplit(screenId));
+      dispatch(masterActionCreators.removeRegionFromLayouts(regionId));
+    }
   };
 }
 
