@@ -1,4 +1,4 @@
-import { PayloadAction, AsyncAction } from "../util";
+import { PayloadAction, AsyncAction, findById } from "../util";
 import { actionCreators as masterActionCreators } from "./masters";
 
 export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
@@ -67,12 +67,23 @@ function removeDeviceAndUpdateMasters(id: string): AsyncAction<void> {
   };
 }
 
+function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
+  return (dispatch, getState) => {
+    const [_, screen] = findById(getState().screens.previewScreens, screenId);
+    const regionId = screen.regions.last()!.id;
+
+    dispatch(undoLastSplit(screenId));
+    dispatch(masterActionCreators.removeRegionFromLayouts(regionId));
+  };
+}
+
 export interface ScreenActions {
   addDevice: (type: "personal" | "communal") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   removeDeviceAndUpdateMasters: (id: string) => AsyncAction<void>;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
+  undoLastSplitAndUpdateMasters: (screenId: string) => AsyncAction<void>;
   updateSelectedScreen: (screenId?: string) => UPDATE_SELECTED_SCREEN;
 }
 
@@ -82,5 +93,6 @@ export const actionCreators: ScreenActions = {
   removeDeviceAndUpdateMasters,
   splitRegion,
   undoLastSplit,
+  undoLastSplitAndUpdateMasters,
   updateSelectedScreen
 };

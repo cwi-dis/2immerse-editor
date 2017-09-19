@@ -163,7 +163,6 @@ actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SP
       ];
     }
 
-
     return state.update("previewScreens", (screens) => {
       return screens.set(screenIndex,
         screen.set("regions", screen.regions.set(parentRegionIndex, {

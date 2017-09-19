@@ -53,7 +53,7 @@ class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, L
                             colRef={(el) => this.communalColumn = el}
                             removeDevice={this.props.removeDeviceAndUpdateMasters}
                             splitRegion={this.props.splitRegion}
-                            undoLastSplit={this.props.undoLastSplit} />
+                            undoLastSplit={this.props.undoLastSplitAndUpdateMasters} />
           <ScreenContainer title="Personal Devices"
                             screens={personalScreens}
                             numColumns={4}
@@ -61,7 +61,7 @@ class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, L
                             colRef={(el) => this.personalColumn = el}
                             removeDevice={this.props.removeDeviceAndUpdateMasters}
                             splitRegion={this.props.splitRegion}
-                            undoLastSplit={this.props.undoLastSplit} />
+                            undoLastSplit={this.props.undoLastSplitAndUpdateMasters} />
         </div>
       </div>
     );
