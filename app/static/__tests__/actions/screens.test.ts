@@ -74,4 +74,16 @@ describe("Screen actions", () => {
 
     expect(actionCreators.updateSelectedScreen("screen1")).toEqual(expected);
   });
+
+  it("should create a UPDATE_SELECTED_SCREEN action with undefined", () => {
+    const expected: actionTypes.UPDATE_SELECTED_SCREEN = {
+      type: "UPDATE_SELECTED_SCREEN",
+      payload: {
+        screenId: undefined
+      }
+    };
+
+    expect(actionCreators.updateSelectedScreen()).toEqual(expected);
+    expect(actionCreators.updateSelectedScreen(undefined)).toEqual(expected);
+  });
 });

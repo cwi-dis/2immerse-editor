@@ -523,4 +523,27 @@ describe("Screens reducer", () => {
 
     expect(transformedState.currentScreen).toEqual("screen1");
   });
+
+  it("should reset the current screen when passing undefined", () => {
+    const state: ScreenState = new ScreenState({previewScreens: List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ])});
+
+    expect(state.currentScreen).toBeUndefined();
+
+    let transformedState = reducer(
+      state,
+      { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: "screen1" } } as any
+    );
+
+    expect(transformedState.currentScreen).toEqual("screen1");
+
+    transformedState = reducer(
+      transformedState,
+      { type: "UPDATE_SELECTED_SCREEN", payload: { screenId: undefined } } as any
+    );
+
+    expect(transformedState.currentScreen).toBeUndefined();
+  });
 });

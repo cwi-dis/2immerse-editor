@@ -180,6 +180,11 @@ actionHandler.addHandler("UNDO_LAST_SPLIT", (state, action: actions.UNDO_LAST_SP
 
 actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDATE_SELECTED_SCREEN) => {
   const { screenId } = action.payload;
+
+  if (screenId === undefined) {
+    return state.set("currentScreen", undefined);
+  }
+
   const result = findById(state.previewScreens, screenId);
 
   if (!result) {
