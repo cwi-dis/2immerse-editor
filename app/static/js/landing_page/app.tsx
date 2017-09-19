@@ -9,6 +9,7 @@ const App: React.SFC<{}> = () => {
         <a className="button is-info is-medium" href="/editor">Preproduction Authoring</a>
         <a className="button is-info is-medium" href="/trigger">Live Triggering</a>
       </div>
+      <CurrentVersion />
     </div>
   );
 };
