@@ -53,12 +53,23 @@ function removeScreenFromLayouts(screenId: string): REMOVE_SCREEN_FROM_LAYOUTS {
   };
 }
 
+export type REMOVE_REGION_FROM_LAYOUTS = PayloadAction<"REMOVE_REGION_FROM_LAYOUTS", {regionId: string}>;
+function removeRegionFromLayouts(regionId: string): REMOVE_REGION_FROM_LAYOUTS {
+  return {
+    type: "REMOVE_REGION_FROM_LAYOUTS",
+    payload: {
+      regionId
+    }
+  };
+}
+
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;
   removeScreenFromLayouts: (screenId: string) => REMOVE_SCREEN_FROM_LAYOUTS;
+  removeRegionFromLayouts: (regionId: string) => REMOVE_REGION_FROM_LAYOUTS;
 }
 
 export const actionCreators: MasterActions = {
@@ -66,5 +77,6 @@ export const actionCreators: MasterActions = {
   removeMasterLayout,
   updateSelectedLayout,
   assignComponentToMaster,
-  removeScreenFromLayouts
+  removeScreenFromLayouts,
+  removeRegionFromLayouts
 };
