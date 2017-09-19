@@ -9,15 +9,16 @@ import CurrentVersion, { CurrentVersionProps, CurrentVersionState } from "../../
 
 describe("Component <CurrentVersion/>", () => {
   it("should render a commit hash", () => {
-    const promise = Promise.resolve("some_commit_hash");
+    const promise = Promise.resolve(JSON.stringify(["some_branch", "some_commit_hash"]));
     const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(<CurrentVersion />);
-    expect.assertions(4);
+    expect.assertions(5);
 
     return promise.then(() => {
       expect(currentVersion.props().commitUrl).toEqual("https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/");
-      expect(currentVersion.state().hash).toEqual("some_commit_hash");
+      expect(currentVersion.state().branch).toEqual("some_branch");
+      expect(currentVersion.state().revision).toEqual("some_commit_hash");
       expect(currentVersion.state().fetchError).toBeFalsy();
 
       expect(
@@ -35,29 +36,31 @@ describe("Component <CurrentVersion/>", () => {
     const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(<CurrentVersion />);
-    expect.assertions(3);
+    expect.assertions(4);
 
     return promise.catch(() => {
       stubbedFn.restore();
     }).then(() => {
       expect(currentVersion.isEmptyRender()).toBeTruthy();
-      expect(currentVersion.state("hash")).toEqual("");
+      expect(currentVersion.state().branch).toEqual("");
+      expect(currentVersion.state().revision).toEqual("");
       expect(currentVersion.state().fetchError).toBeTruthy();
     });
   });
 
   it("should take the commit URL as a prop", () => {
-    const promise = Promise.resolve("some_other_commit_hash");
+    const promise = Promise.resolve(JSON.stringify(["some_other_branch", "some_other_commit_hash"]));
     const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(
       <CurrentVersion commitUrl="http://my-commit-url.com/" />
     );
-    expect.assertions(4);
+    expect.assertions(5);
 
     return promise.then(() => {
       expect(currentVersion.props().commitUrl).toEqual("http://my-commit-url.com/");
-      expect(currentVersion.state().hash).toEqual("some_other_commit_hash");
+      expect(currentVersion.state().branch).toEqual("some_other_branch");
+      expect(currentVersion.state().revision).toEqual("some_other_commit_hash");
       expect(currentVersion.state().fetchError).toBeFalsy();
 
       expect(
