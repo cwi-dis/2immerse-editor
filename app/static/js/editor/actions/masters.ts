@@ -43,16 +43,28 @@ function assignComponentToMaster(masterId: string, screenId: string, regionId: s
   };
 }
 
+export type REMOVE_SCREEN_FROM_LAYOUTS = PayloadAction<"REMOVE_SCREEN_FROM_LAYOUTS", {screenId: string}>;
+function removeScreenFromLayouts(screenId: string): REMOVE_SCREEN_FROM_LAYOUTS {
+  return {
+    type: "REMOVE_SCREEN_FROM_LAYOUTS",
+    payload: {
+      screenId
+    }
+  };
+}
+
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;
+  removeScreenFromLayouts: (screenId: string) => REMOVE_SCREEN_FROM_LAYOUTS;
 }
 
 export const actionCreators: MasterActions = {
   addMasterLayout,
   removeMasterLayout,
   updateSelectedLayout,
-  assignComponentToMaster
+  assignComponentToMaster,
+  removeScreenFromLayouts
 };
