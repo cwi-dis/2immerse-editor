@@ -76,13 +76,21 @@ class Config extends React.Component<{}, ConfigState> {
 
         <h4>Manual Configuration</h4>
         <br/>
-        <URLInputField label="Client API" />
-        <URLInputField label="Layout Service" />
-        <URLInputField label="Timeline Service" />
-        <URLInputField label="Websocket Service" />
-        <CheckboxInputField label="Kibana" description="Enable Kibana" defaultValue={false} />
-        <SelectInputField label="Mode" options={["standalone"]} />
-        <SelectInputField label="Log Level" options={["DEBUG"]} />
+        <URLInputField label="Client API"
+                       value={this.state.clientApiUrl}
+                       onChange={(e) => this.setState({ clientApiUrl: e.target.value})} />
+        <URLInputField label="Layout Service"
+                       value={this.state.layoutService}
+                       onChange={(e) => this.setState({ layoutService: e.target.value})} />
+        <URLInputField label="Timeline Service"
+                       value={this.state.timelineService}
+                       onChange={(e) => this.setState({ timelineService: e.target.value})} />
+        <URLInputField label="Websocket Service"
+                       value={this.state.websocketService}
+                       onChange={(e) => this.setState({ websocketService: e.target.value})} />
+        <CheckboxInputField label="Kibana" description="Disable Kibana" defaultValue={this.state.noKibana} />
+        <SelectInputField label="Mode" options={["standalone"]} defaultValue={this.state.mode} />
+        <SelectInputField label="Log Level" options={["DEBUG"]} defaultValue={this.state.logLevel} />
         <br/>
 
         <div className="field is-horizontal">

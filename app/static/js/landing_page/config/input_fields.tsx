@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface URLInputFieldProps {
   label: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
 }
 
@@ -14,7 +15,7 @@ export const URLInputField: React.SFC<URLInputFieldProps> = (props) => {
       <div className="field-body">
         <div className="field">
           <div className="control">
-            <input className="input" type="url" defaultValue={props.value} />
+            <input className="input" type="url" value={props.value} onChange={props.onChange.bind(this)} />
           </div>
         </div>
       </div>
