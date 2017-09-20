@@ -12,6 +12,8 @@ interface ConfigState {
   mode: string;
   noKibana: boolean;
   websocketService: string;
+
+  formTainted: boolean;
 }
 
 class Config extends React.Component<{}, ConfigState> {
@@ -25,7 +27,8 @@ class Config extends React.Component<{}, ConfigState> {
       timelineService: "",
       mode: "",
       noKibana: false,
-      websocketService: ""
+      websocketService: "",
+      formTainted: false
     };
   }
 
@@ -78,16 +81,16 @@ class Config extends React.Component<{}, ConfigState> {
         <br/>
         <URLInputField label="Client API"
                        value={this.state.clientApiUrl}
-                       onChange={(e) => this.setState({ clientApiUrl: e.target.value})} />
+                       onChange={(e) => this.setState({ clientApiUrl: e.target.value, formTainted: true})} />
         <URLInputField label="Layout Service"
                        value={this.state.layoutService}
-                       onChange={(e) => this.setState({ layoutService: e.target.value})} />
+                       onChange={(e) => this.setState({ layoutService: e.target.value, formTainted: true})} />
         <URLInputField label="Timeline Service"
                        value={this.state.timelineService}
-                       onChange={(e) => this.setState({ timelineService: e.target.value})} />
+                       onChange={(e) => this.setState({ timelineService: e.target.value, formTainted: true})} />
         <URLInputField label="Websocket Service"
                        value={this.state.websocketService}
-                       onChange={(e) => this.setState({ websocketService: e.target.value})} />
+                       onChange={(e) => this.setState({ websocketService: e.target.value, formTainted: true})} />
         <CheckboxInputField label="Kibana" description="Disable Kibana" defaultValue={this.state.noKibana} />
         <SelectInputField label="Mode" options={["standalone"]} defaultValue={this.state.mode} />
         <SelectInputField label="Log Level" options={["DEBUG"]} defaultValue={this.state.logLevel} />
@@ -98,7 +101,7 @@ class Config extends React.Component<{}, ConfigState> {
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <button className="button is-info">
+                <button className="button is-info" disabled={!this.state.formTainted}>
                   Save Config
                 </button>
               </div>
