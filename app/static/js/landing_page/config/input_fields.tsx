@@ -82,35 +82,46 @@ export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
 
 interface FileInputFieldProps {
   label: string;
+  clear: boolean;
   onChange: (data: string) => void;
 }
 
-export const FileInputField: React.SFC<FileInputFieldProps> = (props) => {
-  const readSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+export class FileInputField extends React.Component<FileInputFieldProps, {}> {
+  private inputField: HTMLInputElement | null;
+
+  private readSelectedFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
       const file = e.target.files.item(0);
       const reader = new FileReader();
 
       reader.onloadend = () => {
-        props.onChange(reader.result);
+        this.props.onChange(reader.result);
       };
 
       reader.readAsBinaryString(file);
     }
-  };
+  }
 
-  return (
-    <div className="field is-horizontal">
-      <div className="field-label is-normal">
-        <label className="label">{props.label}</label>
-      </div>
-      <div className="field-body">
-        <div className="field">
-          <div className="control">
-            <input className="input" type="file" onChange={readSelectedFile} />
+  public componentWillReceiveProps(newProps: FileInputFieldProps) {
+    if (newProps.clear && this.inputField) {
+      this.inputField.value = "";
+    }
+  }
+
+  public render() {
+    return (
+      <div className="field is-horizontal">
+        <div className="field-label is-normal">
+          <label className="label">{this.props.label}</label>
+        </div>
+        <div className="field-body">
+          <div className="field">
+            <div className="control">
+              <input className="input" type="file" ref={(e) => this.inputField = e} onChange={this.readSelectedFile.bind(this)} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+}

@@ -92,7 +92,7 @@ class Config extends React.Component<{}, ConfigState> {
         <h4>Upload JSON Config File</h4>
         <br/>
 
-        <FileInputField label="Config File" onChange={(data) => this.setState({ fileData: data })} />
+        <FileInputField label="Config File" clear={this.state.fileData === ""} onChange={(data) => this.setState({ fileData: data })} />
         <br/>
 
         <div className="field is-horizontal">
