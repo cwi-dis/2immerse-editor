@@ -1,20 +1,14 @@
 import * as React from "react";
-import { Stage } from "react-konva";
-import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
 import { ScreenActions } from "../../actions/screens";
 import { findById } from "../../util";
-import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
-import { Master as MasterModel } from "../../reducers/masters";
 
 import DMAppcContainer from "./dmappc_container";
-import Screen from "../screen";
+import DroppableScreen from "./droppable_screen";
 
 class MasterManager extends React.Component<ApplicationState & MasterActions & ScreenActions, {}> {
-  private stageWrapper: Stage | null;
-
   public componentDidMount() {
     const { previewScreens, currentScreen } = this.props.screens;
 
@@ -44,75 +38,9 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     this.props.updateSelectedScreen(screenId);
   }
 
-  private getDropRegion(x: number, y: number): ScreenRegion | undefined {
-    const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
-    const [index] = findById(previewScreens, currentScreenId);
-    const regions = previewScreens.get(index)!.regions;
-
-    const dropRegion = regions.findEntry((region) => {
-      const topLeft = region.position;
-      const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
-
-      return x >= topLeft[0] && x < bottomRight[0] && y >= topLeft[1] && y < bottomRight[1];
-    });
-
-    if (dropRegion) {
-      return dropRegion[1];
-    }
-  }
-
-  private getCanvasDropPosition(pageX: number, pageY: number) {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
-    const {offsetLeft, offsetTop} = stage.container();
-
-    return [
-      pageX - offsetLeft,
-      pageY - offsetTop
-    ];
-  }
-
-  private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-
-    if (!this.props.masters.currentLayout) {
-      alert("Please create and select a master layout before assigning components");
-      return;
-    }
-
-    const componentId = e.dataTransfer.getData("text/plain");
-    const screenId = this.props.screens.currentScreen!;
-    const masterId = this.props.masters.currentLayout!;
-
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
-
-    const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
-    const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
-
-    if (dropRegion) {
-      console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screenId);
-
-      this.props.assignComponentToMaster(
-        masterId,
-        screenId,
-        dropRegion.id,
-        componentId
-      );
-    } else {
-      console.error("could not find region at", x, y);
-    }
-  }
-
   private renderScreen() {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
-
+    const { currentLayout } = this.props.masters;
 
     if (!currentScreenId) {
       return (
@@ -130,11 +58,10 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
           </select>
         </div>
         <br/><br/>
-        <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-          <Screen width={500}
-                  screenInfo={currentScreen}
-                  assignStageRef={(e) => this.stageWrapper = e } />
-        </div>
+        <DroppableScreen screenInfo={currentScreen}
+                         currentLayout={currentLayout}
+                         width={500}
+                         assignComponentToMaster={this.props.assignComponentToMaster} />
       </div>
     );
   }
