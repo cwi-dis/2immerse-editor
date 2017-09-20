@@ -225,7 +225,7 @@ describe("Masters reducer", () => {
     expect(transformedState.layouts.get(1).placedComponents.count()).toEqual(0);
   });
 
-  it("should return the state untransformed if there is not match for the sceen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
+  it("should return the state untransformed if there is no match for the sceen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
     const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
         { screen: "screen1", region: "region1", component: "component1"},
@@ -241,6 +241,52 @@ describe("Masters reducer", () => {
     const transformedState = reducer(
       state,
       { type: "REMOVE_SCREEN_FROM_LAYOUTS", payload: { screenId: "screen5" }} as any
+    );
+
+    expect(transformedState).toEqual(state);
+  });
+
+  it("should remove all component placements containing the given region ID on REMOVE_REGION_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region4", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region4", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_REGION_FROM_LAYOUTS", payload: { regionId: "region4" }} as any
+    );
+
+    expect(transformedState.layouts.get(0).placedComponents.count()).toEqual(2);
+    expect(transformedState.layouts.get(0).placedComponents.get(0).region).toEqual("region1");
+    expect(transformedState.layouts.get(0).placedComponents.get(1).region).toEqual("region2");
+
+    expect(transformedState.layouts.get(1).placedComponents.count()).toEqual(0);
+  });
+
+  it("should return the state untransformed if there is no match for the region ID on REMOVE_REGION_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_REGION_FROM_LAYOUTS", payload: { regionId: "region0" }} as any
     );
 
     expect(transformedState).toEqual(state);
