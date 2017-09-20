@@ -116,10 +116,6 @@ actionHandler.addHandler("REMOVE_REGION_FROM_LAYOUTS", (state, action: actions.R
 
   return state.update("layouts", (layouts) => {
     return layouts.map((layout) => {
-      if (!layout.placedComponents) {
-        return layout;
-      }
-
       return layout.update("placedComponents", (placements) => {
         return placements!.filter((placement) => {
           return placement.region !== regionId;

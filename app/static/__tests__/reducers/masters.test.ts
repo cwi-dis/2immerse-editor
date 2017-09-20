@@ -199,4 +199,50 @@ describe("Masters reducer", () => {
     expect(transformedState).toBe(state);
     expect(state.layouts.first().placedComponents.count()).toEqual(0);
   });
+
+  it("should remove all component placements containing the given screen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_SCREEN_FROM_LAYOUTS", payload: { screenId: "screen1" }} as any
+    );
+
+    expect(transformedState.layouts.get(0).placedComponents.count()).toEqual(2);
+    expect(transformedState.layouts.get(0).placedComponents.get(0).screen).toEqual("screen2");
+    expect(transformedState.layouts.get(0).placedComponents.get(1).screen).toEqual("screen3");
+
+    expect(transformedState.layouts.get(1).placedComponents.count()).toEqual(0);
+  });
+
+  it("should return the state untransformed if there is not match for the sceen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_SCREEN_FROM_LAYOUTS", payload: { screenId: "screen5" }} as any
+    );
+
+    expect(transformedState).toEqual(state);
+  });
 });
