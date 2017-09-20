@@ -82,9 +82,23 @@ export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
 
 interface FileInputFieldProps {
   label: string;
+  onChange: (data: string) => void;
 }
 
 export const FileInputField: React.SFC<FileInputFieldProps> = (props) => {
+  const readSelectedFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files.item(0);
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        props.onChange(reader.result);
+      };
+
+      reader.readAsBinaryString(file);
+    }
+  };
+
   return (
     <div className="field is-horizontal">
       <div className="field-label is-normal">
@@ -93,7 +107,7 @@ export const FileInputField: React.SFC<FileInputFieldProps> = (props) => {
       <div className="field-body">
         <div className="field">
           <div className="control">
-            <input className="input" type="file" />
+            <input className="input" type="file" onChange={readSelectedFile} />
           </div>
         </div>
       </div>
