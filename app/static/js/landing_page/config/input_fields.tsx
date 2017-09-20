@@ -53,6 +53,7 @@ export const CheckboxInputField: React.SFC<CheckboxInputFieldProps> = (props) =>
 interface SelectInputFieldProps {
   label: string;
   options: Array<string>;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   value?: string;
 }
 
@@ -66,7 +67,7 @@ export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
         <div className="field is-narrow">
           <div className="control">
             <div className="select is-fullwidth">
-              <select value={props.value}>
+              <select value={props.value} onChange={props.onChange}>
                 {props.options.map((option, i) => {
                   return (<option key={i}>{option}</option>);
                 })}

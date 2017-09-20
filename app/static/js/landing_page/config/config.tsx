@@ -97,8 +97,14 @@ class Config extends React.Component<{}, ConfigState> {
                             value={this.state.noKibana}
                             onChange={(e) => this.setState({ noKibana: e.target.checked, formTainted: true})} />
 
-        <SelectInputField label="Mode" options={["standalone"]} value={this.state.mode} />
-        <SelectInputField label="Log Level" options={["DEBUG"]} value={this.state.logLevel} />
+        <SelectInputField label="Mode"
+                          options={["standalone"]}
+                          value={this.state.mode}
+                          onChange={(e) => this.setState({ mode: e.target.value, formTainted: true})} />
+        <SelectInputField label="Log Level"
+                          options={["DEBUG"]}
+                          value={this.state.logLevel}
+                          onChange={(e) => this.setState({ logLevel: e.target.value, formTainted: true})} />
         <br/>
 
         <div className="field is-horizontal">
