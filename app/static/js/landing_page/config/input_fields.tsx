@@ -26,6 +26,7 @@ export const URLInputField: React.SFC<URLInputFieldProps> = (props) => {
 interface CheckboxInputFieldProps {
   label: string;
   defaultValue: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   description?: string;
 }
 
@@ -39,7 +40,8 @@ export const CheckboxInputField: React.SFC<CheckboxInputFieldProps> = (props) =>
         <div className="field">
           <div className="control">
             <label className="checkbox">
-              <input type="checkbox" defaultChecked={props.defaultValue} />&emsp;&emsp;{props.description}
+              <input type="checkbox" checked={props.defaultValue} onChange={props.onChange} />
+              &emsp;&emsp;{props.description}
             </label>
           </div>
         </div>

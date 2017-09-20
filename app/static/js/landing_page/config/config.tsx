@@ -91,7 +91,10 @@ class Config extends React.Component<{}, ConfigState> {
         <URLInputField label="Websocket Service"
                        value={this.state.websocketService}
                        onChange={(e) => this.setState({ websocketService: e.target.value, formTainted: true})} />
-        <CheckboxInputField label="Kibana" description="Disable Kibana" defaultValue={this.state.noKibana} />
+        <CheckboxInputField label="Kibana"
+                            description="Disable Kibana"
+                            defaultValue={this.state.noKibana}
+                            onChange={(e) => this.setState({ noKibana: e.target.checked, formTainted: true})} />
         <SelectInputField label="Mode" options={["standalone"]} defaultValue={this.state.mode} />
         <SelectInputField label="Log Level" options={["DEBUG"]} defaultValue={this.state.logLevel} />
         <br/>
