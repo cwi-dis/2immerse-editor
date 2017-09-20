@@ -12,7 +12,7 @@ interface ConfigState {
   mode: string;
   noKibana: boolean;
   websocketService: string;
-
+  fileData: string;
   formTainted: boolean;
 }
 
@@ -28,7 +28,8 @@ class Config extends React.Component<{}, ConfigState> {
       mode: "",
       noKibana: false,
       websocketService: "",
-      formTainted: false
+      formTainted: false,
+      fileData: ""
     };
   }
 
@@ -47,7 +48,7 @@ class Config extends React.Component<{}, ConfigState> {
     this.fetchConfigData();
   }
 
-  private submitForm() {
+  private submitManualForm() {
     const configData = pluck(this.state, [
       "layoutService", "clientApiUrl", "logLevel",
       "timelineService", "mode", "noKibana", "websocketService"
@@ -55,6 +56,17 @@ class Config extends React.Component<{}, ConfigState> {
 
     makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
       this.setState({formTainted: false});
+      console.log("data updated successfully");
+    }).catch(() => {
+      console.error("could not update data");
+    }).then(() => {
+      this.fetchConfigData();
+    });
+  }
+
+  private submitFileForm() {
+    makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json").then(() => {
+      this.setState({fileData: ""});
       console.log("data updated successfully");
     }).catch(() => {
       console.error("could not update data");
@@ -80,7 +92,7 @@ class Config extends React.Component<{}, ConfigState> {
         <h4>Upload JSON Config File</h4>
         <br/>
 
-        <FileInputField label="Config File" />
+        <FileInputField label="Config File" onChange={(data) => this.setState({ fileData: data })} />
         <br/>
 
         <div className="field is-horizontal">
@@ -88,7 +100,7 @@ class Config extends React.Component<{}, ConfigState> {
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <button className="button is-info">
+                <button className="button is-info" onClick={this.submitFileForm.bind(this)} disabled={this.state.fileData === ""}>
                   Upload Config
                 </button>
               </div>
@@ -132,7 +144,7 @@ class Config extends React.Component<{}, ConfigState> {
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <button className="button is-info" onClick={this.submitForm.bind(this)} disabled={!this.state.formTainted}>
+                <button className="button is-info" onClick={this.submitManualForm.bind(this)} disabled={!this.state.formTainted}>
                   Save Config
                 </button>
               </div>
