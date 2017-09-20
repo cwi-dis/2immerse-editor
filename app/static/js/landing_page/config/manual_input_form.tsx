@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as classNames from "classnames";
 
 import { makeRequest, pluck } from "../../editor/util";
 import { URLInputField, CheckboxInputField, SelectInputField } from "./input_fields";
@@ -57,27 +58,19 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
       return;
     }
 
-    if (this.state.submitSuccess) {
-      return (
-        <div>
-          <br/>
-          <div className="notification is-success" style={{padding: 10}}>
-            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
-            Data successfully updated!
-          </div>
+    const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
+
+    return (
+      <div>
+        <br/>
+        <div className={classNames(["notification", notificationColor])} style={{padding: 10}}>
+          <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+          {(this.state.submitSuccess)
+            ? "Data successfully updated!"
+            : "Could not update data!"}
         </div>
-      );
-    } else {
-      return (
-        <div>
-          <br/>
-          <div className="notification is-danger" style={{padding: 10}}>
-            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
-            Could not update data!
-          </div>
-        </div>
-      );
-    }
+      </div>
+    );
   }
 
   public render() {
