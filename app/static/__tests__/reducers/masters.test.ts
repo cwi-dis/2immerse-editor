@@ -246,6 +246,19 @@ describe("Masters reducer", () => {
     expect(transformedState).toEqual(state);
   });
 
+  it("should return the state untransformed if there are not components placed on REMOVE_SCREEN_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1"}),
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_SCREEN_FROM_LAYOUTS", payload: { regionId: "region0" }} as any
+    );
+
+    expect(transformedState).toEqual(state);
+  });
+
   it("should remove all component placements containing the given region ID on REMOVE_REGION_FROM_LAYOUTS", () => {
     const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
@@ -282,6 +295,19 @@ describe("Masters reducer", () => {
       new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
         { screen: "screen1", region: "region4", component: "component9"}
       ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_REGION_FROM_LAYOUTS", payload: { regionId: "region0" }} as any
+    );
+
+    expect(transformedState).toEqual(state);
+  });
+
+  it("should return the state untransformed if there are not components placed on REMOVE_REGION_FROM_LAYOUTS", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1"}),
     ])});
 
     const transformedState = reducer(
