@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { makeRequest } from "../../editor/util";
+import { makeRequest, pluck } from "../../editor/util";
 import { URLInputField, CheckboxInputField, SelectInputField, FileInputField } from "./input_fields";
 import CurrentVersion from "../../editor/components/current_version";
 
@@ -32,7 +32,7 @@ class Config extends React.Component<{}, ConfigState> {
     };
   }
 
-  public componentDidMount() {
+  private fetchConfigData() {
     makeRequest("GET", "/api/v1/configuration").then((data) => {
       const config = JSON.parse(data);
       console.log("retrieved config data:", config);
@@ -40,6 +40,26 @@ class Config extends React.Component<{}, ConfigState> {
       this.setState(config);
     }).catch((error) => {
       console.error("Could not retrieve configuration:", error);
+    });
+  }
+
+  public componentDidMount() {
+    this.fetchConfigData();
+  }
+
+  private submitForm() {
+    const configData = pluck(this.state, [
+      "layoutService", "clientApiUrl", "logLevel",
+      "timelineService", "mode", "noKibana", "websocketService"
+    ]);
+
+    makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
+      this.setState({formTainted: false});
+      console.log("data updated successfully");
+    }).catch(() => {
+      console.error("could not update data");
+    }).then(() => {
+      this.fetchConfigData();
     });
   }
 
@@ -112,7 +132,7 @@ class Config extends React.Component<{}, ConfigState> {
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <button className="button is-info" disabled={!this.state.formTainted}>
+                <button className="button is-info" onClick={this.submitForm.bind(this)} disabled={!this.state.formTainted}>
                   Save Config
                 </button>
               </div>
