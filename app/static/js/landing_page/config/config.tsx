@@ -1,19 +1,12 @@
 import * as React from "react";
 
-import { makeRequest, pluck } from "../../editor/util";
-import { URLInputField, CheckboxInputField, SelectInputField, FileInputField } from "./input_fields";
+import { makeRequest } from "../../editor/util";
 import CurrentVersion from "../../editor/components/current_version";
+import ManualInputForm, { ManualInputFormState } from "./manual_input_form";
+import FileInputForm from "./file_input_form";
 
 interface ConfigState {
-  layoutService: string;
-  clientApiUrl: string;
-  logLevel: string;
-  timelineService: string;
-  mode: string;
-  noKibana: boolean;
-  websocketService: string;
-  fileData: string;
-  formTainted: boolean;
+  formData: ManualInputFormState;
 }
 
 class Config extends React.Component<{}, ConfigState> {
@@ -21,24 +14,16 @@ class Config extends React.Component<{}, ConfigState> {
     super(props);
 
     this.state = {
-      layoutService: "",
-      clientApiUrl: "",
-      logLevel: "",
-      timelineService: "",
-      mode: "",
-      noKibana: false,
-      websocketService: "",
-      formTainted: false,
-      fileData: ""
+      formData: {}
     };
   }
 
-  private fetchConfigData() {
+  public fetchConfigData() {
     makeRequest("GET", "/api/v1/configuration").then((data) => {
       const config = JSON.parse(data);
       console.log("retrieved config data:", config);
 
-      this.setState(config);
+      this.setState({ formData: config});
     }).catch((error) => {
       console.error("Could not retrieve configuration:", error);
     });
@@ -46,33 +31,6 @@ class Config extends React.Component<{}, ConfigState> {
 
   public componentDidMount() {
     this.fetchConfigData();
-  }
-
-  private submitManualForm() {
-    const configData = pluck(this.state, [
-      "layoutService", "clientApiUrl", "logLevel",
-      "timelineService", "mode", "noKibana", "websocketService"
-    ]);
-
-    makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
-      this.setState({formTainted: false});
-      console.log("data updated successfully");
-    }).catch(() => {
-      console.error("could not update data");
-    }).then(() => {
-      this.fetchConfigData();
-    });
-  }
-
-  private submitFileForm() {
-    makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json").then(() => {
-      this.setState({fileData: ""});
-      console.log("data updated successfully");
-    }).catch(() => {
-      console.error("could not update data");
-    }).then(() => {
-      this.fetchConfigData();
-    });
   }
 
   public render() {
@@ -91,69 +49,15 @@ class Config extends React.Component<{}, ConfigState> {
 
         <h4>Upload JSON Config File</h4>
         <br/>
-
-        <FileInputField label="Config File" clear={this.state.fileData === ""} onChange={(data) => this.setState({ fileData: data })} />
-        <br/>
-
-        <div className="field is-horizontal">
-          <div className="field-label"></div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <button className="button is-info" onClick={this.submitFileForm.bind(this)} disabled={this.state.fileData === ""}>
-                  Upload Config
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FileInputForm onSubmit={this.fetchConfigData.bind(this)} />
         <br/>
 
         <h4>Manual Configuration</h4>
         <br/>
-        <URLInputField label="Client API"
-                       value={this.state.clientApiUrl}
-                       onChange={(e) => this.setState({ clientApiUrl: e.target.value, formTainted: true})} />
-        <URLInputField label="Layout Service"
-                       value={this.state.layoutService}
-                       onChange={(e) => this.setState({ layoutService: e.target.value, formTainted: true})} />
-        <URLInputField label="Timeline Service"
-                       value={this.state.timelineService}
-                       onChange={(e) => this.setState({ timelineService: e.target.value, formTainted: true})} />
-        <URLInputField label="Websocket Service"
-                       value={this.state.websocketService}
-                       onChange={(e) => this.setState({ websocketService: e.target.value, formTainted: true})} />
+        <ManualInputForm formData={this.state.formData} onSubmit={this.fetchConfigData.bind(this)} />
 
-        <CheckboxInputField label="Kibana"
-                            description="Disable Kibana"
-                            value={this.state.noKibana}
-                            onChange={(e) => this.setState({ noKibana: e.target.checked, formTainted: true})} />
-
-        <SelectInputField label="Mode"
-                          options={["standalone"]}
-                          value={this.state.mode}
-                          onChange={(e) => this.setState({ mode: e.target.value, formTainted: true})} />
-        <SelectInputField label="Log Level"
-                          options={["DEBUG"]}
-                          value={this.state.logLevel}
-                          onChange={(e) => this.setState({ logLevel: e.target.value, formTainted: true})} />
-        <br/>
-
-        <div className="field is-horizontal">
-          <div className="field-label"></div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <button className="button is-info" onClick={this.submitManualForm.bind(this)} disabled={!this.state.formTainted}>
-                  Save Config
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      <CurrentVersion />
-    </div>
+        <CurrentVersion />
+      </div>
     );
   }
 }
