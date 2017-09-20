@@ -61,6 +61,16 @@ export function capitalize(str: string): string {
   return str[0].toUpperCase() + str.slice(1);
 }
 
+export function pluck<T>(obj: T, keys: Array<keyof T>): Partial<T> {
+  const result: Partial<T> = {};
+
+  keys.forEach((k) => {
+    result[k] = obj[k];
+  });
+
+  return result;
+}
+
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
   return collection.findEntry((value: T) => value.id === id)!;
 }

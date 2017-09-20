@@ -512,3 +512,26 @@ describe("Utility function capitalize()", () => {
     expect(util.capitalize("")).toEqual("");
   });
 });
+
+describe("Utility function pluck()", () => {
+  it("should return a new object with only the specified keys from the original object", () => {
+    const original = {
+      a: 1, b: 2,
+      c: 3, d: 4
+    };
+    const result = util.pluck(original, ["a", "d"]);
+
+    expect(result).toEqual({a: 1, d: 4});
+    expect(result.b).toBeUndefined();
+    expect(result.c).toBeUndefined();
+  });
+
+  it("should return an empty object if no keys are selected", () => {
+    const original = {
+      a: 1, b: 2,
+      c: 3, d: 4
+    };
+
+    expect(util.pluck(original, [])).toEqual({});
+  });
+});
