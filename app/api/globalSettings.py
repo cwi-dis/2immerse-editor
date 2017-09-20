@@ -19,21 +19,19 @@ timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v
 noKibana = False
 logLevel = 'DEBUG'
 
-# Enable this (and fill in the right IP address) to run all services locally.
-# DO NOT CHECK IN, please......
-if False:
-    # Settings for Jack's home machine
-    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
-    layoutService = "http://192.168.1.10:8000/layout/v3"
-    websocketService = "http://192.168.1.10:3000/"
-    timelineService = "http://192.168.1.10:8080/timeline/v1"
-    noKibana=True
-    logLevel = 'DEBUG'
-if False:
-    # Settings for Jack's work machine
-    clientApiUrl = "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
-    layoutService = "http://flauwte.dis.cwi.nl:8000/layout/v3"
-    websocketService = "http://flauwte.dis.cwi.nl:3000/"
-    timelineService = "http://flauwte.dis.cwi.nl:8080/timeline/v1"
-    noKibana=True
-    logLevel = 'DEBUG'
+def _get():
+    kList = [name for name in globals() if name[:1] != '_']
+    rv = {}
+    for k in kList:
+        rv[k] = globals()[k]
+    return rv
+    
+def _put(values):
+    for k, v in values.items():
+        globals()[k] = v
+        
+if __name__ == '__main__':
+    print _get()
+    _put({'noKibana':True})
+    print _get()
+    

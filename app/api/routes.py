@@ -53,6 +53,15 @@ def api_verb(verb):
 def document():
     return api.document()
 
+@app.route(API_ROOT + "/configuration", methods=["GET"])
+def get_configuration():
+    return json.dumps(globalSettings._get())+'\n'
+
+@app.route(API_ROOT + "/configuration", methods=["PUT"])
+def put_configuration():
+    globalSettings._put(request.get_json())
+    return 'OK\n'
+
 #
 # Per-document commands, load and save and such
 #

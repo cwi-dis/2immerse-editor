@@ -16,6 +16,11 @@ Toplevel api is at endpoint `/api/v1`, accepts following calls:
   
 - GET, returns  all _documentId_ as a JSON list.
 
+There is also a global endpoint `/api/v1/configuration` for the global configuration of the backend service:
+
+- GET returns the current configuration variables as a JSON object.
+- PUT accepts a JSON object and updates the configuration variables acordingly.
+
 ## per-document calls
 
 Document api is at endpoint `/api/v1/document/<documentId>`. 

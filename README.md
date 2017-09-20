@@ -80,3 +80,7 @@ the code on the host machine should be reflected in the container
 automatically, but you may need to restart the Flask server if you change
 something in the backend code. To stop the containers, hit *Ctrl+C* on the
 command line.
+
+### Configuring the backend
+
+The backend needs configuration information, such as URLs for reaching the timeline service. The ```configuration``` subdirectory has JSON files with configuration for various deployment settings, and scripts ```get.sh``` and ```put.sh``` to modify the configuration settings or a running backend.
