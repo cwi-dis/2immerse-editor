@@ -9,6 +9,7 @@ interface FileInputFormProps {
 
 interface FileInputFormState {
   fileData: string;
+  submitSuccess?: boolean;
 }
 
 class FileInputForm extends React.Component<FileInputFormProps, FileInputFormState> {
@@ -22,18 +23,54 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
 
   private submitFileForm() {
     makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json").then(() => {
-      this.setState({fileData: ""});
-      console.log("data updated successfully");
-    }).catch(() => {
-      console.error("could not update data");
-    }).then(() => {
+      this.setState({
+        submitSuccess: true,
+        fileData: ""
+      });
+
       this.props.onSubmit();
+    }).catch(() => {
+      this.setState({
+        submitSuccess: false,
+        fileData: ""
+      });
     });
+  }
+
+  private renderNotification() {
+    if (this.state.submitSuccess === undefined) {
+      return;
+    }
+
+    if (this.state.submitSuccess) {
+      return (
+        <div>
+          <br/>
+          <div className="notification is-success" style={{padding: 10}}>
+            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+            Data successfully updated!
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <br/>
+          <div className="notification is-danger" style={{padding: 10}}>
+            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+            Could not update data!
+          </div>
+        </div>
+      );
+    }
   }
 
   public render() {
     return (
       <div>
+        <h4>Upload JSON Config File</h4>
+        {this.renderNotification()}
+        <br/>
         <FileInputField label="Config File" clear={this.state.fileData === ""} onChange={(data) => this.setState({ fileData: data })} />
         <br/>
 

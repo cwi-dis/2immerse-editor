@@ -17,6 +17,7 @@ export interface ManualInputFormState {
   noKibana?: boolean;
   websocketService?: string;
   formTainted?: boolean;
+  submitSuccess?: boolean;
 }
 
 class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputFormState> {
@@ -38,18 +39,54 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     const configData = pluck(this.state, this.formKeys);
 
     makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
-      this.setState({formTainted: false});
-      console.log("data updated successfully");
-    }).catch(() => {
-      console.error("could not update data");
-    }).then(() => {
+      this.setState({
+        formTainted: false,
+        submitSuccess: true
+      });
+
       this.props.onSubmit();
+    }).catch(() => {
+      this.setState({
+        submitSuccess: false
+      });
     });
+  }
+
+  private renderNotification() {
+    if (this.state.submitSuccess === undefined) {
+      return;
+    }
+
+    if (this.state.submitSuccess) {
+      return (
+        <div>
+          <br/>
+          <div className="notification is-success" style={{padding: 10}}>
+            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+            Data successfully updated!
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <br/>
+          <div className="notification is-danger" style={{padding: 10}}>
+            <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+            Could not update data!
+          </div>
+        </div>
+      );
+    }
   }
 
   public render() {
     return (
       <div>
+        <h4>Manual Configuration</h4>
+        {this.renderNotification()}
+        <br/>
+
         <URLInputField label="Client API"
                        value={this.state.clientApiUrl}
                        onChange={(e) => this.setState({ clientApiUrl: e.target.value, formTainted: true})} />

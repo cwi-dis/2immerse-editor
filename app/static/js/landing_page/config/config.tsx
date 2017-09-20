@@ -21,8 +21,6 @@ class Config extends React.Component<{}, ConfigState> {
   public fetchConfigData() {
     makeRequest("GET", "/api/v1/configuration").then((data) => {
       const config = JSON.parse(data);
-      console.log("retrieved config data:", config);
-
       this.setState({ formData: config});
     }).catch((error) => {
       console.error("Could not retrieve configuration:", error);
@@ -46,13 +44,7 @@ class Config extends React.Component<{}, ConfigState> {
       <div style={boxStyle}>
         <h3 style={{fontSize: 25, color: "#555555"}}>Configuration</h3>
         <br/>
-
-        <h4>Upload JSON Config File</h4>
-        <br/>
         <FileInputForm onSubmit={this.fetchConfigData.bind(this)} />
-        <br/>
-
-        <h4>Manual Configuration</h4>
         <br/>
         <ManualInputForm formData={this.state.formData} onSubmit={this.fetchConfigData.bind(this)} />
 
