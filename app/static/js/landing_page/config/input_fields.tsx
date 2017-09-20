@@ -25,7 +25,7 @@ export const URLInputField: React.SFC<URLInputFieldProps> = (props) => {
 
 interface CheckboxInputFieldProps {
   label: string;
-  defaultValue: boolean;
+  value: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   description?: string;
 }
@@ -40,7 +40,7 @@ export const CheckboxInputField: React.SFC<CheckboxInputFieldProps> = (props) =>
         <div className="field">
           <div className="control">
             <label className="checkbox">
-              <input type="checkbox" checked={props.defaultValue} onChange={props.onChange} />
+              <input type="checkbox" checked={props.value} onChange={props.onChange} />
               &emsp;&emsp;{props.description}
             </label>
           </div>
@@ -53,7 +53,7 @@ export const CheckboxInputField: React.SFC<CheckboxInputFieldProps> = (props) =>
 interface SelectInputFieldProps {
   label: string;
   options: Array<string>;
-  defaultValue?: string;
+  value?: string;
 }
 
 export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
@@ -66,7 +66,7 @@ export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
         <div className="field is-narrow">
           <div className="control">
             <div className="select is-fullwidth">
-              <select defaultValue={props.defaultValue}>
+              <select value={props.value}>
                 {props.options.map((option, i) => {
                   return (<option key={i}>{option}</option>);
                 })}
