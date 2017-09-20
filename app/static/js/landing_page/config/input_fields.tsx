@@ -75,3 +75,24 @@ export const SelectInputField: React.SFC<SelectInputFieldProps> = (props) => {
     </div>
   );
 };
+
+interface FileInputFieldProps {
+  label: string;
+}
+
+export const FileInputField: React.SFC<FileInputFieldProps> = (props) => {
+  return (
+    <div className="field is-horizontal">
+      <div className="field-label is-normal">
+        <label className="label">{props.label}</label>
+      </div>
+      <div className="field-body">
+        <div className="field">
+          <div className="control">
+            <input className="input" type="file" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

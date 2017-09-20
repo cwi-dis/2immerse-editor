@@ -3,7 +3,7 @@ import { render } from "react-dom";
 import { Router, Route, hashHistory } from "react-router";
 
 import LandingPage from "./landing_page";
-import Config from "./config";
+import Config from "./config/config";
 
 import "bulma/css/bulma.css";
 import "../../css/style.css";
