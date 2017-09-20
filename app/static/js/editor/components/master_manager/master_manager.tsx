@@ -124,9 +124,11 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
 
     return (
       <div>
-        <select className="select" defaultValue={currentScreen.id} onChange={this.updateSelectedScreen.bind(this)}>
-          {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
-        </select>
+        <div className="select">
+          <select defaultValue={currentScreen.id} onChange={this.updateSelectedScreen.bind(this)}>
+            {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
+          </select>
+        </div>
         <br/><br/>
         <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
           <Screen width={500}
