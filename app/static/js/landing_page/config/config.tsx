@@ -1,9 +1,45 @@
 import * as React from "react";
 
+import { makeRequest } from "../../editor/util";
 import { URLInputField, CheckboxInputField, SelectInputField, FileInputField } from "./input_fields";
 import CurrentVersion from "../../editor/components/current_version";
 
-class Config extends React.Component<{}, {}> {
+interface ConfigState {
+  layoutService: string;
+  clientApiUrl: string;
+  logLevel: string;
+  timelineService: string;
+  mode: string;
+  noKibana: boolean;
+  websocketService: string;
+}
+
+class Config extends React.Component<{}, ConfigState> {
+  public constructor(props: ConfigState) {
+    super(props);
+
+    this.state = {
+      layoutService: "",
+      clientApiUrl: "",
+      logLevel: "",
+      timelineService: "",
+      mode: "",
+      noKibana: false,
+      websocketService: ""
+    };
+  }
+
+  public componentDidMount() {
+    makeRequest("GET", "/api/v1/configuration").then((data) => {
+      const config = JSON.parse(data);
+      console.log("retrieved config data:", config);
+
+      this.setState(config);
+    }).catch((error) => {
+      console.error("Could not retrieve configuration:", error);
+    });
+  }
+
   public render() {
     const boxStyle: React.CSSProperties = {
       width: "70vw",
