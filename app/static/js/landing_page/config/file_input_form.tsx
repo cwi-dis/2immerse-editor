@@ -45,6 +45,10 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
 
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
 
+    setTimeout(() => {
+      this.setState({submitSuccess: undefined});
+    }, 5000);
+
     return (
       <div>
         <br/>
