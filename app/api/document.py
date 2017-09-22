@@ -131,6 +131,7 @@ class Document:
         self.xmlHandler = None
         self.lock = threading.RLock()
         self.editManager = None
+        self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
         self.logger = logger
         self.loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
@@ -591,6 +592,10 @@ class DocumentEvents:
         for elt in elementsModifyable:
             rv.append(self._getDescription(elt, trigger=False))
         self.logger.info('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.loggerExtra)
+        # See if we need to ask the timeline server for updates
+        if self.document.forwardHandler and not self.document.companionTimelineIsActive:
+            self.logger.debug("get: asking document for setDocumentState calls", extra=self.loggerExtra)
+            self.document.forwardHandler.forward([])
         return rv
 
     @synchronized
@@ -717,7 +722,11 @@ class DocumentEvents:
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
         
-        return newElement.get(NS_XML('id'))
+        if not self.document.companionTimelineIsActive:
+            self.logger.warn("trigger: no timeline service, timing may be inaccurate", extra=self.loggerExtra)
+            return "No timeline service, timing may be inaccurate"
+        self.document.companionTimelineIsActive = False
+        return ""
 
     @edit
     def modify(self, id, parameters):
@@ -745,6 +754,11 @@ class DocumentEvents:
         for e in allElements:
             self.document._elementChanged(e)
 
+        if not self.document.companionTimelineIsActive:
+            self.logger.warn("trigger: no timeline service, timing may be inaccurate", extra=self.loggerExtra)
+            return "No timeline service, timing may be inaccurate"
+        self.document.companionTimelineIsActive = False
+        return ""
 
 class DocumentAuthoring:
     def __init__(self, document):
@@ -770,10 +784,11 @@ class DocumentServe:
         return time.time()
         
     @synchronized
-    def _nextGeneration(self):
+    def _nextGeneration(self, sameValue):
         rootElt = self.tree.getroot()
         gen = int(rootElt.get(NS_AUTH("generation"), 0))
-        gen += 1
+        if not sameValue:
+            gen += 1
         rootElt.set(NS_AUTH("generation"), str(gen))
         return gen
 
@@ -866,6 +881,7 @@ class DocumentServe:
     @synchronized
     def setDocumentState(self, documentState):
         self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.loggerExtra)
+        self.document.companionTimelineIsActive = True
         for eltId, eltState in documentState.items():
             elt = self.document._getElementByID(eltId)
             if not elt:
@@ -910,7 +926,7 @@ class DocumentServe:
          
     def forward(self, operations):
         self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
-        gen = self._nextGeneration()
+        gen = self._nextGeneration(not operations)
         toRemove = []
         wantStateUpdates = True
         for callback in self.callbacks:
@@ -925,6 +941,9 @@ class DocumentServe:
             except requests.exceptions.RequestException:
                 print 'PUT failed:', callback # xxxjack need better error message:-)
                 toRemove.append(callback)
+            # Only continue if we have anything to say...
+            if not operations and not wantStateUpdates:
+                break
         for callback in toRemove:
             self.logger.info('removeCallback(%s)'%callback, extra=self.loggerExtra)
             self.callbacks.discard(callback)
