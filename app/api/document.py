@@ -401,6 +401,8 @@ class Document:
 
     @synchronized
     def _getXPath(self, elt):
+        if elt is None:
+            return '$unconnectedElement'
         parent = self._getParent(elt)
         if parent is None:
             return '/' + elt.tag
@@ -573,10 +575,14 @@ class DocumentEvents:
         self.loggerExtra = dict(self.document.loggerExtra)
         self.loggerExtra['subSource'] = 'document.events'
 
+    def _now(self):
+        return time.time()
+        
     @synchronized
     def get(self):
-        exprTriggerable = './/tt:events/tl:par[@tt:name]'
-        exprModifyable = './/tl:par/tl:par[@tt:name][@tls:state]'
+        """REST get command: returns list of triggerable and modifiable events to the front end UI"""
+        exprTriggerable = './/tt:events/*[@tt:name]'
+        exprModifyable = './/tl:par/*[@tt:name][@tls:state]'
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
         rv = []
@@ -589,6 +595,7 @@ class DocumentEvents:
 
     @synchronized
     def _getDescription(self, elt, trigger):
+        """Returns description of a triggerable or modifiable event for the front end"""
         # xxxjack should move to ElementDelegate
         parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
@@ -624,6 +631,7 @@ class DocumentEvents:
 
     @synchronized
     def _getParameter(self, parameter):
+        """For a parameter/value coming from the front end, returns what to set where"""
         # xxxjack should move to ElementDelegate
         try:
             parPath = parameter['parameter']
@@ -644,8 +652,37 @@ class DocumentEvents:
 
         return path, attr, parValue
 
+    @synchronized
+    def _minimalAVT(self, value, contextElement, parentElement=None):
+        """Handle computed values"""
+        if value[:1] != "{" or value[-1:] != "}":
+            return value
+        expr = value[1:-1]
+        if expr == "tt:clock(.)":
+            return self._getClock(contextElement)
+        if expr == "tt:clock(..)":
+            if parentElement is None:
+                parentElement = self.document._getParent(contextElement)
+            return self._getClock(parentElement)
+        self.logger.error("Unexpected AVT: %s" % value, extra=self.loggerExtra)
+        return value
+        
+    @synchronized
+    def _getClock(self, element):
+        """Return current clock value for an element"""
+        self.logger.debug("xxxjack getClock(%s)" % self.document._getXPath(element), extra=self.loggerExtra)
+
+        epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
+        if epoch != None:
+            curTime = self._now() - float(epoch)
+            self.logger.debug("xxxjack getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.loggerExtra)
+            return str(curTime)
+        self.logger.warn("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.loggerExtra)
+        return "0"
+        
     @edit
     def trigger(self, id, parameters):
+        """REST trigger command: triggers an event"""
         self.logger.info('trigger(%s, ...)' % (id), extra=self.loggerExtra)
         element = self.document.idMap.get(id)
 
@@ -670,6 +707,8 @@ class DocumentEvents:
             path, attr, value = self._getParameter(par)
             e = newElement.find(path, NAMESPACES)
 
+            value = self._minimalAVT(value, newElement, newParent)
+
             if e is None:
                 abort(400, 'No element matches XPath %s' % path)
 
@@ -682,6 +721,7 @@ class DocumentEvents:
 
     @edit
     def modify(self, id, parameters):
+        """REST modify command: modifies a running event"""
         self.logger.info('modify(%s, ...)' % (id), extra=self.loggerExtra)
         element = self.document.idMap.get(id)
 
@@ -693,6 +733,8 @@ class DocumentEvents:
         for par in parameters:
             path, attr, value = self._getParameter(par)
             e = element.find(path, NAMESPACES)
+
+            value = self._minimalAVT(value, element)
 
             if e is None:
                 abort(400, 'No element matches XPath %s' % path)
