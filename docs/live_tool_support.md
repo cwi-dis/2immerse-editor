@@ -7,17 +7,13 @@ weight = 3
 
 The basic principle behind the live editing - or triggering - tool is that the timeline document has pre-edited snippets for various events that can happen. These snippets can then be inserted into the timeline document, possibly after filling in some parameters. These snippets are called _events_, because that term seems to be closest to how television producers or directors think of them (even though the name has the disadvantage that it already means many different things in the technical domain).
 
-Ideally, the list of currently triggerable events and their parameters is retrieved from a service (possibly the timeline service, possibly the editing service), and the live editing tool will populate its GUI from this. This allows events to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new events into the live document as it is playing, using the preproduction tool operating on the live document.
+The list of currently triggerable events and their parameters is retrieved from the backend authoring service, and the live editing tool will populate its GUI from this. This allows events to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new events into the live document as it is playing, using the preproduction tool operating on the live document.
 
-An alternative (simpler) implementation is that the preproduction editing tool exports a list of the events.
-
-_Open issue_ This document assume that we want to modify events after they have been triggered (for example to manually stop an event by setting its ending time to "now"). This requires that the list of events is retrieved live. Whether this is implemented should depend on the live tool requirements.
-
+We also want to modify events after they have been triggered (for example to manually stop an event by setting its ending time to "now"). This requires that the list of events is retrieved live.
 ## Requirements Considerations
 
 There are various open issues in this document, that need to be filled from the requirements for the live editing tool:
 
-- Do we need the ability to modify events that are already running? Note that _stopping_ an event (for example an event that has an indefinite duration) is a special case of modifying.
 - What are the parameters we need to be able to change on events when triggering them? What are the UIs needed for them and how should the preproduction author specify these?
 - How should we specify points in time, i.e. from which origin?
 - This design assumes that layout changes are not needed. Is that reasonable?
@@ -34,7 +30,8 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
   The return value entries have the following structure (all parameters are strings unless otherwise noted):
 
 	- `name`: Human-readable name for the trigger (only for the UI).
-	- `verb`: Human-readable string for the UI to put in the trigger or modify button. Probably defaults to _Trigger_ or _Modify_.
+	- `verb`: Human-readable string for the UI to put in the trigger button. Defaults to _Trigger_.
+	- `modVerb`: Human-readable string for the UI to put in the modify button. Defaults to _Modify_.
 	- `previewUrl`: optional URL of an image that can be used as a preview icon, so the trigger tool operator can quickly distinguish the various triggerable events.
 	- `longdesc`: optional text that is shown to the trigger tool operator to help understand what the intention of this trigger is.
 	- `id`: trigger identity, to be passed to the `trigger` call later.
@@ -55,11 +52,11 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 
 The intention of the `type` field is to help populate the UI in a meaningful way (and allow this to be specified in the preproduction tool). I imagine the following types (and behaviours) but this needs to be driven by the requeirements:
 
+- `"set"` a value to be set (from the `tt:value` attribute) without user interaction (and not presented to the user).
 - `"string"` general text entry field, basically the default catch-all.
-- `"time"` a point in time. Probably an integer. The UI should probably have buttons like  `Now` or `In 10 seconds` or so. What this value means (relative to current clock, or beginning of presentation, or something else) needs to come out of the requirements.
-- `"duration"` a duration. Probably in seconds. Should probably have a button _Indefinite_ in the UI, and maybe a button `Default` if the item triggered has a natural duration (for example a prerecorded video clip).
-- `"url"` a url. This may need more functionality, so we can present the triggering tool operator with nice names like _Rossi bikeCam_ or _Home Team Reverse Angle_ in stead of them having the type in horribly long URLs. But maybe that can be handled with the `"choice"` type.
-- `"const"` always set a fixed string value (from the `tt:value` attribute).
+- _(not implemented or fully designed yet)_ `"time"` a point in time. Probably an integer. The UI should probably have buttons like  `Now` or `In 10 seconds` or so. What this value means (relative to current clock, or beginning of presentation, or something else) needs to come out of the requirements.
+- _(not implemented or fully designed yet)_ `"duration"` a duration. Probably in seconds. Should probably have a button _Indefinite_ in the UI, and maybe a button `Default` if the item triggered has a natural duration (for example a prerecorded video clip).
+- _(not implemented or fully designed yet)_ `"url"` a url. This may need more functionality, so we can present the triggering tool operator with nice names like _Rossi bikeCam_ or _Home Team Reverse Angle_ in stead of them having the type in horribly long URLs. But maybe that can be handled with the `"choice"` type.
 - _(not implemented or fully designed yet)_ `"bool"` a boolean, probably based on a checkmark or something.
 - _(not implemented or fully designed yet)_ `"choice"` should have a list of name/value pairs, where the user selects one of the names and the corresponding value is returned. Or maybe just a list of labels, with the front end returning the index?
 - Maybe we need a way to specify a `bookmark`, a point in time which was previously setduring the live playback. Details (such as whether a bookmark implicitly refers to the main video, or is just a point in time so it can be used to pull in videos from different angles) need to be worked out.
@@ -68,11 +65,43 @@ Note that a lot of this depends on the requirements for the live triggering tool
 
 ### Callbacks
 
-We may want a callback mechanism so the timeline service (or production tool backend) can tell the live triggering tool that the list of triggers has changed. Aternatively, the triggering tool could poll.
+Currently the trigger tool frontent polls the backend periodically to refresh the list of current events. In future, we may want a callback mechanism.
 
 ## Timeline Document Considerations
 
-The events will be `<tl:par>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`. 
+The events will be `<tl:par>` or `<tl:seq>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`.
+
+The general structure of an event that always runs to completion is as follows:
+
+```
+<tl:seq tt:name="..." xml:id="..." >
+    <tt:parameters>
+        <tt:parameter tt:name="begin time" tt:parameter="tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(..)}" />
+    </tt:parameters>
+    <tl:sleep tl:dur="0" />
+    <tl:par>
+        ... real content ...
+    </tl:par>
+</tl:seq>
+```
+
+The general structure of an event that can be stopped interactively is as follows:
+
+```
+<tl:seq tt:name="..." xml:id="..." >
+    <tt:parameters>
+        <tt:parameter tt:name="begin time" tt:parameter="tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(..)}" />
+	</tt:parameters>
+	<tt:modparameters>
+	    <tt:parameter tt:name="duration" tt:parameter="tl:par/tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(.)}" />
+	</tt:modparameters>
+    <tl:sleep tl:dur="0" />
+    <tl:par>
+    	<tl:sleep tl:dur="99999" />
+        ... real content ...
+    </tl:par>
+</tl:seq>
+```
 
 An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= required= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted), `tt:verb`, `tt:modVerb`, `tt:longdesc` and `tt:previewUrl`.
 
@@ -80,11 +109,28 @@ There is a second set of parameters `<tt:modparameters>` to signify the paramete
 
 The `parameter` parameters can be relative XPath expressions pointing to the attribute to be modified.
 
+The `value` can be an _Attribute Value Template_, in which case the expression is evaluated and the result stored in the attribute to be modified.
+
+At the moment, exactly two AVTs are implemented (hardcoded), to record current time point and duration. These are used to set the `tl:dur` attribute of `tl:sleep` elements dynamically. See the examples above for how to use these.
+
 On `trigger`, the whole event is copied and its `xml:id` is replaced by a new unique id. All parameter values are filled in. Then the new element is inserted into the timeline as a new child of the parent of the `<tt:events>` element.
 
 The new element (with its new ID) will now show up in the `get` return value, with `trigger=false` and `modify=true`. It will disappear from there whenever its natural duration is done.
 
 The parameter structure for types _choice_ and _bool_ still needs to be defined, probably with some form of indirection. These could then also be used to set multiple parameters at the same time (such as _mediaUrl_ and _auxMediaUrl_ for video elements).
+
+### Timeline service coordination
+
+The trigger tool backend needs to coordinate with the timeline service: 
+
+- The timeline service needs to tell when elements become active and inactive, so the backend can adapt the set of triggerable and modifyable events.
+- The timeline service needs to tell the backend the current clock values of certain elements, so the backend can insert the correct values for the `{tt:clock(.)}` and `{tt:clock(..)}` time values.
+
+When synthesizing the document for the timeline service, the backend inserts the attribute `tt:wantstatus="true"` on all elements for which it wants status and timing updates.
+
+The timeline service now reports `tls:state` and `tls:progress` for those elements (regularly, or whenever they have changed).
+
+The backend stores these on its internal representation of the elements (after converting the progress to a `tls:epoch` that represents start time of the element, so current time of the element can be recomputed later).
 
 ## Preproduction Tool Considerations
 
