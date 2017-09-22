@@ -160,9 +160,8 @@ def document_events_trigger(documentId, id):
     if not isinstance(parameters, list):
         abort(405)
 
-    events.trigger(id, parameters)
+    return events.trigger(id, parameters)
 
-    return ''
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
 def document_events_modify(documentId, id):
@@ -178,9 +177,7 @@ def document_events_modify(documentId, id):
     if not isinstance(parameters, list):
         abort(405)
 
-    events.modify(id, parameters)
-
-    return ''
+    return events.modify(id, parameters)
 
 #
 # Per-document, serve aspect, for consumption of views on the document
