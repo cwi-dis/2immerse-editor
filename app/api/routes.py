@@ -60,6 +60,7 @@ def get_configuration():
 @app.route(API_ROOT + "/configuration", methods=["PUT"])
 def put_configuration():
     globalSettings._put(request.get_json())
+    myLogging.install(globalSettings.noKibana, globalSettings.logLevel)
     return 'OK\n'
 
 #

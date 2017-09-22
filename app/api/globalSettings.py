@@ -17,7 +17,7 @@ timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v
 
 # Logging parameters for the authoring service
 noKibana = False
-logLevel = 'DEBUG'
+logLevel = 'INFO'
 
 def _get():
     kList = [name for name in globals() if name[:1] != '_']

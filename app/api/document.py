@@ -897,13 +897,14 @@ class DocumentServe:
             return abs(t1-t2) < 0.1
         if oldState == newState and almostEqual(oldEpoch, newEpoch):
             return False
+        self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.loggerExtra)
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
         else:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("state"))
         if newEpoch:
             elt.set(NS_TIMELINE_INTERNAL("epoch"), str(newEpoch))
-        else:
+        elif NS_TIMELINE_INTERNAL("epoch") in elt.attrib:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("epoch"))
         return True
          

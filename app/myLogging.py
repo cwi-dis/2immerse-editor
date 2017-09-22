@@ -55,10 +55,10 @@ class MyLoggerAdapter(logging.LoggerAdapter):
 		return msg, kwargs
 
 def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
-    print 'xxxjack installing logger...'
     if noKibana:
-        global MyFormatter
-        MyFormatter = logging.Formatter
+        currentFormatterClass = logging.Formatter
+    else:
+        currentFormatterClass = MyFormatter
     if logLevel:
         for ll in logLevel.split(','):
             if ':' in ll:
@@ -70,12 +70,7 @@ def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
             loggerToModify.setLevel(newLevel)
     
     rootLogger = logging.getLogger()
-    rootLogger.handlers[0].setFormatter(MyFormatter())
-    rootLogger.debug('Logger installed, level >= DEBUG')
-    rootLogger.info('Logger installed, level >= INFO')
-    rootLogger.warn('Logger installed, level >= WARN')
-    tmpLogger = logging.getLogger('foobar')
-    tmpLogger.debug('Foobar logger DEBUG')
+    rootLogger.handlers[0].setFormatter(currentFormatterClass())
 
 # Make stdout unbuffered
 class Unbuffered(object):
