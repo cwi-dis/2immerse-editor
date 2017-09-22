@@ -127,9 +127,9 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
           <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
           {(event.longdesc) && <p>{event.longdesc}</p>}
 
-          <table className="table is-narrow" style={{width: "50%", margin: "20px 0 15px 0"}}>
+          <table className="table is-narrow" style={{width: "80%", margin: "20px 0 15px 0"}}>
             <tbody>
-              {params.map((param, i) => {
+              {params.filter((param) => param.type !== "set").map((param, i) => {
                 return (
                   <tr key={i}>
                     <td style={{width: "50%", verticalAlign: "middle"}}>
