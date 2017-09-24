@@ -1,5 +1,4 @@
 import * as React from "react";
-import { List } from "immutable";
 import { Group, Rect, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 

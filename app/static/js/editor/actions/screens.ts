@@ -72,7 +72,7 @@ function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
     const result = findById(getState().screens.previewScreens, screenId);
 
     if (result) {
-      const [_, screen] = result;
+      const [, screen] = result;
 
       if (screen.regions.count() > 1) {
         const regionId = screen.regions.last()!.id;

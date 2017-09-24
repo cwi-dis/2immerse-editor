@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Layer, Rect, Stage, Group, Text, Line } from "react-konva";
+import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { Coords, countLeafNodes, getRandomInt, getTreeHeight } from "../../util";

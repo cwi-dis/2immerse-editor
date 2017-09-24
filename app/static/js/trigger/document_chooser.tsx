@@ -44,7 +44,6 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     ev.preventDefault();
 
     let submitUrl = "/api/v1/document";
-    let formPromise: Promise<string>;
     let formData: FormData | undefined;
 
     if (this.fileInput && this.fileInput.files) {

@@ -197,7 +197,7 @@ describe("Masters reducer", () => {
     const layout = transformedState.layouts.first();
 
     expect(transformedState).toBe(state);
-    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+    expect(layout.placedComponents.count()).toEqual(0);
   });
 
   it("should remove all component placements containing the given screen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {

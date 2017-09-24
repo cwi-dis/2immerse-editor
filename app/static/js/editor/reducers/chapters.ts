@@ -1,6 +1,6 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
-import { ActionHandler, findById, generateChapterKeyPath } from "../util";
+import { ActionHandler, generateChapterKeyPath } from "../util";
 import * as actions from "../actions/chapters";
 
 type MasterId = string;

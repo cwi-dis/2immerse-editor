@@ -54,7 +54,6 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
     } else {
       const startX = x - xMargin / 2;
       const endX = x + width + xMargin / 2;
-      const centerX = x + width / 2;
 
       connectorLines.push(
         <Line key={`middle.${position}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />

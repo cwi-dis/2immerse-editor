@@ -3,7 +3,6 @@ import * as shortid from "shortid";
 
 import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/masters";
-import { Screen as ScreenModel } from "./screens";
 
 export interface ComponentPlacement {
   screen: string;
