@@ -246,6 +246,91 @@ describe("Masters reducer", () => {
     expect(transformedState).toEqual(state);
   });
 
+  it("should remove the given component from the given master layout on REMOVE_COMPONENT_FROM_MASTER", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_COMPONENT_FROM_MASTER", payload: {
+        masterId: "masterId1",
+        screenId: "screen2",
+        regionId: "region5",
+        componentId: "component2"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+    expect(layout.placedComponents.count()).toBe(3);
+  });
+
+  it("should return the state untransformed if the master layout does not exist on REMOVE_COMPONENT_FROM_MASTER", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_COMPONENT_FROM_MASTER", payload: {
+        masterId: "masterId5",
+        screenId: "screen2",
+        regionId: "region5",
+        componentId: "component2"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+
+    expect(layout.placedComponents.count()).toBe(4);
+    expect(transformedState).toBe(transformedState);
+  });
+
+  it("should return the state untransformed if the component does not exist on REMOVE_COMPONENT_FROM_MASTER", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        { screen: "screen1", region: "region1", component: "component1"},
+        { screen: "screen2", region: "region5", component: "component2"},
+        { screen: "screen3", region: "region2", component: "component5"},
+        { screen: "screen1", region: "region1", component: "component8"},
+      ])}),
+      new Master({ id: "masterId2", name: "Master Layout 2", placedComponents: List([
+        { screen: "screen1", region: "region4", component: "component9"}
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "REMOVE_COMPONENT_FROM_MASTER", payload: {
+        masterId: "masterId1",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component2"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+
+    expect(layout.placedComponents.count()).toBe(4);
+    expect(transformedState).toBe(transformedState);
+  });
+
   it("should return the state untransformed if there are not components placed on REMOVE_SCREEN_FROM_LAYOUTS", () => {
     const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1"}),
