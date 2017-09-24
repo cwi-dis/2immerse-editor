@@ -43,6 +43,19 @@ function assignComponentToMaster(masterId: string, screenId: string, regionId: s
   };
 }
 
+export type REMOVE_COMPONENT_FROM_MASTER = PayloadAction<"REMOVE_COMPONENT_FROM_MASTER", {masterId: string, screenId: string, regionId: string, componentId: string}>;
+function removeComponentFromMaster(masterId: string, screenId: string, regionId: string, componentId: string): REMOVE_COMPONENT_FROM_MASTER {
+  return {
+    type: "REMOVE_COMPONENT_FROM_MASTER",
+    payload: {
+      masterId,
+      screenId,
+      regionId,
+      componentId
+    }
+  };
+}
+
 export type REMOVE_SCREEN_FROM_LAYOUTS = PayloadAction<"REMOVE_SCREEN_FROM_LAYOUTS", {screenId: string}>;
 function removeScreenFromLayouts(screenId: string): REMOVE_SCREEN_FROM_LAYOUTS {
   return {
@@ -68,6 +81,7 @@ export interface MasterActions {
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;
+  removeComponentFromMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => REMOVE_COMPONENT_FROM_MASTER;
   removeScreenFromLayouts: (screenId: string) => REMOVE_SCREEN_FROM_LAYOUTS;
   removeRegionFromLayouts: (regionId: string) => REMOVE_REGION_FROM_LAYOUTS;
 }
@@ -77,6 +91,7 @@ export const actionCreators: MasterActions = {
   removeMasterLayout,
   updateSelectedLayout,
   assignComponentToMaster,
+  removeComponentFromMaster,
   removeScreenFromLayouts,
   removeRegionFromLayouts
 };
