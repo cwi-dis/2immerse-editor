@@ -53,8 +53,8 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
             return <Text x={x * width} y={y * height}
                          width={w * width} padding={5}
                          lineHeight={1.5} fontSize={15}
-                         text={componentNames} />;
-          })}
+                         text={componentNames} key={regionId} />
+          }).toArray()}
         </Group>
       );
     }
