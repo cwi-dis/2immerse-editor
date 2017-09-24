@@ -93,6 +93,21 @@ actionHandler.addHandler("ASSIGN_COMPONENT_TO_MASTER", (state, action: actions.A
   });
 });
 
+actionHandler.addHandler("REMOVE_COMPONENT_FROM_MASTER", (state, action: actions.REMOVE_COMPONENT_FROM_MASTER) => {
+  const { componentId, screenId, regionId, masterId } = action.payload;
+  const result = findById(state.layouts, masterId);
+
+  if (!result) {
+    return state;
+  }
+
+  return state.updateIn(["layouts", result[0], "placedComponents"], (placements: List<ComponentPlacement>) => {
+    return placements.filterNot((p) => {
+      return p.screen === screenId && p.region === regionId && p.component === componentId;
+    });
+  });
+});
+
 actionHandler.addHandler("REMOVE_SCREEN_FROM_LAYOUTS", (state, action: actions.REMOVE_SCREEN_FROM_LAYOUTS) => {
   const { screenId } = action.payload;
 
