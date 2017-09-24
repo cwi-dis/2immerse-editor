@@ -53,6 +53,22 @@ describe("Master actions", () => {
     ).toEqual(expected);
   });
 
+  it("should create a REMOVE_COMPONENT_FROM_MASTER action", () => {
+    const expected: actionTypes.REMOVE_COMPONENT_FROM_MASTER = {
+      type: "REMOVE_COMPONENT_FROM_MASTER",
+      payload: {
+        masterId: "layout1",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component1"
+      }
+    };
+
+    expect(
+      actionCreators.removeComponentFromMaster("layout1", "screen1", "region1", "component1")
+    ).toEqual(expected);
+  });
+
   it("should create a REMOVE_SCREEN_FROM_LAYOUTS action", () => {
     const expected: actionTypes.REMOVE_SCREEN_FROM_LAYOUTS = {
       type: "REMOVE_SCREEN_FROM_LAYOUTS",
