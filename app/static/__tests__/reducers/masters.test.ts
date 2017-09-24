@@ -176,6 +176,33 @@ describe("Masters reducer", () => {
     expect(layout.placedComponents.get(0).component).toEqual("component1");
   });
 
+  it("should not add component to the placedComponents key if already present on ASSIGN_COMPONENT_TO_MASTER", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1", placedComponents: List([
+        {
+          screen: "screen1",
+          region: "region1",
+          component: "component1"
+        }
+      ])})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "ASSIGN_COMPONENT_TO_MASTER", payload: {
+        masterId: "masterId1",
+        screenId: "screen1",
+        regionId: "region1",
+        componentId: "component1"
+      }} as any
+    );
+
+    const layout = transformedState.layouts.first();
+
+    expect(layout.placedComponents.count()).toEqual(1);
+    expect(transformedState).toBe(state);
+  });
+
   it("should return the state unchanged on ASSIGN_COMPONENT_TO_MASTER with an unknown master ID", () => {
     const state: MasterState = new MasterState({layouts: List([
       new Master({ id: "masterId1", name: "Master Layout 1" }),

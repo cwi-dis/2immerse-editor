@@ -88,6 +88,10 @@ actionHandler.addHandler("ASSIGN_COMPONENT_TO_MASTER", (state, action: actions.A
   };
 
   return state.updateIn(["layouts", result[0], "placedComponents"], (placements: List<ComponentPlacement>) => {
+    if (placements.find((p) => p.component === componentId && p.region === regionId && p.screen === screenId)) {
+      return placements;
+    }
+
     return placements.push(placement);
   });
 });
