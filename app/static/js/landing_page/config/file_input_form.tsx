@@ -44,16 +44,20 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
     }
 
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
-
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
+
+    const closeNotification = () => {
+      clearTimeout(timeout);
+      this.setState({submitSuccess: undefined});
+    };
 
     return (
       <div>
         <br/>
         <div className={classNames(["notification", notificationColor])} style={{padding: 10}}>
-          <button className="delete" onClick={() => this.setState({submitSuccess: undefined})}></button>
+          <button className="delete" onClick={closeNotification}></button>
           {(this.state.submitSuccess)
             ? "Data successfully updated!"
             : "Could not update data!"}
