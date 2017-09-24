@@ -5,7 +5,7 @@ import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/masters";
 import { Screen as ScreenModel } from "./screens";
 
-interface ComponentPlacement {
+export interface ComponentPlacement {
   screen: string;
   region: string;
   component: any;

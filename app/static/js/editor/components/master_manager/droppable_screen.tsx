@@ -1,15 +1,18 @@
 import * as React from "react";
+import { List } from "immutable";
 import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
+import { ComponentPlacement } from "../../reducers/masters";
 
 interface DroppableScreenProps {
   screenInfo: ScreenModel;
   width: number;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => void;
   currentLayout?: string;
+  placedComponents?: List<ComponentPlacement>;
 }
 
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
