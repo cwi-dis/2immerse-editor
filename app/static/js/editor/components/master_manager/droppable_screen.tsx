@@ -84,7 +84,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
 
   public render() {
     return (
-      <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+      <div style={{display: "table", margin: "0 auto"}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
         <Screen {...this.props}
                 assignStageRef={(e) => this.stageWrapper = e } />
       </div>
