@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { makeRequest } from "../../editor/util";
 import CurrentVersion from "../../editor/components/current_version";
-import ManualInputForm, { ManualInputFormState } from "./manual_input_form";
+import ManualInputForm, { FormValues } from "./manual_input_form";
 import FileInputForm from "./file_input_form";
 
 interface ConfigState {
-  formData: ManualInputFormState;
+  formData: Partial<FormValues>;
 }
 
 class Config extends React.Component<{}, ConfigState> {

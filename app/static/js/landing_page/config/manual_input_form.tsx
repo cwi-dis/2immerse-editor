@@ -6,18 +6,22 @@ import { URLInputField, CheckboxInputField, SelectInputField } from "./input_fie
 
 interface ManualInputFormProps {
   onSubmit: () => void;
-  formData: ManualInputFormState;
+  formData: Partial<FormValues>;
 }
 
-export interface ManualInputFormState {
-  layoutService?: string;
-  clientApiUrl?: string;
-  logLevel?: string;
-  timelineService?: string;
-  mode?: string;
-  noKibana?: boolean;
-  websocketService?: string;
-  formTainted?: boolean;
+export interface FormValues {
+  layoutService: string;
+  clientApiUrl: string;
+  logLevel: string;
+  timelineService: string;
+  mode: string;
+  noKibana: boolean;
+  websocketService: string;
+}
+
+interface ManualInputFormState {
+  formData: Partial<FormValues>;
+  formTainted: boolean;
   submitSuccess?: boolean;
 }
 
@@ -25,22 +29,35 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   private modeValues: Array<string> = ["standalone"];
   private debugLevelValues: Array<string> = ["DEBUG"];
 
-  private formKeys: Array<keyof ManualInputFormState> = [
+  private formKeys: Array<keyof FormValues> = [
     "layoutService", "clientApiUrl", "logLevel",
     "timelineService", "mode", "noKibana", "websocketService"
   ];
 
   public constructor(props: ManualInputFormProps) {
     super(props);
-    this.state = props.formData;
+
+    this.state = {
+      formData: props.formData,
+      formTainted: false
+    };
   }
 
   public componentWillReceiveProps(newProps: ManualInputFormProps) {
-    this.setState(pluck(newProps.formData, this.formKeys));
+    this.setState((prevState) => {
+      const newState = {...prevState};
+
+      newState.formData = Object.assign({},
+        prevState.formData,
+        pluck(newProps.formData, this.formKeys)
+      );
+
+      return newState;
+    });
   }
 
   private submitManualForm() {
-    const configData = pluck(this.state, this.formKeys);
+    const configData = pluck(this.state.formData, this.formKeys);
 
     makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
       this.setState({
@@ -62,7 +79,6 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     }
 
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
-
     setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
@@ -80,7 +96,22 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     );
   }
 
+  private updateFormData(key: keyof FormValues, value: string | boolean) {
+    this.setState((prevState) => {
+      const newState = {
+        ...prevState,
+        formTainted: true
+      };
+
+      newState.formData[key] = value;
+
+      return newState;
+    });
+  }
+
   public render() {
+    const { formData } = this.state;
+
     return (
       <div>
         <h4>Manual Configuration</h4>
@@ -88,31 +119,31 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
         <br/>
 
         <URLInputField label="Client API"
-                       value={this.state.clientApiUrl}
-                       onChange={(e) => this.setState({ clientApiUrl: e.target.value, formTainted: true})} />
+                       value={formData.clientApiUrl}
+                       onChange={(e) => this.updateFormData("clientApiUrl", e.target.value)} />
         <URLInputField label="Layout Service"
-                       value={this.state.layoutService}
-                       onChange={(e) => this.setState({ layoutService: e.target.value, formTainted: true})} />
+                       value={formData.layoutService}
+                       onChange={(e) => this.updateFormData("layoutService", e.target.value)} />
         <URLInputField label="Timeline Service"
-                       value={this.state.timelineService}
-                       onChange={(e) => this.setState({ timelineService: e.target.value, formTainted: true})} />
+                       value={formData.timelineService}
+                       onChange={(e) => this.updateFormData("timelineService", e.target.value)} />
         <URLInputField label="Websocket Service"
-                       value={this.state.websocketService}
-                       onChange={(e) => this.setState({ websocketService: e.target.value, formTainted: true})} />
+                       value={formData.websocketService}
+                       onChange={(e) => this.updateFormData("websocketService", e.target.value)} />
 
         <CheckboxInputField label="Kibana"
                             description="Disable Kibana"
-                            value={this.state.noKibana || false}
-                            onChange={(e) => this.setState({ noKibana: e.target.checked, formTainted: true})} />
+                            value={formData.noKibana || false}
+                            onChange={(e) => this.updateFormData("noKibana", e.target.checked)} />
 
         <SelectInputField label="Mode"
                           options={this.modeValues}
-                          value={this.state.mode}
-                          onChange={(e) => this.setState({ mode: e.target.value, formTainted: true})} />
+                          value={formData.mode}
+                          onChange={(e) => this.updateFormData("mode", e.target.value)} />
         <SelectInputField label="Log Level"
                           options={this.debugLevelValues}
-                          value={this.state.logLevel}
-                          onChange={(e) => this.setState({ logLevel: e.target.value, formTainted: true})} />
+                          value={formData.logLevel}
+                          onChange={(e) => this.updateFormData("logLevel", e.target.value)} />
         <br/>
 
         <div className="field is-horizontal">
