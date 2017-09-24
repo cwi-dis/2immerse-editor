@@ -49,6 +49,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     }
 
     const [_, currentScreen] = findById(previewScreens, currentScreenId);
+    const width = (currentScreen.orientation === "landscape") ? 800 : 300;
 
     return (
       <div>
@@ -60,7 +61,7 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
         <br/><br/>
         <DroppableScreen screenInfo={currentScreen}
                          currentLayout={currentLayout}
-                         width={500}
+                         width={width}
                          assignComponentToMaster={this.props.assignComponentToMaster} />
       </div>
     );
