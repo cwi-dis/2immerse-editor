@@ -84,29 +84,6 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
     );
   }
 
-  public renderPlacements() {
-    const { layouts, currentLayout: currentLayoutId } = this.props.masters;
-
-    if (!currentLayoutId) {
-      return;
-    }
-
-    const [_, layout] = findById(layouts, currentLayoutId);
-
-    return (
-      <div>
-        <b>Placed components for {layout.name} ({layout.id}):</b>
-        <div>
-          {layout.placedComponents!.sort().map((placement, i) => {
-            return (
-              <p key={i}>&emsp;&emsp;Screen <i>{placement.screen}</i>, Region <i>{placement.region}</i>, Component <i>{placement.component}</i></p>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
   public render() {
     const { layouts, currentLayout } = this.props.masters;
 
@@ -115,8 +92,6 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Manage Masters</h3>
           {this.renderScreen()}
-          <br/>
-          {this.renderPlacements()}
         </div>
         <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
