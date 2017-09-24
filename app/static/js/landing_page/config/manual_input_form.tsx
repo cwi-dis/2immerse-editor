@@ -22,6 +22,9 @@ export interface ManualInputFormState {
 }
 
 class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputFormState> {
+  private modeValues: Array<string> = ["standalone"];
+  private debugLevelValues: Array<string> = ["DEBUG"];
+
   private formKeys: Array<keyof ManualInputFormState> = [
     "layoutService", "clientApiUrl", "logLevel",
     "timelineService", "mode", "noKibana", "websocketService"
@@ -103,11 +106,11 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
                             onChange={(e) => this.setState({ noKibana: e.target.checked, formTainted: true})} />
 
         <SelectInputField label="Mode"
-                          options={["standalone"]}
+                          options={this.modeValues}
                           value={this.state.mode}
                           onChange={(e) => this.setState({ mode: e.target.value, formTainted: true})} />
         <SelectInputField label="Log Level"
-                          options={["DEBUG"]}
+                          options={this.debugLevelValues}
                           value={this.state.logLevel}
                           onChange={(e) => this.setState({ logLevel: e.target.value, formTainted: true})} />
         <br/>
