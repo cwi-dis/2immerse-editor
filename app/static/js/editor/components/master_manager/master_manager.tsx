@@ -1,9 +1,11 @@
 import * as React from "react";
+import { List } from "immutable";
 
 import { ApplicationState } from "../../store";
 import { MasterActions } from "../../actions/masters";
 import { ScreenActions } from "../../actions/screens";
 import { findById } from "../../util";
+import { ComponentPlacement } from "../../reducers/masters";
 
 import DMAppcContainer from "./dmappc_container";
 import DroppableScreen from "./droppable_screen";
@@ -36,6 +38,21 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
     const screenId = e.currentTarget.value;
     this.props.updateSelectedScreen(screenId);
+  }
+
+  private getComponentsOnScreen(screenId: string, layoutId?: string): List<ComponentPlacement> | undefined {
+    if (!layoutId) {
+      return undefined;
+    }
+
+    const { layouts } = this.props.masters;
+    const [, currentLayout] = findById(layouts, layoutId);
+
+    if (!currentLayout || !currentLayout.placedComponents) {
+      return undefined;
+    }
+
+    return currentLayout.placedComponents.filter((p) => p.screen === screenId);
   }
 
   private renderScreen() {
