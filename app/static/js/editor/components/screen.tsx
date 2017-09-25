@@ -46,15 +46,15 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
           {regionMap.map((placedComponents, regionId) => {
             const [, region] = findById(props.screenInfo.regions, regionId);
             const [x, y ] = region.position;
-            const [w] = region.size;
+            const [w, h] = region.size;
 
             const componentNames = placedComponents.map((p) => p.component).join(", ");
 
             return <Text x={x * width} y={y * height}
-                         width={w * width} padding={5}
-                         lineHeight={1.5} fontSize={15}
+                         width={w * width} height={h * height}
+                         padding={5} lineHeight={1.5} fontSize={15}
                          text={componentNames} key={regionId} />;
-          }).toArray()}
+          }).toList()}
         </Group>
       );
     }

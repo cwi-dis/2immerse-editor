@@ -19,7 +19,7 @@ interface ProgramAuthorState {
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
   private readonly defaultBoxSize: Coords = [200, 120];
   private readonly boxMargin: Coords = [40, 70];
-  private readonly canvasWidth = window.innerWidth - 40;
+  private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
   private stageWrapper: any;
@@ -114,8 +114,8 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
     const treeWidth = this.defaultBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
-    if (treeWidth >= window.innerWidth) {
-      this.boxSize[0] = (window.innerWidth - 50 - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
+    if (treeWidth >= this.canvasWidth) {
+      this.boxSize[0] = (this.canvasWidth - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
     } else {
       this.boxSize[0] = this.defaultBoxSize[0];
     }
@@ -157,16 +157,21 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
     const treeOffset = this.getTreeOffset(chapters);
 
     return (
-      <div className="content">
-        <h3>Author Program</h3>
-        <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
-          <Layer>
-            {this.drawChapterTree(chapters, treeOffset)}
-            <Rect fill="#262626" strokeWidth={0}
-                  x={0} y={0}
-                  width={this.canvasWidth} height={treeOffset[1] - 1} />
-          </Layer>
-        </Stage>
+      <div className="columnlayout">
+        <div className="column-content">
+          <h3>Author Program</h3>
+          <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
+            <Layer>
+              {this.drawChapterTree(chapters, treeOffset)}
+              <Rect fill="#262626" strokeWidth={0}
+                    x={0} y={0}
+                    width={this.canvasWidth} height={treeOffset[1] - 1} />
+            </Layer>
+          </Stage>
+        </div>
+        <div className="column-sidebar">
+          sidebar
+        </div>
       </div>
     );
   }
