@@ -45,15 +45,19 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
         <Group>
           {regionMap.map((placedComponents, regionId) => {
             const [, region] = findById(props.screenInfo.regions, regionId);
-            const [x, y ] = region.position;
-            const [w, h] = region.size;
+            const [x, y] = region.position;
+            const [w] = region.size;
 
-            const componentNames = placedComponents.map((p) => p.component).join(", ");
-
-            return <Text x={x * width} y={y * height}
-                         width={w * width} height={h * height}
-                         padding={5} lineHeight={1.5} fontSize={15}
-                         text={componentNames} key={regionId} />;
+            return (
+              <Group key={`labels-${regionId}`}>
+                {placedComponents.map((p, i) => {
+                  return <Text x={x * width} y={y * height + i * 20}
+                               width={w * width} fontSize={15} padding={5}
+                               text={p.component} key={`${p.region}-${i}`}
+                               onClick={() => console.log("clicked component", p.component, "in region", p.region)} />;
+                })}
+              </Group>
+            );
           }).toList()}
         </Group>
       );
