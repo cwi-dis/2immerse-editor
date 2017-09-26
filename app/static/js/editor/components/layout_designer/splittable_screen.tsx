@@ -95,6 +95,10 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     const { width, screenInfo } = this.props;
     const { contextMenu } = this.state;
 
+    const computedHeight = (screenInfo.orientation === "landscape")
+      ? 9 / 16 * width
+      : 16 / 9 * width;
+
     const onContextMenuClick = () => {
       this.setState({contextMenu: {visible: false, x: 0, y: 0}});
     };
@@ -118,7 +122,9 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
         </p>
         <div>
           <div style={{display: "table", margin: "0 auto"}} onClickCapture={this.handleCanvasClick.bind(this)}>
-            <Screen width={width} screenInfo={screenInfo} assignStageRef={(e) => this.stageWrapper = e } />
+            <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+              <Screen width={width} height={computedHeight} screenInfo={screenInfo} />
+            </Stage>
           </div>
         </div>
         <br/>

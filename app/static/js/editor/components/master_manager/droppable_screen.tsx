@@ -83,10 +83,18 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   }
 
   public render() {
+    const { screenInfo: screen, width, placedComponents } = this.props;
+    const computedHeight = (screen.orientation === "landscape")
+      ? 9 / 16 * width
+      : 16 / 9 * width;
+
     return (
       <div style={{display: "table", margin: "0 auto"}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-        <Screen {...this.props}
-                assignStageRef={(e) => this.stageWrapper = e } />
+        <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+          <Screen screenInfo={screen}
+                  width={width} height={computedHeight}
+                  placedComponents={placedComponents} />
+        </Stage>
       </div>
     );
   }

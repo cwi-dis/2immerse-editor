@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Layer, Rect, Stage, Group, Text } from "react-konva";
+import { Layer, Rect, Group, Text } from "react-konva";
 
 import { findById } from "../util";
 import { Screen as ScreenModel } from "../reducers/screens";
@@ -9,15 +9,12 @@ import { ComponentPlacement } from "../reducers/masters";
 export interface ScreenProps {
   screenInfo: ScreenModel;
   width: number;
-  assignStageRef?: (stage: Stage | null) => void;
+  height: number;
   placedComponents?: List<ComponentPlacement>;
 }
 
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
-  const { width, screenInfo: screen } = props;
-  const computedHeight = (screen.orientation === "landscape")
-    ? 9 / 16 * width
-    : 16 / 9 * width;
+  const { width, height, screenInfo: screen } = props;
 
   const renderRegions = (width: number, height: number) => {
     return (
@@ -67,13 +64,11 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   };
 
   return (
-    <Stage width={width} height={computedHeight} ref={(e) => props.assignStageRef && props.assignStageRef(e)}>
-      <Layer>
-        <Rect x={0} y={0} width={width} height={computedHeight} fill="white" />
-        {renderRegions(width, computedHeight)}
-        {renderLabels(width, computedHeight)}
-      </Layer>
-    </Stage>
+    <Layer>
+      <Rect x={0} y={0} width={width} height={height} fill="white" />
+      {renderRegions(width, height)}
+      {renderLabels(width, height)}
+    </Layer>
   );
 };
 
