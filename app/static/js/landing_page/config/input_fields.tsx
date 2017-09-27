@@ -23,6 +23,29 @@ export const URLInputField: React.SFC<URLInputFieldProps> = (props) => {
   );
 };
 
+interface TextInputFieldProps {
+  label: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+}
+
+export const TextInputField: React.SFC<TextInputFieldProps> = (props) => {
+  return (
+    <div className="field is-horizontal">
+      <div className="field-label is-normal">
+        <label className="label">{props.label}</label>
+      </div>
+      <div className="field-body">
+        <div className="field">
+          <div className="control">
+            <input className="input" type="text" value={props.value} onChange={props.onChange.bind(this)} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface CheckboxInputFieldProps {
   label: string;
   value: boolean;
