@@ -86,9 +86,7 @@ function selectNewestLayout(): SELECT_NEWEST_LAYOUT {
 export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void> {
   return (dispatch, getState) => {
     dispatch(addMasterLayout(name));
-
-    const createdMaster = getState().masters.layouts.last()!;
-    dispatch(updateSelectedLayout(createdMaster.id));
+    dispatch(selectNewestLayout());
   };
 }
 

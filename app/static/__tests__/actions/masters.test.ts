@@ -1,5 +1,9 @@
 /// <reference types="jest" />
 
+import configureMockStore from "redux-mock-store";
+import thunk from "redux-thunk";
+import { List } from "immutable";
+
 import * as actionTypes from "../../js/editor/actions/masters";
 import { actionCreators } from "../../js/editor/actions/masters";
 
@@ -97,5 +101,21 @@ describe("Master actions", () => {
     };
 
     expect(actionCreators.selectNewestLayout()).toEqual(expected);
+  });
+});
+
+describe("Async master actions", () => {
+  const mockStore = configureMockStore([thunk]);
+
+  it("should create and select a master when calling addMasterLayoutAndUpdateCurrent() and creating the first master", () => {
+    const expectedActions = [
+      { type: "ADD_MASTER_LAYOUT", payload: { name: "Master 1" }},
+      { type: "SELECT_NEWEST_LAYOUT" }
+    ];
+
+    const store = mockStore({ masters: { currentLayout: undefined, layouts: List() } });
+    store.dispatch(actionCreators.addMasterLayoutAndUpdateCurrent("Master 1"));
+
+    expect(store.getActions()).toEqual(expectedActions);
   });
 });
