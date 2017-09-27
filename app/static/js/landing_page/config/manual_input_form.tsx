@@ -2,7 +2,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { makeRequest, pluck } from "../../editor/util";
-import { URLInputField, CheckboxInputField, SelectInputField } from "./input_fields";
+import { TextInputField, URLInputField, CheckboxInputField, SelectInputField } from "./input_fields";
 
 interface ManualInputFormProps {
   onSubmit: () => void;
@@ -27,7 +27,6 @@ interface ManualInputFormState {
 
 class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputFormState> {
   private modeValues: Array<string> = ["standalone"];
-  private debugLevelValues: Array<string> = ["DEBUG"];
 
   private formKeys: Array<keyof FormValues> = [
     "layoutService", "clientApiUrl", "logLevel",
@@ -146,10 +145,9 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
                           options={this.modeValues}
                           value={formData.mode}
                           onChange={(e) => this.updateFormData("mode", e.target.value)} />
-        <SelectInputField label="Log Level"
-                          options={this.debugLevelValues}
-                          value={formData.logLevel}
-                          onChange={(e) => this.updateFormData("logLevel", e.target.value)} />
+        <TextInputField label="Log Level"
+                        value={formData.logLevel}
+                        onChange={(e) => this.updateFormData("logLevel", e.target.value)} />
         <br/>
 
         <div className="field is-horizontal">
