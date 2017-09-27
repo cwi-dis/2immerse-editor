@@ -722,11 +722,8 @@ class DocumentEvents:
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
         
-        if not self.document.companionTimelineIsActive:
-            self.logger.warn("trigger: no timeline service, timing may be inaccurate", extra=self.loggerExtra)
-            return "No timeline service, timing may be inaccurate"
         self.document.companionTimelineIsActive = False
-        return ""
+        return newElement.get(NS_XML('id'))
 
     @edit
     def modify(self, id, parameters):
@@ -754,9 +751,6 @@ class DocumentEvents:
         for e in allElements:
             self.document._elementChanged(e)
 
-        if not self.document.companionTimelineIsActive:
-            self.logger.warn("trigger: no timeline service, timing may be inaccurate", extra=self.loggerExtra)
-            return "No timeline service, timing may be inaccurate"
         self.document.companionTimelineIsActive = False
         return ""
 
