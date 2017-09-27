@@ -1,4 +1,4 @@
-import { PayloadAction } from "../util";
+import { PayloadAction, AsyncAction } from "../util";
 
 export type ADD_MASTER_LAYOUT = PayloadAction<"ADD_MASTER_LAYOUT", {name: string}>;
 function addMasterLayout(name: string): ADD_MASTER_LAYOUT {
@@ -76,8 +76,18 @@ function removeRegionFromLayouts(regionId: string): REMOVE_REGION_FROM_LAYOUTS {
   };
 }
 
+export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addMasterLayout(name));
+
+    const createdMaster = getState().masters.layouts.last()!;
+    dispatch(updateSelectedLayout(createdMaster.id));
+  };
+}
+
 export interface MasterActions {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
+  addMasterLayoutAndUpdateCurrent: (name: string) => AsyncAction<void>;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;
@@ -88,6 +98,7 @@ export interface MasterActions {
 
 export const actionCreators: MasterActions = {
   addMasterLayout,
+  addMasterLayoutAndUpdateCurrent,
   removeMasterLayout,
   updateSelectedLayout,
   assignComponentToMaster,
