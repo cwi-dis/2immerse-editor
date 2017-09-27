@@ -90,4 +90,12 @@ describe("Master actions", () => {
 
     expect(actionCreators.removeRegionFromLayouts("region1")).toEqual(expected);
   });
+
+  it("should create a SELECT_NEWEST_LAYOUT action", () => {
+    const expected: actionTypes.SELECT_NEWEST_LAYOUT = {
+      type: "SELECT_NEWEST_LAYOUT"
+    };
+
+    expect(actionCreators.selectNewestLayout()).toEqual(expected);
+  });
 });
