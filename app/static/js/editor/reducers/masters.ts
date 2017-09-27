@@ -139,4 +139,12 @@ actionHandler.addHandler("REMOVE_REGION_FROM_LAYOUTS", (state, action: actions.R
   });
 });
 
+actionHandler.addHandler("SELECT_NEWEST_LAYOUT", (state, action: actions.SELECT_NEWEST_LAYOUT) => {
+  if (state.layouts.count() === 0) {
+    return state;
+  }
+
+  return state.set("currentLayout", state.layouts.last()!.id);
+});
+
 export default actionHandler.getReducer();
