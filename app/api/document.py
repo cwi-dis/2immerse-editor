@@ -591,7 +591,7 @@ class DocumentEvents:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
             rv.append(self._getDescription(elt, trigger=False))
-        self.logger.info('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.loggerExtra)
+        self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.loggerExtra)
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
             self.logger.debug("get: asking document for setDocumentState calls", extra=self.loggerExtra)
