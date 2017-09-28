@@ -2426,7 +2426,7 @@ kind-of@^3.0.2:
 
 "konva@https://github.com/troeggla/konva":
   version "1.6.8"
-  resolved "https://github.com/troeggla/konva#b6687d54a941130402554112e6418579e5383b17"
+  resolved "https://github.com/troeggla/konva#93e21434bc54a24036b5cc05324bbf95c15ea90b"
 
 lazy-cache@^1.0.3:
   version "1.0.4"
