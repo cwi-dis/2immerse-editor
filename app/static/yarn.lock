@@ -2424,9 +2424,9 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.1.5"
 
-konva@^1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/konva/-/konva-1.6.3.tgz#33fa44282d1248a6f0b7bd780dcac7632db4c6bd"
+"konva@https://github.com/troeggla/konva":
+  version "1.6.8"
+  resolved "https://github.com/troeggla/konva#b6687d54a941130402554112e6418579e5383b17"
 
 lazy-cache@^1.0.3:
   version "1.0.4"
