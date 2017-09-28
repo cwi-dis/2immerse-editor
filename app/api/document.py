@@ -133,9 +133,12 @@ class Document:
         self.editManager = None
         self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
         self.logger = logger
-        self.loggerExtra = dict(subSource='document', documentID=documentId)
+        self._loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
 
+    def getLoggerExtra(self):
+        return self._loggerExtra
+        
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -296,7 +299,7 @@ class Document:
             self.forwardHandler.forward(commands)
 
     def forward(self, commands):
-        self.logger.debug('forward %d commands' % len(commands), extra=self.loggerExtra)
+        self.logger.debug('forward %d commands' % len(commands), extra=self.getLoggerExtra())
         with self.lock:
             self._startListening()
             for command in commands:
@@ -321,7 +324,7 @@ class Document:
 
     @synchronized
     def loadXml(self, data):
-        self.logger.info('load xml (%d bytes)' % len(data), extra=self.loggerExtra)
+        self.logger.info('load xml (%d bytes)' % len(data), extra=self.getLoggerExtra())
         self.url = None
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
@@ -330,7 +333,7 @@ class Document:
 
     @synchronized
     def load(self, url):
-        self.logger.info('load: %s' % url, extra=self.loggerExtra)
+        self.logger.info('load: %s' % url, extra=self.getLoggerExtra())
         self.url = url
         fp = urllib2.urlopen(url)
         self.tree = ET.parse(fp)
@@ -339,7 +342,7 @@ class Document:
 
     @synchronized
     def save(self, url):
-        self.logger.info('save: %s' % url, extra=self.loggerExtra)
+        self.logger.info('save: %s' % url, extra=self.getLoggerExtra())
         p = urlparse.urlparse(url)
         assert p.scheme == 'file'
         filename = urllib.url2pathname(p.path)
@@ -441,13 +444,14 @@ class DocumentXml:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
-        self.logger = self.document.logger
-        self.loggerExtra = dict(self.document.loggerExtra)
-        self.loggerExtra['subSource'] = 'document.xml'
+        self.logger = self.document.logger.getChild('xml')
+        
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
 
     @synchronized
     def paste(self, path, where, tag=None, data='', mimetype='application/x-python-object'):
-        self.logger.info('paste(%s,%s,%s,...)' % (path, where, tag), extra=self.loggerExtra)
+        self.logger.info('paste(%s,%s,%s,...)' % (path, where, tag), extra=self.getLoggerExtra())
         #
         # where should it go?
         #
@@ -500,7 +504,7 @@ class DocumentXml:
 
     @synchronized
     def cut(self, path, mimetype='application/x-python-object'):
-        self.logger.info('cut(%s)' % (path), extra=self.loggerExtra)
+        self.logger.info('cut(%s)' % (path), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         parent = self.document._getParent(element)
         parent.remove(element)
@@ -509,13 +513,13 @@ class DocumentXml:
 
     @synchronized
     def get(self, path, mimetype='application/x-python-object'):
-        self.logger.info('get(%s)' % (path), extra=self.loggerExtra)
+        self.logger.info('get(%s)' % (path), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         return self.document._fromET(element, mimetype)
 
     @edit
     def modifyAttributes(self, path, attrs, mimetype='application/x-python-object'):
-        self.logger.info('modifyAttributes(%s, ...)' % (path), extra=self.loggerExtra)
+        self.logger.info('modifyAttributes(%s, ...)' % (path), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         if mimetype == 'application/x-python-object':
             pass
@@ -537,7 +541,7 @@ class DocumentXml:
 
     @synchronized
     def modifyData(self, path, data):
-        self.logger.info('modifyData(%s, ...)' % (path), extra=self.loggerExtra)
+        self.logger.info('modifyData(%s, ...)' % (path), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         if data == None:
             element.text = None
@@ -549,7 +553,7 @@ class DocumentXml:
 
     @edit
     def copy(self, path, where, sourcepath):
-        self.logger.info('copy(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
+        self.logger.info('copy(%s, %s <- %s)' % (path, where, sourcepath), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         # Get the original
         sourceElement = self.document._getElementByPath(sourcepath)
@@ -561,7 +565,7 @@ class DocumentXml:
 
     @edit
     def move(self, path, where, sourcepath):
-        self.logger.info('move(%s, %s <- %s)' % (path, where, sourcepath), extra=self.loggerExtra)
+        self.logger.info('move(%s, %s <- %s)' % (path, where, sourcepath), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
@@ -572,10 +576,11 @@ class DocumentEvents:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
-        self.logger = self.document.logger
-        self.loggerExtra = dict(self.document.loggerExtra)
-        self.loggerExtra['subSource'] = 'document.events'
+        self.logger = self.document.logger.getChild('events')
 
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
+        
     def _now(self):
         return time.time()
         
@@ -591,10 +596,10 @@ class DocumentEvents:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
             rv.append(self._getDescription(elt, trigger=False))
-        self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.loggerExtra)
+        self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.getLoggerExtra())
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
-            self.logger.debug("get: asking document for setDocumentState calls", extra=self.loggerExtra)
+            self.logger.debug("get: asking document for setDocumentState calls", extra=self.getLoggerExtra())
             self.document.forwardHandler.forward([])
         return rv
 
@@ -669,26 +674,26 @@ class DocumentEvents:
             if parentElement is None:
                 parentElement = self.document._getParent(contextElement)
             return self._getClock(parentElement)
-        self.logger.error("Unexpected AVT: %s" % value, extra=self.loggerExtra)
+        self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
         return value
         
     @synchronized
     def _getClock(self, element):
         """Return current clock value for an element"""
-        self.logger.debug("xxxjack getClock(%s)" % self.document._getXPath(element), extra=self.loggerExtra)
+        self.logger.debug("xxxjack getClock(%s)" % self.document._getXPath(element), extra=self.getLoggerExtra())
 
         epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
         if epoch != None:
             curTime = self._now() - float(epoch)
-            self.logger.debug("xxxjack getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.loggerExtra)
+            self.logger.debug("xxxjack getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
-        self.logger.warn("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.loggerExtra)
+        self.logger.warn("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
         return "0"
         
     @edit
     def trigger(self, id, parameters):
         """REST trigger command: triggers an event"""
-        self.logger.info('trigger(%s, ...)' % (id), extra=self.loggerExtra)
+        self.logger.info('trigger(%s, ...)' % (id), extra=self.getLoggerExtra())
         element = self.document.idMap.get(id)
 
         if element is None:
@@ -728,7 +733,7 @@ class DocumentEvents:
     @edit
     def modify(self, id, parameters):
         """REST modify command: modifies a running event"""
-        self.logger.info('modify(%s, ...)' % (id), extra=self.loggerExtra)
+        self.logger.info('modify(%s, ...)' % (id), extra=self.getLoggerExtra())
         element = self.document.idMap.get(id)
 
         if element is None:
@@ -759,10 +764,10 @@ class DocumentAuthoring:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
-        self.logger = self.document.logger
-        self.loggerExtra = dict(self.document.loggerExtra)
-        self.loggerExtra['subSource'] = 'document.authoring'
-
+        self.logger = self.document.logger.getChild('authoring')
+        
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
 
 class DocumentServe:
     def __init__(self, document):
@@ -770,10 +775,11 @@ class DocumentServe:
         self.tree = document.tree
         self.lock = self.document.lock
         self.callbacks = set()
-        self.logger = self.document.logger
-        self.loggerExtra = dict(self.document.loggerExtra)
-        self.loggerExtra['subSource'] = 'document.serve'
+        self.logger = self.document.logger.getChild('serve')
 
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
+        
     def _now(self):
         return time.time()
         
@@ -790,7 +796,7 @@ class DocumentServe:
     def get_timeline(self):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
-        self.logger.info('serving timeline.xml document', extra=self.loggerExtra)
+        self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
         return ET.tostring(self.tree.getroot())
 
     @synchronized
@@ -799,7 +805,7 @@ class DocumentServe:
         At the moment, the layout document JSON representation is stored in a toplevel
         au:rawLayout element. This will change when the authoring tool starts modifying the
         layout document data."""
-        self.logger.info('serving layout.json document', extra=self.loggerExtra)
+        self.logger.info('serving layout.json document', extra=self.getLoggerExtra())
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
             abort(404, 'No :au:rawLayout element in document')
@@ -808,7 +814,7 @@ class DocumentServe:
     @synchronized
     def put_layout(self, layoutJSON):
         """Temporary method, stores the raw layout document data in the authoring document."""
-        self.logger.info('storing layout.json document', extra=self.loggerExtra)
+        self.logger.info('storing layout.json document', extra=self.getLoggerExtra())
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
@@ -816,7 +822,7 @@ class DocumentServe:
 
     def get_client(self, timeline, layout, base=None):
         """Return the client.api document that describes this dmapp"""
-        self.logger.info('serving client.json document', extra=self.loggerExtra)
+        self.logger.info('serving client.json document', extra=self.getLoggerExtra())
         if base:
             clientDocData = urllib.urlopen(base).read()
         else:
@@ -854,7 +860,7 @@ class DocumentServe:
     @synchronized
     def put_client(self, clientJSON):
         """Temporary method, store per-dmapp client.json settings in the authoring document"""
-        self.logger.info('storing additions to client.json document', extra=self.loggerExtra)
+        self.logger.info('storing additions to client.json document', extra=self.getLoggerExtra())
         rawClientElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
         if rawClientElement == None:
             rawClientElement = ET.SubElement(self.tree.getroot(), 'au:rawClient')
@@ -863,27 +869,24 @@ class DocumentServe:
     @synchronized
     def setCallback(self, url, contextID=None):
         if contextID:
-            if hasattr(self.document.loggerExtra, 'contextID'):
                 self.logger.info('overriding contextID with %s' % contextID)
-                self.document.loggerExtra['contextID'] = contextID
-                self.loggerExtra['contextID'] = contextID
-                # xxxjack should we also update other accessor objects?
-        self.logger.info('setCallback(%s)' % url, extra=self.loggerExtra)
+                self.document._loggerExtra['contextID'] = contextID
+        self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
         self.callbacks.add(url)
         self.document.forwardHandler = self
 
     @synchronized
     def setDocumentState(self, documentState):
-        self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.loggerExtra)
+        self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.getLoggerExtra())
         self.document.companionTimelineIsActive = True
         for eltId, eltState in documentState.items():
             elt = self.document._getElementByID(eltId)
             if not elt:
-                self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.loggerExtra)
+                self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
                 continue
             changed = self._elementStateChanged(elt, eltState)
             if changed:
-                self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.loggerExtra)
+                self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
                 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
@@ -907,7 +910,7 @@ class DocumentServe:
             return abs(t1-t2) < 0.1
         if oldState == newState and almostEqual(oldEpoch, newEpoch):
             return False
-        self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.loggerExtra)
+        self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.getLoggerExtra())
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
         else:
@@ -919,7 +922,7 @@ class DocumentServe:
         return True
          
     def forward(self, operations):
-        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.loggerExtra)
+        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
         gen = self._nextGeneration(not operations)
         toRemove = []
         wantStateUpdates = True
@@ -939,5 +942,5 @@ class DocumentServe:
             if not operations and not wantStateUpdates:
                 break
         for callback in toRemove:
-            self.logger.info('removeCallback(%s)'%callback, extra=self.loggerExtra)
+            self.logger.info('removeCallback(%s)'%callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
