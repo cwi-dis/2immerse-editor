@@ -1,4 +1,4 @@
-import { PayloadAction, AsyncAction } from "../util";
+import { AsyncAction, BasicAction, PayloadAction } from "../util";
 
 export type ADD_MASTER_LAYOUT = PayloadAction<"ADD_MASTER_LAYOUT", {name: string}>;
 function addMasterLayout(name: string): ADD_MASTER_LAYOUT {
@@ -76,12 +76,17 @@ function removeRegionFromLayouts(regionId: string): REMOVE_REGION_FROM_LAYOUTS {
   };
 }
 
+export type SELECT_NEWEST_LAYOUT = BasicAction<"SELECT_NEWEST_LAYOUT">;
+function selectNewestLayout(): SELECT_NEWEST_LAYOUT {
+  return {
+    type: "SELECT_NEWEST_LAYOUT"
+  };
+}
+
 export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void> {
   return (dispatch, getState) => {
     dispatch(addMasterLayout(name));
-
-    const createdMaster = getState().masters.layouts.last()!;
-    dispatch(updateSelectedLayout(createdMaster.id));
+    dispatch(selectNewestLayout());
   };
 }
 
@@ -94,6 +99,7 @@ export interface MasterActions {
   removeComponentFromMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => REMOVE_COMPONENT_FROM_MASTER;
   removeScreenFromLayouts: (screenId: string) => REMOVE_SCREEN_FROM_LAYOUTS;
   removeRegionFromLayouts: (regionId: string) => REMOVE_REGION_FROM_LAYOUTS;
+  selectNewestLayout: () => SELECT_NEWEST_LAYOUT;
 }
 
 export const actionCreators: MasterActions = {
@@ -104,5 +110,6 @@ export const actionCreators: MasterActions = {
   assignComponentToMaster,
   removeComponentFromMaster,
   removeScreenFromLayouts,
-  removeRegionFromLayouts
+  removeRegionFromLayouts,
+  selectNewestLayout
 };

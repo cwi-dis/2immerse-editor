@@ -429,4 +429,33 @@ describe("Masters reducer", () => {
 
     expect(transformedState).toEqual(state);
   });
+
+  it("should set currentLayout to the ID of the last element of the layouts list on SELECT_NEWEST_LAYOUT", () => {
+    const state: MasterState = new MasterState({layouts: List([
+      new Master({ id: "masterId1", name: "Master Layout 1"}),
+      new Master({ id: "masterId2", name: "Master Layout 2"}),
+    ])});
+
+    expect(state.currentLayout).toBeUndefined();
+
+    const transformedState = reducer(
+      state,
+      { type: "SELECT_NEWEST_LAYOUT" } as any
+    );
+
+    expect(transformedState.currentLayout).toEqual("masterId2");
+  });
+
+  it("should return the state untransformed on SELECT_NEWEST_LAYOUT if there are no layouts", () => {
+    const state: MasterState = new MasterState({layouts: List()});
+
+    expect(state.currentLayout).toBeUndefined();
+
+    const transformedState = reducer(
+      state,
+      { type: "SELECT_NEWEST_LAYOUT" } as any
+    );
+
+    expect(transformedState).toEqual(state);
+  });
 });
