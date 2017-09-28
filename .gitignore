@@ -21,3 +21,4 @@ REVISION
 coverage/
 .coverage
 deploy_app.sh
+app_status.sh

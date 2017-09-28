@@ -9,6 +9,7 @@ import App from "./app";
 import LayoutDesigner from "./layout_designer/layout_designer";
 import MasterManager from "./master_manager/master_manager";
 import ProgramAuthor from "./program_author/program_author";
+import TimelineEditor from "./program_author/timeline_editor";
 
 import "bulma/css/bulma.css";
 import "../../../css/style.css";
@@ -21,6 +22,7 @@ window.onload = () => {
           <Route path="/" component={LayoutDesigner} />
           <Route path="/masters" component={MasterManager} />
           <Route path="/program" component={ProgramAuthor} />
+          <Route path="/timeline" component={TimelineEditor} />
         </Route>
       </Router>
     </Provider>,
