@@ -36,6 +36,14 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     };
   }
 
+  private getStage(): KonvaStage {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    return this.stageWrapper.getStage();
+  }
+
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
@@ -52,11 +60,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
+    const stage: KonvaStage = this.getStage();
 
     const [x, y] = this.state.canvasClick!;
     const clickedRegion = this.getClickedRegion(x / stage.width(), y / stage.height());
@@ -68,11 +72,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   }
 
   private handleCanvasClick(ev: MouseEvent) {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
+    const stage: KonvaStage = this.getStage();
     const {x, y} = stage.getPointerPosition();
 
     this.setState({

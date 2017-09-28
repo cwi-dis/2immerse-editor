@@ -18,6 +18,14 @@ interface DroppableScreenProps {
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   private stageWrapper: Stage | null;
 
+  private getStage() {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    return this.stageWrapper.getStage();
+  }
+
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
@@ -34,11 +42,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   }
 
   private getCanvasDropPosition(pageX: number, pageY: number) {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
+    const stage: KonvaStage = this.getStage();
     const {offsetLeft, offsetTop} = stage.container();
 
     return [
@@ -59,11 +63,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     const screenId = this.props.screenInfo.id;
     const masterId = this.props.currentLayout!;
 
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    const stage: KonvaStage = this.stageWrapper.getStage();
+    const stage: KonvaStage = this.getStage();
 
     const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
     const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
