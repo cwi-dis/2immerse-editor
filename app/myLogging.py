@@ -19,7 +19,7 @@ class MyFormatter(logging.Formatter):
             documentID = record.documentID
         source = "AuthoringService"
         level = record.levelname
-        subSource = record.module
+        subSource = record.name
         message = logging.Formatter.format(self, record)
         logmessage = repr('"' + message)
         if logmessage[0] == 'u':
