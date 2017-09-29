@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as shortid from "shortid";
 import { List } from "immutable";
 import { Stage, Layer, Rect } from "react-konva";
 import { Vector2d } from "konva";
@@ -7,29 +6,24 @@ import { Vector2d } from "konva";
 import { findById } from "../../util";
 import { ScreenRegion } from "../../reducers/screens";
 
+export interface TimelineElement {
+  id: string;
+  x: number;
+  width: number;
+}
+
 interface TimelineProps {
   width: number;
   height: number;
+  elements: List<TimelineElement>;
+  elementPositionUpdated: (id: string, x: number) => void;
 }
 
 interface TimelineState {
   regions: Array<ScreenRegion>;
 }
 
-interface TimelineRect {
-  id: string;
-  x: number;
-  width: number;
-}
-
-function newRect(x: number, width: number): TimelineRect {
-  return {
-    id: shortid.generate(),
-    x, width
-  };
-}
-
-function getClosestNeighbors(target: TimelineRect, rects: List<TimelineRect>): [TimelineRect | undefined, TimelineRect | undefined] {
+function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
   const filteredRects = rects.filterNot((r) => r.id === target.id);
 
   const leftNeighbors = filteredRects.filter((r) => r.x - target.x < 0).sortBy((r) => r.x);
@@ -42,26 +36,24 @@ function getClosestNeighbors(target: TimelineRect, rects: List<TimelineRect>): [
 }
 
 class Timeline extends React.Component<TimelineProps, TimelineState> {
-  private components: List<TimelineRect>;
+  private updatedXPosition: number;
 
   public constructor(props: TimelineProps) {
     super(props);
+  }
 
-    this.components = List([
-      newRect(10, 150),
-      newRect(300, 200),
-      newRect(600, 100)
-    ]);
+  private onDragEnd(id: string) {
+    this.props.elementPositionUpdated(id, this.updatedXPosition);
   }
 
   public render() {
-    const {width, height} = this.props;
+    const {width, height, elements} = this.props;
 
     const dragBoundFunc = (currentId: string, pos: Vector2d): Vector2d => {
-      const [i] = findById(this.components, currentId);
-      const current = this.components.get(i)!;
+      const [i] = findById(elements, currentId);
+      const current = elements.get(i)!;
 
-      const [leftNeighbor, rightNeighbor] = getClosestNeighbors(current, this.components);
+      const [leftNeighbor, rightNeighbor] = getClosestNeighbors(current, elements);
       let newX = pos.x;
 
       if (leftNeighbor && pos.x < leftNeighbor.x + leftNeighbor.width) {
@@ -76,7 +68,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
         newX = width - current.width;
       }
 
-      this.components = this.components.set(i, {...current, x: newX});
+      this.updatedXPosition = newX;
 
       return {
         x: newX,
@@ -89,13 +81,14 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
         <Layer>
           <Rect x={0} y={0} width={width} height={height} fill="#555555" />
 
-          {this.components.map((dim, i) => {
+          {elements.map((dim, i) => {
             return (
               <Rect key={i}
                     x={dim.x} y={0}
                     width={dim.width} height={height}
                     fill="#E06C56" stroke="#000000" strokeWidth={1}
                     draggable={true} dragDistance={25}
+                    onDragEnd={this.onDragEnd.bind(this, dim.id)}
                     dragBoundFunc={dragBoundFunc.bind(this, dim.id)} />
             );
           })}
