@@ -922,7 +922,10 @@ class DocumentServe:
         return True
          
     def forward(self, operations):
-        self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
+        if len(self.operations) and len(self.callbacks):
+            self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
+        else:
+            self.logger.debug('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
         gen = self._nextGeneration(not operations)
         toRemove = []
         wantStateUpdates = True
