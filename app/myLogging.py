@@ -6,7 +6,7 @@ logging.basicConfig()
 
 # Default logging configuration: INFO for document and timeline (useful to app developers), WARNING for everything else.
 #DEFAULT_LOG_CONFIG="document:INFO,WARNING"
-DEFAULT_LOG_CONFIG="werkzeug:WARN,INFO"
+DEFAULT_LOG_CONFIG="INFO"
 
 class MyFormatter(logging.Formatter):
 
