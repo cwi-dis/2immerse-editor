@@ -700,10 +700,11 @@ class DocumentEvents:
     @edit
     def trigger(self, id, parameters):
         """REST trigger command: triggers an event"""
-        self.logger.info('trigger(%s, ...)' % (id), extra=self.getLoggerExtra())
+        self.logger.info('trigger(%s, %s)' % (id, repr(parameters)), extra=self.getLoggerExtra())
         element = self.document.idMap.get(id)
 
         if element is None:
+            self.logger.error("trigger: no such xml:id: %s" % id, extra=self.getLoggerExtra())
             abort(404, 'No such xml:id: %s' % id)
 
         if False:
