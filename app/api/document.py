@@ -680,12 +680,12 @@ class DocumentEvents:
     @synchronized
     def _getClock(self, element):
         """Return current clock value for an element"""
-        self.logger.debug("xxxjack getClock(%s)" % self.document._getXPath(element), extra=self.getLoggerExtra())
+        self.logger.debug("getClock(%s)" % self.document._getXPath(element), extra=self.getLoggerExtra())
 
         epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
         if epoch != None:
             curTime = self._now() - float(epoch)
-            self.logger.debug("xxxjack getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
+            self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
         self.logger.warn("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
         return "0"
@@ -833,10 +833,8 @@ class DocumentServe:
         # Next we override from the document (if overrides are present)
         #
         clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
-        print 'xxxjack found rawClient element'
         if clientExtraElement != None and clientExtraElement.text:
             clientExtra = json.loads(clientExtraElement.text)
-            print 'xxxjack rawClient extra data', clientExtra
             for k, v in clientExtra.items():
                 clientDoc[k] = v
         # 
@@ -939,7 +937,7 @@ class DocumentServe:
                 r.raise_for_status()
                 wantStateUpdates = False
             except requests.exceptions.RequestException:
-                print 'PUT failed:', callback # xxxjack need better error message:-)
+                self.logger.warn("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
                 toRemove.append(callback)
             # Only continue if we have anything to say...
             if not operations and not wantStateUpdates:
