@@ -73,7 +73,10 @@ def edit(method):
     """Annotate a mthod to use the object lock and record the results."""
     def wrapper(self, *args, **kwargs):
         with self.lock:
-            self.document._startListening()
+            ok = self.document._startListening(method.__name__)
+            if not ok:
+                self.logger.error('edit(%s): another edit operation is still in progress' % method.__name__, extra=self.getLoggerExtra())
+                abort(400, "Another editing operation is still in progress")
             rv = method(self, *args, **kwargs)
             toForward = self.document._stopListening()
         self.document._forwardToOthers(toForward)
@@ -81,8 +84,9 @@ def edit(method):
     return wrapper
 
 class EditManager:
-    def __init__(self, document):
+    def __init__(self, document, reason=None):
         self.document = document
+        self.reason = reason
         self.commandList = []
         self.document.lock.acquire()
 
@@ -278,11 +282,14 @@ class Document:
         return self.xmlHandler
 
     @synchronized
-    def _startListening(self):
-        """Start recording edit operations."""
-        assert not self.editManager
+    def _startListening(self, reason=None):
+        """Start recording edit operations. Returns success indicator."""
+        if self.editManager:
+            self.logger.warning("EditManager for %s is still active" % self.reason, extra=self.getLoggerExtra())
+            return False
         if self.forwardHandler:
-            self.editManager = EditManager(self)
+            self.editManager = EditManager(self, reason)
+        return True
 
     @synchronized
     def _stopListening(self):
@@ -301,7 +308,7 @@ class Document:
     def forward(self, commands):
         self.logger.debug('forward %d commands' % len(commands), extra=self.getLoggerExtra())
         with self.lock:
-            self._startListening()
+            self._startListening('Document.forward()')
             for command in commands:
                 cmd = command['verb']
                 del command['verb']
@@ -687,7 +694,7 @@ class DocumentEvents:
             curTime = self._now() - float(epoch)
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
-        self.logger.warn("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
+        self.logger.warning("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
         return "0"
         
     @edit
@@ -937,7 +944,7 @@ class DocumentServe:
                 r.raise_for_status()
                 wantStateUpdates = False
             except requests.exceptions.RequestException:
-                self.logger.warn("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
+                self.logger.warning("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
                 toRemove.append(callback)
             # Only continue if we have anything to say...
             if not operations and not wantStateUpdates:
