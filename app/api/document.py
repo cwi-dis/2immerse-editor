@@ -602,6 +602,9 @@ class DocumentEvents:
         for elt in elementsTriggerable:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
+            # Weed out events that are already finished
+            if elt.get(NS_TIMELINE_INTERNAL("state")) == "finished":
+                continue
             rv.append(self._getDescription(elt, trigger=False))
         self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.getLoggerExtra())
         # See if we need to ask the timeline server for updates
