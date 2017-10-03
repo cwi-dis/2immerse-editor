@@ -277,7 +277,6 @@ def get_preview(documentId):
     if base:
         clientDocUrl += '?' + urllib.urlencode(dict(base=base))
     clientApiUrl = "%s#?inputDocument=%s" % (globalSettings.clientApiUrl, clientDocUrl)
-    print 'xxxjack return', clientApiUrl
     return redirect(clientApiUrl)
 
 
