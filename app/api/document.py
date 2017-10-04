@@ -594,7 +594,7 @@ class DocumentEvents:
     @synchronized
     def get(self):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
-        exprTriggerable = './/tt:events/*[@tt:name]'
+        exprTriggerable = './/*[tls:state]/tt:events/*[@tt:name]'
         exprModifyable = './/tl:par/*[@tt:name][@tls:state]'
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
@@ -602,6 +602,9 @@ class DocumentEvents:
         for elt in elementsTriggerable:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
+            # Weed out events that are already finished
+            if elt.get(NS_TIMELINE_INTERNAL("state")) == "finished":
+                continue
             rv.append(self._getDescription(elt, trigger=False))
         self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.getLoggerExtra())
         # See if we need to ask the timeline server for updates

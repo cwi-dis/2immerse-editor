@@ -36,7 +36,7 @@ class TestEvents(unittest.TestCase):
         e = d.events()
         allEvents = e.get()
 
-        self.assertEqual(len(allEvents), 4)
+        self.assertEqual(len(allEvents), 1)
         self.assertEqual(d._count(), oldCount)
 
     def test_trigger(self):
