@@ -61,6 +61,6 @@
     "redux-thunk": "^2.2.0",
     "shortid": "^2.2.8",
     "sinon": "^3.2.1",
-    "typescript": "2.4.0"
+    "typescript": "2.5.3"
   }
 }
