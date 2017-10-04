@@ -423,6 +423,45 @@ describe("Utility function makeRequest()", () => {
   });
 });
 
+describe("Utility function shortenUrl()", () => {
+  it("should return a promise which resolves to the shortened url", () => {
+    XHRmock.setup();
+
+    XHRmock.post(/https:\/\/www\.googleapis\.com\/.*/, (req, res) => {
+      return res.status(200).body(JSON.stringify({
+        id: "http://shortened.url"
+      }));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.shortenUrl("http://this-is-a-long.url")
+    ).resolves.toEqual("http://shortened.url").then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should reject the promise with an error object on failure", () => {
+    XHRmock.setup();
+
+    XHRmock.post(/https:\/\/www\.googleapis\.com\/.*/, (req, res) => {
+      return res.status(500).statusText("Some error");
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.shortenUrl("http://this-is-a-long.url")
+    ).rejects.toEqual({
+      status: 500,
+      statusText: "Some error"
+    }).then(() => {
+      XHRmock.teardown();
+    });
+  });
+});
+
 describe("Utility function getRandomInt()", () => {
   it("should always return the same number if min is equal to max", () => {
     expect(util.getRandomInt(5, 5)).toEqual(5);

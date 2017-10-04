@@ -149,7 +149,9 @@ export function shortenUrl(originalUrl: string): Promise<string> {
     ).then((response) => {
       const { id: shortUrl } = JSON.parse(response);
       resolve(shortUrl);
-    }).catch(reject);
+    }).catch((err) => {
+      reject(err);
+    });
   });
 }
 
