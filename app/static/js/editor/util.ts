@@ -138,6 +138,21 @@ export function parseQueryString(query: string): Map<string, string | undefined>
   return result;
 }
 
+export function shortenUrl(originalUrl: string): Promise<string> {
+  const KEY = "AIzaSyDv6yE4WVhdAW44qxkoV-BF2V4I9oD9gqg";
+  const data = JSON.stringify({ longUrl: originalUrl });
+
+  return new Promise((resolve, reject) => {
+    makeRequest(
+      "POST", `https://www.googleapis.com/urlshortener/v1/url?key=${KEY}`,
+      data, "application/json"
+    ).then((response) => {
+      const { id: shortUrl } = JSON.parse(response);
+      resolve(shortUrl);
+    }).catch(reject);
+  });
+}
+
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
