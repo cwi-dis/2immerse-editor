@@ -654,18 +654,20 @@ class DocumentEvents:
     def get(self):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
         exprTriggerable = './/tt:events/*[@tt:name]'
+        exprComplete = './/tt:completeEvents/*[@tt:name]'
         exprModifyable = './/tl:par/*[@tt:name][@tls:state]'
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
+        elementsComplete = self.tree.getroot().findall(exprComplete, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
         rv = []
-        for elt in elementsTriggerable:
+        for elt in elementsTriggerable + elementsComplete:
             rv.append(self._getDescription(elt, trigger=True))
         for elt in elementsModifyable:
             # Weed out events that are already finished
             if elt.get(NS_TIMELINE_INTERNAL("state")) == "finished":
                 continue
             rv.append(self._getDescription(elt, trigger=False))
-        self.logger.debug('get: %d triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsModifyable)), extra=self.getLoggerExtra())
+        self.logger.debug('get: %d triggerable, %d complete-triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsComplete), len(elementsModifyable)), extra=self.getLoggerExtra())
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
             self.logger.debug("get: asking document for setDocumentState calls", extra=self.getLoggerExtra())
