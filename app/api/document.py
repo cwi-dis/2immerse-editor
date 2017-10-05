@@ -123,6 +123,7 @@ class Document:
         # The whole document, as an elementtree
         self.tree = None
         self.documentElement = None # Nasty trick to work around elementtree XPath incompleteness
+        self.baseAdded = False # True if tim:base attribute was added by us
         # Data strcutures for mapping over the tree
         self.parentMap = None
         self.idMap = None
@@ -153,7 +154,7 @@ class Document:
                 self.load(request.args['url'])
                 return ''
         else:
-            return Response(ET.tostring(self.tree.getroot()), mimetype="application/xml")
+            return Response(ET.tostring(self._prepareForSave()), mimetype="application/xml")
 
     @synchronized
     def _documentLoaded(self):
@@ -171,7 +172,29 @@ class Document:
             name = e.get(NS_TRIGGER('name'))
             if name:
                 self.nameSet.add(name)
+        # Add attributes and elements that we need (mainly to communicate with the preview player timeline service)
+        self.tree.getroot().set(NS_TRIGGER("wantstatus"), "true")
+        self._ensureId(self.tree.getroot())
+        for elt in self.tree.getroot().findall('.//tt:events/..', NAMESPACES):
+            elt.set(NS_TRIGGER("wantstatus"), "true")
+            self._ensureId(elt)
 
+    @synchronized
+    def _ensureId(self, elt):
+        """Add an xml:id to an element if it doesn't have one already"""
+        id = elt.get(NS_XML("id"))
+        if id: return
+        id = 'ttadded'
+        while id in self.idMap:
+            match = FIND_ID_INDEX.match(id)
+            if match:
+                num = int(match.group(2))
+                id = match.group(1) + '-' + str(num+1)
+            else:
+                id = id + '-1'
+        elt.set(NS_XML("id"), id)
+        self.idMap[id] = elt
+        
     @synchronized
     def _elementAdded(self, elt, parent, recursive=False):
         """Updates paremtMap and idMap and various other data structures after a new element is added.
@@ -333,6 +356,7 @@ class Document:
     def loadXml(self, data):
         self.logger.info('load xml (%d bytes)' % len(data), extra=self.getLoggerExtra())
         self.url = None
+        self.baseAdded = False
         root = ET.fromstring(data)
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
@@ -342,9 +366,14 @@ class Document:
     def load(self, url):
         self.logger.info('load: %s' % url, extra=self.getLoggerExtra())
         self.url = url
+        self.baseAdded = False
         fp = urllib2.urlopen(url)
         self.tree = ET.parse(fp)
         self._documentLoaded()
+        if not self.tree.getroot().get(NS_2IMMERSE("base")):
+            self.baseAdded = True
+            self.tree.getroot().set(NS_2IMMERSE("base"), self.url)
+            self.logger.debug("load: added tim:base=%s" % self.url, extra=self.getLoggerExtra())
         return ''
 
     @synchronized
@@ -355,7 +384,8 @@ class Document:
         filename = urllib.url2pathname(p.path)
         fp = open(filename, 'w')
         self._zapWhitespace()
-        fp.write(ET.tostring(self.tree.getroot()))
+        saveTree = self._prepareForSave()
+        fp.write(ET.tostring(saveTree))
 
     @synchronized
     def _zapWhitespace(self):
@@ -365,6 +395,34 @@ class Document:
                 e.text = e.text.strip()
             if e.tail:
                 e.tail = e.tail.strip()
+                
+    def _prepareForSave(self):
+        """Prepare tree for saving by removing all items we added"""
+        saveTree = copy.deepcopy(self.tree.getroot())
+        # Remove tim:base, if we added it
+        if self.baseAdded:
+            assert saveTree.get(NS_2IMMERSE("base"))
+            saveTree.attrib.pop(NS_2IMMERSE("base"))
+        for elt in saveTree.iter():
+            # Copy tl:dur attribute from tt:_realDur
+            realDur = elt.get(NS_TRIGGER("_realDur"))
+            if realDur:
+                elt.set(NS_2IMMERSE("dur"), realDur)
+            # Remove all tt: attributes
+            toRemove = []
+            for attr in elt.attrib.keys():
+                if attr == NS_TRIGGER("wantstatus"):
+                    toRemove.append(attr)
+                if attr == NS_TRIGGER("_realdur"):
+                    toRemove.append(attr)
+                if attr in NS_TIMELINE_INTERNAL:
+                    toRemove.append(attr)
+            for attr in toRemove:
+                elt.attrib.pop(attr)
+        # Remove any elements we inserted
+        # xxxjack tbd
+        return saveTree
+        
     @synchronized
     def dump(self):
         return '%d elements' % self._count()
@@ -401,6 +459,7 @@ class Document:
         return newElement
 
     def _fromET(self, element, mimetype):
+        """Encode an element as xml"""
         if mimetype == 'application/x-python-object':
             # assert element.getroot() == None
             return element
