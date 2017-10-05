@@ -83,4 +83,61 @@ command line.
 
 ### Configuring the backend
 
-The backend needs configuration information, such as URLs for reaching the timeline service. The ```configuration``` subdirectory has JSON files with configuration for various deployment settings, and scripts ```get.sh``` and ```put.sh``` to modify the configuration settings or a running backend.
+The backend needs configuration information, such as URLs for reaching the
+timeline service. The `configuration` subdirectory has JSON files with
+configuration for various deployment settings, and scripts `get.sh` and
+`put.sh` to modify the configuration settings or a running backend.
+
+### Running tests
+
+The low-level functionality of the application is to some degree covered by
+unit tests. The tests are separated into frontend and backend tests. Backend
+tests are run by Python's builtin `unittest` and can be found in the folder
+`test/`. Frontend tests are managed by the unit testing framework `jest` and
+the test cases are located in `app/static/__tests__/`.
+
+In order to run the backend tests, navigate to the `test/` folder and invoke
+the following command:
+
+```
+python -m unittest discover
+```
+
+This will run all test cases in the current directory. If you want to generate
+a code coverage report, first make sure to install Python's `coverage` tool by
+running
+
+```
+[sudo] pip install coverage
+```
+
+Then you can run the test suites and collect code coverage by calling
+
+```
+coverage run --source app -m unittest discover
+```
+
+The `--source` option ensures that coverage data is only collected for app
+files and not for external libraries). After that, to print the code coverage
+report, invoke
+
+```
+coverage report
+```
+
+For running the backend tests, first make sure you have the `jest` binary
+installed. To install it, run
+
+```
+[sudo] npm install -g jest
+```
+
+After that, it is simply a matter of navigating to `app/static/` and calling
+`jest`. This will run all tests in the `__tests__/` directory. You can pass the
+flags `--verbose` and `--coverage` to cause the runner to print the description
+of each test case and generate a test coverage report at the end.
+
+These two steps can be combined into one by running `make test` in the root
+directory of the app or running the script `run_tests.sh` in the `scripts/`
+directory. Make sure you have `coverage` and `jest` installed
+beforehand.
