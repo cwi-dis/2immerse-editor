@@ -1,9 +1,9 @@
 {
-	"layoutService": "http://flauwte.dis.cwi.nl:8000/layout/v3", 
+	"layoutService": "http://flauwte.dis.cwi.nl:8000/layout/v4", 
 	"clientApiUrl": "http://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html", 
 	"logLevel": "DEBUG", 
 	"timelineService": "http://flauwte.dis.cwi.nl:8080/timeline/v1", 
 	"mode": "standalone", 
 	"noKibana": true, 
-	"websocketService": "https://websocket-service-edge.platform.2immerse.eu/"
+	"websocketService": "http://flauwte.dis.cwi.nl:3000/"
 }
