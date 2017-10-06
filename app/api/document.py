@@ -1001,6 +1001,7 @@ class DocumentServe:
         wantStateUpdates = True
         for callback in self.callbacks:
             try:
+                requestStartTime = time.time() # Debugging: sometimes requests take a very long time
                 args = dict(generation=gen, operations=operations)
                 # for the first successful one, add updateState=True
                 if wantStateUpdates:
@@ -1011,6 +1012,11 @@ class DocumentServe:
             except requests.exceptions.RequestException:
                 self.logger.warning("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
                 toRemove.append(callback)
+            else:
+                requestDuration = time.time() - requestStartTime
+                if requestDuration > 2:
+                    self.logger.warning("forward: PUT took %d seconds for %s" % (requestDuration, callback), extra=self.getLoggerExtra())
+                    
             # Only continue if we have anything to say...
             if not operations and not wantStateUpdates:
                 break

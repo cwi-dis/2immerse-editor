@@ -25,7 +25,7 @@ We need to get these clear, with input from Andy and possibly Jonathan and Marti
 
 The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 
-- method `GET` retrieves a list of the current triggerable and modifyable items as a JSON object. No parameters. Events are triggerable when they are not active yet. When triggered, a copy is made, with a new name, and this event may be modifyable.
+- method `GET` retrieves a list of the current triggerable, proposed and modifyable items as a JSON object. No parameters. Events are triggerable when they are not active yet and have parameters for which the user must supply a value. Proposed events are similar but have all their parameters already filled in. When triggered, a copy is made, with a new name, and this event is inserted into the timeline of the document. The copy may be modifyable.
 
   The return value entries have the following structure (all parameters are strings unless otherwise noted):
 
@@ -36,16 +36,20 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 	- `longdesc`: optional text that is shown to the trigger tool operator to help understand what the intention of this trigger is.
 	- `id`: trigger identity, to be passed to the `trigger` call later.
 	- `trigger`: (boolean) true if this item can be passed to `trigger` currently.
-	- `modify`: (boolean) true if this item can be passed to `modify` currently. Note that exactly one of `trigger` and `notify` will be true for any event.
+	- `modify`: (boolean) true if this item can be passed to `modify` currently. Note that exactly one of `trigger` and `modify` will be true for any event.
 	- `parameters`: list of parameters, of the form:
 		- `name`: Human-readable name for the parameter (only for the UI).
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
 		- `type`: type of the parameter (string), see below.
 		- `value`: optional default value.
 		- `required`: if true, this parameter must be filled in by the tool operator before the trigger/modify button is enabled.
+
 - `trigger` (method `POST`) triggers a triggerable item. Returns a success indicator. The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings)
+	
+- `propose` (method `POST`) is very similar to trigger, but in stead of the event copy being inserted into the timeline it is inserted into the 
+
 - `modify` (method `PUT`) modifies a previously triggered item. Returns a success indicator.   The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings).
@@ -69,7 +73,7 @@ Currently the trigger tool frontent polls the backend periodically to refresh th
 
 ## Timeline Document Considerations
 
-The events will be `<tl:par>` or `<tl:seq>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>`.
+The events will be `<tl:par>` or `<tl:seq>` elements in the timeline document with an `xml:id` attribute to address them. The events will be hidden from the timeline service by putting them in a `<tt:events>` or `<tt:completeEvents>`. The distinction between the two is that _complete events_ are expected to have all their parameters filled in already and can be instered into the document at the press of a button, where _events_ have some holes to be filled in, after which a `propose` call will copy them to the _complete events_.
 
 The general structure of an event that always runs to completion is as follows:
 
