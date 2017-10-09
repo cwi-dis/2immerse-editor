@@ -6,6 +6,18 @@ import { Vector2d } from "konva";
 import { findById } from "../../util";
 import { ScreenRegion } from "../../reducers/screens";
 
+function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
+  const filteredRects = rects.filterNot((r) => r.id === target.id);
+
+  const leftNeighbors = filteredRects.filter((r) => r.x - target.x < 0).sortBy((r) => r.x);
+  const rightNeighbors = filteredRects.filter((r) => r.x - target.x > 0).sortBy((r) => r.x);
+
+  return [
+    leftNeighbors.last(),
+    rightNeighbors.first()
+  ];
+}
+
 export interface TimelineElement {
   id: string;
   x: number;
@@ -21,18 +33,6 @@ interface TimelineProps {
 
 interface TimelineState {
   regions: Array<ScreenRegion>;
-}
-
-function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
-  const filteredRects = rects.filterNot((r) => r.id === target.id);
-
-  const leftNeighbors = filteredRects.filter((r) => r.x - target.x < 0).sortBy((r) => r.x);
-  const rightNeighbors = filteredRects.filter((r) => r.x - target.x > 0).sortBy((r) => r.x);
-
-  return [
-    leftNeighbors.last(),
-    rightNeighbors.first()
-  ];
 }
 
 class Timeline extends React.Component<TimelineProps, TimelineState> {

@@ -119,6 +119,15 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     clearInterval(this.pollingInterval);
   }
 
+  private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
+    const apiUrl = `${location.origin}/api/v1/document/${this.props.documentId}`;
+
+    e.preventDefault();
+    e.clipboardData.setData("text/plain", apiUrl);
+
+    alert("API URL copied to clipboard");
+  }
+
   private renderMainContent(): JSX.Element {
     if (this.state.pageIsLoading) {
       return (
@@ -213,6 +222,13 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <div className="level-left">
             <p style={{marginLeft: 15}}>
               <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
+              &emsp;&emsp;
+              <i>
+                <a onClick={() => document.execCommand("copy")}
+                   onCopy={this.copyApiUrl.bind(this)}>
+                  (copy URL)
+                </a>
+              </i>
             </p>
           </div>
           <div className="level-right">
