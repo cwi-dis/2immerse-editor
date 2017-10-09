@@ -5,6 +5,8 @@ import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
 
 export type Coords = [number, number];
+export type Nullable<T> = T | null;
+
 interface Action {
   type: string;
 }

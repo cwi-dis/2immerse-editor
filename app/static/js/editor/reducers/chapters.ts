@@ -1,13 +1,13 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
-import { ActionHandler, generateChapterKeyPath } from "../util";
+import { ActionHandler, generateChapterKeyPath, Nullable } from "../util";
 import * as actions from "../actions/chapters";
 
 type MasterId = string;
 
 export interface ChapterAttributes {
   id: string;
-  name?: string | null;
+  name?: Nullable<string>;
   masterLayouts?: List<MasterId>;
   children?: List<Chapter>;
 }

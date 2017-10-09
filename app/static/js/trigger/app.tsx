@@ -4,10 +4,10 @@ import CurrentVersion from "../editor/components/current_version";
 import DocumentChooser from "./document_chooser";
 import TriggerClient from "./trigger_client";
 
-import { makeRequest, parseQueryString } from "../editor/util";
+import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 
 interface AppState {
-  documentId: string | null;
+  documentId: Nullable<string>;
 }
 
 class App extends React.Component<{}, AppState> {

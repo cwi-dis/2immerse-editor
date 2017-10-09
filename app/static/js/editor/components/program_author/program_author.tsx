@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords, countLeafNodes, getRandomInt, getTreeHeight } from "../../util";
+import { Coords, countLeafNodes, getRandomInt, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 import { ApplicationState } from "../../store";
 
@@ -13,7 +13,7 @@ import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
 
 interface ProgramAuthorState {
-  stage: KonvaStage | null;
+  stage: Nullable<KonvaStage>;
 }
 
 class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Nullable } from "../../editor/util";
 
 interface URLInputFieldProps {
   label: string;
@@ -110,7 +111,7 @@ interface FileInputFieldProps {
 }
 
 export class FileInputField extends React.Component<FileInputFieldProps, {}> {
-  private inputField: HTMLInputElement | null;
+  private inputField: Nullable<HTMLInputElement>;
 
   private readSelectedFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {

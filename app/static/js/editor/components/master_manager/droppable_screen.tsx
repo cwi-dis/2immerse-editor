@@ -3,6 +3,7 @@ import { List } from "immutable";
 import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
+import { Nullable } from "../../util";
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import { ComponentPlacement } from "../../reducers/masters";
@@ -16,7 +17,7 @@ interface DroppableScreenProps {
 }
 
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
-  private stageWrapper: Stage | null;
+  private stageWrapper: Nullable<Stage>;
 
   private getStage() {
     if (!this.stageWrapper) {

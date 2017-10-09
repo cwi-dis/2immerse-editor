@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as QRCode from "qrcode";
-import { shortenUrl } from "../editor/util";
+import { Nullable, shortenUrl } from "../editor/util";
 
 interface PreviewLauncherProps {
   documentId: string;
@@ -12,7 +12,7 @@ interface PreviewLauncherState {
 }
 
 class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLauncherState> {
-  private qrCanvas: HTMLCanvasElement | null;
+  private qrCanvas: Nullable<HTMLCanvasElement>;
 
   public constructor(props: PreviewLauncherProps) {
     super(props);

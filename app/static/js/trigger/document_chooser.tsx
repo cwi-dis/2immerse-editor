@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest } from "../editor/util";
+import { makeRequest, Nullable } from "../editor/util";
 
 interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
@@ -16,9 +16,9 @@ interface DocumentChooserState {
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
-  private fileInput: HTMLInputElement | null;
-  private urlInput: HTMLInputElement | null;
-  private idInput: HTMLInputElement | null;
+  private fileInput: Nullable<HTMLInputElement>;
+  private urlInput: Nullable<HTMLInputElement>;
+  private idInput: Nullable<HTMLInputElement>;
 
   constructor(props: DocumentChooserProps) {
     super(props);

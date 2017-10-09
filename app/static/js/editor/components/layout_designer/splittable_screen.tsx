@@ -2,6 +2,7 @@ import * as React from "react";
 import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
+import { Nullable } from "../../util";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import Screen from "../screen";
 import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
@@ -24,7 +25,7 @@ interface SplittableScreenState {
 }
 
 class SplittableScreen extends React.Component<SplittableScreenProps, SplittableScreenState> {
-  private stageWrapper: Stage | null;
+  private stageWrapper: Nullable<Stage>;
 
   constructor(props: SplittableScreenProps) {
     super(props);

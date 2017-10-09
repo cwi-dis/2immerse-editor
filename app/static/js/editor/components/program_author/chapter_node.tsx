@@ -2,7 +2,7 @@ import * as React from "react";
 import { Group, Rect, Text, Line } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords } from "../../util";
+import { Coords, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
 interface ChapterNodeProps {
@@ -65,7 +65,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     };
   }
 
-  private renderHandles(): JSX.Element | null {
+  private renderHandles(): Nullable<JSX.Element> {
     const {chapter, stage, position, size, currentPath} = this.props;
     const [x, y] = position;
     const [boxWidth, boxHeight] = size;
