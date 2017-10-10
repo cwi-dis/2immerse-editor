@@ -7,3 +7,10 @@ services:
       - .:/code
     ports:
       - "8008:8000"
+    networks:
+        - 2immerse
+
+networks:
+  2immerse:
+    driver: bridge
+

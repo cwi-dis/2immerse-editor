@@ -180,6 +180,32 @@ def document_events_modify(documentId, id):
     return events.modify(id, parameters)
 
 #
+# per-document, remote control of playback
+#
+@app.route(API_ROOT + "/document/<uuid:documentId>/remote")
+def document_remote_get(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    remote = document.remote()
+    assert remote
+    rv = remote.get()
+    return Response(json.dumps(rv), mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/remote/control", methods=["POST"])
+def document_remote_control(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    remote = document.remote()
+    assert remote
+    command = request.get_json()
+    rv = remote.get()
+    return remote.control(command)
+
+#
 # Per-document, serve aspect, for consumption of views on the document
 #
 

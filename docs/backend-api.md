@@ -81,6 +81,20 @@ The endpoint at `/api/v1/document/<documentId>/preview` is a convenience endpoin
 
 	- `base` the URL of a base _client.json_ configuration document. Use this to select different timeline/layout server instances.
 
+## remote control calls
+
+The endpoint at `/api/v1/document/<documentId>/remote` is a remote control for the preview player attached to the document:
+
+- `GET` returns the current playback status of the document as a JSON object with the following fields:
+	- `status` (string) a message to present to the user.
+	- `active` (boolean) true if a preview player is attached. If false the rest of the fields are not available.
+	- `playing` (boolean) true if the document is playing, false if paused.
+	- `position` (float) time position in seconds.
+- `control` (POST) allows to control the preview player, argument is a JSON object. Fields are optional, missing fields means _no change_.
+	- `playing` (boolean) set to `false` or `true` to pause or resume playback.
+	- `position` (float) set absolute time position. _NOTE:_ this may not be fully implemented.
+	- `adjust` (float) adjust time position by this amount.
+
 ## document changes
 
 Each high level edit operation (through the trigger tool calls, the xml calls or the authoring tool calls) results in a sequence of low-level edit operations. This sequence can then be forwarded to other copies of the document (which will then be updated to be the same as the original).

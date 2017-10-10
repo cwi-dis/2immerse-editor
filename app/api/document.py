@@ -134,6 +134,7 @@ class Document:
         self.serveHandler = None
         self.forwardHandler = None
         self.xmlHandler = None
+        self.remoteHandler = None
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
@@ -303,6 +304,13 @@ class Document:
         if not self.xmlHandler:
             self.xmlHandler = DocumentXml(self)
         return self.xmlHandler
+
+    @synchronized
+    def remote(self):
+        """Returns the control handler (after creating it if needed)"""
+        if not self.remoteHandler:
+            self.remoteHandler = DocumentRemote(self)
+        return self.remoteHandler
 
     @synchronized
     def _startListening(self, reason=None):
@@ -829,6 +837,37 @@ class DocumentEvents:
             self.document._elementChanged(e)
 
         self.document.companionTimelineIsActive = False
+        return ""
+
+        
+class DocumentRemote:
+    def __init__(self, document):
+        self.document = document
+        self.tree = document.tree
+        self.lock = self.document.lock
+        self.logger = self.document.logger.getChild('remote')
+        
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
+        
+    @synchronized
+    def get(self):
+        rv = dict(status='Preview player may be running', active=False)
+        return rv
+        
+    @synchronized
+    def control(self, command):
+        if type(command) != type({}):
+            abort(400, 'remote/control requires JSON object')
+        if 'position' in command:
+            position = command.get('position')
+            self.logger.warning('position=%f not implemented yet' % position, extra=self.getLoggerExtra())
+        if 'adjust' in command:
+            adjust = command.get('adjust')
+            self.logger.warning('adjust=%f not implemented yet' % adjust, extra=self.getLoggerExtra())
+        if 'playing' in command:
+            playing = command.get('playing')
+            self.logger.warning('playing=%s not implemented yet' % playing, extra=self.getLoggerExtra())
         return ""
 
 class DocumentAuthoring:
