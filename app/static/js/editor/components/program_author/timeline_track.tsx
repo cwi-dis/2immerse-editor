@@ -22,6 +22,7 @@ export interface TimelineElement {
   id: string;
   x: number;
   width: number;
+  color?: string;
 }
 
 interface TimelineProps {
@@ -82,15 +83,15 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       <Stage width={width} height={height}>
         <Layer>
           <Rect x={0} y={0} width={width} height={height} fill="#555555" />
-          {elements.map((dim, i) => {
+          {elements.map((element, i) => {
             return (
               <Rect key={i}
-                    x={dim.x} y={0}
-                    width={dim.width} height={height}
-                    fill="#E06C56" stroke="#000000" strokeWidth={1}
+                    x={element.x} y={0}
+                    width={element.width} height={height}
+                    fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
                     draggable={true} dragDistance={25}
-                    onDragEnd={this.onDragEnd.bind(this, dim.id)}
-                    dragBoundFunc={dragBoundFunc.bind(this, dim.id)} />
+                    onDragEnd={this.onDragEnd.bind(this, element.id)}
+                    dragBoundFunc={dragBoundFunc.bind(this, element.id)} />
             );
           })}
           <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#000000" strokeWidth={1} />

@@ -24,7 +24,7 @@ class TimelineEditor extends React.Component<{}, TimelineEditorState> {
         new TimelineTrack({
           timelineElements: List([
             { id: "one", x: 100, width: 200},
-            { id: "two", x: 320, width: 300},
+            { id: "two", x: 320, width: 300, color: "#3776D9"},
             { id: "three", x: 800, width: 150}
           ])
         }),
@@ -32,7 +32,8 @@ class TimelineEditor extends React.Component<{}, TimelineEditorState> {
           timelineElements: List([
             { id: "four", x: 10, width: 400},
             { id: "five", x: 450, width: 100},
-            { id: "six", x: 600, width: 200}
+            { id: "six", x: 600, width: 200, color: "#3776D9"},
+            { id: "seven", x: 850, width: 100},
           ])
         })
       ])
