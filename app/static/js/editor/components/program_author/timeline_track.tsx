@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Stage, Layer, Rect } from "react-konva";
+import { Layer, Line, Rect, Stage } from "react-konva";
 import { Vector2d } from "konva";
 
 import { findById } from "../../util";
@@ -29,6 +29,7 @@ interface TimelineProps {
   height: number;
   elements: List<TimelineElement>;
   elementPositionUpdated: (id: string, x: number) => void;
+  snapDistance?: number;
 }
 
 interface TimelineState {
@@ -48,6 +49,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
   public render() {
     const {width, height, elements} = this.props;
+    const snapDistance = (this.props.snapDistance) ? this.props.snapDistance : 0;
 
     const dragBoundFunc = (currentId: string, pos: Vector2d): Vector2d => {
       const [i] = findById(elements, currentId);
@@ -56,13 +58,13 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       const [leftNeighbor, rightNeighbor] = getClosestNeighbors(current, elements);
       let newX = pos.x;
 
-      if (leftNeighbor && pos.x < leftNeighbor.x + leftNeighbor.width) {
+      if (leftNeighbor && pos.x - snapDistance < leftNeighbor.x + leftNeighbor.width) {
         newX = leftNeighbor.x + leftNeighbor.width;
       } else if (pos.x < 0) {
         newX = 0;
       }
 
-      if (rightNeighbor && pos.x + current.width > rightNeighbor.x) {
+      if (rightNeighbor && pos.x + current.width > rightNeighbor.x - snapDistance) {
         newX = rightNeighbor.x - current.width;
       } else if (pos.x + current.width > width) {
         newX = width - current.width;
@@ -80,7 +82,6 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       <Stage width={width} height={height}>
         <Layer>
           <Rect x={0} y={0} width={width} height={height} fill="#555555" />
-
           {elements.map((dim, i) => {
             return (
               <Rect key={i}
@@ -92,6 +93,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
                     dragBoundFunc={dragBoundFunc.bind(this, dim.id)} />
             );
           })}
+          <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#000000" strokeWidth={1} />
         </Layer>
       </Stage>
     );
