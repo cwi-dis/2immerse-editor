@@ -11,7 +11,7 @@ clientApiUrl = "https://origin.platform.2immerse.eu/client-api/master/dist/test/
 mode = "standalone"
 
 # URLs for 2immerse services
-layoutService = "https://layout-service-v4.platform.2immerse.eu/layout/v4"
+layoutService = "https://layout-service-edge.platform.2immerse.eu/layout/v4"
 websocketService = "https://websocket-service-edge.platform.2immerse.eu/"
 timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
 
