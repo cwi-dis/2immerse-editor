@@ -133,10 +133,10 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
               {params.filter((param) => param.type !== "set").map((param, i) => {
                 return (
                   <tr key={i}>
-                    <td style={{width: "50%", verticalAlign: "middle"}}>
+                    <td style={{width: "50%", verticalAlign: "middle", border: "none"}}>
                       {capitalize(param.name)}
                     </td>
-                    <td style={{width: "50%"}}>
+                    <td style={{width: "50%", border: "none"}}>
                       <ParamInputField type={param.type}
                                       value={params.get(i)!.value!}
                                       onChange={this.updateParamField.bind(this, i)} />
