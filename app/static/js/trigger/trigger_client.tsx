@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 
 import { makeRequest, parseQueryString } from "../editor/util";
 import EventContainer from "./event_container";
+import LoadingSpinner from "./loading_spinner";
 import PreviewLauncher from "./preview_launcher";
 import ErrorMessage from "./error_message";
 
@@ -130,11 +131,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   private renderMainContent(): JSX.Element {
     if (this.state.pageIsLoading) {
-      return (
-        <div className="content">
-          <div className="loader" style={{marginTop: "15%"}} />
-        </div>
-      );
+      return <LoadingSpinner />;
     } else if (this.state.fetchError) {
       const { status, statusText } = this.state.fetchError;
 
