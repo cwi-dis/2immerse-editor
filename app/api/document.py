@@ -174,7 +174,8 @@ class Document:
             if name:
                 self.nameSet.add(name)
         # Add attributes and elements that we need (mainly to communicate with the preview player timeline service)
-        self.tree.getroot().set(NS_TRIGGER("wantstatus"), "true")
+        firstRootChild = list(self.tree.getroot())[0]
+        firstRootChild.set(NS_TRIGGER("wantstatus"), "true")
         self._ensureId(self.tree.getroot())
         for elt in self.tree.getroot().findall('.//tt:events/..', NAMESPACES):
             elt.set(NS_TRIGGER("wantstatus"), "true")
@@ -852,7 +853,18 @@ class DocumentRemote:
         
     @synchronized
     def get(self):
-        rv = dict(status='Preview player may be running', active=False)
+        firstRootChild = list(self.tree.getroot())[0]
+        curClock = self.document.events()._getClock(firstRootChild)
+        clockRunning = firstRootChild.get(NS_TIMELINE_INTERNAL("clockRunning"))
+        playing = not not (clockRunning and clockRunning != "false")
+        active = not not (clockRunning or curClock != "0")
+        rv = dict(active=active)
+        if not active:
+            rv["status"] = "Preview player is not running"
+        if active:
+            rv["playing"] = playing
+        if curClock and curClock != "0":
+            rv["position"] = float(curClock)
         return rv
         
     @synchronized
