@@ -75,6 +75,15 @@ def document_instance(documentId):
         abort(404)
     return document.index()
 
+@app.route(API_ROOT + "/document/<uuid:documentId>", methods=["DELETE"])
+def delete_document(documentId):
+    try:
+        del api.documents[documentId]
+    except KeyError:
+        abort(404)
+
+    return ""
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/<string:verb>")
 def document_instance_verb(documentId, verb):
     try:
