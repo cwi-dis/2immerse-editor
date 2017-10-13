@@ -35,8 +35,8 @@ class TestForward(unittest.TestCase):
         d.forwardHandler = dCopy
         self.assertEqual(d._count(), dCopy._count())
 
-        newDocUrl = self._buildUrl('_aftertrigger_tmp')
-        copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
+        newDocUrl = self._buildUrl('_forward_create_tmp')
+        copyDocUrl = self._buildUrl('_forward_create_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
@@ -65,8 +65,8 @@ class TestForward(unittest.TestCase):
         self.assertEqual(d._count(), oldCount + 6)
         self.assertEqual(dCopy._count(), oldCount + 6)
 
-        newDocUrl = self._buildUrl('_aftertrigger_tmp')
-        copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
+        newDocUrl = self._buildUrl('_forward_trigger_tmp')
+        copyDocUrl = self._buildUrl('_forward_trigger_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
@@ -86,8 +86,8 @@ class TestForward(unittest.TestCase):
         self.assertEqual(d._count(), oldCount)
         self.assertEqual(dCopy._count(), oldCount)
 
-        newDocUrl = self._buildUrl('_aftertrigger_tmp')
-        copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
+        newDocUrl = self._buildUrl('_forward_modify_tmp')
+        copyDocUrl = self._buildUrl('_forward_modify_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
@@ -112,8 +112,8 @@ class TestForward(unittest.TestCase):
         self.assertEqual(d._count(), oldCount + 5)
         self.assertEqual(dCopy._count(), oldCount + 5)
 
-        newDocUrl = self._buildUrl('_aftertrigger_tmp')
-        copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
+        newDocUrl = self._buildUrl('_forward_triggerParameter_tmp')
+        copyDocUrl = self._buildUrl('_forward_triggerParameter_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
@@ -136,8 +136,8 @@ class TestForward(unittest.TestCase):
         self.assertEqual(dCopy._count(), oldCount + 7)
 
         e.modify(newId, [dict(parameter='./tl:sleep/@tl:dur', value='0')])
-        newDocUrl = self._buildUrl('_aftertrigger_tmp')
-        copyDocUrl = self._buildUrl('_aftertrigger_copy_tmp')
+        newDocUrl = self._buildUrl('_forward_modifyParameter_tmp')
+        copyDocUrl = self._buildUrl('_forward_modifyParameter_copy_tmp')
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
