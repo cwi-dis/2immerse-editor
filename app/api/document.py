@@ -1020,18 +1020,28 @@ class DocumentServe:
             newEpoch = self._now() - float(newProgress)
         else:
             newEpoch = None
+        newClockRunning = eltState[NS_TIMELINE_INTERNAL("clockRunning")]
+        if not newClockRunning or newClockRunning == "false":
+            newClockRunning = None
+            
         oldState = elt.get(NS_TIMELINE_INTERNAL("state"))
         oldEpoch = elt.get(NS_TIMELINE_INTERNAL("epoch"))
+        oldClockRunning = elt.get(NS_TIMELINE_INTERNAL("clockRunning"))
+        if not oldClockRunning or oldClockRunning == "false":
+            oldClockRunning = None
         if oldEpoch:
             oldEpoch = float(oldEpoch)
+            
         def almostEqual(t1, t2):
             if not t1 and not t2:
                 return True
             if not t1 or not t2:
                 return t1 == t2
             return abs(t1-t2) < 0.1
-        if oldState == newState and almostEqual(oldEpoch, newEpoch):
+            
+        if oldState == newState and almostEqual(oldEpoch, newEpoch) and oldClockRunning == newClockRunning:
             return False
+            
         self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.getLoggerExtra())
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
@@ -1041,6 +1051,11 @@ class DocumentServe:
             elt.set(NS_TIMELINE_INTERNAL("epoch"), str(newEpoch))
         elif NS_TIMELINE_INTERNAL("epoch") in elt.attrib:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("epoch"))
+        if newClockRunning:
+            elt.set(NS_TIMELINE_INTERNAL("clockRunning"), newClockRunning)
+        else:
+            elt.attrib.pop(NS_TIMELINE_INTERNAL("clockRunning"))
+            
         return True
          
     def forward(self, operations):
