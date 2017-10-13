@@ -176,6 +176,7 @@ class Document:
         # Add attributes and elements that we need (mainly to communicate with the preview player timeline service)
         firstRootChild = list(self.tree.getroot())[0]
         firstRootChild.set(NS_TRIGGER("wantstatus"), "true")
+        self._ensureId(firstRootChild)
         self._ensureId(self.tree.getroot())
         for elt in self.tree.getroot().findall('.//tt:events/..', NAMESPACES):
             elt.set(NS_TRIGGER("wantstatus"), "true")
