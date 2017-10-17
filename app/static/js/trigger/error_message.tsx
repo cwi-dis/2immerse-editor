@@ -4,9 +4,11 @@ interface ErrorMessageProps {
   documentId?: string;
   statusText: string;
   status: number;
+  message?: string;
 }
 
 const ErrorMessage: React.SFC<ErrorMessageProps> = (props) => {
+
   return (
     <div className="content" style={{width: "50vw", margin: "15% auto"}}>
       <article className="message is-danger">
@@ -21,9 +23,10 @@ const ErrorMessage: React.SFC<ErrorMessageProps> = (props) => {
 
           <div style={{margin: 25, fontWeight: "bold", textAlign: "center"}}>
             {props.statusText} (HTTP error {props.status})
+            {props.message && <span style={{fontWeight: "normal"}}><br/>{props.message}</span>}
           </div>
 
-          {(props.documentId) && <span>Try to clear the session and start over.</span>}
+          {props.documentId && <span>Try to clear the session and start over.</span>}
         </div>
       </article>
     </div>
