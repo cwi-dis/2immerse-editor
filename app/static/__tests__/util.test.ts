@@ -333,7 +333,28 @@ describe("Utility function makeRequest()", () => {
       util.makeRequest("GET", "http://does-not.exist")
     ).rejects.toEqual({
       status: 0,
-      statusText: ""
+      statusText: "",
+      body: null
+    }).then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should reject with HTTP error and the 'body' property set to the response body", () => {
+    XHRmock.setup();
+
+    XHRmock.get("http://triggers-some-other.error", (req, res) => {
+      return res.status(400).statusText("Bad Request").body("This is the response body");
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("GET", "http://triggers-some-other.error")
+    ).rejects.toEqual({
+      status: 400,
+      statusText: "Bad Request",
+      body: "This is the response body"
     }).then(() => {
       XHRmock.teardown();
     });
@@ -343,7 +364,7 @@ describe("Utility function makeRequest()", () => {
     XHRmock.setup();
 
     XHRmock.get("http://triggers-some.error", (req, res) => {
-      return res.status(400).statusText("Bad Request");
+      return res.status(400).statusText("Bad Request").body("Some error occurred");
     });
 
     expect.assertions(1);
@@ -352,7 +373,8 @@ describe("Utility function makeRequest()", () => {
       util.makeRequest("GET", "http://triggers-some.error")
     ).rejects.toEqual({
       status: 400,
-      statusText: "Bad Request"
+      statusText: "Bad Request",
+      body: "Some error occurred"
     }).then(() => {
       XHRmock.teardown();
     });
@@ -446,7 +468,7 @@ describe("Utility function shortenUrl()", () => {
     XHRmock.setup();
 
     XHRmock.post(/https:\/\/www\.googleapis\.com\/.*/, (req, res) => {
-      return res.status(500).statusText("Some error");
+      return res.status(500).statusText("Some error").body("Some more details on the error");
     });
 
     expect.assertions(1);
@@ -455,7 +477,8 @@ describe("Utility function shortenUrl()", () => {
       util.shortenUrl("http://this-is-a-long.url")
     ).rejects.toEqual({
       status: 500,
-      statusText: "Some error"
+      statusText: "Some error",
+      body: "Some more details on the error"
     }).then(() => {
       XHRmock.teardown();
     });
