@@ -1,6 +1,6 @@
 from app import app
 from api import api
-from flask import Response, request, abort, redirect
+from flask import Response, request, abort, redirect, jsonify
 import json
 import os
 import urlparse
@@ -38,6 +38,31 @@ def get_docRoot():
         # We are running standalone. Trust http headers.
         docRoot = urlparse.urljoin(request.base_url, API_ROOT)
     return docRoot
+
+
+def handle_error(code, status, error):
+    response = jsonify({"message": error.description})
+    response.status_code = code
+    response.status = status
+
+    return response
+
+
+@app.errorhandler(400)
+def handle_400(error):
+    return handle_error(400, "Bad Request", error)
+
+
+@app.errorhandler(404)
+def handle_404(error):
+    return handle_error(404, "Not Found", error)
+
+
+@app.errorhandler(405)
+def handle_405(error):
+    return handle_error(405, "Method Not Allowed", error)
+
+
 #
 # Global routes
 #
