@@ -77,9 +77,13 @@ def edit(method):
             if not ok:
                 self.logger.error('edit(%s): another edit operation is still in progress' % method.__name__, extra=self.getLoggerExtra())
                 abort(400, "Another editing operation is still in progress")
-            rv = method(self, *args, **kwargs)
-            toForward = self.document._stopListening()
-        self.document._forwardToOthers(toForward)
+            toForward = None
+            try:
+                rv = method(self, *args, **kwargs)
+            finally:
+                toForward = self.document._stopListening()
+        if toForward:
+            self.document._forwardToOthers(toForward)
         return rv
     return wrapper
 
