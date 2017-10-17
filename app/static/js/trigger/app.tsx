@@ -2,6 +2,7 @@ import * as React from "react";
 
 import CurrentVersion from "../editor/components/current_version";
 import DocumentChooser from "./document_chooser";
+import ErrorMessage from "./error_message";
 import LoadingSpinner from "./loading_spinner";
 import TriggerClient from "./trigger_client";
 
@@ -10,6 +11,7 @@ import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 interface AppState {
   documentId: Nullable<string>;
   isLoading: boolean;
+  ajaxError?: {status: number, statusText: string};
 }
 
 class App extends React.Component<{}, AppState> {
@@ -18,7 +20,7 @@ class App extends React.Component<{}, AppState> {
 
     this.state = {
       documentId: localStorage.getItem("documentId"),
-      isLoading: false
+      isLoading: false,
     };
   }
 
@@ -42,7 +44,6 @@ class App extends React.Component<{}, AppState> {
 
   public componentDidMount() {
     const queryData = parseQueryString(location.hash);
-    console.log("hash:", location.hash);
     console.log("parsed hash:", queryData);
 
     if (queryData.has("url")) {
@@ -61,22 +62,34 @@ class App extends React.Component<{}, AppState> {
         this.assignDocumentId(documentId);
       }).catch((err) => {
         console.error(err);
+
+        this.setState({
+          isLoading: false,
+          ajaxError: err
+        });
       });
     }
   }
 
-  public render() {
-    const { documentId, isLoading } = this.state;
+  private renderContent() {
+    const { documentId, isLoading, ajaxError } = this.state;
 
+    if (isLoading) {
+      return <LoadingSpinner />;
+    } else if (ajaxError) {
+      return <ErrorMessage {...ajaxError} />;
+    } else if (documentId) {
+      return <TriggerClient documentId={documentId}
+                            clearSession={this.clearSession.bind(this)} />;
+    }
+
+    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />
+  }
+
+  public render() {
     return (
       <div>
-        {(isLoading)
-          ? <LoadingSpinner />
-          : (documentId)
-            ? <TriggerClient documentId={documentId} clearSession={this.clearSession.bind(this)} />
-            : <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />
-        }
-
+        {this.renderContent()}
         <CurrentVersion />
       </div>
     );
