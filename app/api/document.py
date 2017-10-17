@@ -988,6 +988,12 @@ class DocumentServe:
                 websocketService=globalSettings.websocketService,
                 timelineService=globalSettings.timelineService,
                 )
+        #
+        # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
+        clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = True
+        #
+        # And we set the playback mode
+        #
         # Note that this should be user-settable, depending on this flag the preview will run
         # in single-device (standalone) or TV mode.
         clientDoc['mode'] = globalSettings.mode
