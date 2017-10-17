@@ -367,7 +367,10 @@ class Document:
         self.logger.info('load xml (%d bytes)' % len(data), extra=self.getLoggerExtra())
         self.url = None
         self.baseAdded = False
-        root = ET.fromstring(data)
+        try:
+            root = ET.fromstring(data)
+        except ParseError:
+            abort(400, "XML parse error in document")
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
         return ''
@@ -378,7 +381,10 @@ class Document:
         self.url = url
         self.baseAdded = False
         fp = urllib2.urlopen(url)
-        self.tree = ET.parse(fp)
+        try:
+            self.tree = ET.parse(fp)
+        except ParseError:
+            abort(400, "XML parse error in %s" % url)
         self._documentLoaded()
         if not self.tree.getroot().get(NS_2IMMERSE("base")):
             self.baseAdded = True
