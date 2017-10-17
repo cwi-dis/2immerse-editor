@@ -11,7 +11,7 @@ import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 interface AppState {
   documentId: Nullable<string>;
   isLoading: boolean;
-  ajaxError?: {status: number, statusText: string};
+  ajaxError?: {status: number, statusText: string, message?: string};
 }
 
 class App extends React.Component<{}, AppState> {
@@ -65,7 +65,10 @@ class App extends React.Component<{}, AppState> {
 
         this.setState({
           isLoading: false,
-          ajaxError: err
+          ajaxError: {
+            ...err,
+            message: err.body && JSON.parse(err.body).message
+          }
         });
       });
     }
@@ -83,7 +86,7 @@ class App extends React.Component<{}, AppState> {
                             clearSession={this.clearSession.bind(this)} />;
     }
 
-    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />
+    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />;
   }
 
   public render() {
