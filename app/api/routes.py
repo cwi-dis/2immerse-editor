@@ -42,10 +42,9 @@ def get_docRoot():
 
 def handle_error(code, status, error):
     response = jsonify({"message": error.description})
-    response.status_code = code
     response.status = status
 
-    return response
+    return response, code
 
 
 @app.errorhandler(400)
