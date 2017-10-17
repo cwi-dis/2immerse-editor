@@ -22,7 +22,7 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
 export type AsyncAction<R> = ThunkAction<R, ApplicationState, void>;
 
 type PromiseResolve = (data: string) => void;
-type PromiseReject = (err: {status: number, statusText: string}) => void;
+type PromiseReject = (err: {status: number, statusText: string, body?: string}) => void;
 
 export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: any, contentType?: string): Promise<string> {
   return new Promise<string>((resolve: PromiseResolve, reject: PromiseReject) => {
@@ -35,7 +35,8 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
       } else {
         reject({
           status: xhr.status,
-          statusText: xhr.statusText
+          statusText: xhr.statusText,
+          body: xhr.response
         });
       }
     };
@@ -43,7 +44,8 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
     xhr.onerror = () => {
       reject({
         status: xhr.status,
-        statusText: xhr.statusText
+        statusText: xhr.statusText,
+        body: xhr.response
       });
     };
 
