@@ -2,9 +2,13 @@
 
 The 2IMMERSE Editor has an option for live triggering events that are embedded in a timeline document. The live triggering is recorded and the resulting experience can be stored in a copy of the document that can be used to replay the experience created in this way.
 
-In this tutorial we will not address how to create a timeline document with embedded events and assume it is available.
+### Preparing your timeline document
 
-##Starting the tool
+For use with the trigger tool your timeline document must have _layout.json_ and bits of _client.json_ included in the timeline document. Your document must also include triggerable events.
+
+For a terse description of the XML needed for this see [docs/live\_tool\_support.md](docs/live_tool_support.md) or look at the example in `technical-samples/301-motogp-events`.
+
+## Starting the tool
 
 The 2IMMERSE Editor does not require installation, simply start up the web application:
 <https://2immerse-editor-edge.platform.2immerse.eu/>
@@ -28,13 +32,7 @@ Select your timeline document and hit `Continue`.
 
 This brings you back to the previous page, now showing all events that are embedded in the document that has been uploaded.
 
-### Preparing your timeline document
-
-For use with the trigger tool your timeline document must have _layout.json_ and bits of _client.json_ included in the timeline document. Your document must also include triggerable events.
-
-For a terse description of the XML needed for this see [docs/live\_tool\_support.md](docs/live_tool_support.md) or look at the example in `technical-samples/301-motogp-events`.
-
-##Start triggering
+## Start triggering
 
 To start the triggering process you first have to bring up a webpage for preview playout. This is done by hitting the `Launch Preview` button on top of the control page. Doing so will allow you to open a preview using one of three methods:
 
