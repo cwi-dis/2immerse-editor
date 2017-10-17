@@ -369,7 +369,7 @@ class Document:
         self.baseAdded = False
         try:
             root = ET.fromstring(data)
-        except ParseError:
+        except ET.ParseError:
             abort(400, "XML parse error in document")
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
@@ -383,7 +383,7 @@ class Document:
         fp = urllib2.urlopen(url)
         try:
             self.tree = ET.parse(fp)
-        except ParseError:
+        except ET.ParseError:
             abort(400, "XML parse error in %s" % url)
         self._documentLoaded()
         if not self.tree.getroot().get(NS_2IMMERSE("base")):
