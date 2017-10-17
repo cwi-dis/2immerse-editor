@@ -318,7 +318,7 @@ class Document:
     def _startListening(self, reason=None):
         """Start recording edit operations. Returns success indicator."""
         if self.editManager:
-            self.logger.warning("EditManager for %s is still active" % self.reason, extra=self.getLoggerExtra())
+            self.logger.warning("EditManager for %s is still active" % self.editManager.reason, extra=self.getLoggerExtra())
             return False
         if self.forwardHandler:
             self.editManager = EditManager(self, reason)
@@ -808,6 +808,7 @@ class DocumentEvents:
             value = self._minimalAVT(value, newElement, newParent)
 
             if e is None:
+                self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
                 abort(400, 'No element matches XPath %s' % path)
 
             e.set(attr, value)
@@ -1009,7 +1010,7 @@ class DocumentServe:
         self.document.companionTimelineIsActive = True
         for eltId, eltState in documentState.items():
             elt = self.document._getElementByID(eltId)
-            if not elt:
+            if elt == None:
                 self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
                 continue
             changed = self._elementStateChanged(elt, eltState)
