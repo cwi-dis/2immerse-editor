@@ -883,17 +883,20 @@ class DocumentRemote:
     def control(self, command):
         if type(command) != type({}):
             abort(400, 'remote/control requires JSON object')
-        if 'position' in command:
-            position = command.get('position')
-            self.logger.warning('position=%f not implemented yet' % position, extra=self.getLoggerExtra())
-        if 'adjust' in command:
-            adjust = command.get('adjust')
-            self.logger.warning('adjust=%f not implemented yet' % adjust, extra=self.getLoggerExtra())
-        if 'playing' in command:
-            playing = command.get('playing')
-            self.logger.warning('playing=%s not implemented yet' % playing, extra=self.getLoggerExtra())
+        self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
+        contextID = self.document.serve().contextID
+        if not contextID:
+            self.logger.error("remote/control: no contextID for preview client", extra=self.getLoggerExtra())
+            abort(500, 'remote/control: no contextID for preview client')
+        wsUrl = globalSettings.websocketService + "bus-message/remote-control-clock-" + contextID
+        try:
+            r = requests.post(wsUrl, json=command)
+            r.raise_for_status
+        except requests.exceptions.RequestException:
+            self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
+            abort(500, "remote/control: POST to preivew client failed")
         return ""
-
+        
 class DocumentAuthoring:
     def __init__(self, document):
         self.document = document
