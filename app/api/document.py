@@ -869,7 +869,7 @@ class DocumentRemote:
         curClock = self.document.events()._getClock(firstRootChild)
         clockRunning = firstRootChild.get(NS_TIMELINE_INTERNAL("clockRunning"))
         playing = not not (clockRunning and clockRunning != "false")
-        active = not not (clockRunning or curClock != "0")
+        active = not not (self.document.serve().contextID)
         rv = dict(active=active)
         if not active:
             rv["status"] = "Preview player is not running"
@@ -909,6 +909,7 @@ class DocumentServe:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.contextID = None
         self.callbacks = set()
         self.logger = self.document.logger.getChild('serve')
 
@@ -1001,8 +1002,9 @@ class DocumentServe:
 
     @synchronized
     def setCallback(self, url, contextID=None):
-        if contextID:
+        if contextID != None and contextID != self.contextID:
                 self.logger.info('overriding contextID with %s' % contextID)
+                self.contextID = contextID
                 self.document._loggerExtra['contextID'] = contextID
         self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
         self.callbacks.add(url)
