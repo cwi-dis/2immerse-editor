@@ -88,6 +88,18 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
         <button className="button is-info"
                 style={{flexGrow: 0, margin: "0 5px"}}
                 disabled={!previewStatus.active}
+                onClick={this.sendControlCommand.bind(this, { adjust: -5.0 })}>
+          -5s
+        </button>
+        <button className="button is-info"
+                style={{flexGrow: 0, margin: "0 5px"}}
+                disabled={!previewStatus.active}
+                onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
+          Rev
+        </button>
+        <button className="button is-info"
+                style={{flexGrow: 0, margin: "0 5px"}}
+                disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: true })}>
           Play
         </button>
@@ -96,6 +108,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: false })}>
           Pause
+        </button>
+        <button className="button is-info"
+                style={{flexGrow: 0, margin: "0 5px"}}
+                disabled={!previewStatus.active}
+                onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
+          Fwd
         </button>
       </div>
     );
