@@ -108,11 +108,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   private getButtonLabel(): string {
     const { event } = this.props;
 
-    if (event.modify) {
-      return (event.verb) ? event.verb : "Modify";
-    } else {
-      return (event.verb) ? event.verb : "Trigger";
+    if (event.verb) {
+      return event.verb;
+    } else if (event.modify) {
+      return "Modify";
     }
+
+    return "Trigger";
   }
 
   public render() {

@@ -30,7 +30,6 @@ export interface Event {
   longdesc?: string;
   previewUrl?: string;
   verb?: string;
-  modVerb?: string;
 }
 
 interface TriggerClientState {
