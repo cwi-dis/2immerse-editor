@@ -427,13 +427,13 @@ class Document:
             # Copy tl:dur attribute from tt:_realDur
             realDur = elt.get(NS_TRIGGER("_realDur"))
             if realDur:
-                elt.set(NS_2IMMERSE("dur"), realDur)
+                elt.set(NS_TIMELINE("dur"), realDur)
             # Remove all tt: attributes
             toRemove = []
             for attr in elt.attrib.keys():
                 if attr == NS_TRIGGER("wantstatus"):
                     toRemove.append(attr)
-                if attr == NS_TRIGGER("_realdur"):
+                if attr == NS_TRIGGER("_realDur"):
                     toRemove.append(attr)
                 if attr in NS_TIMELINE_INTERNAL:
                     toRemove.append(attr)
