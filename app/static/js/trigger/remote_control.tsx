@@ -12,12 +12,17 @@ class RemoteControl extends React.Component<RemoteControlProps, {}> {
       bottom: 0,
       left: 0,
       width: "100%",
-      borderTop: "2px solid #161616"
+      padding: 10,
+      borderTop: "2px solid #161616",
+      display: "flex",
+      justifyContent: "center"
     };
 
     return (
       <div style={style}>
-        <p style={{textAlign: "center", marginTop: 15}}>Remote Control</p>
+        <button className="button is-info" style={{flexGrow: 0, margin: "0 5px"}} disabled={!previewStatus.active}>
+          {(previewStatus.playing) ? "Pause" : "Play"}
+        </button>
       </div>
     );
   }
