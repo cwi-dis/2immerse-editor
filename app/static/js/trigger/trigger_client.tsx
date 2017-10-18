@@ -144,7 +144,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
       return (
         <div>
-          <div className="tabs is-centered" style={{marginTop: 15}}>
+          <div className="tabs is-centered">
             <ul>
               <li className={classNames({"is-active": activeTab === "abstract"})}>
                 <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({abstractEvents.length})</a>
@@ -214,7 +214,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
     return (
       <div>
-        <div className="level" style={{width: "100vw", height: 60, borderBottom: "2px solid #161616"}}>
+        <div className="level" style={{width: "100vw", height: 60, borderBottom: "2px solid #161616", marginBottom: 5}}>
           <div className="level-left">
             <p style={{marginLeft: 15}}>
               <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
@@ -259,7 +259,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           </div>
         </div>
 
-        <div style={{width: "60vw", height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
+        <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
           {this.renderMainContent()}
         </div>
 
