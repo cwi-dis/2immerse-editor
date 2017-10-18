@@ -6,6 +6,7 @@ import EventContainer from "./event_container";
 import LoadingSpinner from "./loading_spinner";
 import PreviewLauncher from "./preview_launcher";
 import ErrorMessage from "./error_message";
+import RemoteControl from "./remote_control";
 
 interface TriggerClientProps {
   documentId: string;
@@ -159,7 +160,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
             </ul>
           </div>
-          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 170px)"}}>
+          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 170px - 30px)"}}>
             {this.renderActiveTab()}
           </div>
         </div>
@@ -259,11 +260,13 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           </div>
         </div>
 
-        <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
+        <div style={{height: "calc(100vh - 85px - 45px)", margin: "0 auto", overflowY: "hidden"}}>
           {this.renderMainContent()}
         </div>
 
         {this.renderPreviewModal()}
+
+        <RemoteControl />
       </div>
     );
   }
