@@ -50,6 +50,24 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
+  private togglePlayback() {
+    const { previewStatus } = this.state;
+    const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
+
+    if (previewStatus.active) {
+      const command = { playing: !previewStatus.playing };
+      console.log("Sending playback command: ", command);
+
+      makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
+        console.log("Playback state toggled");
+      }).catch((err) => {
+        console.warn("Could not toggle playback:", err);
+      });
+    } else {
+      console.log("Preview not active, this is a no-op");
+    }
+  }
+
   public render() {
     const { previewStatus } = this.state;
 
@@ -67,7 +85,10 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
     return (
       <div style={style}>
-        <button className="button is-info" style={{flexGrow: 0, margin: "0 5px"}} disabled={!previewStatus.active}>
+        <button className="button is-info"
+                style={{flexGrow: 0, margin: "0 5px"}}
+                disabled={!previewStatus.active}
+                onClick={this.togglePlayback.bind(this)}>
           {(previewStatus.playing) ? "Pause" : "Play"}
         </button>
       </div>
