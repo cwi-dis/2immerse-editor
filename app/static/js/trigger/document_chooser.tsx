@@ -13,6 +13,7 @@ interface DocumentChooserState {
   selectedMethod: InputMethod;
   isLoading: boolean;
   ajaxError?: {status: number, statusText: string};
+  existingDocuments: Array<string>;
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
@@ -27,7 +28,8 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
     this.state = {
       isLoading: false,
-      selectedMethod: selectedMethod || "upload"
+      selectedMethod: selectedMethod || "upload",
+      existingDocuments: []
     };
   }
 
@@ -133,7 +135,12 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
             <div className="field">
               <label className="label">Document ID</label>
               <div className="control">
-                <input key="id" className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
+                <input key="id" list="existing-documents" className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
+                <datalist id="existing-documents">
+                  {this.state.existingDocuments.map((documentId) => {
+                    return <option value={documentId} />;
+                  })}
+                </datalist>
               </div>
             </div>
           }
