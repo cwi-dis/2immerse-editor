@@ -34,6 +34,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.statusInterval = setInterval(() => {
       makeRequest("GET", `/api/v1/document/${this.props.documentId}/remote`).then((data) => {
         const previewStatus = JSON.parse(data);
+        console.log("Preview status:", previewStatus);
 
         this.setState({
           previewStatus
@@ -50,12 +51,11 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
-  private togglePlayback() {
+  private sendControlCommand(command: any) {
     const { previewStatus } = this.state;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
 
     if (previewStatus.active) {
-      const command = { playing: !previewStatus.playing };
       console.log("Sending playback command: ", command);
 
       makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
@@ -88,8 +88,14 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
         <button className="button is-info"
                 style={{flexGrow: 0, margin: "0 5px"}}
                 disabled={!previewStatus.active}
-                onClick={this.togglePlayback.bind(this)}>
-          {(previewStatus.playing) ? "Pause" : "Play"}
+                onClick={this.sendControlCommand.bind(this, { playing: true })}>
+          Play
+        </button>
+        <button className="button is-warning"
+                style={{flexGrow: 0, margin: "0 5px"}}
+                disabled={!previewStatus.active}
+                onClick={this.sendControlCommand.bind(this, { playing: false })}>
+          Pause
         </button>
       </div>
     );
