@@ -266,7 +266,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
         {this.renderPreviewModal()}
 
-        <RemoteControl />
+        <RemoteControl documentId={this.props.documentId} />
       </div>
     );
   }

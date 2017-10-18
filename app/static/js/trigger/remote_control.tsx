@@ -1,6 +1,10 @@
 import * as React from "react";
 
-class RemoteControl extends React.Component<{}, {}> {
+interface RemoteControlProps {
+  documentId: string;
+}
+
+class RemoteControl extends React.Component<RemoteControlProps, {}> {
   public render() {
     const style: React.CSSProperties = {
       position: "fixed",
