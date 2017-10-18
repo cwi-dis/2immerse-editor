@@ -109,7 +109,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
 
     if (event.modify) {
-      return (event.modVerb) ? event.modVerb : "Modify";
+      return (event.verb) ? event.verb : "Modify";
     } else {
       return (event.verb) ? event.verb : "Trigger";
     }
