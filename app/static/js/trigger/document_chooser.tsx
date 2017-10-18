@@ -33,6 +33,19 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     };
   }
 
+  public componentDidMount() {
+    makeRequest("GET", "/api/v1/document").then((data) => {
+      const documents = JSON.parse(data);
+      console.log("Fetched list of documents:", documents);
+
+      this.setState({
+        existingDocuments: documents
+      });
+    }).catch((err) => {
+      console.error("Could not fetch existing documents:", err);
+    });
+  }
+
   private methodUpdated(ev: any) {
     const selectedMethod = ev.target.value;
     localStorage.setItem("selectedMethod", selectedMethod);
