@@ -19,7 +19,7 @@ interface DocumentChooserState {
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
   private fileInput: Nullable<HTMLInputElement>;
   private urlInput: Nullable<HTMLInputElement>;
-  private idInput: Nullable<HTMLInputElement>;
+  private idInput: Nullable<HTMLSelectElement>;
 
   constructor(props: DocumentChooserProps) {
     super(props);
@@ -119,7 +119,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
         <form className="column" onSubmit={this.submitForm.bind(this)}>
           <div className="field">
-            <label className="label">Upload method</label>
+            <label className="label">Start session from</label>
             <div className="control">
               <div className="select is-fullwidth is-info">
                 <select className="is-info" value={selectedMethod} onChange={this.methodUpdated.bind(this)}>
@@ -148,12 +148,13 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
             <div className="field">
               <label className="label">Document ID</label>
               <div className="control">
-                <input key="id" list="existing-documents" className="input is-info" required={true} ref={(e) => this.idInput = e} type="text" placeholder="Document ID" />
-                <datalist id="existing-documents">
-                  {this.state.existingDocuments.map((documentId) => {
-                    return <option value={documentId} />;
-                  })}
-                </datalist>
+                <div className="select is-fullwidth is-info">
+                  <select key="id" ref={(e) => this.idInput = e} required={true}>
+                    {this.state.existingDocuments.map((documentId, i) => {
+                      return <option key={i} value={documentId}>{documentId}</option>;
+                    })}
+                  </select>
+                </div>
               </div>
             </div>
           }
