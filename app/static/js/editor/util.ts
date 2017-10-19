@@ -49,11 +49,16 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
       });
     };
 
-    if (contentType) {
-      xhr.setRequestHeader("Content-Type", contentType);
-    }
+    if (typeof data === "object") {
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(JSON.stringify(data));
+    } else {
+      if (contentType) {
+        xhr.setRequestHeader("Content-Type", contentType);
+      }
 
-    xhr.send(data);
+      xhr.send(data);
+    }
   });
 }
 
