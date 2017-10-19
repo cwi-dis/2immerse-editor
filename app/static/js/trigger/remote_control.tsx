@@ -114,8 +114,19 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       margin: "0 5px"
     };
 
+    const statusStyle: React.CSSProperties = {
+      width: 175, height: 36,
+      fontSize: 16,
+      overflow: "hidden", whiteSpace: "nowrap",
+      marginRight: 20, paddingTop: 7,
+      textOverflow: "ellipsis"
+    };
+
     return (
       <div style={style}>
+        <div title={previewStatus.status} style={statusStyle}>
+            {previewStatus.status}
+        </div>
         <button className="button is-info"
                 style={buttonStyle}
                 disabled={!previewStatus.active}
