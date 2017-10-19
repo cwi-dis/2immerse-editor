@@ -11,6 +11,7 @@ import os
 import time
 import requests
 import globalSettings
+import clocks
 
 import logging
 logger = logging.getLogger(__name__)
@@ -143,6 +144,7 @@ class Document:
         self.editManager = None
         self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
         self.logger = logger
+        self.clock = clocks.PausableClock(clocks.SystemClock())
         self._loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
 
@@ -667,9 +669,6 @@ class DocumentEvents:
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
-    def _now(self):
-        return time.time()
-
     @synchronized
     def get(self):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
@@ -775,7 +774,7 @@ class DocumentEvents:
 
         epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
         if epoch != None:
-            curTime = self._now() - float(epoch)
+            curTime = self.document.clock.now() - float(epoch)
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
         self.logger.warning("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
@@ -926,9 +925,6 @@ class DocumentServe:
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
-    def _now(self):
-        return time.time()
-
     @synchronized
     def _nextGeneration(self, sameValue):
         rootElt = self.tree.getroot()
@@ -1046,7 +1042,7 @@ class DocumentServe:
             newState = None
         newProgress = eltState.get(NS_TIMELINE_INTERNAL("progress"))
         if newProgress:
-            newEpoch = self._now() - float(newProgress)
+            newEpoch = self.document.clock.now() - float(newProgress)
         else:
             newEpoch = None
         newClockRunning = eltState.get(NS_TIMELINE_INTERNAL("clockRunning"))
@@ -1071,7 +1067,7 @@ class DocumentServe:
         if oldState == newState and almostEqual(oldEpoch, newEpoch) and oldClockRunning == newClockRunning:
             return False
 
-        self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.getLoggerExtra())
+        self.logger.debug("eltStateChanged(%s): state=%s epoch=%s clockRunning=%s" % (self.document._getXPath(elt), newState, newEpoch, newClockRunning), extra=self.getLoggerExtra())
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
         else:
@@ -1082,8 +1078,11 @@ class DocumentServe:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("epoch"))
         if newClockRunning:
             elt.set(NS_TIMELINE_INTERNAL("clockRunning"), newClockRunning)
+            self.document.clock.start()
         else:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("clockRunning"))
+            if newEpoch:
+                self.document.clock.stop()
 
         return True
 
