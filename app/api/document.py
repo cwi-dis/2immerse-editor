@@ -1041,15 +1041,15 @@ class DocumentServe:
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
-        newState = eltState[NS_TIMELINE_INTERNAL("state")]
+        newState = eltState.get(NS_TIMELINE_INTERNAL("state"))
         if newState == 'idle':
             newState = None
-        newProgress = eltState[NS_TIMELINE_INTERNAL("progress")]
+        newProgress = eltState.get(NS_TIMELINE_INTERNAL("progress"))
         if newProgress:
             newEpoch = self._now() - float(newProgress)
         else:
             newEpoch = None
-        newClockRunning = eltState[NS_TIMELINE_INTERNAL("clockRunning")]
+        newClockRunning = eltState.get(NS_TIMELINE_INTERNAL("clockRunning"))
         if not newClockRunning or newClockRunning == "false":
             newClockRunning = None
 
