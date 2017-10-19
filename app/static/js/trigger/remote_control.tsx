@@ -83,37 +83,43 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       justifyContent: "center"
     };
 
+    const buttonStyle: React.CSSProperties = {
+      width: 55,
+      flexGrow: 0,
+      margin: "0 5px"
+    };
+
     return (
       <div style={style}>
         <button className="button is-info"
-                style={{flexGrow: 0, margin: "0 5px"}}
+                style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { adjust: -5.0 })}>
-          -5s
+          <i className="fa fa-fast-backward"></i>
         </button>
         <button className="button is-info"
-                style={{flexGrow: 0, margin: "0 5px"}}
+                style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
-          Rev
+          <i className="fa fa-step-backward"></i>
         </button>
-        <button className="button is-info"
-                style={{flexGrow: 0, margin: "0 5px"}}
+        <button className="button is-success"
+                style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: true })}>
-          Play
+          <i className="fa fa-play"></i>
         </button>
-        <button className="button is-warning"
-                style={{flexGrow: 0, margin: "0 5px"}}
+        <button className="button is-danger"
+                style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: false })}>
-          Pause
+          <i className="fa fa-pause"></i>
         </button>
         <button className="button is-info"
-                style={{flexGrow: 0, margin: "0 5px"}}
+                style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
-          Fwd
+          <i className="fa fa-step-forward"></i>
         </button>
       </div>
     );
