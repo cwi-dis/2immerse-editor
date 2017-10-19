@@ -428,6 +428,70 @@ describe("Utility function makeRequest()", () => {
     });
   });
 
+  it("should automatically stringify the value when passing an object", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-stringify.object", (req, res) => {
+      return res.status(200).body(req.body());
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-stringify.object", {hello: "world"})
+    ).resolves.toEqual(JSON.stringify({hello: "world"})).then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should ignore contentType parameter if an object is passed in as data", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-ignore-content.type", (req, res) => {
+      return res.status(200).body(req.header("Content-Type"));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-ignore-content.type", {hello: "world"}, "image/png")
+    ).resolves.toEqual("application/json").then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should automatically set the Content-Type header to application/json when passing an object", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-set-content.type", (req, res) => {
+      return res.status(200).body(req.header("Content-Type"));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-set-content.type", {hello: "world"})
+    ).resolves.toEqual("application/json").then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should automatically set the Content-Type header to application/json when passing an array", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-set-content.type", (req, res) => {
+      return res.status(200).body(req.header("Content-Type"));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-set-content.type", [1, 2, 3])
+    ).resolves.toEqual("application/json").then(() => {
+      XHRmock.teardown();
+    });
+  });
+
   it("should send the given data to the server", () => {
     XHRmock.setup();
 
