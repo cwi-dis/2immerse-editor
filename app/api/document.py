@@ -859,15 +859,22 @@ class DocumentRemote:
         self.tree = document.tree
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('remote')
+        self.statusElement = None
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
     @synchronized
     def get(self):
-        firstRootChild = list(self.tree.getroot())[0]
-        curClock = self.document.events()._getClock(firstRootChild)
-        clockRunning = firstRootChild.get(NS_TIMELINE_INTERNAL("clockRunning"))
+        if self.statusElement == None:
+            eventParents = self.tree.getroot().findall('.//tt:events/..', NAMESPACES)
+            if eventParents:
+                self.statusElement = eventParents[0]
+            else:
+                # If there are no events in the document we use the first child of the root.
+                self.statusElement = list(self.tree.getroot())[0]
+        curClock = self.document.events()._getClock(self.statusElement)
+        clockRunning = self.statusElement.get(NS_TIMELINE_INTERNAL("clockRunning"))
         playing = not not (clockRunning and clockRunning != "false")
         active = not not (self.document.serve().contextID)
         rv = dict(active=active)
