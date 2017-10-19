@@ -87,7 +87,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       const seconds = Math.floor(position) - minutes * 60 - hours * 3600;
       const msecs = Math.floor((position - Math.floor(position)) * 1000);
 
-      return `${padStart(hours, 2)}:${padStart(minutes, 2)}:${padStart(seconds, 2)}.${msecs}`;
+      return `${padStart(hours, 2)}:${padStart(minutes, 2)}:${padStart(seconds, 2)}.${padStart(msecs, 3)}`;
     }
 
     return "00:00:00.000";
