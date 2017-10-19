@@ -16,5 +16,5 @@ def print_version(out=sys.stderr):
     except IOError:
         pass
     print >>out, '2immerse authoring tool backend, branch', branch, 'revision', revision
-    
+
 print_version()

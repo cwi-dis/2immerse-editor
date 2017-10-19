@@ -25,13 +25,12 @@ def _get():
     for k in kList:
         rv[k] = globals()[k]
     return rv
-    
+
 def _put(values):
     for k, v in values.items():
         globals()[k] = v
-        
+
 if __name__ == '__main__':
     print _get()
     _put({'noKibana':True})
     print _get()
-    

@@ -25,7 +25,7 @@ class MyFormatter(logging.Formatter):
         if logmessage[0] == 'u':
             logmessage = logmessage[1:]
         logmessage = "'" + logmessage[2:]
-        
+
         rvList = ['2-Immerse']
         if source:
             rvList.append('source:%s' % source)
@@ -44,7 +44,7 @@ class MyFormatter(logging.Formatter):
         rvList.append('sourcetime:%s' % datetime.datetime.fromtimestamp(time.time()).isoformat())
         rvList.append('logmessage:%s' % logmessage)
         return ' '.join(rvList)
-        
+
 class MyLoggerAdapter(logging.LoggerAdapter):
 
 	def process(self, msg, kwargs):
@@ -68,7 +68,7 @@ def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
                 loggerToModify = logging.getLogger()
                 newLevel = getattr(logging, ll)
             loggerToModify.setLevel(newLevel)
-    
+
     rootLogger = logging.getLogger()
     rootLogger.handlers[0].setFormatter(currentFormatterClass())
 

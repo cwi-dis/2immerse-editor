@@ -148,7 +148,7 @@ class Document:
 
     def getLoggerExtra(self):
         return self._loggerExtra
-        
+
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -201,7 +201,7 @@ class Document:
                 id = id + '-1'
         elt.set(NS_XML("id"), id)
         self.idMap[id] = elt
-        
+
     @synchronized
     def _elementAdded(self, elt, parent, recursive=False):
         """Updates paremtMap and idMap and various other data structures after a new element is added.
@@ -336,7 +336,7 @@ class Document:
                 commands = self.editManager.commit()
                 self.editManager = None
         return commands
-        
+
     def _forwardToOthers(self, commands):
         if commands:
             assert self.forwardHandler
@@ -415,7 +415,7 @@ class Document:
                 e.text = e.text.strip()
             if e.tail:
                 e.tail = e.tail.strip()
-                
+
     def _prepareForSave(self):
         """Prepare tree for saving by removing all items we added"""
         saveTree = copy.deepcopy(self.tree.getroot())
@@ -442,7 +442,7 @@ class Document:
         # Remove any elements we inserted
         # xxxjack tbd
         return saveTree
-        
+
     @synchronized
     def dump(self):
         return '%d elements' % self._count()
@@ -524,14 +524,14 @@ class Document:
 
     def _getElementByID(self, id):
         return self.idMap.get(id)
-        
+
 class DocumentXml:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('xml')
-        
+
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
@@ -666,10 +666,10 @@ class DocumentEvents:
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
-        
+
     def _now(self):
         return time.time()
-        
+
     @synchronized
     def get(self):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
@@ -727,7 +727,7 @@ class DocumentEvents:
                 rv["previewUrl"] = previewUrl
         if NS_TRIGGER("longdesc") in elt.attrib:
             rv["longdesc"] = elt.get(NS_TRIGGER("longdesc"))
-            
+
         return rv
 
     @synchronized
@@ -767,7 +767,7 @@ class DocumentEvents:
             return self._getClock(parentElement)
         self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
         return value
-        
+
     @synchronized
     def _getClock(self, element):
         """Return current clock value for an element"""
@@ -780,7 +780,7 @@ class DocumentEvents:
             return str(curTime)
         self.logger.warning("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
         return "0"
-        
+
     @edit
     def trigger(self, id, parameters):
         """REST trigger command: triggers an event"""
@@ -819,7 +819,7 @@ class DocumentEvents:
 
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
-        
+
         self.document.companionTimelineIsActive = False
         return newElement.get(NS_XML('id'))
 
@@ -852,17 +852,17 @@ class DocumentEvents:
         self.document.companionTimelineIsActive = False
         return ""
 
-        
+
 class DocumentRemote:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('remote')
-        
+
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
-        
+
     @synchronized
     def get(self):
         firstRootChild = list(self.tree.getroot())[0]
@@ -878,7 +878,7 @@ class DocumentRemote:
         if curClock and curClock != "0":
             rv["position"] = float(curClock)
         return rv
-        
+
     @synchronized
     def control(self, command):
         if type(command) != type({}):
@@ -896,14 +896,14 @@ class DocumentRemote:
             self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
             abort(500, "remote/control: POST to preivew client failed")
         return ""
-        
+
 class DocumentAuthoring:
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('authoring')
-        
+
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
@@ -918,10 +918,10 @@ class DocumentServe:
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
-        
+
     def _now(self):
         return time.time()
-        
+
     @synchronized
     def _nextGeneration(self, sameValue):
         rootElt = self.tree.getroot()
@@ -976,7 +976,7 @@ class DocumentServe:
             clientExtra = json.loads(clientExtraElement.text)
             for k, v in clientExtra.items():
                 clientDoc[k] = v
-        # 
+        #
         # We do substitution manually, for now. May want to use a templating system at some point.
         #
         clientDoc['serviceInput'] = dict(
@@ -997,7 +997,7 @@ class DocumentServe:
         # Note that this should be user-settable, depending on this flag the preview will run
         # in single-device (standalone) or TV mode.
         clientDoc['mode'] = globalSettings.mode
-        
+
         return json.dumps(clientDoc)
 
     @synchronized
@@ -1031,7 +1031,7 @@ class DocumentServe:
             changed = self._elementStateChanged(elt, eltState)
             if changed:
                 self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
-                
+
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
         newState = eltState[NS_TIMELINE_INTERNAL("state")]
@@ -1045,7 +1045,7 @@ class DocumentServe:
         newClockRunning = eltState[NS_TIMELINE_INTERNAL("clockRunning")]
         if not newClockRunning or newClockRunning == "false":
             newClockRunning = None
-            
+
         oldState = elt.get(NS_TIMELINE_INTERNAL("state"))
         oldEpoch = elt.get(NS_TIMELINE_INTERNAL("epoch"))
         oldClockRunning = elt.get(NS_TIMELINE_INTERNAL("clockRunning"))
@@ -1053,17 +1053,17 @@ class DocumentServe:
             oldClockRunning = None
         if oldEpoch:
             oldEpoch = float(oldEpoch)
-            
+
         def almostEqual(t1, t2):
             if not t1 and not t2:
                 return True
             if not t1 or not t2:
                 return t1 == t2
             return abs(t1-t2) < 0.1
-            
+
         if oldState == newState and almostEqual(oldEpoch, newEpoch) and oldClockRunning == newClockRunning:
             return False
-            
+
         self.logger.debug("eltStateChanged(%s): state=%s epoch=%s" % (self.document._getXPath(elt), newState, newEpoch), extra=self.getLoggerExtra())
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
@@ -1077,9 +1077,9 @@ class DocumentServe:
             elt.set(NS_TIMELINE_INTERNAL("clockRunning"), newClockRunning)
         else:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("clockRunning"))
-            
+
         return True
-         
+
     def forward(self, operations):
         if len(operations) and len(self.callbacks):
             self.logger.info('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
@@ -1105,7 +1105,7 @@ class DocumentServe:
                 requestDuration = time.time() - requestStartTime
                 if requestDuration > 2:
                     self.logger.warning("forward: PUT took %d seconds for %s" % (requestDuration, callback), extra=self.getLoggerExtra())
-                    
+
             # Only continue if we have anything to say...
             if not operations and not wantStateUpdates:
                 break

@@ -286,7 +286,7 @@ def get_client_document(documentId):
     docRoot = '%s/document/%s/serve/' % (get_docRoot(), documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'))
     return Response(config, mimetype="application/json")
-    
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
 def put_client_document(documentId):
     try:
