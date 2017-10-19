@@ -48,9 +48,19 @@ By hitting the `Trigger` button of an event you will activate that event and imm
 
 There is a second tab `triggered events` where you can stop events again.
 
-### Time control
+### Preview control
 
-A future version of this tool will have an option to pause and go back and fort in time to have precise control on timing of events.
+Once the preview player has started the preview control buttons on the bottom of the editing window become active. These buttons allow you to control the preview player:
+
+- Go back 5 seconds
+- Go back 1 video frame
+- Play
+- Pause
+- Go forward 1 video frame
+
+This allows fine control over where events are inserted into the timeline document.
+
+Eventually there will also be a display of current timecode, and any error or status messages.
 
 ### Multi-user
 
