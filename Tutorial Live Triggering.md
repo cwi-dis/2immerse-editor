@@ -60,7 +60,9 @@ Once the preview player has started the preview control buttons on the bottom of
 
 This allows fine control over where events are inserted into the timeline document.
 
-Eventually there will also be a display of current timecode, and any error or status messages.
+To the right of the playback controls, you should see the current timecode. At the moment, this field is only updated once a second. Another issue is that when pausing the stream, the counter does not stop, even if the presentation is paused successfully. It will, however, reset to the correct timecode once you press play again.
+
+To the left of the playback there is a field which displays status messages from the server. Once playback is started, this field should usually be clear. Note that most messages will be truncated. Hover over the the text to see the full message.
 
 ### Multi-user
 
