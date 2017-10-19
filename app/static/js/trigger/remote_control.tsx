@@ -1,6 +1,16 @@
 import * as React from "react";
 import { makeRequest } from "../editor/util";
 
+function padStart(s: any, targetLength: number, pad= "0") {
+  s = s.toString();
+
+  if (pad.length !== 1 || s.length > targetLength) {
+    return s;
+  }
+
+  return Array(targetLength - s.length).fill(pad).join("") + s;
+}
+
 interface RemoteControlProps {
   documentId: string;
 }
@@ -68,6 +78,21 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
+  private renderTimestamp() {
+    const { previewStatus: { position } } = this.state;
+
+    if (position) {
+      const hours = Math.floor(position / 3600);
+      const minutes = Math.floor(position / 60) - hours * 60;
+      const seconds = Math.floor(position) - minutes * 60 - hours * 3600;
+      const msecs = Math.floor((position - Math.floor(position)) * 1000);
+
+      return `${padStart(hours, 2)}:${padStart(minutes, 2)}:${padStart(seconds, 2)}.${msecs}`;
+    }
+
+    return "00:00:00.000";
+  }
+
   public render() {
     const { previewStatus } = this.state;
 
@@ -103,13 +128,13 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                 onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
           <i className="fa fa-step-backward"></i>
         </button>
-        <button className="button is-success"
+        <button className="button is-info"
                 style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: true })}>
           <i className="fa fa-play"></i>
         </button>
-        <button className="button is-danger"
+        <button className="button is-info"
                 style={buttonStyle}
                 disabled={!previewStatus.active}
                 onClick={this.sendControlCommand.bind(this, { playing: false })}>
@@ -121,6 +146,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                 onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
           <i className="fa fa-step-forward"></i>
         </button>
+        <div style={{fontFamily: "monospace", fontSize: 24, marginLeft: 20}}>
+          {this.renderTimestamp()}
+        </div>
       </div>
     );
   }
