@@ -239,7 +239,7 @@ def document_settings_put(documentId):
     parameters = request.get_json()
     if not isinstance(parameters, dict):
         abort(405)
-    return settings.put(**parameters)
+    return settings.set(**parameters)
 
 #
 # per-document, remote control of playback
