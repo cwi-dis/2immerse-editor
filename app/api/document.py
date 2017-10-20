@@ -1062,7 +1062,7 @@ class DocumentServe:
                 return True
             if not t1 or not t2:
                 return t1 == t2
-            return abs(t1-t2) < 0.04
+            return abs(t1-t2) < 0.01
 
         if oldState == newState and almostEqual(oldEpoch, newEpoch) and oldClockRunning == newClockRunning:
             return False
