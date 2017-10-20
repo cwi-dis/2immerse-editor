@@ -1,17 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest } from "../editor/util";
-
-function padStart(s: any, targetLength: number, pad = "0") {
-  s = s.toString();
-
-  if (pad.length !== 1 || s.length > targetLength) {
-    return s;
-  }
-
-  return Array(targetLength - s.length).fill(pad).join("") + s;
-}
+import { makeRequest, padStart } from "../editor/util";
 
 interface RemoteControlProps {
   documentId: string;

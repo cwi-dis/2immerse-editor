@@ -62,6 +62,16 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
   });
 }
 
+export function padStart(s: any, targetLength: number, pad = "0") {
+  s = s.toString();
+
+  if (pad.length !== 1 || s.length > targetLength) {
+    return s;
+  }
+
+  return Array(targetLength - s.length).fill(pad).join("") + s;
+}
+
 export function capitalize(str: string): string {
   if (str.length === 0) {
     return str;
