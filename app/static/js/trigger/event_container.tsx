@@ -45,19 +45,6 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     }));
   }
 
-  private countParams(): string {
-    const { parameters } = this.props.event;
-    const count = parameters.filter((p) => p.type !== "set").length;
-
-    if (count === 0) {
-      return "No parameters";
-    } else if (count === 1) {
-      return "1 parameter";
-    }
-
-    return `${count} parameters`;
-  }
-
   private collectParams(): List<{parameter: string, value: string}> {
     return this.state.params.map((param) => {
       return {
