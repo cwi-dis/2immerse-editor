@@ -1062,7 +1062,7 @@ class DocumentServe:
                 return True
             if not t1 or not t2:
                 return t1 == t2
-            return abs(t1-t2) < 0.1
+            return abs(t1-t2) < 0.04
 
         if oldState == newState and almostEqual(oldEpoch, newEpoch) and oldClockRunning == newClockRunning:
             return False
@@ -1080,7 +1080,8 @@ class DocumentServe:
             elt.set(NS_TIMELINE_INTERNAL("clockRunning"), newClockRunning)
             self.document.clock.start()
         else:
-            elt.attrib.pop(NS_TIMELINE_INTERNAL("clockRunning"))
+            if NS_TIMELINE_INTERNAL("clockRunning") in elt.attrib:
+                elt.attrib.pop(NS_TIMELINE_INTERNAL("clockRunning"))
             if newEpoch:
                 self.document.clock.stop()
 
