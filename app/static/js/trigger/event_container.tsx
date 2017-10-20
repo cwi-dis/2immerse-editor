@@ -126,6 +126,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { params, isLoading, flashSuccess, flashError } = this.state;
 
+    const submitEnabled = params.every((p) => p.value !== undefined && p.value !== "");
+
     return (
       <div style={{display: "flex", margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
         <div style={{width: 100, height: 100, margin: "0 15px 0 0", border: "1px solid #555555", backgroundColor: "#222222"}}>
@@ -168,6 +170,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                                     "button",
                                     "is-info",
                                     {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                        disabled={!submitEnabled}
                         onClick={this.launchEvent.bind(this)}
                         onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
                   {this.getButtonLabel()}
