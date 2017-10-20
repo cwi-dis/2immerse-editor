@@ -549,6 +549,29 @@ describe("Utility function shortenUrl()", () => {
   });
 });
 
+describe("Utility function padStart()", () => {
+  it("should pad the given string with zeroes to the specified length", () => {
+    expect(util.padStart("1", 5)).toEqual("00001");
+  });
+
+  it("should pad the given number with zeroes to the specified length and return a string", () => {
+    expect(util.padStart(2, 5)).toEqual("00002");
+  });
+
+  it("should pad the given string with the given pad to the specified length", () => {
+    expect(util.padStart("hi", 5, " ")).toEqual("   hi");
+  });
+
+  it("return the string unchanged if it is longer than the pad-length", () => {
+    expect(util.padStart("hello", 5)).toEqual("hello");
+    expect(util.padStart("hello", 4)).toEqual("hello");
+  });
+
+  it("return the string unchanged if the pad is longer than one character", () => {
+    expect(util.padStart("a", 5, "hello")).toEqual("a");
+  });
+});
+
 describe("Utility function getRandomInt()", () => {
   it("should always return the same number if min is equal to max", () => {
     expect(util.getRandomInt(5, 5)).toEqual(5);
