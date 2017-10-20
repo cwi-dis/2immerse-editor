@@ -20,6 +20,7 @@ export interface EventParams {
   parameter: string;
   type: ParamTypes;
   value?: string;
+  required?: boolean;
 }
 
 export interface Event {

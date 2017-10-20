@@ -126,7 +126,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { params, isLoading, flashSuccess, flashError } = this.state;
 
-    const submitEnabled = params.every((p) => p.value !== undefined && p.value !== "");
+    const submitEnabled = params.filter((p) => p.required)
+                                .every((p) => p.value !== undefined && p.value !== "");
 
     return (
       <div style={{display: "flex", margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
