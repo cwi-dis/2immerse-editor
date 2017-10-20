@@ -131,7 +131,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     return (
       <div style={{display: "flex", margin: "10px 25px 0 25px", padding: 25, borderBottom: "1px solid #555555"}}>
-        <div style={{width: 100, height: 100, margin: "0 15px 0 0", border: "1px solid #555555", backgroundColor: "#222222"}}>
+        <div style={{width: 100, height: 100, margin: "0 15px 0 0"}}>
           {(event.previewUrl) && <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />}
         </div>
         <div style={{flexGrow: 1}}>
@@ -158,13 +158,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
           </table>
 
           <div className="level">
-            <div className="level-left">
-              <p className="level-item" style={{color: "#999999", fontStyle: "italic", fontSize: 14}}>
-                {(event.modify) ? "Modifiable. " : ""}
-                {this.countParams()}
-              </p>
-            </div>
-
+            <div className="level-left"></div>
             <div className="level-right">
               <div className="level-item">
                 <button className={classNames(
