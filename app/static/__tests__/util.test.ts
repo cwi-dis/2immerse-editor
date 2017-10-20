@@ -492,6 +492,22 @@ describe("Utility function makeRequest()", () => {
     });
   });
 
+  it("should not automatically set the Content-Type header to application/json when passing an instance of FormData", () => {
+    XHRmock.setup();
+
+    XHRmock.post("http://should-not-set-content.type", (req, res) => {
+      return res.status(200).body(req.header("Content-Type"));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.makeRequest("POST", "http://should-not-set-content.type", new FormData())
+    ).resolves.not.toEqual("application/json").then(() => {
+      XHRmock.teardown();
+    });
+  });
+
   it("should send the given data to the server", () => {
     XHRmock.setup();
 

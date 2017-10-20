@@ -49,7 +49,7 @@ export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: 
       });
     };
 
-    if (typeof data === "object") {
+    if (typeof data === "object" && !(data instanceof FormData)) {
       xhr.setRequestHeader("Content-Type", "application/json");
       xhr.send(JSON.stringify(data));
     } else {
