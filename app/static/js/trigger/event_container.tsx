@@ -34,11 +34,15 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       isLoading: false,
       flashSuccess: false,
       flashError: false,
-      params: List(props.event.parameters.map((param) => {
-        param.value = param.value ? param.value : paramDefaults[param.type];
-        return param;
-      }))
+      params: this.convertParams(props.event.parameters)
     };
+  }
+
+  private convertParams(parameters: Array<EventParams>) {
+    return List(parameters.map((param) => {
+      param.value = param.value ? param.value : paramDefaults[param.type];
+      return param;
+    }));
   }
 
   private countParams(): string {
@@ -82,7 +86,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
       this.setState({
         isLoading: false,
-        flashSuccess: true
+        flashSuccess: true,
+        params: this.convertParams(this.props.event.parameters)
       });
 
       this.props.onTriggered && this.props.onTriggered();
@@ -140,8 +145,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                     </td>
                     <td style={{width: "50%", border: "none"}}>
                       <ParamInputField type={param.type}
-                                      value={params.get(i)!.value!}
-                                      onChange={this.updateParamField.bind(this, i)} />
+                                       value={params.get(i)!.value!}
+                                       onChange={this.updateParamField.bind(this, i)} />
                     </td>
                   </tr>
                 );
