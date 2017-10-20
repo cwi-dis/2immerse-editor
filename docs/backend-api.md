@@ -57,6 +57,15 @@ These provide an interface that is tailored to the preproduction authoring tool.
 
 There aren't any calls, at the moment:-)
 
+## document settings
+
+The endpoint at `/api/v1/document/<documentId>/settings` allows getting and setting per-document variables. The following variables are available:
+
+- `startPaused` (boolean) determines whether a preview player starts paused or playing.
+- `mode` (string) determines whether the preview player is started in `"standalone"` or `"tv"` mode.
+
+On `GET`, the return value also contains an object `debugLinks` which has key/value pairs of links that may be useful to the trigger tool operator. The keys are human readable strings, the values URLs. Suggested use is to show the keys in a menu and open a new tab with the URL when selected.
+
 ## document serving calls
 
 The endpoint at `/api/v1/document/<documentId>/serve/` serves things like timeline and layout documents, generated on the fly form the underlying document representation:
