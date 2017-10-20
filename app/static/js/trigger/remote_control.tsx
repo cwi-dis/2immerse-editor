@@ -26,10 +26,12 @@ interface PreviewStatus {
 
 interface RemoteControlState {
   previewStatus: PreviewStatus;
+  lastPositionUpdate?: number;
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
   private statusInterval: any;
+  private timerInterval: any;
 
   public constructor(props: RemoteControlProps) {
     super(props);
@@ -49,18 +51,34 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
         console.log("Preview status:", previewStatus);
 
         this.setState({
-          previewStatus
+          previewStatus,
+          lastPositionUpdate: Date.now() / 1000
         });
       }).catch((err) => {
         console.error("Could not fetch preview status:", err);
       });
     }, 1000);
+
+    this.timerInterval = setInterval(() => {
+      const { lastPositionUpdate, previewStatus } = this.state;
+
+      if (previewStatus.playing && previewStatus.position && lastPositionUpdate) {
+        const delta = (Date.now() / 1000) - lastPositionUpdate;
+
+        this.setState({
+          previewStatus: {
+            ...previewStatus,
+            position: previewStatus.position + delta
+          },
+          lastPositionUpdate: Date.now() / 1000
+        });
+      }
+    }, 10);
   }
 
   public componentWillUnmount() {
-    if (this.statusInterval) {
-      clearInterval(this.statusInterval);
-    }
+    this.statusInterval && clearInterval(this.statusInterval);
+    this.timerInterval && clearInterval(this.timerInterval);
   }
 
   private sendControlCommand(command: any) {
