@@ -1156,6 +1156,7 @@ class DocumentSettings:
             self.startPaused = startPaused
         if playerMode != None:
             self.playerMode = playerMode
+        return ""
             
     def _getDebugLinks(self, frontend, backend):
         frontendURL = frontend + "#documentID=%s" % self.document.documentId
