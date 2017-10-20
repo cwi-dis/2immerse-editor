@@ -91,7 +91,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
         console.log("Playback state toggled");
 
-        if (command.playing) {
+        if (command.playing !== undefined) {
           this.setState({
             previewStatus: {
               ...previewStatus,
