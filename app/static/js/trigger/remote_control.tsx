@@ -71,6 +71,21 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
+  private togglePlayback() {
+    const { previewStatus } = this.state;
+
+    if (previewStatus.playing) {
+      this.setState({
+        previewStatus: {
+          ...previewStatus,
+          playing: false
+        }
+      });
+    }
+
+    this.sendControlCommand({ playing: !previewStatus.playing });
+  }
+
   private sendControlCommand(command: any) {
     const { previewStatus } = this.state;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
@@ -80,15 +95,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
       makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
         console.log("Playback state toggled");
-
-        if (command.playing !== undefined) {
-          this.setState({
-            previewStatus: {
-              ...previewStatus,
-              playing: command.playing
-            }
-          });
-        }
       }).catch((err) => {
         console.warn("Could not toggle playback:", err);
       });
@@ -156,17 +162,11 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                   onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
             <i className="fa fa-step-backward"></i>
           </button>
-          <button className={classNames("button", (previewStatus.playing) ? "is-success" : "is-info")}
+          <button className={classNames("button", (previewStatus.playing) ? "is-error" : "is-success")}
                   style={buttonStyle}
                   disabled={!previewStatus.active}
-                  onClick={this.sendControlCommand.bind(this, { playing: true })}>
-            <i className="fa fa-play"></i>
-          </button>
-          <button className="button is-info"
-                  style={buttonStyle}
-                  disabled={!previewStatus.active}
-                  onClick={this.sendControlCommand.bind(this, { playing: false })}>
-            <i className="fa fa-pause"></i>
+                  onClick={this.togglePlayback.bind(this)}>
+            <i className={classNames("fa", (previewStatus.playing) ? "fa-pause" : "fa-play")}></i>
           </button>
           <button className="button is-info"
                   style={buttonStyle}
