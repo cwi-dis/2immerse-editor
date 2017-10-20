@@ -141,6 +141,16 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       margin: "0 5px"
     };
 
+    const timestampStyle = {
+      fontFamily: "monospace",
+      fontSize: 24,
+      borderRadius: 3,
+      padding: "0 5px",
+      marginLeft: 20,
+      border: "1px solid #E2E2E2",
+      height: 36
+    };
+
     return (
       <div style={containerStyle}>
         <div style={{display: "flex", justifyContent: "center"}}>
@@ -174,7 +184,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                   onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
             <i className="fa fa-step-forward"></i>
           </button>
-          <div style={{fontFamily: "monospace", fontSize: 24, borderRadius: 3, padding: "0 5px 0 5px", marginLeft: 20, border: "1px solid #E2E2E2", height: 36}}>
+          <div style={timestampStyle}>
             <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
           </div>
         </div>
