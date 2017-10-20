@@ -90,10 +90,13 @@ The endpoint at `/api/v1/document/<documentId>/remote` is a remote control for t
 	- `active` (boolean) true if a preview player is attached. If false the rest of the fields are not available.
 	- `playing` (boolean) true if the document is playing, false if paused.
 	- `position` (float) time position in seconds.
+	- `duration` (float, optional) if present, this is the duration of the whole timeline. (Or at least the duration that should be presented to the user in scrubbers, etc).
+
 - `control` (POST) allows to control the preview player, argument is a JSON object. Fields are optional, missing fields means _no change_.
 	- `playing` (boolean) set to `false` or `true` to pause or resume playback.
 	- `position` (float) set absolute time position. _NOTE:_ this may not be fully implemented.
 	- `adjust` (float) adjust time position by this amount.
+	- `mute` (boolean) mutes or unmutes the audio of the preview player, if present.
 
 ## document changes
 
