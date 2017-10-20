@@ -14,6 +14,7 @@ mode = "standalone"
 layoutService = "https://layout-service-edge.platform.2immerse.eu/layout/v4"
 websocketService = "https://websocket-service-edge.platform.2immerse.eu/"
 timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
+kibanaService = "https://platform.2immerse.eu/kibana/app/kibana"
 
 # Logging parameters for the authoring service
 noKibana = False

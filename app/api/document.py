@@ -140,6 +140,7 @@ class Document:
         self.forwardHandler = None
         self.xmlHandler = None
         self.remoteHandler = None
+        self.settingsHandler = None
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
@@ -319,6 +320,13 @@ class Document:
         if not self.remoteHandler:
             self.remoteHandler = DocumentRemote(self)
         return self.remoteHandler
+
+    @synchronized
+    def settings(self):
+        """Returns the control handler (after creating it if needed)"""
+        if not self.settingsHandler:
+            self.settingsHandler = DocumentSettings(self)
+        return self.settingsHandler
 
     @synchronized
     def _startListening(self, reason=None):
@@ -993,13 +1001,17 @@ class DocumentServe:
                 )
         #
         # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
-        clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = True
+        if self.document.settings().startPaused:
+            rcValue = dict(playing=False)
+        else:
+            rcValue = True
+        clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = rcValue
         #
         # And we set the playback mode
         #
         # Note that this should be user-settable, depending on this flag the preview will run
         # in single-device (standalone) or TV mode.
-        clientDoc['mode'] = globalSettings.mode
+        clientDoc['mode'] = self.document.settings().playerMode
 
         return json.dumps(clientDoc)
 
@@ -1119,3 +1131,42 @@ class DocumentServe:
         for callback in toRemove:
             self.logger.info('removeCallback(%s)'%callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
+
+class DocumentSettings:
+    def __init__(self, document):
+        self.document = document
+        self.lock = self.document.lock
+        self.logger = self.document.logger.getChild('settings')
+        
+        self.startPaused = False
+        self.playerMode = globalSettings.mode
+
+    def getLoggerExtra(self):
+        return self.document.getLoggerExtra()
+
+    def get(self, frontend, backend):
+        return dict(
+            startPaused=self.startPaused,
+            playerMode=self.playerMode,
+            debugLinks=self._getDebugLinks(frontend, backend)
+            )
+            
+    def set(self, startPaused=None, playerMode=None):
+        if startPaused != None:
+            self.startPaused = startPaused
+        if playerMode != None:
+            self.playerMode = playerMode
+            
+    def _getDebugLinks(self, frontend, backend):
+        frontendURL = frontend + "#documentID=%s" % self.document.documentId
+        backendURL = backend + "/document/%s" % self.document.documentId
+        rv = {
+            "Open This Document Again" : frontendURL,
+            "Backend REST Endpoint" : backendURL
+            }
+        contextID = self.document.serve().contextID
+        if contextID:
+            kibanaCommand = "#/discover/All-2-Immerse-prefixed-logs-without-Websocket-Service?_g=(refreshInterval:(display:'10%%20seconds',pause:!f,section:1,value:10000),time:(from:now-15m,mode:quick,to:now))&_a=(columns:!(sourcetime,source,subSource,verb,logmessage,contextID,message),filters:!(),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'rawmessage:%%22%%2F%%5E2-Immerse%%2F%%22%%20AND%%20NOT%%20source:%%22WebsocketService%%22%%20AND%%20contextID:%%%s%%22')),sort:!(sourcetime,desc))"
+            rv["Kibana Log"] = globalSettings.kibanaService + (kibanaCommand % contextID)
+            rv["Timeline Dump"] = globalSettings.timelineService + '/context/' + contextID + '/dump'
+        return rv

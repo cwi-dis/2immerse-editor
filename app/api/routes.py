@@ -27,18 +27,19 @@ API_ROOT = '/api/v1'
 #
 # Get externally accessible URL for an endpoint. Only call while inside a request.
 #
-def get_docRoot():
+def get_docRoot(localPath=API_ROOT):
     protoRP = request.headers.get('X-Forwarded-Proto')
     if protoRP:
         # We are running behind a reverse proxy. Construct base URL manually.
         hostRP = request.headers.get('X-Forwarded-Host')
         assert hostRP
-        docRoot = '%s://%s%s' % (protoRP, hostRP, API_ROOT)
+        docRoot = '%s://%s/' % (protoRP, hostRP)
     else:
         # We are running standalone. Trust http headers.
-        docRoot = urlparse.urljoin(request.base_url, API_ROOT)
+        docRoot = request.base_url
+    if localPath:
+        docRoot = urlparse.urljoin(docRoot, localPath)
     return docRoot
-
 
 def handle_error(code, status, error):
     response = jsonify({"message": error.description})
@@ -211,6 +212,34 @@ def document_events_modify(documentId, id):
         abort(405)
 
     return events.modify(id, parameters)
+
+#
+# per-document, settings and debug links
+#
+@app.route(API_ROOT + "/document/<uuid:documentId>/settings")
+def document_settings_get(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    settings = document.settings()
+    assert settings
+    rv = settings.get(frontend=get_docRoot("/trigger"), backend=get_docRoot())
+    return Response(json.dumps(rv), mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/settings", methods=["PUT"])
+def document_settings_put(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    settings = document.settings()
+    assert settings
+
+    parameters = request.get_json()
+    if not isinstance(parameters, dict):
+        abort(405)
+    return settings.put(**parameters)
 
 #
 # per-document, remote control of playback
