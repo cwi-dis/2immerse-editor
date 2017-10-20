@@ -74,14 +74,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   private togglePlayback() {
     const { previewStatus } = this.state;
 
-    if (previewStatus.playing) {
-      this.setState({
-        previewStatus: {
-          ...previewStatus,
-          playing: false
-        }
-      });
-    }
+    this.setState({
+      previewStatus: {
+        ...previewStatus,
+        playing: !previewStatus.playing
+      }
+    });
 
     this.sendControlCommand({ playing: !previewStatus.playing });
   }
@@ -162,7 +160,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                   onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
             <i className="fa fa-step-backward"></i>
           </button>
-          <button className={classNames("button", (previewStatus.playing) ? "is-error" : "is-success")}
+          <button className={classNames("button", (previewStatus.playing) ? "is-danger" : "is-success")}
                   style={buttonStyle}
                   disabled={!previewStatus.active}
                   onClick={this.togglePlayback.bind(this)}>
