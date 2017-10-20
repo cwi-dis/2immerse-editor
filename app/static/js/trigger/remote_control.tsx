@@ -1,4 +1,6 @@
 import * as React from "react";
+import * as classNames from "classnames";
+
 import { makeRequest } from "../editor/util";
 
 function padStart(s: any, targetLength: number, pad= "0") {
@@ -90,7 +92,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       return `${padStart(hours, 2)}:${padStart(minutes, 2)}:${padStart(seconds, 2)}.${padStart(msecs, 3)}`;
     }
 
-    return "00:00:00.000";
+    return "--:--:--.---";
   }
 
   public render() {
@@ -98,14 +100,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
     const style: React.CSSProperties = {
       position: "fixed",
-      height: 60,
+      height: 80,
       bottom: 0,
       left: 0,
       width: "100%",
       padding: 10,
-      borderTop: "2px solid #161616",
-      display: "flex",
-      justifyContent: "center"
+      borderTop: "2px solid #161616"
     };
 
     const buttonStyle: React.CSSProperties = {
@@ -114,51 +114,45 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       margin: "0 5px"
     };
 
-    const statusStyle: React.CSSProperties = {
-      width: 175, height: 36,
-      fontSize: 16,
-      overflow: "hidden", whiteSpace: "nowrap",
-      marginRight: 20, paddingTop: 7,
-      textOverflow: "ellipsis"
-    };
-
     return (
       <div style={style}>
-        <div title={previewStatus.status} style={statusStyle}>
-            {previewStatus.status}
+        <div style={{display: "flex", justifyContent: "center"}}>
+          <button className="button is-info"
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { adjust: -5.0 })}>
+            <i className="fa fa-fast-backward"></i>
+          </button>
+          <button className="button is-info"
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
+            <i className="fa fa-step-backward"></i>
+          </button>
+          <button className={classNames("button", (previewStatus.playing) ? "is-success" : "is-info")}
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { playing: true })}>
+            <i className="fa fa-play"></i>
+          </button>
+          <button className="button is-info"
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { playing: false })}>
+            <i className="fa fa-pause"></i>
+          </button>
+          <button className="button is-info"
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
+            <i className="fa fa-step-forward"></i>
+          </button>
+          <div style={{fontFamily: "monospace", fontSize: 24, borderRadius: 3, padding: "0 5px 0 5px", marginLeft: 20, border: "1px solid #E2E2E2", height: 36}}>
+            <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
+          </div>
         </div>
-        <button className="button is-info"
-                style={buttonStyle}
-                disabled={!previewStatus.active}
-                onClick={this.sendControlCommand.bind(this, { adjust: -5.0 })}>
-          <i className="fa fa-fast-backward"></i>
-        </button>
-        <button className="button is-info"
-                style={buttonStyle}
-                disabled={!previewStatus.active}
-                onClick={this.sendControlCommand.bind(this, { adjust: -0.04 })}>
-          <i className="fa fa-step-backward"></i>
-        </button>
-        <button className="button is-info"
-                style={buttonStyle}
-                disabled={!previewStatus.active}
-                onClick={this.sendControlCommand.bind(this, { playing: true })}>
-          <i className="fa fa-play"></i>
-        </button>
-        <button className="button is-info"
-                style={buttonStyle}
-                disabled={!previewStatus.active}
-                onClick={this.sendControlCommand.bind(this, { playing: false })}>
-          <i className="fa fa-pause"></i>
-        </button>
-        <button className="button is-info"
-                style={buttonStyle}
-                disabled={!previewStatus.active}
-                onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
-          <i className="fa fa-step-forward"></i>
-        </button>
-        <div style={{fontFamily: "monospace", fontSize: 24, marginLeft: 20}}>
-          {this.renderTimestamp()}
+        <div style={{marginTop: 7}}>
+          <p style={{color: "#FF3860", textAlign: "center"}}>{previewStatus.status}</p>
         </div>
       </div>
     );
