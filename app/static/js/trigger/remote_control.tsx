@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 
 import { makeRequest } from "../editor/util";
 
-function padStart(s: any, targetLength: number, pad= "0") {
+function padStart(s: any, targetLength: number, pad = "0") {
   s = s.toString();
 
   if (pad.length !== 1 || s.length > targetLength) {
@@ -90,6 +90,15 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
       makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
         console.log("Playback state toggled");
+
+        if (command.playing) {
+          this.setState({
+            previewStatus: {
+              ...previewStatus,
+              playing: command.playing
+            }
+          });
+        }
       }).catch((err) => {
         console.warn("Could not toggle playback:", err);
       });
@@ -116,7 +125,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   public render() {
     const { previewStatus } = this.state;
 
-    const style: React.CSSProperties = {
+    const containerStyle: React.CSSProperties = {
       position: "fixed",
       height: 80,
       bottom: 0,
@@ -133,7 +142,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     };
 
     return (
-      <div style={style}>
+      <div style={containerStyle}>
         <div style={{display: "flex", justifyContent: "center"}}>
           <button className="button is-info"
                   style={buttonStyle}
