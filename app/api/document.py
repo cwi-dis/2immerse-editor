@@ -77,6 +77,7 @@ def edit(method):
             ok = self.document._startListening(method.__name__)
             if not ok:
                 self.logger.error('edit(%s): another edit operation is still in progress' % method.__name__, extra=self.getLoggerExtra())
+                self.document.setError("Another editing operation is still in progress")
                 abort(400, "Another editing operation is still in progress")
             toForward = None
             try:
@@ -89,6 +90,7 @@ def edit(method):
     return wrapper
 
 class EditManager:
+    """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
     def __init__(self, document, reason=None):
         self.document = document
         self.reason = reason
@@ -144,6 +146,7 @@ class Document:
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
+        self.lastErrorMessage = None
         self.logger = logger
         self.clock = clocks.PausableClock(clocks.SystemClock())
         self._loggerExtra = dict(subSource='document', documentID=documentId)
@@ -152,6 +155,12 @@ class Document:
     def getLoggerExtra(self):
         return self._loggerExtra
 
+    def clearError(self):
+        self.lastErrorMessage = None
+        
+    def setError(self, msg):
+        self.lastErrorMessage = msg
+        
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -384,6 +393,7 @@ class Document:
         try:
             root = ET.fromstring(data)
         except ET.ParseError:
+            self.setError("XML parse error in document")
             abort(400, "XML parse error in document")
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
@@ -398,12 +408,14 @@ class Document:
         try:
             self.tree = ET.parse(fp)
         except ET.ParseError:
+            self.setError("XML parse error in document")
             abort(400, "XML parse error in %s" % url)
         self._documentLoaded()
         if not self.tree.getroot().get(NS_2IMMERSE("base")):
             self.baseAdded = True
             self.tree.getroot().set(NS_2IMMERSE("base"), self.url)
             self.logger.debug("load: added tim:base=%s" % self.url, extra=self.getLoggerExtra())
+        self.clearError()
         return ''
 
     @synchronized
@@ -416,6 +428,7 @@ class Document:
         self._zapWhitespace()
         saveTree = self._prepareForSave()
         fp.write(ET.tostring(saveTree))
+        self.clearError()
 
     @synchronized
     def _zapWhitespace(self):
@@ -485,6 +498,7 @@ class Document:
         elif mimetype == 'application/xml':
             newElement = ET.fromstring(data)
         else:
+            self.setError("Internal error: unexpected mimetype %s" % mimetype)
             abort(400, 'Unexpected mimetype %s' % mimetype)
         return newElement
 
@@ -526,8 +540,10 @@ class Document:
         else:
             positions = self.tree.getroot().findall(path, NAMESPACES)
         if not positions:
+            self.setError'No XML element matches XPath %s' % path)
             abort(404, 'No tree element matches XPath %s' % path)
         if len(positions) > 1:
+            self.setError'Multiple XML elements match XPath %s' % path)
             abort(400, 'Multiple tree elements match XPath %s' % path)
         element = positions[0]
         return element
@@ -595,6 +611,7 @@ class DocumentXml:
                 parent.insert(pos+1, newElement)
             self.document._elementAdded(newElement, parent)
         else:
+            self.setError('Internal error: unknown relative position %s' % where)
             abort(400, 'Unknown relative position %s' % where)
         return self.document._getXPath(newElement)
 
@@ -622,6 +639,7 @@ class DocumentXml:
         elif mimetype == 'application/json':
             attrs = json.loads(attrs)
         else:
+            self.setError('Internal error: unexpected mimetype %s' % mimetype)
             abort(400, 'Unexpected mimetype %s' % mimetype)
         assert type(attrs) == type({})
         existingAttrs = element.attrib
@@ -745,10 +763,12 @@ class DocumentEvents:
             parPath = parameter['parameter']
             parValue = parameter['value']
         except KeyError:
+            self.document.setError('Missing parameter and/or value in event')
             abort(400, 'Missing parameter and/or value')
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
-            abort(400, 'Unsupported parameter XPath: %s' % parPath)
+            self.document.setError('Event parameter XPath does not match existing element: %s' % parPath)
+            abort(400, 'Event parameter XPath does not match existing element: %s' % parPath)
 
         path = match.group(1)
         attr = match.group(2)
@@ -796,6 +816,7 @@ class DocumentEvents:
 
         if element is None:
             self.logger.error("trigger: no such xml:id: %s" % id, extra=self.getLoggerExtra())
+            self.document.setError('No such xml:id: %s' % id)
             abort(404, 'No such xml:id: %s' % id)
 
         if False:
@@ -820,6 +841,7 @@ class DocumentEvents:
 
             if e is None:
                 self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
+                self.document.setError("No element matches XPath %s" % path)
                 abort(400, 'No element matches XPath %s' % path)
 
             e.set(attr, value)
@@ -828,6 +850,7 @@ class DocumentEvents:
         self.document._elementAdded(newElement, newParent)
 
         self.document.companionTimelineIsActive = False
+        self.document.clearError()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -838,6 +861,7 @@ class DocumentEvents:
 
         if element is None:
             self.logger.error("modify: no such xml:id: %s" % id, extra=self.getLoggerExtra())
+            self.document.setError("No such xml:id: %s" % id)
             abort(404, 'No such xml:id: %s' % id)
 
         allElements = set()
@@ -850,6 +874,7 @@ class DocumentEvents:
 
             if e is None:
                 self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
+                self.document.setError('No element matches XPath %s' % path)
                 abort(400, 'No element matches XPath %s' % path)
 
             e.set(attr, value)
@@ -859,6 +884,7 @@ class DocumentEvents:
             self.document._elementChanged(e)
 
         self.document.companionTimelineIsActive = False
+        self.document.clearError()
         return ""
 
 
@@ -893,17 +919,21 @@ class DocumentRemote:
             rv["playing"] = playing
         if curClock and curClock != "0":
             rv["position"] = float(curClock)
+        if self.document.lastErrorMessage:
+            rv["status"] = self.document.lastErrorMessage
         return rv
 
     @synchronized
     def control(self, command):
         if type(command) != type({}):
             self.logger.error('remote/control: requires JSON object', extra=self.getLoggerExtra())
+            self.document.setError('Internal error: remote/control requires JSON object')
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
         contextID = self.document.serve().contextID
         if not contextID:
             self.logger.error("remote/control: no contextID for preview client", extra=self.getLoggerExtra())
+            self.document.setError('No preview client is running')
             abort(500, 'remote/control: no contextID for preview client')
         wsUrl = globalSettings.websocketService + "bus-message/remote-control-clock-" + contextID
         try:
@@ -911,7 +941,9 @@ class DocumentRemote:
             r.raise_for_status
         except requests.exceptions.RequestException:
             self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
-            abort(500, "remote/control: POST to preivew client failed")
+            self.document.setError("Cannot communicate with preview client")
+            abort(500, "remote/control: POST to preview client failed")
+        self.document.clearError()
         return ""
 
 class DocumentAuthoring:
@@ -962,6 +994,7 @@ class DocumentServe:
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
             self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
+            self.document.setError('No au:rawLayout element in document')
             abort(404, 'No au:rawLayout element in document')
         return rawLayoutElement.text
 
