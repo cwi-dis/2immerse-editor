@@ -540,10 +540,10 @@ class Document:
         else:
             positions = self.tree.getroot().findall(path, NAMESPACES)
         if not positions:
-            self.setError'No XML element matches XPath %s' % path)
+            self.setError('No XML element matches XPath %s' % path)
             abort(404, 'No tree element matches XPath %s' % path)
         if len(positions) > 1:
-            self.setError'Multiple XML elements match XPath %s' % path)
+            self.setError('Multiple XML elements match XPath %s' % path)
             abort(400, 'Multiple tree elements match XPath %s' % path)
         element = positions[0]
         return element
