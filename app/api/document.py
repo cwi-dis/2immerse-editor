@@ -837,6 +837,7 @@ class DocumentEvents:
         element = self.document.idMap.get(id)
 
         if element is None:
+            self.logger.error("modify: no such xml:id: %s" % id, extra=self.getLoggerExtra())
             abort(404, 'No such xml:id: %s' % id)
 
         allElements = set()
@@ -848,6 +849,7 @@ class DocumentEvents:
             value = self._minimalAVT(value, element)
 
             if e is None:
+                self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
                 abort(400, 'No element matches XPath %s' % path)
 
             e.set(attr, value)
@@ -896,6 +898,7 @@ class DocumentRemote:
     @synchronized
     def control(self, command):
         if type(command) != type({}):
+            self.logger.error('remote/control: requires JSON object', extra=self.getLoggerExtra())
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
         contextID = self.document.serve().contextID
@@ -958,7 +961,8 @@ class DocumentServe:
         self.logger.info('serving layout.json document', extra=self.getLoggerExtra())
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement == None:
-            abort(404, 'No :au:rawLayout element in document')
+            self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
+            abort(404, 'No au:rawLayout element in document')
         return rawLayoutElement.text
 
     @synchronized
