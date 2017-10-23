@@ -109,6 +109,33 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     return "Trigger";
   }
 
+  private renderParamTable() {
+    const params = this.state.params.filter((p) => p.type !== "set");
+
+    if (params.count() > 0) {
+      return (
+        <table className="table is-narrow" style={{width: "80%", margin: "20px 0 15px 0"}}>
+          <tbody>
+            {params.filter((param) => param.type !== "set").map((param, i) => {
+              return (
+                <tr key={i}>
+                  <td style={{width: "50%", verticalAlign: "middle", border: "none"}}>
+                    {capitalize(param.name)}
+                  </td>
+                  <td style={{width: "50%", border: "none"}}>
+                    <ParamInputField type={param.type}
+                                      value={params.get(i)!.value!}
+                                      onChange={this.updateParamField.bind(this, i)} />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      );
+    }
+  }
+
   public render() {
     const { event } = this.props;
     const { params, isLoading, flashSuccess, flashError } = this.state;
@@ -124,25 +151,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
         <div style={{flexGrow: 1}}>
           <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
           {(event.longdesc) && <p>{event.longdesc}</p>}
-
-          <table className="table is-narrow" style={{width: "80%", margin: "20px 0 15px 0"}}>
-            <tbody>
-              {params.filter((param) => param.type !== "set").map((param, i) => {
-                return (
-                  <tr key={i}>
-                    <td style={{width: "50%", verticalAlign: "middle", border: "none"}}>
-                      {capitalize(param.name)}
-                    </td>
-                    <td style={{width: "50%", border: "none"}}>
-                      <ParamInputField type={param.type}
-                                       value={params.get(i)!.value!}
-                                       onChange={this.updateParamField.bind(this, i)} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          {this.renderParamTable()}
         </div>
 
         <div style={{alignSelf: "flex-end"}}>
