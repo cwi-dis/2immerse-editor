@@ -143,23 +143,18 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
               })}
             </tbody>
           </table>
+        </div>
 
-          <div className="level">
-            <div className="level-left"></div>
-            <div className="level-right">
-              <div className="level-item">
-                <button className={classNames(
-                                    "button",
-                                    "is-info",
-                                    {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                        disabled={!submitEnabled}
-                        onClick={this.launchEvent.bind(this)}
-                        onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
-                  {this.getButtonLabel()}
-                </button>
-              </div>
-            </div>
-          </div>
+        <div style={{alignSelf: "flex-end"}}>
+          <button className={classNames(
+                              "button",
+                              "is-info",
+                              {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                  disabled={!submitEnabled}
+                  onClick={this.launchEvent.bind(this)}
+                  onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
+            {this.getButtonLabel()}
+          </button>
         </div>
       </div>
     );
