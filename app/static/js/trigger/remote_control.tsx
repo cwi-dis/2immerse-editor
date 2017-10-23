@@ -16,6 +16,7 @@ interface PreviewStatus {
 
 interface RemoteControlState {
   previewStatus: PreviewStatus;
+  timeOffset: number;
   lastPositionUpdate?: number;
 }
 
@@ -30,7 +31,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       previewStatus: {
         active: false,
         status: "Preview player is not running"
-      }
+      },
+      timeOffset: 0
     };
   }
 
@@ -38,7 +40,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.statusInterval = setInterval(() => {
       makeRequest("GET", `/api/v1/document/${this.props.documentId}/remote`).then((data) => {
         const previewStatus = JSON.parse(data);
-        console.log("Preview status:", previewStatus);
 
         this.setState({
           previewStatus,
@@ -102,9 +103,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private renderTimestamp() {
-    const { previewStatus: { position } } = this.state;
+    const { timeOffset } = this.state;
+    let { previewStatus: { position } } = this.state;
 
     if (position) {
+      position += timeOffset;
+
       const hours = Math.floor(position / 3600);
       const minutes = Math.floor(position / 60) - hours * 60;
       const seconds = Math.floor(position) - minutes * 60 - hours * 3600;
@@ -116,8 +120,18 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     return "--:--:--.---";
   }
 
+  private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
+    const timeOffset = e.target.valueAsNumber;
+
+    this.setState({
+      timeOffset
+    }, () => {
+      console.log("offset updated to", timeOffset);
+    });
+  }
+
   public render() {
-    const { previewStatus } = this.state;
+    const { previewStatus, timeOffset } = this.state;
 
     const containerStyle: React.CSSProperties = {
       position: "fixed",
@@ -174,6 +188,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
           </button>
           <div style={timestampStyle}>
             <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
+          </div>
+          <div style={{width: 100, marginLeft: 20}}>
+            <input className="input" type="number" value={timeOffset} min={0} onChange={this.updateOffset.bind(this)} />
           </div>
         </div>
         <div style={{marginTop: 7}}>
