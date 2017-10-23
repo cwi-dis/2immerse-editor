@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest, padStart } from "../editor/util";
+import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {
   documentId: string;
@@ -19,11 +19,14 @@ interface RemoteControlState {
   timeOffset: number;
   lastPositionUpdate?: number;
   showdirty: boolean;
+  timecodePopup?: { top: number, left: number };
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
   private statusInterval: any;
   private timerInterval: any;
+
+  private timecodeBox: Nullable<HTMLDivElement>;
 
   public constructor(props: RemoteControlProps) {
     super(props);
@@ -137,8 +140,50 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     });
   }
 
+  private toggleTimecodePopup() {
+    if (this.state.timecodePopup !== undefined) {
+      this.setState({ timecodePopup: undefined });
+      return;
+    }
+
+    if (this.timecodeBox) {
+      const rect = this.timecodeBox.getBoundingClientRect();
+      console.log("box position:", rect);
+
+      this.setState({
+        timecodePopup: { top: -85, left: rect.left }
+      });
+    }
+  }
+
+  private renderTimecodePopup() {
+    if (this.state.timecodePopup) {
+      const { timeOffset, timecodePopup: { top, left } } = this.state;
+
+      const boxStyle: React.CSSProperties = {
+        width: 250,
+        backgroundColor: "#FFFFFF",
+        position: "absolute", top, left,
+        padding: 15,
+        borderRadius: 3,
+        boxShadow: "0 0 5px #555555"
+      };
+
+      return (
+        <div style={boxStyle}>
+          Timecode Fudge Factor
+          <input className="input"
+                 type="number"
+                 value={timeOffset}
+                 min={0}
+                 onChange={this.updateOffset.bind(this)} />
+        </div>
+      );
+    }
+  }
+
   public render() {
-    const { previewStatus, timeOffset, showdirty } = this.state;
+    const { previewStatus, showdirty } = this.state;
 
     const containerStyle: React.CSSProperties = {
       position: "fixed",
@@ -163,7 +208,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       padding: "0 5px",
       marginLeft: 20,
       border: "1px solid #E2E2E2",
-      height: 36
+      height: 36,
+      cursor: "pointer"
     };
 
     return (
@@ -200,12 +246,10 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                   onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
             <i className="fa fa-step-forward"></i>
           </button>
-          <div style={timestampStyle}>
+          <div style={timestampStyle} ref={(e) => this.timecodeBox = e} onClick={this.toggleTimecodePopup.bind(this)}>
             <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
           </div>
-          <div style={{width: 100, marginLeft: 20}}>
-            <input className="input" type="number" value={timeOffset} min={0} onChange={this.updateOffset.bind(this)} />
-          </div>
+          {this.renderTimecodePopup()}
         </div>
         <div style={{marginTop: 7}}>
           <p style={{color: "#FF3860", textAlign: "center"}}>{previewStatus.status}</p>
