@@ -129,6 +129,8 @@ class Document:
         self.documentId = documentId
         # The whole document, as an elementtree
         self.tree = None
+        self.url = None
+        self.base = None
         self.documentElement = None # Nasty trick to work around elementtree XPath incompleteness
         self.baseAdded = False # True if tim:base attribute was added by us
         # Data strcutures for mapping over the tree
@@ -389,6 +391,7 @@ class Document:
     def loadXml(self, data):
         self.logger.info('load xml (%d bytes)' % len(data), extra=self.getLoggerExtra())
         self.url = None
+        self.base = None
         self.baseAdded = False
         try:
             root = ET.fromstring(data)
@@ -397,12 +400,15 @@ class Document:
             abort(400, "XML parse error in document")
         self.tree = ET.ElementTree(root)
         self._documentLoaded()
+        if self.tree.getroot().get(NS_2IMMERSE("base")):
+            self.base = self.tree.getroot().get(NS_2IMMERSE("base"))
         return ''
 
     @synchronized
     def load(self, url):
         self.logger.info('load: %s' % url, extra=self.getLoggerExtra())
         self.url = url
+        self.base = None
         self.baseAdded = False
         fp = urllib2.urlopen(url)
         try:
@@ -411,7 +417,10 @@ class Document:
             self.setError("XML parse error in document")
             abort(400, "XML parse error in %s" % url)
         self._documentLoaded()
-        if not self.tree.getroot().get(NS_2IMMERSE("base")):
+        if self.tree.getroot().get(NS_2IMMERSE("base")):
+            self.base = self.tree.getroot().get(NS_2IMMERSE("base"))
+        else:
+            self.base = self.url
             self.baseAdded = True
             self.tree.getroot().set(NS_2IMMERSE("base"), self.url)
             self.logger.debug("load: added tim:base=%s" % self.url, extra=self.getLoggerExtra())
@@ -746,8 +755,8 @@ class DocumentEvents:
             rv["verb"] = elt.get(NS_TRIGGER("modVerb"))
         if NS_TRIGGER("previewUrl") in elt.attrib:
             previewUrl = elt.get(NS_TRIGGER("previewUrl"))
-            if previewUrl and self.document.url:
-                previewUrl = urllib.basejoin(self.document.url, previewUrl)
+            if previewUrl and self.document.base:
+                previewUrl = urllib.basejoin(self.document.base, previewUrl)
             if previewUrl:
                 rv["previewUrl"] = previewUrl
         if NS_TRIGGER("longdesc") in elt.attrib:
