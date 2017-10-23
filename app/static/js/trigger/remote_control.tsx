@@ -121,12 +121,10 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
-    const timeOffset = e.target.valueAsNumber;
+    const timeOffset = e.target.valueAsNumber || 0;
 
     this.setState({
       timeOffset
-    }, () => {
-      console.log("offset updated to", timeOffset);
     });
   }
 
