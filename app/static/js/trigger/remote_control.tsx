@@ -18,6 +18,7 @@ interface RemoteControlState {
   previewStatus: PreviewStatus;
   timeOffset: number;
   lastPositionUpdate?: number;
+  showdirty: boolean;
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
@@ -32,7 +33,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
         active: false,
         status: "Preview player is not running"
       },
-      timeOffset: 0
+      timeOffset: 0,
+      showdirty: false
     };
   }
 
@@ -85,6 +87,13 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.sendControlCommand({ playing: !previewStatus.playing });
   }
 
+  private toggleGuideFeed() {
+    const { showdirty } = this.state;
+
+    this.sendControlCommand({ showdirty: !showdirty });
+    this.setState({ showdirty: !showdirty });
+  }
+
   private sendControlCommand(command: any) {
     const { previewStatus } = this.state;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
@@ -107,7 +116,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     let { previewStatus: { position } } = this.state;
 
     if (position) {
-      position += timeOffset;
+      position += timeOffset || 0;
 
       const hours = Math.floor(position / 3600);
       const minutes = Math.floor(position / 60) - hours * 60;
@@ -121,7 +130,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
-    const timeOffset = e.target.valueAsNumber || 0;
+    const timeOffset = e.target.valueAsNumber;
 
     this.setState({
       timeOffset
@@ -129,7 +138,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public render() {
-    const { previewStatus, timeOffset } = this.state;
+    const { previewStatus, timeOffset, showdirty } = this.state;
 
     const containerStyle: React.CSSProperties = {
       position: "fixed",
@@ -160,6 +169,13 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     return (
       <div style={containerStyle}>
         <div style={{display: "flex", justifyContent: "center"}}>
+          <button className="button is-info"
+                  style={{marginRight: 15, flexGrow: 0}}
+                  disabled={!previewStatus.active}
+                  onClick={this.toggleGuideFeed.bind(this)}>
+            {(showdirty) ? "Hide" : "Show"} Guide Feed
+          </button>
+
           <button className="button is-info"
                   style={buttonStyle}
                   disabled={!previewStatus.active}
