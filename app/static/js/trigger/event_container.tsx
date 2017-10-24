@@ -73,8 +73,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
       this.setState({
         isLoading: false,
-        flashSuccess: true,
-        params: this.convertParams(this.props.event.parameters)
+        flashSuccess: true
       });
 
       this.props.onTriggered && this.props.onTriggered();
