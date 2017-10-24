@@ -148,7 +148,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
     if (this.timecodeBox) {
       const rect = this.timecodeBox.getBoundingClientRect();
-      console.log("box position:", rect);
 
       this.setState({
         timecodePopup: { top: -85, left: rect.left }
@@ -245,6 +244,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                   disabled={!previewStatus.active}
                   onClick={this.sendControlCommand.bind(this, { adjust: 0.04 })}>
             <i className="fa fa-step-forward"></i>
+          </button>
+          <button className="button is-info"
+                  style={buttonStyle}
+                  disabled={!previewStatus.active}
+                  onClick={this.sendControlCommand.bind(this, { adjust: 5.0 })}>
+            <i className="fa fa-fast-forward"></i>
           </button>
           <div style={timestampStyle} ref={(e) => this.timecodeBox = e} onClick={this.toggleTimecodePopup.bind(this)}>
             <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
