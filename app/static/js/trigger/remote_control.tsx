@@ -27,6 +27,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   private timerInterval: any;
 
   private timecodeBox: Nullable<HTMLDivElement>;
+  private seekByField: Nullable<HTMLInputElement>;
 
   public constructor(props: RemoteControlProps) {
     super(props);
@@ -140,6 +141,20 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     });
   }
 
+  private seekBy() {
+    if (this.seekByField) {
+      const value = this.seekByField.valueAsNumber;
+
+      if (value) {
+        this.sendControlCommand({ adjust: value });
+      }
+    }
+
+    this.setState({
+      timecodePopup: undefined
+    });
+  }
+
   private toggleTimecodePopup() {
     if (this.state.timecodePopup !== undefined) {
       this.setState({ timecodePopup: undefined });
@@ -150,7 +165,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       const rect = this.timecodeBox.getBoundingClientRect();
 
       this.setState({
-        timecodePopup: { top: -85, left: rect.left }
+        timecodePopup: { top: -160, left: rect.left }
       });
     }
   }
@@ -170,12 +185,24 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
       return (
         <div style={boxStyle}>
-          Timecode Fudge Factor
+          <div>Timecode Fudge Factor</div>
           <input className="input"
                  type="number"
                  value={timeOffset}
                  min={0}
                  onChange={this.updateOffset.bind(this)} />
+
+          <div style={{marginTop: 10}}>Seek by</div>
+          <div className="field has-addons">
+            <div className="control">
+              <input className="input" type="number" defaultValue="0" ref={(e) => this.seekByField = e} />
+            </div>
+            <div className="control">
+              <button className="button is-info" onClick={this.seekBy.bind(this)}>
+                Go
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
