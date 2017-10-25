@@ -812,6 +812,28 @@ class DocumentEvents:
         except KeyError:
             self.document.setError('Missing parameter and/or value in event')
             abort(400, 'Missing parameter and/or value')
+        if '@' in parPath:
+            # The XPath has an attribute designator. Assume it's the final destination XPath.
+            path, attr = self._splitXPath(parPath)
+            return [(path, attr, parValue)]
+        # The XPath has no attribute designator, assume it's a node XPath and collect the
+        # tt:destination children there.
+        elt = self.document._getElementByPath(parPath)
+        if elt == None:
+            self.document.setError('XPath in parameter does not refer to existing element')
+            abort(400, 'XPath in parameter does not refer to existing element')
+        destElements = elt.findall('./tt:destination', NAMESPACES)
+        rv = []
+        for dElt in destElements:
+            dXPath = dElt.get(NS_TRIGGER("parameter"))
+            dValue = dElt.get(NS_TRIGGER("value"))
+            dPath, dAttr = self._splitXPath(dXPath)
+            rv.append((dPath, dAttr, dValue))
+        return rv
+            
+
+    def _splitXPath(self, parPath):
+        """Split off the attribute bit of an xpath"""
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
             self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
@@ -825,7 +847,7 @@ class DocumentEvents:
             namespace = NAMESPACES[ns]
             attr = '{%s}%s' % (namespace, rest)
 
-        return [(path, attr, parValue)]
+        return path, attr
 
     @synchronized
     def _minimalAVT(self, value, userValue, contextElement, parentElement=None):
@@ -886,12 +908,13 @@ class DocumentEvents:
         newElement = copy.deepcopy(element)
         newElement.set(NS_TRIGGER("wantstatus"), "true")
         self.document._afterCopy(newElement, triggerAttributes=True)
-
+        
         for par in parameters:
+            parValue = par['value']
             for path, attr, value in self._getParameterDestinations(par):
                 e = newElement.find(path, NAMESPACES)
 
-                value = self._minimalAVT(value, None, newElement, newParent)
+                value = self._minimalAVT(value, parValue, newElement, newParent)
 
                 if e is None:
                     self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
@@ -921,10 +944,11 @@ class DocumentEvents:
         allElements = set()
 
         for par in parameters:
+            parValue = par['value']
             for path, attr, value in self._getParameterDestinations(par):
                 e = element.find(path, NAMESPACES)
 
-                value = self._minimalAVT(value, None, element)
+                value = self._minimalAVT(value, parValue, element)
 
                 if e is None:
                     self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
