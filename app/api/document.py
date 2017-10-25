@@ -772,7 +772,7 @@ class DocumentEvents:
             optionElements = paramElt.findall('./tt:option', NAMESPACES)
             optionValues = []
             for optionElt in optionElements:
-                optionValues.append(dict(label=optionElt.get(NS_TRIGGER("label"), value=optionElt.get(NS_TRIGGER("value"))))
+                optionValues.append(dict(label=optionElt.get(NS_TRIGGER("label"), value=optionElt.get(NS_TRIGGER("value")))))
             if optionValues:
                 pData['options'] = optionValues
             parameters.append(pData)
