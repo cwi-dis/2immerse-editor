@@ -29,6 +29,16 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
                   defaultValue={props.value}
                   type="string"
                   disabled />;
+  case "selection":
+    return (
+      <div className="select">
+        <select onChange={props.onChange.bind(this)}>
+          {props.value && props.value.map(({ label, value }) => {
+            return <option value={value}>{label}</option>;
+          })}
+        </select>
+      </div>
+    );
   default:
     return <div>Parameter type not recognised</div>;
   }
