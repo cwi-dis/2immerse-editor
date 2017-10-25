@@ -41,7 +41,7 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 		- `name`: Human-readable name for the parameter (only for the UI).
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
 		- `type`: type of the parameter (string), see below.
-		- `value`: optional default value.
+		- `value`: optional default value (or some other object, based on `type`).
 		- `required`: if true, this parameter must be filled in by the tool operator before the trigger/modify button is enabled.
 
 - `trigger` (method `POST`) triggers a triggerable item. Returns a success indicator. The body is an `application/json` object, with the following keys:
@@ -60,9 +60,9 @@ The intention of the `type` field is to help populate the UI in a meaningful way
 - `"string"` general text entry field, basically the default catch-all.
 - _(not implemented or fully designed yet)_ `"time"` a point in time. Probably an integer. The UI should probably have buttons like  `Now` or `In 10 seconds` or so. What this value means (relative to current clock, or beginning of presentation, or something else) needs to come out of the requirements.
 - _(not implemented or fully designed yet)_ `"duration"` a duration. Probably in seconds. Should probably have a button _Indefinite_ in the UI, and maybe a button `Default` if the item triggered has a natural duration (for example a prerecorded video clip).
+- _(not implemented yet)_ `"selection"` should have a list of objects with `label` and `value` strings, where the user selects one of the labels and the corresponding value is returned. 
 - _(not implemented or fully designed yet)_ `"url"` a url. This may need more functionality, so we can present the triggering tool operator with nice names like _Rossi bikeCam_ or _Home Team Reverse Angle_ in stead of them having the type in horribly long URLs. But maybe that can be handled with the `"choice"` type.
 - _(not implemented or fully designed yet)_ `"bool"` a boolean, probably based on a checkmark or something.
-- _(not implemented or fully designed yet)_ `"choice"` should have a list of name/value pairs, where the user selects one of the names and the corresponding value is returned. Or maybe just a list of labels, with the front end returning the index?
 - Maybe we need a way to specify a `bookmark`, a point in time which was previously setduring the live playback. Details (such as whether a bookmark implicitly refers to the main video, or is just a point in time so it can be used to pull in videos from different angles) need to be worked out.
 
 Note that a lot of this depends on the requirements for the live triggering tool. For example, it may also be needed to have radio buttons or popups or such that can be populated with name/value pairs during preproduction.
@@ -111,11 +111,15 @@ An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `
 
 There is a second set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (which is probably a different set of parameters than those for _trigger_).
 
-The `parameter` parameters can be relative XPath expressions pointing to the attribute to be modified.
-
 The `value` can be an _Attribute Value Template_, in which case the expression is evaluated and the result stored in the attribute to be modified.
 
-At the moment, exactly two AVTs are implemented (hardcoded), to record current time point and duration. These are used to set the `tl:dur` attribute of `tl:sleep` elements dynamically. See the examples above for how to use these.
+At the moment, exactly two AVTs are implemented (hardcoded), to record current time point and duration and another one to refer to the value entered by the user (the default). These are used to set the `tl:dur` attribute of `tl:sleep` elements dynamically. See the examples above for how to use these:
+
+- `{tt:clock(..)}` refers to the current clock value progress of the parent element. This corresponds roughly to the current time in the presentation.
+- `{tt:clock(.)}` refers to the current clock value progress of the current element. This corresponds roughly to the current duration of the current element.
+- `{tt:value()}` refers to the value entered by the trigger tool operator. This can be used to (slightly) modify the value before it is stored into the receiving attribute.
+
+The `tt:parameter` attribute can be a relative XPath expressions pointing to the attribute to be modified. If `tt:parameter` is missing there can be multiple `tt:destination` children, each with `tt:parameter` and `tt:value` attributes, which allows storing the resultant value in multiple places.
 
 On `trigger`, the whole event is copied and its `xml:id` is replaced by a new unique id. All parameter values are filled in. Then the new element is inserted into the timeline as a new child of the parent of the `<tt:events>` element.
 

@@ -16,6 +16,8 @@ import clocks
 import logging
 logger = logging.getLogger(__name__)
 
+# Pattern to find AVT-like interpolation expressions
+INTERPOLATION=re.compile(r'\{[^}]+\}')
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -736,7 +738,18 @@ class DocumentEvents:
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
         parameters = []
         for p in parameterElements:
-            pData = dict(name=p.get(NS_TRIGGER('name')), parameter=p.get(NS_TRIGGER('parameter')))
+            pData = dict(name=p.get(NS_TRIGGER('name')))
+            parameter=p.get(NS_TRIGGER('parameter'))
+            if parameter:
+                # Single location to store the parameter
+                match = FIND_PATH_ATTRIBUTE.match(parameter)
+                if not match:
+                    self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
+                    abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
+            else:
+                # Multiple locations to store the parameter. Pass our XPath in stead
+                # and trigger/modify will handle it.
+                pData['parameter'] = self.document._getXPath(p)
             if NS_TRIGGER('type') in p.attrib:
                 pData['type'] = p.get(NS_TRIGGER('type'))
             if NS_TRIGGER('value') in p.attrib:
@@ -765,7 +778,7 @@ class DocumentEvents:
         return rv
 
     @synchronized
-    def _getParameter(self, parameter):
+    def _getParameterDestinations(self, parameter):
         """For a parameter/value coming from the front end, returns what to set where"""
         # xxxjack should move to ElementDelegate
         try:
@@ -776,8 +789,8 @@ class DocumentEvents:
             abort(400, 'Missing parameter and/or value')
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
-            self.document.setError('Event parameter XPath does not match existing element: %s' % parPath)
-            abort(400, 'Event parameter XPath does not match existing element: %s' % parPath)
+            self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
+            abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
 
         path = match.group(1)
         attr = match.group(2)
@@ -787,21 +800,28 @@ class DocumentEvents:
             namespace = NAMESPACES[ns]
             attr = '{%s}%s' % (namespace, rest)
 
-        return path, attr, parValue
+        return [(path, attr, parValue)]
 
     @synchronized
-    def _minimalAVT(self, value, contextElement, parentElement=None):
+    def _minimalAVT(self, value, userValue, contextElement, parentElement=None):
         """Handle computed values"""
-        if value[:1] != "{" or value[-1:] != "}":
+        match = INTERPOLATION.search(value)
+        if not match:
             return value
-        expr = value[1:-1]
+        expr = value[match.start()+1:match.end()-1]
         if expr == "tt:clock(.)":
-            return self._getClock(contextElement)
-        if expr == "tt:clock(..)":
+            exprValue = self._getClock(contextElement)
+        elif expr == "tt:clock(..)":
             if parentElement is None:
                 parentElement = self.document._getParent(contextElement)
-            return self._getClock(parentElement)
-        self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
+            exprValue = self._getClock(parentElement)
+        elif expr == "tt:value()":
+            exprValue = userValue
+        else:
+            self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
+            exprValue = "{" + expr + "}"
+        exprValue = str(exprValue)
+        value = value[:match.start()] + exprValue + value[match.end()]
         return value
 
     @synchronized
@@ -843,17 +863,17 @@ class DocumentEvents:
         self.document._afterCopy(newElement, triggerAttributes=True)
 
         for par in parameters:
-            path, attr, value = self._getParameter(par)
-            e = newElement.find(path, NAMESPACES)
+            for path, attr, value in self._getParameterDestinations(par):
+                e = newElement.find(path, NAMESPACES)
 
-            value = self._minimalAVT(value, newElement, newParent)
+                value = self._minimalAVT(value, None, newElement, newParent)
 
-            if e is None:
-                self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
-                self.document.setError("No element matches XPath %s" % path)
-                abort(400, 'No element matches XPath %s' % path)
+                if e is None:
+                    self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
+                    self.document.setError("No element matches XPath %s" % path)
+                    abort(400, 'No element matches XPath %s' % path)
 
-            e.set(attr, value)
+                e.set(attr, value)
 
         newParent.append(newElement)
         self.document._elementAdded(newElement, newParent)
@@ -876,18 +896,18 @@ class DocumentEvents:
         allElements = set()
 
         for par in parameters:
-            path, attr, value = self._getParameter(par)
-            e = element.find(path, NAMESPACES)
+            for path, attr, value in self._getParameterDestinations(par):
+                e = element.find(path, NAMESPACES)
 
-            value = self._minimalAVT(value, element)
+                value = self._minimalAVT(value, None, element)
 
-            if e is None:
-                self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
-                self.document.setError('No element matches XPath %s' % path)
-                abort(400, 'No element matches XPath %s' % path)
+                if e is None:
+                    self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
+                    self.document.setError('No element matches XPath %s' % path)
+                    abort(400, 'No element matches XPath %s' % path)
 
-            e.set(attr, value)
-            allElements.add(e)
+                e.set(attr, value)
+                allElements.add(e)
 
         for e in allElements:
             self.document._elementChanged(e)
