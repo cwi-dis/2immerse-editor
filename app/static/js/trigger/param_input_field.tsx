@@ -31,7 +31,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
                   disabled />;
   case "selection":
     return (
-      <div className="select">
+      <div className="select is-fullwidth">
         <select onChange={props.onChange.bind(this)}>
           {props.options && props.options.map(({ label, value }) => {
             return <option value={value}>{label}</option>;
