@@ -13,15 +13,23 @@ interface TriggerClientProps {
   clearSession: () => void;
 }
 
-export type ParamTypes = "duration" | "time" | "string" | "url" | "const" | "set";
-
-export interface EventParams {
+interface SingleValueParams {
+  type: "duration" | "time" | "string" | "url" | "const" | "set";
   name: string;
   parameter: string;
-  type: ParamTypes;
   value?: string;
   required?: boolean;
 }
+
+interface MultiValueParams {
+  type: "selection";
+  name: string;
+  parameter: string;
+  value?: Array<{label: string, value: string}>;
+  required?: boolean;
+}
+
+export type EventParams = SingleValueParams | MultiValueParams;
 
 export interface Event {
   trigger: boolean;
