@@ -1,37 +1,32 @@
 import * as React from "react";
-import { ParamTypes } from "./trigger_client";
+import { EventParams } from "./trigger_client";
 
-interface ParamInputFieldProps {
-  type: ParamTypes;
-  value: string;
-
+type ParamInputFieldProps = Partial<EventParams> & {
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputFieldProps) => {
-  const { type, value, onChange } = props;
-
-  switch (type) {
+  switch (props.type) {
   case "duration":
   case "time":
     return <input className="input is-info"
-                  onChange={onChange.bind(this)}
+                  onChange={props.onChange.bind(this)}
                   type="number"
-                  value={value}
+                  value={props.value}
                   min="0" />;
   case "string":
     return <input className="input is-info"
-                  onChange={onChange.bind(this)}
-                  value={value}
+                  onChange={props.onChange.bind(this)}
+                  value={props.value}
                   type="text" />;
   case "url":
     return <input className="input is-info"
-                  onChange={onChange.bind(this)}
-                  value={value}
+                  onChange={props.onChange.bind(this)}
+                  value={props.value}
                   type="url" />;
   case "const":
     return <input className="input"
-                  defaultValue={value}
+                  defaultValue={props.value}
                   type="string"
                   disabled />;
   default:
