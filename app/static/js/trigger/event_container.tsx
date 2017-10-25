@@ -115,16 +115,15 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       return (
         <table className="table is-narrow" style={{width: "80%", margin: "20px 0 15px 0"}}>
           <tbody>
-            {params.filter((param) => param.type !== "set").map((param, i) => {
+            {params.map((param, i) => {
               return (
                 <tr key={i}>
                   <td style={{width: "50%", verticalAlign: "middle", border: "none"}}>
                     {capitalize(param.name)}
                   </td>
                   <td style={{width: "50%", border: "none"}}>
-                    <ParamInputField type={param.type}
-                                      value={params.get(i)!.value!}
-                                      onChange={this.updateParamField.bind(this, i)} />
+                    <ParamInputField {...param}
+                                     onChange={this.updateParamField.bind(this, i)} />
                   </td>
                 </tr>
               );

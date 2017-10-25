@@ -1,7 +1,7 @@
 import * as React from "react";
 import { EventParams } from "./trigger_client";
 
-type ParamInputFieldProps = Partial<EventParams> & {
+type ParamInputFieldProps = EventParams & {
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -33,7 +33,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
     return (
       <div className="select">
         <select onChange={props.onChange.bind(this)}>
-          {props.value && props.value.map(({ label, value }) => {
+          {props.options && props.options.map(({ label, value }) => {
             return <option value={value}>{label}</option>;
           })}
         </select>
