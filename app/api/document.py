@@ -746,6 +746,7 @@ class DocumentEvents:
                 if not match:
                     self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
                     abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
+                pData['parameter'] = parameter
             else:
                 # Multiple locations to store the parameter. Pass our XPath in stead
                 # and trigger/modify will handle it.
