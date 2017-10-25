@@ -109,13 +109,17 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   }
 
   private renderParamTable() {
-    const params = this.state.params.filter((p) => p.type !== "set");
+    const { params } = this.state;
 
     if (params.count() > 0) {
       return (
         <table className="table is-narrow" style={{width: "80%", margin: "20px 0 15px 0"}}>
           <tbody>
             {params.map((param, i) => {
+              if (param.type === "set") {
+                return;
+              }
+
               return (
                 <tr key={i}>
                   <td style={{width: "50%", verticalAlign: "middle", border: "none"}}>
