@@ -41,6 +41,11 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   private convertParams(parameters: Array<EventParams>) {
     return List(parameters.map((param) => {
       param.value = param.value ? param.value : paramDefaults[param.type];
+
+      if (param.type === "selection" && param.options) {
+        param.value = param.options[0].value;
+      }
+
       return param;
     }));
   }
