@@ -822,7 +822,7 @@ class DocumentEvents:
             self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
             exprValue = "{" + expr + "}"
         exprValue = str(exprValue)
-        value = value[:match.start()] + exprValue + value[match.end()]
+        value = value[:match.start()] + exprValue + value[match.end():]
         return value
 
     @synchronized
