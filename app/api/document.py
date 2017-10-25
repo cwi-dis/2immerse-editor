@@ -737,29 +737,48 @@ class DocumentEvents:
         parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
         parameters = []
-        for p in parameterElements:
-            pData = dict(name=p.get(NS_TRIGGER('name')))
-            parameter=p.get(NS_TRIGGER('parameter'))
+        #
+        # Collect information about each individual parameter
+        #
+        for paramElt in parameterElements:
+            pData = dict(name=paramElt.get(NS_TRIGGER('name')))
+            parameter=paramElt.get(NS_TRIGGER('parameter'))
             if parameter:
-                # Single location to store the parameter
+                #
+                # If tt:parameter is set this parameter has a single location to store the parameter
+                #
                 match = FIND_PATH_ATTRIBUTE.match(parameter)
                 if not match:
                     self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
                     abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
                 pData['parameter'] = parameter
             else:
-                # Multiple locations to store the parameter. Pass our XPath in stead
+                #
+                # Multiple locations to store the parameter. Pass XPath of the tt:parameter element itself in stead
                 # and trigger/modify will handle it.
-                pData['parameter'] = self.document._getXPath(p)
-            if NS_TRIGGER('type') in p.attrib:
-                pData['type'] = p.get(NS_TRIGGER('type'))
-            if NS_TRIGGER('value') in p.attrib:
-                pData['value'] = p.get(NS_TRIGGER('value'))
-            if NS_TRIGGER('required') in p.attrib:
-                required = p.get(NS_TRIGGER('required'))
+                #
+                pData['parameter'] = self.document._getXPath(paramElt)
+            if NS_TRIGGER('type') in paramElt.attrib:
+                pData['type'] = paramElt.get(NS_TRIGGER('type'))
+            if NS_TRIGGER('value') in paramElt.attrib:
+                pData['value'] = paramElt.get(NS_TRIGGER('value'))
+            if NS_TRIGGER('required') in paramElt.attrib:
+                required = paramElt.get(NS_TRIGGER('required'))
                 if required and required != 'false':
                     pData['required'] = True
+            #
+            # Find all menu options (if any)
+            #
+            optionElements = paramElt.findall('./tt:option', NAMESPACES)
+            optionValues = []
+            for optionElt in optionElements:
+                optionValues.append(dict(label=optionElt.get(NS_TRIGGER("label"), value=optionElt.get(NS_TRIGGER("value"))))
+            if optionValues:
+                pData['options'] = optionValues
             parameters.append(pData)
+        #
+        # Collect information about the event as a whole
+        #
         name = elt.get(NS_TRIGGER('name'))
         idd = elt.get(NS_XML('id'))
         rv = dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
