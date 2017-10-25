@@ -15,7 +15,6 @@ interface TimelineEditorState {
 }
 
 class TimelineEditor extends React.Component<{}, TimelineEditorState> {
-
   public constructor(props: TimelineEditorProps) {
     super(props);
 
@@ -41,27 +40,48 @@ class TimelineEditor extends React.Component<{}, TimelineEditorState> {
   }
 
   private elementPositionUpdated(index: number, id: string, x: number) {
-    const [i, element] = findById(this.state.timelines.get(index)!.timelineElements, id);
+    const { timelines } = this.state;
+    const [i, element] = findById(timelines.get(index)!.timelineElements, id);
+
     console.log("updating", element, "with new x", x);
 
     this.setState({
-      timelines: this.state.timelines.updateIn([index, "timelineElements", i], (element) => {
+      timelines: timelines.updateIn([index, "timelineElements", i], (element) => {
         return {...element, x};
       })
     });
   }
 
   public render() {
+    const { timelines } = this.state;
+
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor</h3>
-          <Timeline elements={this.state.timelines.getIn([0, "timelineElements"])}
+          <Timeline elements={timelines.getIn([0, "timelineElements"])}
                     elementPositionUpdated={this.elementPositionUpdated.bind(this, 0)}
                     width={1000} height={40} />
-          <Timeline elements={this.state.timelines.getIn([1, "timelineElements"])}
+          <Timeline elements={timelines.getIn([1, "timelineElements"])}
                     elementPositionUpdated={this.elementPositionUpdated.bind(this, 1)}
                     width={1000} height={40} snapDistance={15} />
+          <br/>
+          {timelines.map((track, i) => {
+            return (
+              <p key={i}>
+                <b>Track {i + 1}</b>
+                <br/>
+                {track.timelineElements.map((element, i) => {
+                  return (
+                    <span key={i}>
+                      {element.id} => {element.x} {element.x + element.width}<br/>
+                    </span>
+                  );
+                })}
+                <br/>
+              </p>
+            );
+          })}
         </div>
         <div className="column-sidebar">
           sidebar
