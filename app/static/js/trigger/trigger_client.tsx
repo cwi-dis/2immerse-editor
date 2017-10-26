@@ -256,12 +256,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               <button style={{marginRight: 15}}
                 className={classNames("button", "is-info")}
                 onClick={() => this.setState({ showSettingsModal: true })}>
-                Settings
+                <i className="fa fa-cog"></i>
               </button> :
               <button style={{marginRight: 15}}
                  className={classNames("button", "is-info")}
                  disabled={true}>
-                Settings
+                 <i className="fa fa-cog"></i>
               </button>
             }
             {this.state.fetchError === undefined ?
