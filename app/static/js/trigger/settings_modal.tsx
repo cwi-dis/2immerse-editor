@@ -57,6 +57,30 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     return renderedLinks;
   }
 
+  private changePlayerMode(e: React.ChangeEvent<HTMLSelectElement>) {
+    const { value } = e.target;
+    console.log("changing playerMode:", value);
+
+    makeRequest("PUT", this.settingsUrl, {playerMode: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.playerMode = value;
+
+        this.setState({
+          settings
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set playerMode:", err);
+    });
+  }
+
+  private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = e.target;
+    console.log("changing startPaused:", value);
+  }
+
   public render() {
     const { settings } = this.state;
 
@@ -69,7 +93,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
         <b>Preview player mode</b>
         <br/>
         <div className="select">
-          <select value={settings.playerMode}>
+          <select value={settings.playerMode} onChange={this.changePlayerMode.bind(this)}>
             <option>standalone</option>
             <option>tv</option>
           </select>
@@ -79,7 +103,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
         <b>Start paused</b>
         <br/>
         <label className="checkbox">
-          <input type="checkbox" checked={settings.startPaused} />
+          <input type="checkbox" checked={settings.startPaused} onChange={this.changeStartPaused.bind(this)} />
           &emsp;Start player paused
         </label>
         <br/><br/>
