@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import TimecodePopup from "./timecode_popup";
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {
@@ -133,22 +134,14 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     return "--:--:--.---";
   }
 
-  private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
-    const timeOffset = e.target.valueAsNumber;
-
+  private updateOffset(timeOffset: number) {
     this.setState({
       timeOffset
     });
   }
 
-  private seekBy() {
-    if (this.seekByField) {
-      const value = this.seekByField.valueAsNumber;
-
-      if (value) {
-        this.sendControlCommand({ adjust: value });
-      }
-    }
+  private seekBy(value: number) {
+    this.sendControlCommand({ adjust: value });
 
     this.setState({
       timecodePopup: undefined
@@ -167,44 +160,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       this.setState({
         timecodePopup: { top: -160, left: rect.left }
       });
-    }
-  }
-
-  private renderTimecodePopup() {
-    if (this.state.timecodePopup) {
-      const { timeOffset, timecodePopup: { top, left } } = this.state;
-
-      const boxStyle: React.CSSProperties = {
-        width: 250,
-        backgroundColor: "#FFFFFF",
-        position: "absolute", top, left,
-        padding: 15,
-        borderRadius: 3,
-        boxShadow: "0 0 5px #555555"
-      };
-
-      return (
-        <div style={boxStyle}>
-          <div>Timecode Fudge Factor</div>
-          <input className="input"
-                 type="number"
-                 value={timeOffset}
-                 min={0}
-                 onChange={this.updateOffset.bind(this)} />
-
-          <div style={{marginTop: 10}}>Seek by</div>
-          <div className="field has-addons">
-            <div className="control">
-              <input className="input" type="number" defaultValue="0" ref={(e) => this.seekByField = e} />
-            </div>
-            <div className="control">
-              <button className="button is-info" onClick={this.seekBy.bind(this)}>
-                Go
-              </button>
-            </div>
-          </div>
-        </div>
-      );
     }
   }
 
@@ -281,7 +236,10 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
           <div style={timestampStyle} ref={(e) => this.timecodeBox = e} onClick={this.toggleTimecodePopup.bind(this)}>
             <p style={{marginTop: -2, padding: "0 10px"}}>{this.renderTimestamp()}</p>
           </div>
-          {this.renderTimecodePopup()}
+          <TimecodePopup position={this.state.timecodePopup}
+                         timeOffset={this.state.timeOffset}
+                         updateOffset={this.updateOffset.bind(this)}
+                         seekBy={this.seekBy.bind(this)} />
         </div>
         <div style={{marginTop: 7}}>
           <p style={{color: "#FF3860", textAlign: "center"}}>{previewStatus.status}</p>
