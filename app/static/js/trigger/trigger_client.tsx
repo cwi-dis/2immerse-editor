@@ -252,11 +252,18 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
-            <button style={{marginRight: 15}}
-              className={classNames("button", "is-info")}
-              onClick={() => this.setState({ showSettingsModal: true })}>
-              Settings
-            </button>
+            {this.state.fetchError === undefined ?
+              <button style={{marginRight: 15}}
+                className={classNames("button", "is-info")}
+                onClick={() => this.setState({ showSettingsModal: true })}>
+                Settings
+              </button> :
+              <button style={{marginRight: 15}}
+                 className={classNames("button", "is-info")}
+                 disabled={true}>
+                Settings
+              </button>
+            }
             {this.state.fetchError === undefined ?
               <button style={{marginRight: 15}}
                 className={classNames("button", "is-info")}
