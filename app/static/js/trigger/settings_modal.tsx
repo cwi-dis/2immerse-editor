@@ -77,8 +77,22 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
   }
 
   private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
-    const { value } = e.target;
+    const value = (e.target.value === "true") ? true : false;
     console.log("changing startPaused:", value);
+
+    makeRequest("PUT", this.settingsUrl, {startPaused: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.startPaused = value;
+
+        this.setState({
+          settings
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set startPaused:", err);
+    });
   }
 
   public render() {
