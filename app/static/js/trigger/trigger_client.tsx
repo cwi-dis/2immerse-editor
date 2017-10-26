@@ -38,6 +38,7 @@ export interface Event {
 interface TriggerClientState {
   activeTab: "abstract" | "instantiated";
   showPreviewModal: boolean;
+  showSettingsModal: boolean;
   flashTab: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<any>;
@@ -55,6 +56,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     this.state = {
       activeTab: "abstract",
       showPreviewModal: false,
+      showSettingsModal: false,
       flashTab: false,
       abstractEvents: [],
       instantiatedEvents: [],
@@ -212,6 +214,26 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     );
   }
 
+  private renderSettingsModal() {
+    if (!this.state.showSettingsModal) {
+      return;
+    }
+
+    return (
+      <div className="modal is-active">
+        <div className="modal-background"></div>
+        <div className="modal-content">
+          <div className="box">
+            Settings go here
+          </div>
+        </div>
+        <button className="modal-close is-large"
+                onClick={() => this.setState({showSettingsModal: false})}>
+        </button>
+      </div>
+    );
+  }
+
   public render() {
     const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
@@ -231,6 +253,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
+            <button style={{marginRight: 15}}
+              className={classNames("button", "is-info")}
+              onClick={() => this.setState({ showSettingsModal: true })}>
+              Settings
+            </button>
             {this.state.fetchError === undefined ?
               <button style={{marginRight: 15}}
                 className={classNames("button", "is-info")}
@@ -267,6 +294,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         </div>
 
         {this.renderPreviewModal()}
+        {this.renderSettingsModal()}
 
         <RemoteControl documentId={this.props.documentId} />
       </div>
