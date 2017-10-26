@@ -102,10 +102,12 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
 
         <b>Start paused</b>
         <br/>
-        <label className="checkbox">
-          <input type="checkbox" checked={settings.startPaused} onChange={this.changeStartPaused.bind(this)} />
-          &emsp;Start player paused
-        </label>
+        <div className="select">
+          <select value={settings.startPaused ? "true" : "false"} onChange={this.changeStartPaused.bind(this)}>
+            <option>true</option>
+            <option>false</option>
+          </select>
+        </div>
         <br/><br/>
 
         <b>Debug Links</b>
