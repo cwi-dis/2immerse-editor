@@ -7,6 +7,7 @@ import LoadingSpinner from "./loading_spinner";
 import PreviewLauncher from "./preview_launcher";
 import ErrorMessage from "./error_message";
 import RemoteControl from "./remote_control";
+import SettingsModal from "./settings_modal";
 
 interface TriggerClientProps {
   documentId: string;
@@ -223,9 +224,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       <div className="modal is-active">
         <div className="modal-background"></div>
         <div className="modal-content">
-          <div className="box">
-            Settings go here
-          </div>
+          <SettingsModal documentId={this.props.documentId} />
         </div>
         <button className="modal-close is-large"
                 onClick={() => this.setState({showSettingsModal: false})}>
