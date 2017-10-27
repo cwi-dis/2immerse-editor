@@ -706,6 +706,12 @@ class DocumentEvents:
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
+    def _documentError(self, message):
+        """Error in document. Report to trigger tool user as well as to the log"""
+        self.document.setError(message)
+        self.logger.error(message, extra=self.getLoggerExtra())
+        abort(400, message)
+
     @synchronized
     def get(self):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
@@ -749,8 +755,7 @@ class DocumentEvents:
                 #
                 match = FIND_PATH_ATTRIBUTE.match(parameter)
                 if not match:
-                    self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
-                    abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
+                    self._documentError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
                 pData['parameter'] = parameter
             else:
                 #
@@ -774,8 +779,7 @@ class DocumentEvents:
                 optionListId = paramElt.get(NS_TRIGGER('optionListId'))
                 optionListElt = self.document._getElementByID(optionListId)
                 if optionListElt == None:
-                    self.document.setError('tt:parameter optionListId does not exist: %s' % optionListId)
-                    abort(400, 'tt:parameter optionListId does not exist: %s' % optionListId)
+                    self._documentError('tt:parameter optionListId does not exist: %s' % optionListId)
             optionValues = self._getOptions(paramElt)
             if optionValues:
                 pData['options'] = optionValues
@@ -824,8 +828,7 @@ class DocumentEvents:
             parPath = parameter['parameter']
             parValue = parameter['value']
         except KeyError:
-            self.document.setError('Missing parameter and/or value in event')
-            abort(400, 'Missing parameter and/or value')
+            self._documentError('Missing parameter and/or value in event')
         if '@' in parPath:
             # The XPath has an attribute designator. Assume it's the final destination XPath.
             path, attr = self._splitXPath(parPath)
@@ -834,8 +837,7 @@ class DocumentEvents:
         # tt:destination children there.
         elt = self.document._getElementByPath(parPath)
         if elt == None:
-            self.document.setError('XPath in parameter does not refer to existing element')
-            abort(400, 'XPath in parameter does not refer to existing element')
+            self._documentError('XPath in parameter does not refer to existing element')
         destElements = elt.findall('./tt:destination', NAMESPACES)
         rv = []
         for dElt in destElements:
@@ -850,8 +852,7 @@ class DocumentEvents:
         """Split off the attribute bit of an xpath"""
         match = FIND_PATH_ATTRIBUTE.match(parPath)
         if not match:
-            self.document.setError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
-            abort(400, 'tt:parameter XPath does not refer to an attribute: %s' % parPath)
+            self._documentError('Event tt:parameter XPath does not refer to an attribute: %s' % parPath)
 
         path = match.group(1)
         attr = match.group(2)
@@ -931,9 +932,7 @@ class DocumentEvents:
                 value = self._minimalAVT(value, parValue, newElement, newParent)
 
                 if e is None:
-                    self.logger.error("trigger: no element matches XPath %s" % path, extra=self.getLoggerExtra())
-                    self.document.setError("No element matches XPath %s" % path)
-                    abort(400, 'No element matches XPath %s' % path)
+                    self._documentError("No element matches XPath %s" % path)
 
                 e.set(attr, value)
 
@@ -965,9 +964,7 @@ class DocumentEvents:
                 value = self._minimalAVT(value, parValue, element)
 
                 if e is None:
-                    self.logger.error('modify: no element matches XPath %s' % path, extra=self.getLoggerExtra())
-                    self.document.setError('No element matches XPath %s' % path)
-                    abort(400, 'No element matches XPath %s' % path)
+                    self._documentError('No element matches XPath %s' % path)
 
                 e.set(attr, value)
                 allElements.add(e)
