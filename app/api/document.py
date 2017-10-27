@@ -783,8 +783,8 @@ class DocumentEvents:
                 optionValues = self._getOptions(optionListElt)
                 self.logger.debug('_getDescription: got %d selection options from element %s' % (len(optionValues), optionListId), extra=self.getLoggerExtra())
             else:
-                self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
                 optionValues = self._getOptions(paramElt)
+                self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
             if optionValues:
                 pData['options'] = optionValues
             if pData.get('type') == 'selection' and not pData.get('options'):
