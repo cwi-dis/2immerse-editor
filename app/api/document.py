@@ -769,17 +769,19 @@ class DocumentEvents:
             #
             # Find all menu options (if any)
             #
-            optionElements = paramElt.findall('./tt:option', NAMESPACES)
-            optionValues = []
-
-            for optionElt in optionElements:
-                optionValues.append({
-                    "label": optionElt.get(NS_TRIGGER("label")),
-                    "value": optionElt.get(NS_TRIGGER("value"))
-                })
-
+            if NS_TRIGGER('optionListId') in paramElt.attrib:
+                # Get indirectly (probably from an au:assetList)
+                optionListId = paramElt.get(NS_TRIGGER('optionListId'))
+                optionListElt = self.document._getElementByID(optionListId)
+                if optionListElt == None:
+                    self.document.setError('tt:parameter optionListId does not exist: %s' % optionListId)
+                    abort(400, 'tt:parameter optionListId does not exist: %s' % optionListId)
+            optionValues = self._getOptions(paramElt)
             if optionValues:
                 pData['options'] = optionValues
+            #
+            # Append all data on this parameter to the list of all parameters
+            #
             parameters.append(pData)
         #
         # Collect information about the event as a whole
@@ -802,6 +804,18 @@ class DocumentEvents:
 
         return rv
 
+    @synchronized
+    def _getOptions(self, optionListElt):
+        optionElements = optionListElt.findall('./tt:option', NAMESPACES)
+        optionValues = []
+
+        for optionElt in optionElements:
+            optionValues.append({
+                "label": optionElt.get(NS_TRIGGER("label")),
+                "value": optionElt.get(NS_TRIGGER("value"))
+            })
+        return optionValues
+        
     @synchronized
     def _getParameterDestinations(self, parameter):
         """For a parameter/value coming from the front end, returns what to set where"""
