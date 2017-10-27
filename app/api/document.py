@@ -780,7 +780,9 @@ class DocumentEvents:
                 optionListElt = self.document._getElementByID(optionListId)
                 if optionListElt == None:
                     self._documentError('tt:parameter optionListId does not exist: %s' % optionListId)
-            optionValues = self._getOptions(paramElt)
+                optionValues = self._getOptions(optionListElt)
+            else:
+                optionValues = self._getOptions(paramElt)
             if optionValues:
                 pData['options'] = optionValues
             #
@@ -810,13 +812,13 @@ class DocumentEvents:
 
     @synchronized
     def _getOptions(self, optionListElt):
-        optionElements = optionListElt.findall('./tt:option', NAMESPACES)
+        optionElements = optionListElt.findall('./au:item', NAMESPACES)
         optionValues = []
 
         for optionElt in optionElements:
             optionValues.append({
-                "label": optionElt.get(NS_TRIGGER("label")),
-                "value": optionElt.get(NS_TRIGGER("value"))
+                "label": optionElt.get(NS_AUTH("label")),
+                "value": optionElt.get(NS_AUTH("value"))
             })
         return optionValues
         
