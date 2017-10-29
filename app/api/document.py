@@ -781,10 +781,10 @@ class DocumentEvents:
                 if optionListElt == None:
                     self._documentError('tt:parameter optionListId does not exist: %s' % optionListId)
                 optionValues = self._getOptions(optionListElt)
-                self.logger.debug('_getDescription: got %d selection options from element %s' % (len(optionValues), optionListId), extra=self.getLoggerExtra())
+                #self.logger.debug('_getDescription: got %d selection options from element %s' % (len(optionValues), optionListId), extra=self.getLoggerExtra())
             else:
                 optionValues = self._getOptions(paramElt)
-                self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
+                #self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
             if optionValues:
                 pData['options'] = optionValues
             if pData.get('type') == 'selection' and not pData.get('options'):
@@ -897,7 +897,6 @@ class DocumentEvents:
     @synchronized
     def _getClock(self, element):
         """Return current clock value for an element"""
-        self.logger.debug("getClock(%s)" % self.document._getXPath(element), extra=self.getLoggerExtra())
 
         epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
         if epoch != None:
