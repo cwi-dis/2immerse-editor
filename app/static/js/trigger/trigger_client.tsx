@@ -184,7 +184,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public render() {
-    const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
     return (
       <div>
@@ -192,19 +191,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <div className="level-left">
           </div>
           <div className="level-right">
-            {this.state.fetchError === undefined ?
-              <a href={downloadUrl}
-                 download="document.xml"
-                 style={{marginRight: 15}}
-                 className={classNames("button", "is-info")}>
-                Save Document
-              </a> :
-              <button style={{marginRight: 15}}
-                 className={classNames("button", "is-info")}
-                 disabled={true}>
-                Save Document
-              </button>
-            }
           </div>
         </div>
 

@@ -149,11 +149,21 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
       return;
     }
 
+    const downloadUrl = `/api/v1/document/${this.props.documentId}`;
+
     return (
       <div>
-        <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
+        <a href={downloadUrl}
+           style={{display: "block", margin: "0 auto 0 auto"}}
+           download="document.xml"
+           className={classNames("button", "is-info")}>
+          Save Document
+        </a>
+        <a onClick={this.props.clearSession.bind(this)}
+           style={{display: "block", margin: "10px auto 0 auto"}}
+           className="button is-warning">
           Clear Session
-        </button>
+        </a>
       </div>
     );
   }
