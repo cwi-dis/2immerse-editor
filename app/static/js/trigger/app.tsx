@@ -2,8 +2,8 @@ import * as React from "react";
 
 import CurrentVersion from "../editor/components/current_version";
 import DocumentChooser from "./document_chooser";
-import ErrorMessage from "./error_message";
-import LoadingSpinner from "./loading_spinner";
+import ErrorMessage from "./utils/error_message";
+import LoadingSpinner from "./utils/loading_spinner";
 import TriggerClient from "./trigger_client";
 
 import { makeRequest, Nullable, parseQueryString } from "../editor/util";

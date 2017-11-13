@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Nullable } from "../editor/util";
+import { Nullable } from "../../editor/util";
 
 interface TimecodePopupProps {
   position?: { top: number, left: number };

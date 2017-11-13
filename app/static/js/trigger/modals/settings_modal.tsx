@@ -1,5 +1,5 @@
 import * as React from "react";
-import { makeRequest, Nullable } from "../editor/util";
+import { makeRequest, Nullable } from "../../editor/util";
 
 interface SettingsModalProps {
   documentId: string;

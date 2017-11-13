@@ -3,11 +3,11 @@ import * as classNames from "classnames";
 
 import { makeRequest, parseQueryString } from "../editor/util";
 import EventContainer from "./event_container";
-import LoadingSpinner from "./loading_spinner";
-import PreviewLauncher from "./preview_launcher";
-import ErrorMessage from "./error_message";
+import LoadingSpinner from "./utils/loading_spinner";
+import PreviewLauncher from "./modals/preview_launcher";
+import ErrorMessage from "./utils/error_message";
 import RemoteControl from "./remote_control";
-import SettingsModal from "./settings_modal";
+import SettingsModal from "./modals/settings_modal";
 
 interface TriggerClientProps {
   documentId: string;

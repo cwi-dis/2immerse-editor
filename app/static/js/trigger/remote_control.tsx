@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import TimecodePopup from "./timecode_popup";
+import TimecodePopup from "./modals/timecode_popup";
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {

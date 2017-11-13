@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as QRCode from "qrcode";
-import { Nullable, shortenUrl } from "../editor/util";
+import { Nullable, shortenUrl } from "../../editor/util";
 
 interface PreviewLauncherProps {
   documentId: string;
