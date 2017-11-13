@@ -27,7 +27,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
 
     this.settingsUrl = `/api/v1/document/${props.documentId}/settings`;
     this.state = {
-      currentTab: "settings"
+      currentTab: "session"
     };
   }
 
@@ -154,12 +154,19 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
 
     return (
       <div>
-        <a href={downloadUrl}
-           style={{display: "block", margin: "0 auto 0 auto"}}
-           download="document.xml"
-           className={classNames("button", "is-info")}>
-          Save Document
-        </a>
+        {this.props.fetchError === undefined ?
+          <a href={downloadUrl}
+             download="document.xml"
+             style={{display: "block", margin: "10px auto 0 auto"}}
+             className={classNames("button", "is-info")}>
+            Save Document
+          </a> :
+          <button style={{display: "block", margin: "10px auto 0 auto", width: "100%"}}
+                  className={classNames("button", "is-info")}
+                  disabled={true}>
+            Save Document
+          </button>
+        }
         <a onClick={this.props.clearSession.bind(this)}
            style={{display: "block", margin: "10px auto 0 auto"}}
            className="button is-warning">
@@ -180,6 +187,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
 
   public render() {
     const { currentTab } = this.state;
+    const { fetchError } = this.props;
 
     return (
       <div className="box" style={{height: 600}}>
@@ -201,12 +209,16 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
               <a>Session</a>
             </li>
             <li className={classNames({"is-active": currentTab === "preview"})}
-                onClick={() => this.setState({currentTab: "preview"})}>
-              <a>Preview</a>
+                onClick={() => fetchError || this.setState({currentTab: "preview"})}>
+              <a style={{pointerEvents: fetchError ? "none" : "", color: fetchError ? "#E2E2E2" : ""}}>
+                Preview
+              </a>
             </li>
             <li className={classNames({"is-active": currentTab === "settings"})}
-                onClick={() => this.setState({currentTab: "settings"})}>
-              <a>Settings</a>
+                onClick={() => fetchError || this.setState({currentTab: "settings"})}>
+              <a style={{pointerEvents: fetchError ? "none" : "", color: fetchError ? "#E2E2E2" : ""}}>
+                Settings
+              </a>
             </li>
           </ul>
         </div>
