@@ -6,6 +6,7 @@ import { makeRequest } from "../../editor/util";
 
 interface SettingsModalProps {
   documentId: string;
+  fetchError?: {status: number, statusText: string};
   clearSession: () => void;
 }
 

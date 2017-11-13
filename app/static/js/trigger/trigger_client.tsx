@@ -192,6 +192,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         </div>
 
         <RemoteControl documentId={this.props.documentId}
+                       fetchError={this.state.fetchError}
                        clearSession={this.props.clearSession} />
       </div>
     );

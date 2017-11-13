@@ -8,6 +8,7 @@ import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {
   documentId: string;
+  fetchError?: {status: number, statusText: string};
   clearSession: () => void;
 }
 
@@ -172,13 +173,11 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       return;
     }
 
-    const { documentId, clearSession } = this.props;
-
     return (
       <div className="modal is-active">
         <div className="modal-background"></div>
         <div className="modal-content">
-          <SettingsModal documentId={documentId} clearSession={clearSession} />
+          <SettingsModal {...this.props} />
         </div>
         <button className="modal-close is-large"
                 onClick={() => this.setState({showSettingsModal: false})}>
