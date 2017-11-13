@@ -1,5 +1,5 @@
 import * as React from "react";
-import { makeRequest, Nullable } from "../../editor/util";
+import { makeRequest } from "../../editor/util";
 
 interface SettingsModalProps {
   documentId: string;
@@ -14,7 +14,6 @@ interface SettingsModalState {
 }
 
 class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
-  private playerModeField: Nullable<HTMLInputElement>;
   private settingsUrl: string;
 
   public constructor(props: SettingsModalProps) {
@@ -28,17 +27,10 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     makeRequest("GET", this.settingsUrl).then((response) => {
       this.setState({
         settings: JSON.parse(response)
-      })
+      });
     }).catch((err) => {
       console.error("Could not retrieve settings:", err);
     });
-  }
-
-  private setPlayerMode() {
-    if (this.playerModeField) {
-      const playerMode = this.playerModeField.value;
-      console.log("setting player mode to:", playerMode);
-    }
   }
 
   private renderDebugLinks(links: {[key: string]: string}) {

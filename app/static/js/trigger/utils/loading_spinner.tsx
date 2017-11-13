@@ -6,6 +6,6 @@ const LoadingSpinner: React.SFC<{}> = () => {
       <div className="loader" style={{marginTop: "15%"}} />
     </div>
   );
-}
+};
 
 export default LoadingSpinner;
