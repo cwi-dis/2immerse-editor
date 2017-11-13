@@ -1,4 +1,6 @@
 import * as React from "react";
+import * as classNames from "classnames";
+
 import { makeRequest } from "../../editor/util";
 
 interface SettingsModalProps {
@@ -11,6 +13,7 @@ interface SettingsModalState {
     startPaused: boolean,
     debugLinks: {[key: string]: string}
   };
+  currentTab: "settings" | "preview" | "session";
 }
 
 class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
@@ -20,7 +23,9 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     super(props);
 
     this.settingsUrl = `/api/v1/document/${props.documentId}/settings`;
-    this.state = {};
+    this.state = {
+      currentTab: "settings"
+    };
   }
 
   public componentDidMount() {
@@ -87,7 +92,11 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     });
   }
 
-  public render() {
+  private renderSettingsTab() {
+    if (this.state.currentTab !== "settings") {
+      return;
+    }
+
     const { settings } = this.state;
 
     if (settings === undefined) {
@@ -95,7 +104,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     }
 
     return (
-      <div className="box">
+      <div>
         <b>Preview player mode</b>
         <br/>
         <div className="select">
@@ -119,6 +128,59 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
         <b>Debug Links</b>
         <br/>
         {this.renderDebugLinks(settings.debugLinks)}
+      </div>
+    );
+  }
+
+  private renderPreviewTab() {
+    if (this.state.currentTab !== "preview") {
+      return;
+    }
+
+    return (
+      <div>
+        Launch preview
+      </div>
+    );
+  }
+
+  private renderSessionTab() {
+    if (this.state.currentTab !== "session") {
+      return;
+    }
+
+    return (
+      <div>
+        Session options
+      </div>
+    );
+  }
+
+  public render() {
+    const { currentTab } = this.state;
+
+    return (
+      <div className="box" style={{height: 600}}>
+        <div className="tabs">
+          <ul>
+            <li className={classNames({"is-active": currentTab === "session"})}
+                onClick={() => this.setState({currentTab: "session"})}>
+              <a>Session</a>
+            </li>
+            <li className={classNames({"is-active": currentTab === "preview"})}
+                onClick={() => this.setState({currentTab: "preview"})}>
+              <a>Preview</a>
+            </li>
+            <li className={classNames({"is-active": currentTab === "settings"})}
+                onClick={() => this.setState({currentTab: "settings"})}>
+              <a>Settings</a>
+            </li>
+          </ul>
+        </div>
+
+        {this.renderSettingsTab()}
+        {this.renderPreviewTab()}
+        {this.renderSessionTab()}
       </div>
     );
   }
