@@ -28,7 +28,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   private timerInterval: any;
 
   private timecodeBox: Nullable<HTMLDivElement>;
-  private seekByField: Nullable<HTMLInputElement>;
 
   public constructor(props: RemoteControlProps) {
     super(props);

@@ -5,7 +5,7 @@ interface TimecodePopupProps {
   position?: { top: number, left: number };
   timeOffset: number;
 
-  updateOffset: (t: number) => void; 
+  updateOffset: (t: number) => void;
   seekBy: (t: number) => void;
 }
 
@@ -25,7 +25,7 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
   }
 
   public render() {
-    const { position, timeOffset, updateOffset } = this.props;
+    const { position, timeOffset } = this.props;
 
     if (position === undefined) {
       return null;
