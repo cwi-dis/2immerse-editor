@@ -21,10 +21,11 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
 
 export type AsyncAction<R> = ThunkAction<R, ApplicationState, void>;
 
+type HTTPMethods = "GET" | "POST" | "PUT" | "DELETE";
 type PromiseResolve = (data: string) => void;
 type PromiseReject = (err: {status: number, statusText: string, body?: string}) => void;
 
-export function makeRequest(method: "GET" | "POST" | "PUT", url: string, data?: any, contentType?: string): Promise<string> {
+export function makeRequest(method: HTTPMethods, url: string, data?: any, contentType?: string): Promise<string> {
   return new Promise<string>((resolve: PromiseResolve, reject: PromiseReject) => {
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
