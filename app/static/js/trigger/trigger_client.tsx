@@ -7,7 +7,6 @@ import LoadingSpinner from "./utils/loading_spinner";
 import PreviewLauncher from "./modals/preview_launcher";
 import ErrorMessage from "./utils/error_message";
 import RemoteControl from "./remote_control";
-import SettingsModal from "./modals/settings_modal";
 
 interface TriggerClientProps {
   documentId: string;
@@ -215,24 +214,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     );
   }
 
-  private renderSettingsModal() {
-    if (!this.state.showSettingsModal) {
-      return;
-    }
-
-    return (
-      <div className="modal is-active">
-        <div className="modal-background"></div>
-        <div className="modal-content">
-          <SettingsModal documentId={this.props.documentId} />
-        </div>
-        <button className="modal-close is-large"
-                onClick={() => this.setState({showSettingsModal: false})}>
-        </button>
-      </div>
-    );
-  }
-
   public render() {
     const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
@@ -252,18 +233,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
             </p>
           </div>
           <div className="level-right">
-            {this.state.fetchError === undefined ?
-              <button style={{marginRight: 15}}
-                className={classNames("button", "is-info")}
-                onClick={() => this.setState({ showSettingsModal: true })}>
-                <i className="fa fa-cog"></i>
-              </button> :
-              <button style={{marginRight: 15}}
-                 className={classNames("button", "is-info")}
-                 disabled={true}>
-                 <i className="fa fa-cog"></i>
-              </button>
-            }
             {this.state.fetchError === undefined ?
               <button style={{marginRight: 15}}
                 className={classNames("button", "is-info")}
@@ -300,7 +269,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         </div>
 
         {this.renderPreviewModal()}
-        {this.renderSettingsModal()}
 
         <RemoteControl documentId={this.props.documentId} />
       </div>

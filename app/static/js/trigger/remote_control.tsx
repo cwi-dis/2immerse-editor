@@ -1,7 +1,9 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import SettingsModal from "./modals/settings_modal";
 import TimecodePopup from "./modals/timecode_popup";
+
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {
@@ -21,6 +23,7 @@ interface RemoteControlState {
   lastPositionUpdate?: number;
   showdirty: boolean;
   timecodePopup?: { top: number, left: number };
+  showSettingsModal: boolean;
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
@@ -38,7 +41,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
         status: "Preview player is not running"
       },
       timeOffset: 0,
-      showdirty: false
+      showdirty: false,
+      showSettingsModal: false
     };
   }
 
@@ -162,6 +166,24 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
+  private renderSettingsModal() {
+    if (!this.state.showSettingsModal) {
+      return;
+    }
+
+    return (
+      <div className="modal is-active">
+        <div className="modal-background"></div>
+        <div className="modal-content">
+          <SettingsModal documentId={this.props.documentId} />
+        </div>
+        <button className="modal-close is-large"
+                onClick={() => this.setState({showSettingsModal: false})}>
+        </button>
+      </div>
+    );
+  }
+
   public render() {
     const { previewStatus, showdirty } = this.state;
 
@@ -194,6 +216,13 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
     return (
       <div style={containerStyle}>
+        <button className="button is-info" style={{position: "absolute"}}
+                onClick={() => this.setState({showSettingsModal: true})}>
+          <i className="fa fa-cog"></i>
+        </button>
+
+        {this.renderSettingsModal()}
+
         <div style={{display: "flex", justifyContent: "center"}}>
           <button className="button is-info"
                   style={{marginRight: 15, flexGrow: 0}}
