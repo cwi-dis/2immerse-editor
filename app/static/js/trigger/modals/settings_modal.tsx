@@ -6,6 +6,7 @@ import { makeRequest } from "../../editor/util";
 
 interface SettingsModalProps {
   documentId: string;
+  clearSession: () => void;
 }
 
 interface SettingsModalState {
@@ -150,7 +151,9 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
 
     return (
       <div>
-        Session options
+        <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
+          Clear Session
+        </button>
       </div>
     );
   }

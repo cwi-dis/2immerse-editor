@@ -205,9 +205,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                 Save Document
               </button>
             }
-            <button onClick={this.props.clearSession.bind(this)} style={{marginRight: 15}} className="button is-warning">
-              Clear Session
-            </button>
           </div>
         </div>
 
@@ -215,7 +212,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           {this.renderMainContent()}
         </div>
 
-        <RemoteControl documentId={this.props.documentId} />
+        <RemoteControl documentId={this.props.documentId}
+                       clearSession={this.props.clearSession} />
       </div>
     );
   }
