@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import PreviewLauncher from "./preview_launcher";
 import { makeRequest } from "../../editor/util";
 
 interface SettingsModalProps {
@@ -138,9 +139,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     }
 
     return (
-      <div>
-        Launch preview
-      </div>
+      <PreviewLauncher documentId={this.props.documentId} />
     );
   }
 

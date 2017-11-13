@@ -4,7 +4,6 @@ import { Nullable, shortenUrl } from "../../editor/util";
 
 interface PreviewLauncherProps {
   documentId: string;
-  optionClicked: () => void;
 }
 
 interface PreviewLauncherState {
@@ -51,7 +50,7 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
     const { shortUrl } = this.state;
 
     return (
-      <div className="box">
+      <div>
         Scan the QR Code below to open the preview on a mobile device:
         <br/><br/>
         <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
@@ -62,8 +61,7 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
         <br/><br/>
         <a style={{display: "block", margin: "0 auto 0 auto"}}
            className="button is-info" href={previewUrl}
-           target="_blank"
-           onClick={this.props.optionClicked.bind(this)}>
+           target="_blank">
           Open preview in new tab
         </a>
         <br/>

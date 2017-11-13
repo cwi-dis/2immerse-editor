@@ -4,7 +4,6 @@ import * as classNames from "classnames";
 import { makeRequest, parseQueryString } from "../editor/util";
 import EventContainer from "./event_container";
 import LoadingSpinner from "./utils/loading_spinner";
-import PreviewLauncher from "./modals/preview_launcher";
 import ErrorMessage from "./utils/error_message";
 import RemoteControl from "./remote_control";
 
@@ -184,27 +183,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
-  private renderPreviewModal() {
-    if (!this.state.showPreviewModal) {
-      return;
-    }
-
-    console.log("rendering preview");
-
-    return (
-      <div className="modal is-active">
-        <div className="modal-background"></div>
-        <div className="modal-content">
-          <PreviewLauncher documentId={this.props.documentId}
-                           optionClicked={() => this.setState({showPreviewModal: false})} />
-        </div>
-        <button className="modal-close is-large"
-                onClick={() => this.setState({showPreviewModal: false})}>
-        </button>
-      </div>
-    );
-  }
-
   public render() {
     const downloadUrl = `/api/v1/document/${this.props.documentId}`;
 
@@ -214,18 +192,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
           <div className="level-left">
           </div>
           <div className="level-right">
-            {this.state.fetchError === undefined ?
-              <button style={{marginRight: 15}}
-                className={classNames("button", "is-info")}
-                onClick={() => this.setState({ showPreviewModal: true })}>
-                Launch Preview
-              </button> :
-              <button style={{marginRight: 15}}
-                 className={classNames("button", "is-info")}
-                 disabled={true}>
-                Launch Preview
-              </button>
-            }
             {this.state.fetchError === undefined ?
               <a href={downloadUrl}
                  download="document.xml"
@@ -248,8 +214,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         <div style={{height: "calc(100vh - 85px - 65px)", margin: "0 auto", overflowY: "hidden"}}>
           {this.renderMainContent()}
         </div>
-
-        {this.renderPreviewModal()}
 
         <RemoteControl documentId={this.props.documentId} />
       </div>
