@@ -157,7 +157,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       const rect = this.timecodeBox.getBoundingClientRect();
 
       this.setState({
-        timecodePopup: { top: -160, left: rect.left }
+        timecodePopup: { top: -162, left: rect.left }
       });
     }
   }
