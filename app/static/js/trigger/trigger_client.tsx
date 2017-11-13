@@ -154,7 +154,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
               </li>
             </ul>
           </div>
-          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 170px - 50px)"}}>
+          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 160px)"}}>
             {this.renderActiveTab()}
           </div>
         </div>
@@ -187,14 +187,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
     return (
       <div>
-        <div className="level" style={{width: "100vw", height: 60, borderBottom: "2px solid #161616", marginBottom: 5}}>
-          <div className="level-left">
-          </div>
-          <div className="level-right">
-          </div>
-        </div>
-
-        <div style={{height: "calc(100vh - 85px - 65px)", margin: "0 auto", overflowY: "hidden"}}>
+        <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
           {this.renderMainContent()}
         </div>
 
