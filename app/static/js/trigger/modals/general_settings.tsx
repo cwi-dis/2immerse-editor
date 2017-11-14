@@ -12,6 +12,7 @@ interface GeneralSettingsState {
     startPaused: boolean,
     debugLinks: {[key: string]: string}
   };
+  saveSuccessful?: boolean;
 }
 
 class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSettingsState> {
@@ -61,11 +62,13 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         settings.playerMode = value;
 
         this.setState({
-          settings
+          settings,
+          saveSuccessful: true
         });
       }
     }).catch((err) => {
       console.error("could not set playerMode:", err);
+      this.setState({ saveSuccessful: false });
     });
   }
 
@@ -80,12 +83,40 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         settings.startPaused = value;
 
         this.setState({
-          settings
+          settings,
+          saveSuccessful: true
         });
       }
     }).catch((err) => {
       console.error("could not set startPaused:", err);
+      this.setState({ saveSuccessful: false });
     });
+  }
+
+  private renderNotification() {
+    const { saveSuccessful } = this.state;
+
+    if (saveSuccessful === undefined) {
+      return;
+    } else {
+      setTimeout(() => {
+        this.setState({ saveSuccessful: undefined });
+      }, 1000);
+
+      if (saveSuccessful === true) {
+        return (
+          <div className="notification is-success" style={{ margin: "0 0 15px 0", padding: "0.5rem" }}>
+            Settings saved successfully!
+          </div>
+        );
+      }
+
+      return (
+        <div className="notification is-danger" style={{margin: "0 0 15px 0", padding: "0.5rem"}}>
+          Could not save settings
+        </div>
+      );
+    }
   }
 
   public render() {
@@ -97,6 +128,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
     return (
       <div>
+        {this.renderNotification()}
         <b>Preview player mode</b>
         <br/>
         <div className="select">
