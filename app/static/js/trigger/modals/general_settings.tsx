@@ -19,7 +19,9 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
   public constructor(props: GeneralSettingsProps) {
     super(props);
+
     this.settingsUrl = `/api/v1/document/${props.documentId}/settings`;
+    this.state = {};
   }
 
   public componentDidMount() {

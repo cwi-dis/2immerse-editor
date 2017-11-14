@@ -45,7 +45,7 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
       <a onClick={deleteSession}
           style={{display: "block", margin: "10px auto 0 auto"}}
           className="button is-danger">
-        Clear &amp; delete Session
+        Clear &amp; Delete Session
       </a>
     </div>
   );
