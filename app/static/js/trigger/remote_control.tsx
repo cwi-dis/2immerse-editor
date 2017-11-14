@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import SettingsModal from "./modals/settings_modal";
-import TimecodePopup from "./modals/timecode_popup";
+import SettingsModal from "./settings/settings_modal";
+import TimecodePopup from "./utils/timecode_popup";
 
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
