@@ -25,7 +25,7 @@ describe("Component <CurrentVersion/>", () => {
       expect(currentVersion.state().fetchError).toBeFalsy();
 
       expect(
-        currentVersion.find("a").first().props().href
+        currentVersion.render().find("a").first().prop("href")
       ).toEqual(
         "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/some_commit_hash"
       );
@@ -67,7 +67,7 @@ describe("Component <CurrentVersion/>", () => {
       expect(currentVersion.state().fetchError).toBeFalsy();
 
       expect(
-        currentVersion.find("a").first().props().href
+        currentVersion.render().find("a").first().prop("href")
       ).toEqual(
         "http://my-commit-url.com/some_other_commit_hash"
       );
