@@ -1,8 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import { makeRequest } from "../../editor/util";
-
+import GeneralSettings from "./general_settings";
 import PreviewLauncher from "./preview_launcher";
 import SessionSettings from "./session_settings";
 
@@ -13,128 +12,23 @@ interface SettingsModalProps {
 }
 
 interface SettingsModalState {
-  settings?: {
-    playerMode: string,
-    startPaused: boolean,
-    debugLinks: {[key: string]: string}
-  };
   currentTab: "settings" | "preview" | "session";
 }
 
 class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
-  private settingsUrl: string;
-
   public constructor(props: SettingsModalProps) {
     super(props);
 
-    this.settingsUrl = `/api/v1/document/${props.documentId}/settings`;
     this.state = {
       currentTab: "session"
     };
-  }
-
-  public componentDidMount() {
-    makeRequest("GET", this.settingsUrl).then((response) => {
-      this.setState({
-        settings: JSON.parse(response)
-      });
-    }).catch((err) => {
-      console.error("Could not retrieve settings:", err);
-    });
-  }
-
-  private renderDebugLinks(links: {[key: string]: string}) {
-    const renderedLinks: Array<JSX.Element> = [];
-
-    for (let key in links) {
-      if (links.hasOwnProperty(key)) {
-        renderedLinks.push(
-          <a key={key} href={links[key]}>{key}</a>
-        );
-
-        renderedLinks.push(<br key={key + "br"} />);
-      }
-    }
-
-    return renderedLinks;
-  }
-
-  private changePlayerMode(e: React.ChangeEvent<HTMLSelectElement>) {
-    const { value } = e.target;
-    console.log("changing playerMode:", value);
-
-    makeRequest("PUT", this.settingsUrl, {playerMode: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.playerMode = value;
-
-        this.setState({
-          settings
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set playerMode:", err);
-    });
-  }
-
-  private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = (e.target.value === "true") ? true : false;
-    console.log("changing startPaused:", value);
-
-    makeRequest("PUT", this.settingsUrl, {startPaused: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.startPaused = value;
-
-        this.setState({
-          settings
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set startPaused:", err);
-    });
   }
 
   private renderSettingsTab() {
     if (this.state.currentTab !== "settings") {
       return;
     }
-
-    const { settings } = this.state;
-
-    if (settings === undefined) {
-      return null;
-    }
-
-    return (
-      <div>
-        <b>Preview player mode</b>
-        <br/>
-        <div className="select">
-          <select value={settings.playerMode} onChange={this.changePlayerMode.bind(this)}>
-            <option>standalone</option>
-            <option>tv</option>
-          </select>
-        </div>
-        <br/><br/>
-
-        <b>Start paused</b>
-        <br/>
-        <div className="select">
-          <select value={settings.startPaused ? "true" : "false"} onChange={this.changeStartPaused.bind(this)}>
-            <option>true</option>
-            <option>false</option>
-          </select>
-        </div>
-        <br/><br/>
-
-        <b>Debug Links</b>
-        <br/>
-        {this.renderDebugLinks(settings.debugLinks)}
-      </div>
-    );
+    return <GeneralSettings documentId={this.props.documentId} />
   }
 
   private renderPreviewTab() {
