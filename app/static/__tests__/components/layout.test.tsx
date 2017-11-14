@@ -1,7 +1,10 @@
 /// <reference types="jest" />
 
 import * as React from "react";
-import { mount } from "enzyme";
+import { configure, mount } from "enzyme";
+import * as Adapter from "enzyme-adapter-react-16";
+
+configure({ adapter: new Adapter() });
 
 import Layout from "../../js/editor/components/layout";
 import MenuBar from "../../js/editor/components/menu_bar";
