@@ -24,27 +24,15 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     };
   }
 
-  private renderSettingsTab() {
-    if (this.state.currentTab !== "settings") {
-      return;
+  private renderCurrentTab() {
+    switch (this.state.currentTab) {
+    case "session":
+      return <SessionSettings {...this.props} />;
+    case "preview":
+      return <PreviewLauncher documentId={this.props.documentId} />;
+    case "settings":
+      return <GeneralSettings documentId={this.props.documentId} />;
     }
-    return <GeneralSettings documentId={this.props.documentId} />
-  }
-
-  private renderPreviewTab() {
-    if (this.state.currentTab !== "preview") {
-      return;
-    }
-
-    return <PreviewLauncher documentId={this.props.documentId} />;
-  }
-
-  private renderSessionTab() {
-    if (this.state.currentTab !== "session") {
-      return;
-    }
-
-    return <SessionSettings {...this.props} />;
   }
 
   private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
@@ -94,9 +82,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
           </ul>
         </div>
 
-        {this.renderSettingsTab()}
-        {this.renderPreviewTab()}
-        {this.renderSessionTab()}
+        {this.renderCurrentTab()}
       </div>
     );
   }
