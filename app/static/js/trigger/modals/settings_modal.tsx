@@ -1,8 +1,10 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
-import PreviewLauncher from "./preview_launcher";
 import { makeRequest } from "../../editor/util";
+
+import PreviewLauncher from "./preview_launcher";
+import SessionSettings from "./session_settings";
 
 interface SettingsModalProps {
   documentId: string;
@@ -140,9 +142,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
       return;
     }
 
-    return (
-      <PreviewLauncher documentId={this.props.documentId} />
-    );
+    return <PreviewLauncher documentId={this.props.documentId} />;
   }
 
   private renderSessionTab() {
@@ -150,44 +150,7 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
       return;
     }
 
-    const downloadUrl = `/api/v1/document/${this.props.documentId}`;
-
-    return (
-      <div>
-        {this.props.fetchError === undefined ?
-          <a href={downloadUrl}
-             download="document.xml"
-             style={{display: "block", margin: "10px auto 0 auto"}}
-             className={classNames("button", "is-info")}>
-            Save Document
-          </a> :
-          <button style={{display: "block", margin: "10px auto 0 auto", width: "100%"}}
-                  className={classNames("button", "is-info")}
-                  disabled={true}>
-            Save Document
-          </button>
-        }
-        <a onClick={this.props.clearSession.bind(this)}
-           style={{display: "block", margin: "10px auto 0 auto"}}
-           className="button is-warning">
-          Clear Session
-        </a>
-        <a onClick={this.deleteSession.bind(this)}
-           style={{display: "block", margin: "10px auto 0 auto"}}
-           className="button is-danger">
-          Clear &amp; delete Session
-        </a>
-      </div>
-    );
-  }
-
-  private deleteSession() {
-    makeRequest("DELETE", `/api/v1/document/${this.props.documentId}`).then(() => {
-      console.log("Document deleted successfully");
-      this.props.clearSession();
-    }).catch((err) => {
-      console.error("Could not delete document:", err);
-    });
+    return <SessionSettings {...this.props} />;
   }
 
   private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
