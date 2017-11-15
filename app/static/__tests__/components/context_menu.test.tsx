@@ -127,13 +127,15 @@ describe("Component <ContextMenuEntry />", () => {
     expect(contextMenuEntry.state().selected).toBeTruthy();
   });
 
-  it.skip("should update the element's style on mouseover", () => {
+  it("should update the element's style on mouseover", () => {
     const contextMenuEntry = mount(
       <ContextMenuEntry name="Some entry" callback={() => {}} />
     );
 
+    contextMenuEntry.find("div").first().simulate("mouseover");
+    contextMenuEntry.update();
+
     const container = contextMenuEntry.find("div").first();
-    container.simulate("mouseover");
 
     expect(container.props().style.color).toEqual("#FFFFFF");
     expect(container.props().style.backgroundColor).toEqual("#007ACC");
@@ -153,19 +155,23 @@ describe("Component <ContextMenuEntry />", () => {
     expect(contextMenuEntry.state().selected).toBeFalsy();
   });
 
-  it.skip("should reset the element's style to default on mouseout", () => {
+  it("should reset the element's style to default on mouseout", () => {
     const contextMenuEntry = mount(
       <ContextMenuEntry name="Some entry" callback={() => {}} />
     );
 
-    const container = contextMenuEntry.find("div").first();
-    const beforeStyle = container.props().style;
+    const beforeContainer = contextMenuEntry.find("div").first();
+    const beforeStyle = beforeContainer.props().style;
 
-    container.simulate("mouseover");
-    expect(container.props().style).not.toEqual(beforeStyle);
+    beforeContainer.simulate("mouseover");
 
-    container.simulate("mouseout");
-    expect(container.props().style).toEqual(beforeStyle);
+    let afterContainer = contextMenuEntry.find("div").first();
+    expect(afterContainer.props().style).not.toEqual(beforeStyle);
+
+    afterContainer.simulate("mouseout");
+    afterContainer = contextMenuEntry.find("div").first();
+
+    expect(afterContainer.props().style).toEqual(beforeStyle);
   });
 
   it("should trigger the element's callback when clicked", () => {
