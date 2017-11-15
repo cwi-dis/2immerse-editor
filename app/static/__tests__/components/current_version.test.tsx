@@ -1,11 +1,8 @@
 /// <reference types="jest" />
 
 import * as React from "react";
-import { configure, mount } from "enzyme";
-import * as Adapter from "enzyme-adapter-react-16";
+import { mount } from "enzyme";
 import { stub } from "sinon";
-
-configure({ adapter: new Adapter() });
 
 import * as util from "../../js/editor/util";
 import CurrentVersion, { CurrentVersionProps, CurrentVersionState } from "../../js/editor/components/current_version";

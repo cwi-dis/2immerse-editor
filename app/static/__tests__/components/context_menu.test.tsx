@@ -1,11 +1,8 @@
 /// <reference types="jest" />
 
 import * as React from "react";
-import { configure, mount } from "enzyme";
-import * as Adapter from "enzyme-adapter-react-16";
+import { mount } from "enzyme";
 import { spy } from "sinon";
-
-configure({ adapter: new Adapter() });
 
 import ContextMenu, { ContextMenuDivider, ContextMenuEntry } from "../../js/editor/components/context_menu";
 
