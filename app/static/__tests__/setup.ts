@@ -1,7 +1,4 @@
-global.requestAnimationFrame = function (callback) {
-  setTimeout(callback, 0);
-};
-
+import "raf/polyfill";
 import { configure } from "enzyme";
 import * as Adapter from "enzyme-adapter-react-16";
 
