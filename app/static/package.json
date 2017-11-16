@@ -11,7 +11,9 @@
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*\\.(test|spec))\\.(ts|tsx|js)$",
-    "setupFiles": ["./__tests__/setup.ts"],
+    "setupFiles": [
+      "./__tests__/setup.ts"
+    ],
     "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
