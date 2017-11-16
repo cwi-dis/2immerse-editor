@@ -2,7 +2,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { makeRequest, parseQueryString } from "../editor/util";
-import EventContainer from "./event_container";
+import EventList from "./event_list";
 import LoadingSpinner from "./utils/loading_spinner";
 import ErrorMessage from "./utils/error_message";
 import RemoteControl from "./remote_control";
@@ -162,29 +162,20 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
-  private renderActiveTab(): Array<JSX.Element> {
+  private renderActiveTab(): JSX.Element {
     if (this.state.activeTab === "abstract") {
-      return this.state.abstractEvents.map((event: Event, i) => {
-        return (
-          <EventContainer key={`abstract.${i}`}
-                          documentId={this.props.documentId}
-                          event={event}
-                          onTriggered={this.fetchEvents.bind(this, true)} />
-        );
-      });
+      return <EventList key="abstract"
+                        documentId={this.props.documentId}
+                        events={this.state.abstractEvents}
+                        fetchEvents={this.fetchEvents.bind(this, true)} />;
     } else {
-      return this.state.instantiatedEvents.map((event: Event, i) => {
-        return (
-          <EventContainer key={`instantiated.${i}`}
-                          documentId={this.props.documentId}
-                          event={event} />
-        );
-      });
+      return <EventList key="instantiated"
+                        documentId={this.props.documentId}
+                        events={this.state.instantiatedEvents} />;
     }
   }
 
   public render() {
-
     return (
       <div>
         <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
