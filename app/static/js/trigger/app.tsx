@@ -15,8 +15,8 @@ interface AppState {
 }
 
 class App extends React.Component<{}, AppState> {
-  constructor() {
-    super();
+  constructor(props: never) {
+    super(props);
 
     this.state = {
       documentId: localStorage.getItem("documentId"),

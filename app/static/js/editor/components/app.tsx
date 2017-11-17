@@ -17,7 +17,7 @@ function mapStateToProps(state: ApplicationState): ApplicationState {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
-  return bindActionCreators(Object.assign({} as ActionCreatorsMapObject,
+  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
     chapterActions.actionCreators,
     masterActions.actionCreators,
     screenActions.actionCreators

@@ -16,8 +16,8 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     commitUrl: "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/"
   };
 
-  constructor() {
-    super();
+  constructor(props: CurrentVersionProps) {
+    super(props);
 
     this.state = {
       branch: "",
