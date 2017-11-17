@@ -1,23 +1,26 @@
 #
 # Global settings for this instance of the backend service.
 #
-# Replace the URLs here for deployment, or for running local copies of everything.
+# Replace the URLs here for running local copies of everything (or use the environment variables).
 #
+# When deployed to the 2immerse infrastructure with the Mantl stuff there will be
+# environment variables that override the URLs
+import os
 
 # URL for the preview player:
-clientApiUrl = "https://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
+clientApiUrl = os.getenv("CLIENT_API_URL", "https://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html")
 
 # Mode in which the preview player runs (tv or standalone)
 mode = "standalone"
 
 # URLs for 2immerse services
-layoutService = "https://layout-service-edge.platform.2immerse.eu/layout/v4"
-websocketService = "https://websocket-service-edge.platform.2immerse.eu/"
-timelineService = "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
-kibanaService = "https://platform.2immerse.eu/kibana/app/kibana"
+layoutService = os.getenv("LAYOUT_SERVICE_URL", "https://layout-service-edge.platform.2immerse.eu/layout/v4")
+websocketService = os.getenv("WEBSOCKET_SERVICE_URL", "https://websocket-service-edge.platform.2immerse.eu/")
+timelineService = os.getenv("TIMELINE_SERVICE_URL", "https://timeline-service-edge.platform.2immerse.eu/timeline/v1")
+kibanaService = os.getenv("KIBANA_SERVICE_URL", "https://platform.2immerse.eu/kibana/app/kibana")
 
 # Logging parameters for the authoring service
-noKibana = False
+noKibana = (kibanaService == "")
 logLevel = 'werkzeug:WARN,INFO'
 
 def _get():
