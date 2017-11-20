@@ -1,3 +1,4 @@
+import { ActionCreatorsMapObject } from "redux";
 import { AsyncAction, BasicAction, PayloadAction } from "../util";
 
 export type ADD_MASTER_LAYOUT = PayloadAction<"ADD_MASTER_LAYOUT", {name: string}>;
@@ -90,7 +91,7 @@ export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void>
   };
 }
 
-export interface MasterActions {
+export interface MasterActions extends ActionCreatorsMapObject {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
   addMasterLayoutAndUpdateCurrent: (name: string) => AsyncAction<void>;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;

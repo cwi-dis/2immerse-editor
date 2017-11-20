@@ -1,3 +1,4 @@
+import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
@@ -62,7 +63,7 @@ function assignMaster(accessPath: Array<number>, masterId: string): ASSIGN_MASTE
   };
 }
 
-export interface ChapterActions {
+export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;

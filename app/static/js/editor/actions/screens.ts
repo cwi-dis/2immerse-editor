@@ -1,3 +1,5 @@
+import { ActionCreatorsMapObject } from "redux";
+
 import { PayloadAction, AsyncAction, findById } from "../util";
 import { actionCreators as masterActionCreators } from "./masters";
 
@@ -84,7 +86,7 @@ function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
   };
 }
 
-export interface ScreenActions {
+export interface ScreenActions extends ActionCreatorsMapObject {
   addDevice: (type: "personal" | "communal") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   removeDeviceAndUpdateMasters: (id: string) => AsyncAction<void>;
