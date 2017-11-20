@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 
 import { ApplicationState } from "../../store";
@@ -10,7 +10,8 @@ import ScreenContainer from "./screen_container";
 
 type LayoutDesignerProps = {
   screens: ScreenState
-} & ScreenActions;
+  screenActions: ScreenActions
+};
 
 interface LayoutDesignerState {
   personalScreenWidth: number;
@@ -38,6 +39,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 
   public render() {
+    const { screenActions } = this.props;
     const { previewScreens: screens } = this.props.screens;
     const personalScreens = screens.filter((screen) => screen.type === "personal");
     const communalScreens = screens.filter((screen) => screen.type === "communal");
@@ -47,29 +49,29 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
         <h3>Layout Designer</h3>
 
         <div className="block">
-          <a style={{marginRight: 10}} className="button is-info" onClick={this.props.addDevice.bind(null, "communal")}>Add communal device</a>
-          <a className="button is-info" onClick={this.props.addDevice.bind(null, "personal")}>Add personal device</a>
+          <a style={{marginRight: 10}} className="button is-info" onClick={screenActions.addDevice.bind(null, "communal")}>Add communal device</a>
+          <a className="button is-info" onClick={screenActions.addDevice.bind(null, "personal")}>Add personal device</a>
         </div>
 
         <br/>
 
         <div className="columns">
           <ScreenContainer title="Communal Device"
-                            screens={communalScreens}
-                            numColumns={8}
-                            screenWidth={this.state.communalScreenWidth * 3 / 4}
-                            colRef={(el) => this.communalColumn = el}
-                            removeDevice={this.props.removeDeviceAndUpdateMasters}
-                            splitRegion={this.props.splitRegion}
-                            undoLastSplit={this.props.undoLastSplitAndUpdateMasters} />
+                           screens={communalScreens}
+                           numColumns={8}
+                           screenWidth={this.state.communalScreenWidth * 3 / 4}
+                           colRef={(el) => this.communalColumn = el}
+                           removeDevice={screenActions.removeDeviceAndUpdateMasters}
+                           splitRegion={screenActions.splitRegion}
+                           undoLastSplit={screenActions.undoLastSplitAndUpdateMasters} />
           <ScreenContainer title="Personal Devices"
-                            screens={personalScreens}
-                            numColumns={4}
-                            screenWidth={this.state.personalScreenWidth * 3 / 8}
-                            colRef={(el) => this.personalColumn = el}
-                            removeDevice={this.props.removeDeviceAndUpdateMasters}
-                            splitRegion={this.props.splitRegion}
-                            undoLastSplit={this.props.undoLastSplitAndUpdateMasters} />
+                           screens={personalScreens}
+                           numColumns={4}
+                           screenWidth={this.state.personalScreenWidth * 3 / 8}
+                           colRef={(el) => this.personalColumn = el}
+                           removeDevice={screenActions.removeDeviceAndUpdateMasters}
+                           splitRegion={screenActions.splitRegion}
+                           undoLastSplit={screenActions.undoLastSplitAndUpdateMasters} />
         </div>
       </div>
     );
@@ -82,10 +84,10 @@ function mapStateToProps(state: ApplicationState): { screens: ScreenState } {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
-  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
-    screenActions.actionCreators
-  ), dispatch);
+function mapDispatchToProps(dispatch: Dispatch<ScreenActions>): { screenActions: ScreenActions } {
+  return {
+    screenActions: bindActionCreators<ScreenActions>(screenActions.actionCreators, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(LayoutDesigner);

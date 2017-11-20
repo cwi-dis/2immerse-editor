@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 
@@ -19,17 +19,19 @@ import { ComponentPlacement } from "../../reducers/masters";
 import DMAppcContainer from "./dmappc_container";
 import DroppableScreen from "./droppable_screen";
 
-type MasterManagerProps = {
-  masters: MasterState,
-  screens: ScreenState
-} & MasterActions & ScreenActions;
+interface MasterManagerProps {
+  masters: MasterState;
+  screens: ScreenState;
+  masterActions: MasterActions;
+  screenActions: ScreenActions;
+}
 
 class MasterManager extends React.Component<MasterManagerProps, {}> {
   public componentDidMount() {
     const { previewScreens, currentScreen } = this.props.screens;
 
     if (!previewScreens.isEmpty() && !currentScreen) {
-      this.props.updateSelectedScreen(previewScreens.first()!.id);
+      this.props.screenActions.updateSelectedScreen(previewScreens.first()!.id);
     }
   }
 
@@ -37,13 +39,13 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     const masterName = prompt("Master layout name:");
 
     if (masterName !== null && masterName !== "") {
-      this.props.addMasterLayoutAndUpdateCurrent(masterName);
+      this.props.masterActions.addMasterLayoutAndUpdateCurrent(masterName);
     }
   }
 
   private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
     const screenId = e.currentTarget.value;
-    this.props.updateSelectedScreen(screenId);
+    this.props.screenActions.updateSelectedScreen(screenId);
   }
 
   private getComponentsOnScreen(screenId: string, layoutId?: string): List<ComponentPlacement> | undefined {
@@ -87,7 +89,7 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
                          currentLayout={currentLayoutId}
                          width={width}
                          placedComponents={componentsOnScreen}
-                         assignComponentToMaster={this.props.assignComponentToMaster} />
+                         assignComponentToMaster={this.props.masterActions.assignComponentToMaster} />
       </div>
     );
   }
@@ -116,7 +118,7 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
 
               return (
                 <div key={`master.${i}`}
-                     onClick={this.props.updateSelectedLayout.bind(this, master.id)}
+                     onClick={this.props.masterActions.updateSelectedLayout.bind(this, master.id)}
                      style={{backgroundColor: bgColor, width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
                   {i + 1}. {master.name}
                 </div>
@@ -138,11 +140,11 @@ function mapStateToProps(state: ApplicationState): { masters: MasterState, scree
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
-  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
-    masterActions.actionCreators,
-    screenActions.actionCreators
-  ), dispatch);
+function mapDispatchToProps(dispatch: Dispatch<MasterActions & ScreenActions>): { masterActions: MasterActions, screenActions: ScreenActions} {
+  return {
+    masterActions: bindActionCreators<MasterActions>(masterActions.actionCreators, dispatch),
+    screenActions: bindActionCreators<ScreenActions>(screenActions.actionCreators, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MasterManager);

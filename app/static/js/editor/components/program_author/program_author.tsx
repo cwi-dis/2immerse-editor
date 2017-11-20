@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
@@ -16,9 +16,10 @@ import * as chapterActions from "../../actions/chapters";
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
 
-type ProgramAuthorProps = {
-  chapters: ChapterState
-} & ChapterActions;
+interface ProgramAuthorProps {
+  chapters: ChapterState;
+  chapterActions: ChapterActions;
+}
 
 interface ProgramAuthorState {
   stage: Nullable<KonvaStage>;
@@ -50,28 +51,28 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
       return;
     }
 
-    this.props.removeChapter(accessPath);
+    this.props.chapterActions.removeChapter(accessPath);
   }
 
   private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
     const chapterName = prompt("Chapter name:", currentName || "");
 
     if (chapterName !== null && chapterName !== "") {
-      this.props.renameChapter(accessPath, chapterName);
+      this.props.chapterActions.renameChapter(accessPath, chapterName);
     }
   }
 
   private handleMasterLabelClick(accessPath: Array<number>): void {
-    this.props.assignMaster(accessPath, `potato_${getRandomInt()}`);
+    this.props.chapterActions.assignMaster(accessPath, `potato_${getRandomInt()}`);
   }
 
   private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
     if (handlePosition === "left") {
-      this.props.addChapterBefore(accessPath);
+      this.props.chapterActions.addChapterBefore(accessPath);
     } else if (handlePosition === "right") {
-      this.props.addChapterAfter(accessPath);
+      this.props.chapterActions.addChapterAfter(accessPath);
     } else {
-      this.props.addChapterChild(accessPath);
+      this.props.chapterActions.addChapterChild(accessPath);
     }
   }
 
@@ -191,10 +192,10 @@ function mapStateToProps(state: ApplicationState): { chapters: ChapterState } {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>) {
-  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
-    chapterActions.actionCreators,
-  ), dispatch);
+function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): { chapterActions: ChapterActions } {
+  return {
+    chapterActions: bindActionCreators<ChapterActions>(chapterActions.actionCreators, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProgramAuthor);
