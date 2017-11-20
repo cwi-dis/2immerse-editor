@@ -1,22 +1,30 @@
 import * as React from "react";
+import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { Coords, countLeafNodes, getRandomInt, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
-import { ApplicationState } from "../../store";
 
+import { ApplicationState } from "../../store";
+import { ChapterState } from "../../reducers/chapters";
 import { ChapterActions } from "../../actions/chapters";
+import * as chapterActions from "../../actions/chapters";
 
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
+
+type ProgramAuthorProps = {
+  chapters: ChapterState
+} & ChapterActions;
 
 interface ProgramAuthorState {
   stage: Nullable<KonvaStage>;
 }
 
-class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, ProgramAuthorState> {
+class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorState> {
   private readonly defaultBoxSize: Coords = [200, 120];
   private readonly boxMargin: Coords = [40, 70];
   private readonly canvasWidth = window.innerWidth - 40 - 300;
@@ -24,7 +32,7 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
   private stageWrapper: any;
 
-  constructor(props: ApplicationState & ChapterActions) {
+  constructor(props: ProgramAuthorProps) {
     super(props);
 
     this.state = {
@@ -177,4 +185,16 @@ class ProgramAuthor extends React.Component<ApplicationState & ChapterActions, P
   }
 }
 
-export default ProgramAuthor;
+function mapStateToProps(state: ApplicationState): { chapters: ChapterState } {
+  return {
+    chapters: state.chapters
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
+    chapterActions.actionCreators,
+  ), dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ProgramAuthor);

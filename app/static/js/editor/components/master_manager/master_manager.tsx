@@ -1,16 +1,30 @@
 import * as React from "react";
+import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 
 import { ApplicationState } from "../../store";
+import { MasterState } from "../../reducers/masters";
+import { ScreenState } from "../../reducers/screens";
+
 import { MasterActions } from "../../actions/masters";
 import { ScreenActions } from "../../actions/screens";
+
+import * as screenActions from "../../actions/screens";
+import * as masterActions from "../../actions/masters";
+
 import { findById } from "../../util";
 import { ComponentPlacement } from "../../reducers/masters";
 
 import DMAppcContainer from "./dmappc_container";
 import DroppableScreen from "./droppable_screen";
 
-class MasterManager extends React.Component<ApplicationState & MasterActions & ScreenActions, {}> {
+type MasterManagerProps = {
+  masters: MasterState,
+  screens: ScreenState
+} & MasterActions & ScreenActions;
+
+class MasterManager extends React.Component<MasterManagerProps, {}> {
   public componentDidMount() {
     const { previewScreens, currentScreen } = this.props.screens;
 
@@ -117,4 +131,18 @@ class MasterManager extends React.Component<ApplicationState & MasterActions & S
   }
 }
 
-export default MasterManager;
+function mapStateToProps(state: ApplicationState): { masters: MasterState, screens: ScreenState } {
+  return {
+    masters: state.masters,
+    screens: state.screens
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
+    masterActions.actionCreators,
+    screenActions.actionCreators
+  ), dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MasterManager);

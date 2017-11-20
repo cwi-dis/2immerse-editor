@@ -1,19 +1,27 @@
 import * as React from "react";
+import { ActionCreatorsMapObject, bindActionCreators } from "redux";
+import { connect, Dispatch } from "react-redux";
 
 import { ApplicationState } from "../../store";
+import { ScreenState } from "../../reducers/screens";
+import * as screenActions from "../../actions/screens";
 import { ScreenActions } from "../../actions/screens";
 import ScreenContainer from "./screen_container";
+
+type LayoutDesignerProps = {
+  screens: ScreenState
+} & ScreenActions;
 
 interface LayoutDesignerState {
   personalScreenWidth: number;
   communalScreenWidth: number;
 }
 
-class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, LayoutDesignerState> {
+class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesignerState> {
   private communalColumn: HTMLDivElement;
   private personalColumn: HTMLDivElement;
 
-  constructor(props: ApplicationState & ScreenActions) {
+  constructor(props: LayoutDesignerProps) {
     super(props);
 
     this.state = {
@@ -68,4 +76,16 @@ class LayoutDesigner extends React.Component<ApplicationState & ScreenActions, L
   }
 }
 
-export default LayoutDesigner;
+function mapStateToProps(state: ApplicationState): { screens: ScreenState } {
+  return {
+    screens: state.screens,
+  };
+}
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+  return bindActionCreators<any>(Object.assign({} as ActionCreatorsMapObject,
+    screenActions.actionCreators
+  ), dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LayoutDesigner);
