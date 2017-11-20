@@ -1,18 +1,18 @@
 import * as React from "react";
-import { Link } from "react-router";
+import { NavLink } from "react-router-dom";
 
 class MenuBar extends React.Component<{}, {}> {
   public render() {
     return (
       <div className="menubar">
         <div>
-          <Link to="/" activeStyle={{color: "#319aee"}}>Design Layout</Link>
+          <NavLink exact to="/" activeStyle={{color: "#319aee"}}>Design Layout</NavLink>
         </div>
         <div>
-          <Link to="/masters" activeStyle={{color: "#319aee"}}>Manage Masters</Link>
+          <NavLink to="/masters" activeStyle={{color: "#319aee"}}>Manage Masters</NavLink>
         </div>
         <div>
-          <Link to="/program" activeStyle={{color: "#319aee"}}>Author Program</Link>
+          <NavLink to="/program" activeStyle={{color: "#319aee"}}>Author Program</NavLink>
         </div>
       </div>
     );
