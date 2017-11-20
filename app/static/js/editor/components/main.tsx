@@ -1,11 +1,12 @@
 import * as React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { Router, Route } from "react-router";
+import { ConnectedRouter } from "react-router-redux";
+import { Route } from "react-router-dom";
 
 import store, { history } from "../store";
 
-import App from "./app";
+import Layout from "./Layout";
 import LayoutDesigner from "./layout_designer/layout_designer";
 import MasterManager from "./master_manager/master_manager";
 import ProgramAuthor from "./program_author/program_author";
@@ -17,14 +18,14 @@ import "../../../css/style.css";
 window.onload = () => {
   render(
     <Provider store={store}>
-      <Router history={history}>
-        <Route component={App}>
-          <Route path="/" component={LayoutDesigner} />
-          <Route path="/masters" component={MasterManager} />
-          <Route path="/program" component={ProgramAuthor} />
-          <Route path="/timeline" component={TimelineEditor} />
-        </Route>
-      </Router>
+      <ConnectedRouter history={history}>
+        <Layout>
+          <Route exact path="/" component={LayoutDesigner} />
+          <Route exact path="/masters" component={MasterManager} />
+          <Route exact path="/program" component={ProgramAuthor} />
+          <Route exact path="/timeline" component={TimelineEditor} />
+        </Layout>
+      </ConnectedRouter>
     </Provider>,
     document.getElementById("react")
   );
