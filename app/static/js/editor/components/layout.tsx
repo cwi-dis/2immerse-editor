@@ -1,5 +1,4 @@
 import * as React from "react";
-import { withRouter } from "react-router-dom";
 
 import CurrentVersion from "./current_version";
 import MenuBar from "./menu_bar";
@@ -14,4 +13,4 @@ const Layout: React.SFC<{}> = (props) => {
   );
 };
 
-export default withRouter(Layout);
+export default Layout;

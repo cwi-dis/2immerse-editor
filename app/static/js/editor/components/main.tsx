@@ -2,7 +2,7 @@ import * as React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "react-router-redux";
-import { Route } from "react-router-dom";
+import { Route, withRouter } from "react-router-dom";
 
 import store, { history } from "../store";
 
@@ -15,16 +15,18 @@ import TimelineEditor from "./program_author/timeline_editor";
 import "bulma/css/bulma.css";
 import "../../../css/style.css";
 
+const App = withRouter(Layout);
+
 window.onload = () => {
   render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <Layout>
+        <App>
           <Route exact path="/" component={LayoutDesigner} />
           <Route exact path="/masters" component={MasterManager} />
           <Route exact path="/program" component={ProgramAuthor} />
           <Route exact path="/timeline" component={TimelineEditor} />
-        </Layout>
+        </App>
       </ConnectedRouter>
     </Provider>,
     document.getElementById("react")
