@@ -1,22 +1,17 @@
 import * as React from "react";
+import { withRouter } from "react-router-dom";
 
 import CurrentVersion from "./current_version";
 import MenuBar from "./menu_bar";
 
-interface ApplicationProps {
-  children?: any;
-}
+const Layout: React.SFC<{}> = (props) => {
+  return (
+    <div className="wrapper">
+      <MenuBar />
+      {props.children}
+      <CurrentVersion />
+    </div>
+  );
+};
 
-class Layout extends React.Component<ApplicationProps, {}> {
-  public render() {
-    return (
-      <div className="wrapper">
-        <MenuBar />
-        {React.cloneElement(this.props.children, Object.assign({}, this.props))}
-        <CurrentVersion />
-      </div>
-    );
-  }
-}
-
-export default Layout;
+export default withRouter(Layout);

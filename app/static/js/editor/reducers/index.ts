@@ -8,7 +8,7 @@ import screens from "./screens";
 const rootReducer = combineReducers({
   chapters,
   masters,
-  routing: routerReducer,
+  router: routerReducer,
   screens,
 });
 
