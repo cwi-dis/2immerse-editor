@@ -98,6 +98,12 @@ actionHandler.addHandler("ASSIGN_MASTER", (state, action: actions.ASSIGN_MASTER)
   const { accessPath, masterId } = action.payload;
   const keyPath = generateChapterKeyPath(accessPath).push("masterLayouts");
 
+  const masterLayouts: List<MasterId> = state.getIn(keyPath);
+
+  if (masterLayouts.contains(masterId)) {
+    return state;
+  }
+
   return state.updateIn(keyPath, (masters) => masters.push(masterId));
 });
 
