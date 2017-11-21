@@ -4,8 +4,7 @@ import { connect, Dispatch } from "react-redux";
 
 import { ApplicationState } from "../../store";
 import { ScreenState } from "../../reducers/screens";
-import * as screenActions from "../../actions/screens";
-import { ScreenActions } from "../../actions/screens";
+import { actionCreators as screenActionCreators, ScreenActions } from "../../actions/screens";
 import ScreenContainer from "./screen_container";
 
 type LayoutDesignerProps = {
@@ -86,7 +85,7 @@ function mapStateToProps(state: ApplicationState): { screens: ScreenState } {
 
 function mapDispatchToProps(dispatch: Dispatch<ScreenActions>): { screenActions: ScreenActions } {
   return {
-    screenActions: bindActionCreators<ScreenActions>(screenActions.actionCreators, dispatch)
+    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
   };
 }
 

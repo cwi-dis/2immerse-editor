@@ -7,11 +7,8 @@ import { ApplicationState } from "../../store";
 import { MasterState } from "../../reducers/masters";
 import { ScreenState } from "../../reducers/screens";
 
-import { MasterActions } from "../../actions/masters";
-import { ScreenActions } from "../../actions/screens";
-
-import * as screenActions from "../../actions/screens";
-import * as masterActions from "../../actions/masters";
+import { actionCreators as masterActionCreators, MasterActions } from "../../actions/masters";
+import { actionCreators as screenActionCreators, ScreenActions } from "../../actions/screens";
 
 import { findById } from "../../util";
 import { ComponentPlacement } from "../../reducers/masters";
@@ -142,8 +139,8 @@ function mapStateToProps(state: ApplicationState): { masters: MasterState, scree
 
 function mapDispatchToProps(dispatch: Dispatch<MasterActions & ScreenActions>): { masterActions: MasterActions, screenActions: ScreenActions} {
   return {
-    masterActions: bindActionCreators<MasterActions>(masterActions.actionCreators, dispatch),
-    screenActions: bindActionCreators<ScreenActions>(screenActions.actionCreators, dispatch)
+    masterActions: bindActionCreators<MasterActions>(masterActionCreators, dispatch),
+    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
   };
 }
 

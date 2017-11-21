@@ -10,8 +10,7 @@ import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState } from "../../store";
 import { ChapterState } from "../../reducers/chapters";
-import { ChapterActions } from "../../actions/chapters";
-import * as chapterActions from "../../actions/chapters";
+import { actionCreators as chapterActionCreators, ChapterActions } from "../../actions/chapters";
 
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
@@ -194,7 +193,7 @@ function mapStateToProps(state: ApplicationState): { chapters: ChapterState } {
 
 function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): { chapterActions: ChapterActions } {
   return {
-    chapterActions: bindActionCreators<ChapterActions>(chapterActions.actionCreators, dispatch)
+    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch)
   };
 }
 
