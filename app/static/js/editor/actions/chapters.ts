@@ -1,5 +1,7 @@
 import { ActionCreatorsMapObject } from "redux";
-import { PayloadAction } from "../util";
+import { AsyncAction, PayloadAction, generateChapterKeyPath } from "../util";
+
+import { Chapter } from "../reducers/chapters";
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
 function addChapterBefore(accessPath: Array<number>): ADD_CHAPTER_BEFORE {
@@ -63,6 +65,28 @@ function assignMaster(accessPath: Array<number>, masterId: string): ASSIGN_MASTE
   };
 }
 
+export function assignMasterToTree(accessPath: Array<number>, masterId: string): AsyncAction<void> {
+  return (dispatch, getState) => {
+    const { chapters } = getState();
+
+    const assignMasterRecursively = (accessPath: Array<number>) => {
+      dispatch(assignMaster(accessPath, masterId));
+
+      const keyPath = generateChapterKeyPath(accessPath);
+      const chapter: Chapter = chapters.getIn(keyPath);
+
+      if (chapter.children && !chapter.children.isEmpty()) {
+        chapter.children.forEach((childChapter, i) => {
+          const childPath = accessPath.slice().concat(i);
+          assignMasterRecursively(childPath);
+        });
+      }
+    };
+
+    assignMasterRecursively(accessPath);
+  };
+}
+
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
@@ -70,6 +94,7 @@ export interface ChapterActions extends ActionCreatorsMapObject {
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
   assignMaster: (accessPath: Array<number>, masterId: string) => ASSIGN_MASTER;
+  assignMasterToTree: (accessPath: Array<number>, masterId: string) => AsyncAction<void>;
 }
 
 export const actionCreators: ChapterActions = {
@@ -78,5 +103,6 @@ export const actionCreators: ChapterActions = {
   addChapterChild,
   renameChapter,
   removeChapter,
-  assignMaster
+  assignMaster,
+  assignMasterToTree
 };

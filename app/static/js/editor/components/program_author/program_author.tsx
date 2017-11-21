@@ -193,7 +193,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     })[0];
 
     if (dropZone) {
-      this.props.chapterActions.assignMaster(dropZone.accessPath, masterId);
+      this.props.chapterActions.assignMasterToTree(dropZone.accessPath, masterId);
     } else {
       console.log("Component not dropped on node");
     }
