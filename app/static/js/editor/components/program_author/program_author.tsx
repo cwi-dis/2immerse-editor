@@ -170,17 +170,27 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
       <div className="columnlayout">
         <div className="column-content">
           <h3>Author Program</h3>
-          <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
-            <Layer>
-              {this.drawChapterTree(chapters, treeOffset)}
-              <Rect fill="#262626" strokeWidth={0}
-                    x={0} y={0}
-                    width={this.canvasWidth} height={treeOffset[1] - 1} />
-            </Layer>
-          </Stage>
+          <div onDragOver={(e) => e.preventDefault()} onDrop={this.onDrop.bind(this)}>
+            <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
+              <Layer>
+                {renderedTree}
+                <Rect fill="#262626" strokeWidth={0}
+                      x={0} y={0}
+                      width={this.canvasWidth} height={treeOffset[1] - 1} />
+              </Layer>
+            </Stage>
+          </div>
         </div>
         <div className="column-sidebar">
-          sidebar
+          {this.props.masters.layouts.map((masterLayout, i) => {
+            return (
+              <div key={`master.${i}`}
+                   draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", masterLayout.id)}
+                   style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
+                {i + 1}. {masterLayout.name}
+              </div>
+            );
+          })}
         </div>
       </div>
     );
