@@ -130,14 +130,14 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
   }
 }
 
-function mapStateToProps(state: ApplicationState): { masters: MasterState, screens: ScreenState } {
+function mapStateToProps(state: ApplicationState): Partial<MasterManagerProps> {
   return {
     masters: state.masters,
     screens: state.screens
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<MasterActions & ScreenActions>): { masterActions: MasterActions, screenActions: ScreenActions} {
+function mapDispatchToProps(dispatch: Dispatch<MasterActions & ScreenActions>): Partial<MasterManagerProps> {
   return {
     masterActions: bindActionCreators<MasterActions>(masterActionCreators, dispatch),
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)

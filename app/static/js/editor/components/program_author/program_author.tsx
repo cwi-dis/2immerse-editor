@@ -185,13 +185,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
   }
 }
 
-function mapStateToProps(state: ApplicationState): { chapters: ChapterState } {
+function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   return {
     chapters: state.chapters
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): { chapterActions: ChapterActions } {
+function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): Partial<ProgramAuthorProps> {
   return {
     chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch)
   };

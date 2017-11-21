@@ -77,13 +77,13 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 }
 
-function mapStateToProps(state: ApplicationState): { screens: ScreenState } {
+function mapStateToProps(state: ApplicationState): Partial<LayoutDesignerProps> {
   return {
     screens: state.screens,
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<ScreenActions>): { screenActions: ScreenActions } {
+function mapDispatchToProps(dispatch: Dispatch<ScreenActions>): Partial<LayoutDesignerProps> {
   return {
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
   };
