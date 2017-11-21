@@ -168,6 +168,37 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     });
   }
 
+  private getCanvasDropPosition(pageX: number, pageY: number) {
+    const stage: KonvaStage = this.getStage();
+    const {offsetLeft, offsetTop} = stage.container();
+
+    return [
+      pageX - offsetLeft,
+      pageY - offsetTop
+    ];
+  }
+
+  private onDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    const [dropX, dropY] = this.getCanvasDropPosition(e.pageX, e.pageY);
+    const masterId = e.dataTransfer.getData("text/plain");
+
+    console.log("drop event coords:", dropX, dropY);
+
+    const dropZone = this.treeLayout.filter((node) => {
+      const [x, y] = node.position;
+      const [w, h] = node.size;
+
+      return dropX >= x && dropX <= x + w && dropY >= y && dropY <= y + h;
+    })[0];
+
+    if (dropZone) {
+      this.props.chapterActions.assignMaster(dropZone.accessPath, masterId);
+    } else {
+      console.log("Component not dropped on node");
+    }
+  }
+
   public render() {
     const { chapters } = this.props;
 
