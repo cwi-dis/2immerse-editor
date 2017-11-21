@@ -10,6 +10,7 @@ import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState } from "../../store";
 import { ChapterState } from "../../reducers/chapters";
+import { MasterState } from "../../reducers/masters";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../../actions/chapters";
 
 import ChapterNode from "./chapter_node";
@@ -17,6 +18,7 @@ import NodeConnectors from "./node_connectors";
 
 interface ProgramAuthorProps {
   chapters: ChapterState;
+  masters: MasterState;
   chapterActions: ChapterActions;
 }
 
@@ -187,7 +189,8 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
 
 function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   return {
-    chapters: state.chapters
+    chapters: state.chapters,
+    masters: state.masters
   };
 }
 
