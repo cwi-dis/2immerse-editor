@@ -32,7 +32,8 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
   private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
-  private stageWrapper: any;
+  private stageWrapper: Nullable<Stage>;
+  private treeLayout: Array<{chapterId: string, accessPath: Array<number>, position: Coords, size: Coords}>;
 
   constructor(props: ProgramAuthorProps) {
     super(props);
@@ -40,6 +41,14 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     this.state = {
       stage: null
     };
+  }
+
+  private getStage() {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    return this.stageWrapper.getStage();
   }
 
   private handleBoxClick(accessPath: Array<number>): void {
@@ -155,7 +164,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
 
   public componentDidMount() {
     this.setState({
-      stage: this.stageWrapper.getStage()
+      stage: this.getStage()
     });
   }
 
@@ -164,7 +173,20 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
 
     const canvasHeight = this.adjustCanvasHeight(chapters) + this.boxMargin[1];
     this.adjustBoxWidth();
+
     const treeOffset = this.getTreeOffset(chapters);
+    const renderedTree = this.drawChapterTree(chapters, treeOffset);
+
+    this.treeLayout = renderedTree.filter((node) => {
+      return node.type === ChapterNode;
+    }).map((node: ChapterNode) => {
+      return {
+        chapterId: node.props.chapter.id,
+        accessPath: node.props.currentPath,
+        position: node.props.position,
+        size: node.props.size
+      };
+    });
 
     return (
       <div className="columnlayout">
