@@ -107,4 +107,23 @@ describe("Async chapter actions", () => {
 
     expect(store.getActions()).toEqual(expectedActions);
   });
+
+  it("should assign a master ID to the chapter if the chapter has no children", () => {
+    const expectedActions = [
+      { type: "ASSIGN_MASTER", payload: { masterId: "master1", accessPath: [0, 0] }},
+    ];
+
+    const store = mockStore({ chapters: List([
+      new Chapter({id: "chapter0", children: List([
+        new Chapter({id: "chapter0.0", children: null}),
+        new Chapter({id: "chapter0.1", children: List([
+          new Chapter({id: "chapter0.1.0"})
+        ])})
+      ])})
+    ]) });
+
+    store.dispatch(actionCreators.assignMasterToTree([0, 0], "master1"));
+
+    expect(store.getActions()).toEqual(expectedActions);
+  });
 });
