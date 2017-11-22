@@ -7,6 +7,17 @@ import { Chapter } from "./reducers/chapters";
 export type Coords = [number, number];
 export type Nullable<T> = T | null;
 
+export interface RouterProps {
+  match: {
+    path: string;
+    url: string;
+    params: any;
+    isExact: boolean;
+  };
+  location: Location;
+  history: History;
+}
+
 interface Action {
   type: string;
 }
