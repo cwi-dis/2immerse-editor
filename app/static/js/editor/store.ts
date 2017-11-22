@@ -1,6 +1,6 @@
 import { applyMiddleware, compose, createStore } from "redux";
-import { routerMiddleware } from "react-router-redux";
-import { createHashHistory } from "history";
+import { routerMiddleware, push, RouterAction } from "react-router-redux";
+import { createHashHistory, LocationDescriptor } from "history";
 import thunk from "redux-thunk";
 
 import rootReducer from "./reducers/index";
@@ -24,5 +24,9 @@ const store = createStore(
   undefined,
   composeEnhancers(applyMiddleware(thunk), applyMiddleware(router))
 );
+
+export function navigate(route: LocationDescriptor, state?: any): RouterAction {
+  return store.dispatch(push(route, state));
+};
 
 export default store;
