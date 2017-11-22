@@ -75,7 +75,7 @@ export function assignMasterToTree(accessPath: Array<number>, masterId: string):
       const keyPath = generateChapterKeyPath(accessPath);
       const chapter: Chapter = chapters.getIn(keyPath);
 
-      if (chapter.children && !chapter.children.isEmpty()) {
+      if (chapter.children) {
         chapter.children.forEach((childChapter, i) => {
           const childPath = accessPath.slice().concat(i);
           assignMasterRecursively(childPath);

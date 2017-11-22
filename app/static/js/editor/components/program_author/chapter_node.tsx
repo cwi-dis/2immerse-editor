@@ -14,7 +14,6 @@ interface ChapterNodeProps {
 
   boxClick: (currentPath: Array<number>, position: Coords, size: Coords) => void;
   nameLabelClick: (currentPath: Array<number>, currentName: string) => void;
-  masterLabelClick: (currentPath: Array<number>) => void;
   addChapterClick: (currentPath: Array<number>, handlePosition: "left" | "right" | "bottom") => void;
   removeChapterClick: (currentPath: Array<number>) => void;
 }
@@ -135,9 +134,6 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
         <Text text={masterLabel} align="center"
               x={x} y={y + boxHeight + 24}
               width={boxWidth}
-              onMouseEnter={() => stage.container().style.cursor = "pointer" }
-              onMouseLeave={() => stage.container().style.cursor = "default" }
-              onClick={this.props.masterLabelClick.bind(null, currentPath)}
               fill="#777777" fontSize={12} fontStyle="italic"
               key={`masters.${chapter.get("id")}`} />
       </Group>

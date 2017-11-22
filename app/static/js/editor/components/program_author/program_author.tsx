@@ -5,7 +5,7 @@ import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords, countLeafNodes, getRandomInt, getTreeHeight, Nullable } from "../../util";
+import { Coords, countLeafNodes, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState } from "../../store";
@@ -72,10 +72,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     }
   }
 
-  private handleMasterLabelClick(accessPath: Array<number>): void {
-    this.props.chapterActions.assignMaster(accessPath, `potato_${getRandomInt()}`);
-  }
-
   private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
     if (handlePosition === "left") {
       this.props.chapterActions.addChapterBefore(accessPath);
@@ -107,7 +103,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
                      nameLabelClick={this.handleLabelClick.bind(this)}
-                     masterLabelClick={this.handleMasterLabelClick.bind(this)}
                      addChapterClick={this.handleAddChapterClick.bind(this)}
                      removeChapterClick={this.handleRemoveClick.bind(this)} />
       ].concat(
