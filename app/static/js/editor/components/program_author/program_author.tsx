@@ -22,11 +22,7 @@ interface ProgramAuthorProps {
   chapterActions: ChapterActions;
 }
 
-interface ProgramAuthorState {
-  stage: Nullable<KonvaStage>;
-}
-
-class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorState> {
+class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private readonly defaultBoxSize: Coords = [200, 120];
   private readonly boxMargin: Coords = [40, 70];
   private readonly canvasWidth = window.innerWidth - 40 - 300;
@@ -34,14 +30,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
   private stageWrapper: Nullable<Stage>;
   private treeLayout: Array<{chapterId: string, accessPath: Array<number>, position: Coords, size: Coords}>;
-
-  constructor(props: ProgramAuthorProps) {
-    super(props);
-
-    this.state = {
-      stage: null
-    };
-  }
 
   private getStage() {
     if (!this.stageWrapper) {
@@ -83,12 +71,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
   }
 
   private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
-    const { stage } = this.state;
-
-    if (stage === null) {
-      return [];
-    }
-
     return chapters.reduce((result: Array<any>, chapter, i) => {
       const [x, y] = startPos;
 
@@ -98,7 +80,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
       const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
 
       let rects = [
-        <ChapterNode key={`group.${currentPath}`} stage={stage} chapter={chapter}
+        <ChapterNode key={`group.${currentPath}`} chapter={chapter}
                      position={[x, y]} size={[boxWidth, this.boxSize[1]]}
                      currentPath={currentPath}
                      boxClick={this.handleBoxClick.bind(this)}
@@ -155,12 +137,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     const xOffset = this.canvasWidth / 2 - treeWidth / 2;
 
     return [xOffset + this.boxMargin[0], 10];
-  }
-
-  public componentDidMount() {
-    this.setState({
-      stage: this.getStage()
-    });
   }
 
   private getCanvasDropPosition(pageX: number, pageY: number) {
