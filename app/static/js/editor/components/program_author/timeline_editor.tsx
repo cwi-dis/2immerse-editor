@@ -1,20 +1,22 @@
 import * as React from "react";
+import { connect, Dispatch } from "react-redux";
 import { List, Record } from "immutable";
 
-import { findById } from "../../util";
+import { ApplicationState } from "../../store";
+import { findById, RouterProps } from "../../util";
 import Timeline, { TimelineElement } from "./timeline_track";
 
 class TimelineTrack extends Record<{timelineElements: List<TimelineElement>}>({ timelineElements: List() }) {
 }
 
-interface TimelineEditorProps {
+interface TimelineEditorProps extends RouterProps {
 }
 
 interface TimelineEditorState {
   timelines: List<TimelineTrack>;
 }
 
-class TimelineEditor extends React.Component<{}, TimelineEditorState> {
+class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
   public constructor(props: TimelineEditorProps) {
     super(props);
 
@@ -53,12 +55,13 @@ class TimelineEditor extends React.Component<{}, TimelineEditorState> {
   }
 
   public render() {
+    const { match: { params } } = this.props;
     const { timelines } = this.state;
 
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
-          <h3>Timeline Editor</h3>
+          <h3>Timeline Editor for Chapter {params.chapterid}</h3>
           <Timeline elements={timelines.getIn([0, "timelineElements"])}
                     elementPositionUpdated={this.elementPositionUpdated.bind(this, 0)}
                     width={1000} height={40} />
@@ -91,4 +94,12 @@ class TimelineEditor extends React.Component<{}, TimelineEditorState> {
   }
 }
 
-export default TimelineEditor;
+function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> {
+  return {};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
+  return {};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TimelineEditor);
