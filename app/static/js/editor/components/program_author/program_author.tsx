@@ -173,6 +173,19 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
     ];
   }
 
+  private computeTreeLayout(renderedTree: Array<any>) {
+    this.treeLayout = renderedTree.filter((node) => {
+      return node.type === ChapterNode;
+    }).map((node: ChapterNode) => {
+      return {
+        chapterId: node.props.chapter.id,
+        accessPath: node.props.currentPath,
+        position: node.props.position,
+        size: node.props.size
+      };
+    });
+  }
+
   private onDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const [dropX, dropY] = this.getCanvasDropPosition(e.pageX, e.pageY);
@@ -202,17 +215,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, ProgramAuthorSta
 
     const treeOffset = this.getTreeOffset(chapters);
     const renderedTree = this.drawChapterTree(chapters, treeOffset);
-
-    this.treeLayout = renderedTree.filter((node) => {
-      return node.type === ChapterNode;
-    }).map((node: ChapterNode) => {
-      return {
-        chapterId: node.props.chapter.id,
-        accessPath: node.props.currentPath,
-        position: node.props.position,
-        size: node.props.size
-      };
-    });
+    this.computeTreeLayout(renderedTree);
 
     return (
       <div className="columnlayout">
