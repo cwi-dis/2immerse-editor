@@ -5,10 +5,10 @@ import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords, countLeafNodes, getTreeHeight, Nullable } from "../../util";
+import { Coords, countLeafNodes, generateChapterKeyPath, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
-import { ApplicationState } from "../../store";
+import { ApplicationState, navigate } from "../../store";
 import { ChapterState } from "../../reducers/chapters";
 import { MasterState } from "../../reducers/masters";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../../actions/chapters";
@@ -40,7 +40,10 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 
   private handleBoxClick(accessPath: Array<number>): void {
-    alert("Move along, nothing to see here yet");
+    const keyPath = generateChapterKeyPath(accessPath);
+    const chapter: Chapter = this.props.chapters.getIn(keyPath);
+
+    navigate(`/timeline/${chapter.id}`);
   }
 
   private handleRemoveClick(accessPath: Array<number>): void {
