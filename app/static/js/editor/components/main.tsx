@@ -25,7 +25,7 @@ window.onload = () => {
           <Route exact path="/" component={LayoutDesigner} />
           <Route exact path="/masters" component={MasterManager} />
           <Route exact path="/program" component={ProgramAuthor} />
-          <Route exact path="/timeline" component={TimelineEditor} />
+          <Route exact path="/timeline/:chapterid" component={TimelineEditor} />
         </App>
       </ConnectedRouter>
     </Provider>,
