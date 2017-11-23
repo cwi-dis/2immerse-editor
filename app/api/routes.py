@@ -6,9 +6,10 @@ import os
 import urlparse
 import urllib
 import globalSettings
+from globalSettings import GlobalSettings
 from app import myLogging
 
-myLogging.install(globalSettings.noKibana, globalSettings.logLevel)
+myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)
 
 #
 # Disable CORS problems
@@ -85,7 +86,7 @@ def get_configuration():
 @app.route(API_ROOT + "/configuration", methods=["PUT"])
 def put_configuration():
     globalSettings._put(request.get_json())
-    myLogging.install(globalSettings.noKibana, globalSettings.logLevel)
+    myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)
     return 'OK\n'
 
 #
@@ -364,7 +365,7 @@ def get_preview(documentId):
     base = request.args.get('base')
     if base:
         clientDocUrl += '?' + urllib.urlencode(dict(base=base))
-    clientApiUrl = "%s#?inputDocument=%s" % (globalSettings.clientApiUrl, clientDocUrl)
+    clientApiUrl = "%s#?inputDocument=%s" % (GlobalSettings.clientApiUrl, clientDocUrl)
     return redirect(clientApiUrl)
 
 
