@@ -30,17 +30,26 @@ API_ROOT = '/api/v1'
 #
 def get_docRoot(localPath=API_ROOT):
     protoRP = request.headers.get('X-Forwarded-Proto')
+
     if protoRP:
         # We are running behind a reverse proxy. Construct base URL manually.
         hostRP = request.headers.get('X-Forwarded-Host')
+
+        # Try the Host header if X-Forwarded-Host is not set
+        if not hostRP:
+            hostRP = request.headers.get('Host')
+
         assert hostRP
         docRoot = '%s://%s/' % (protoRP, hostRP)
     else:
         # We are running standalone. Trust http headers.
         docRoot = request.base_url
+
     if localPath:
         docRoot = urlparse.urljoin(docRoot, localPath)
+
     return docRoot
+
 
 def handle_error(code, status, error):
     response = jsonify({"message": error.description})
