@@ -385,7 +385,7 @@ def expand_shorturl(id):
     if id >= len(short_urls):
         abort(400, "ID not found")
 
-    return jsonify({"url": short_urls[id]})
+    return redirect(short_urls[id])
 
 @app.route("/shorturl", methods=["POST"])
 def generate_shorturl():
