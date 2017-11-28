@@ -529,9 +529,9 @@ describe("Utility function shortenUrl()", () => {
   it("should return a promise which resolves to the shortened url", () => {
     XHRmock.setup();
 
-    XHRmock.post(/https:\/\/www\.googleapis\.com\/.*/, (req, res) => {
+    XHRmock.post(/shorturl/, (req, res) => {
       return res.status(200).body(JSON.stringify({
-        id: "http://shortened.url"
+        id: 0
       }));
     });
 
@@ -539,7 +539,7 @@ describe("Utility function shortenUrl()", () => {
 
     return expect(
       util.shortenUrl("http://this-is-a-long.url")
-    ).resolves.toEqual("http://shortened.url").then(() => {
+    ).resolves.toEqual("about:///shorturl/0").then(() => {
       XHRmock.teardown();
     });
   });
@@ -547,7 +547,7 @@ describe("Utility function shortenUrl()", () => {
   it("should reject the promise with an error object on failure", () => {
     XHRmock.setup();
 
-    XHRmock.post(/https:\/\/www\.googleapis\.com\/.*/, (req, res) => {
+    XHRmock.post(/shorturl/, (req, res) => {
       return res.status(500).statusText("Some error").body("Some more details on the error");
     });
 
