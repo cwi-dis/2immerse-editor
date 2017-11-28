@@ -170,15 +170,16 @@ export function parseQueryString(query: string): Map<string, string | undefined>
 }
 
 export function shortenUrl(originalUrl: string): Promise<string> {
-  const KEY = "AIzaSyDv6yE4WVhdAW44qxkoV-BF2V4I9oD9gqg";
   const data = JSON.stringify({ longUrl: originalUrl });
 
   return new Promise((resolve, reject) => {
     makeRequest(
-      "POST", `https://www.googleapis.com/urlshortener/v1/url?key=${KEY}`,
+      "POST", `/shorturl`,
       data, "application/json"
     ).then((response) => {
-      const { id: shortUrl } = JSON.parse(response);
+      const { id } = JSON.parse(response);
+      const shortUrl = `${location.protocol}//${location.host}/shorturl/${id}`;
+
       resolve(shortUrl);
     }).catch((err) => {
       reject(err);
