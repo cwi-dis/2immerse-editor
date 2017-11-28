@@ -378,3 +378,23 @@ def get_preview(documentId):
     return redirect(clientApiUrl)
 
 
+short_urls = []
+
+@app.route("/shorturl/<int:id>", methods=["GET"])
+def expand_shorturl(id):
+    if id >= len(short_urls):
+        abort(400, "ID not found")
+
+    return jsonify({"url": short_urls[id]})
+
+@app.route("/shorturl", methods=["POST"])
+def generate_shorturl():
+    if "url" not in request.form:
+        abort(400, "Parameter 'url' missing")
+
+    if request.form["url"] in short_urls:
+        return jsonify({"id": short_urls.index(request.form["url"])})
+    else:
+        short_urls.append(request.form["url"])
+
+        return jsonify({"id": len(short_urls) - 1})
