@@ -3,16 +3,16 @@
 
 
 "@types/cheerio@*":
-  version "0.22.5"
-  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.5.tgz#db749e8470d98f103d51407db9bee5a8b9d20d45"
+  version "0.22.6"
+  resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.6.tgz#ad8c630a942efe3fc59165857851b55f95de2d50"
 
 "@types/classnames@^2.2.0":
   version "2.2.3"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.3.tgz#3f0ff6873da793870e20a260cada55982f38a9e5"
 
 "@types/enzyme@^3.1.0":
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.1.4.tgz#5d6fc570786345a8fb10d9b3643335746612f9d8"
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/@types/enzyme/-/enzyme-3.1.5.tgz#6cc31d7f7e552209e244a45d89279f4def4aaade"
   dependencies:
     "@types/cheerio" "*"
     "@types/react" "*"
@@ -54,8 +54,8 @@
     redux "^3.6.0"
 
 "@types/react-router-dom@^4.2.1":
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-4.2.1.tgz#c5583550d7246dea60612cc55a523cf980d56df1"
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/@types/react-router-dom/-/react-router-dom-4.2.3.tgz#06e0b67ff536adc0681dffdbe592ae91fb85887d"
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -70,8 +70,8 @@
     redux "^3.7.2"
 
 "@types/react-router@*":
-  version "4.0.17"
-  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.17.tgz#1032c800ed0da188d8a3bb38fe6afa8c917865d5"
+  version "4.0.19"
+  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.19.tgz#4258eb59a9c3a01b5adf1bf9b14f068a7699bbb6"
   dependencies:
     "@types/history" "*"
     "@types/react" "*"
@@ -4444,8 +4444,8 @@ type-detect@^4.0.0:
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.5.tgz#d70e5bc81db6de2a381bcaca0c6e0cbdc7635de2"
 
 typescript@^2.6.0:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.1.tgz#ef39cdea27abac0b500242d6726ab90e0c846631"
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.2.tgz#3c5b6fd7f6de0914269027f03c0946758f7673a4"
 
 ua-parser-js@^0.7.9:
   version "0.7.17"
