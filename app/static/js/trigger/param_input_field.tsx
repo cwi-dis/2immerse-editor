@@ -33,8 +33,8 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
     return (
       <div className="select is-fullwidth">
         <select onChange={props.onChange.bind(this)} value={props.value}>
-          {props.options && props.options.map(({ label, value }) => {
-            return <option value={value}>{label}</option>;
+          {props.options && props.options.map(({ label, value }, i) => {
+            return <option value={value} key={i}>{label}</option>;
           })}
         </select>
       </div>
