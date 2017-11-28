@@ -389,12 +389,14 @@ def expand_shorturl(id):
 
 @app.route("/shorturl", methods=["POST"])
 def generate_shorturl():
-    if "url" not in request.form:
-        abort(400, "Parameter 'url' missing")
+    data = request.get_json()
 
-    if request.form["url"] in short_urls:
-        return jsonify({"id": short_urls.index(request.form["url"])})
+    if not data or "longUrl" not in data:
+        abort(400, "Parameter 'longUrl' missing or wrong content type")
+
+    if data["longUrl"] in short_urls:
+        return jsonify({"id": short_urls.index(data["longUrl"])})
     else:
-        short_urls.append(request.form["url"])
+        short_urls.append(data["longUrl"])
 
         return jsonify({"id": len(short_urls) - 1})
