@@ -903,7 +903,8 @@ class DocumentEvents:
             curTime = self.document.clock.now() - float(epoch)
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
-        self.logger.warning("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
+        self.logger.debug("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
+        self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
         return "0"
 
     @edit
