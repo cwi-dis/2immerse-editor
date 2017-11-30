@@ -1,1 +1,1 @@
-<testDocument xml:id="rootid"><first xml:id="ttadded"><firstChild1 /><firstChild2 attr="value" /></first><second><second1 /><second2 /><second3 /></second><third /></testDocument>
+<testDocument xmlns:tt="http://jackjansen.nl/2immerse/livetrigger" xml:id="rootid"><first tt:wantstatus="true" xml:id="ttadded"><firstChild1 /><firstChild2 attr="value" /></first><second><second1 /><second2 /><second3 /></second><third /></testDocument>
