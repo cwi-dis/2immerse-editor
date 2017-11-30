@@ -59,8 +59,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftertrigger')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read()
-        newData = urllib.urlopen(newDocUrl).read()
+        oldData = urllib.urlopen(goodDocUrl).read().strip()
+        newData = urllib.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -76,8 +76,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftermodify')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read()
-        newData = urllib.urlopen(newDocUrl).read()
+        oldData = urllib.urlopen(goodDocUrl).read().strip()
+        newData = urllib.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -99,8 +99,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftertriggerparameter')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read()
-        newData = urllib.urlopen(newDocUrl).read()
+        oldData = urllib.urlopen(goodDocUrl).read().strip()
+        newData = urllib.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -119,8 +119,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftermodifyparameter')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read()
-        newData = urllib.urlopen(newDocUrl).read()
+        oldData = urllib.urlopen(goodDocUrl).read().strip()
+        newData = urllib.urlopen(newDocUrl).read().strip()
         self.assertEqual(newData, oldData)
 
 
