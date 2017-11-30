@@ -465,8 +465,6 @@ class Document:
             # Remove all tt: attributes
             toRemove = []
             for attr in elt.attrib.keys():
-                if attr == NS_TRIGGER("wantstatus"):
-                    toRemove.append(attr)
                 if attr == NS_TRIGGER("_realDur"):
                     toRemove.append(attr)
                 if attr in NS_TIMELINE_INTERNAL:
