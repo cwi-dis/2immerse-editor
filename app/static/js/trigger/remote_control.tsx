@@ -196,7 +196,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       left: 0,
       width: "100%",
       padding: 10,
-      borderTop: "2px solid #161616"
+      borderTop: "2px solid #161616",
+      backgroundColor: "#262626"
     };
 
     const buttonStyle: React.CSSProperties = {
