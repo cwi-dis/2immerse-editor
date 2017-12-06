@@ -41,7 +41,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     for (let key in links) {
       if (links.hasOwnProperty(key)) {
         renderedLinks.push(
-          <a key={key} href={links[key]}>{key}</a>
+          <a key={key} target="_blank" href={links[key]}>{key}</a>
         );
 
         renderedLinks.push(<br key={key + "br"} />);
