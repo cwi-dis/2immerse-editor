@@ -902,7 +902,7 @@ class DocumentEvents:
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
         self.logger.debug("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
-        self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
+        #self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
         return "0"
 
     @edit
@@ -1251,6 +1251,7 @@ class DocumentServe:
                 wantStateUpdates = False
             except requests.exceptions.RequestException:
                 self.logger.warning("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
+                self.setError("Error communicating to timeline service")
                 toRemove.append(callback)
             else:
                 requestDuration = time.time() - requestStartTime
