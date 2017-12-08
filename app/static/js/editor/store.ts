@@ -7,11 +7,13 @@ import rootReducer from "./reducers/index";
 import { ChapterState } from "./reducers/chapters";
 import { MasterState } from "./reducers/masters";
 import { ScreenState } from "./reducers/screens";
+import { TimelineState } from "./reducers/timelines";
 
 export interface ApplicationState {
   chapters: ChapterState;
   masters: MasterState;
   screens: ScreenState;
+  timelines: TimelineState;
 };
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
