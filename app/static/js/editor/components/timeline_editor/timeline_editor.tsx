@@ -1,15 +1,20 @@
 import * as React from "react";
+import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { List, Record } from "immutable";
 
 import { ApplicationState } from "../../store";
 import { findById, RouterProps } from "../../util";
+import { TimelineState } from "../../reducers/timelines";
+import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 import Timeline, { TimelineElement } from "./timeline_track";
 
 class TimelineTrack extends Record<{timelineElements: List<TimelineElement>}>({ timelineElements: List() }) {
 }
 
 interface TimelineEditorProps extends RouterProps {
+  timelines: TimelineState,
+  timelineActions: TimelineActions
 }
 
 interface TimelineEditorState {
@@ -95,11 +100,15 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 }
 
 function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> {
-  return {};
+  return {
+    timelines: state.timelines
+  };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
-  return {};
+  return {
+    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch)
+  };
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimelineEditor);
