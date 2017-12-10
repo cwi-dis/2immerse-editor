@@ -5,6 +5,7 @@ import { Vector2d } from "konva";
 
 import { findById } from "../../util";
 import { ScreenRegion } from "../../reducers/screens";
+import { TimelineElement } from "../../reducers/timelines";
 
 function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
   const filteredRects = rects.filterNot((r) => r.id === target.id);
@@ -16,13 +17,6 @@ function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElemen
     leftNeighbors.last(),
     rightNeighbors.first()
   ];
-}
-
-export interface TimelineElement {
-  id: string;
-  x: number;
-  width: number;
-  color?: string;
 }
 
 interface TimelineProps {
