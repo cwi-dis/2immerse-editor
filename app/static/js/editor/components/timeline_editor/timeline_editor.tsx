@@ -43,7 +43,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
               <p key={i}>
                 <b>Track {i + 1}</b>
                 <br/>
-                {track.timelineElements.map((element, i) => {
+                {track.timelineElements!.map((element, i) => {
                   return (
                     <span key={i}>
                       {element.id} => {element.x} {element.x + element.width}<br/>

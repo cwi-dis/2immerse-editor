@@ -13,10 +13,10 @@ describe("Timeline class", () => {
   });
 
   it("should instantiate a new object with all given attributes", () => {
-    const track: TimelineTrack = {
-      regionId: "region1",
-      timelineElements: List()
-    };
+    const track: TimelineTrack = new TimelineTrack({
+      id: "track1",
+      regionId: "region1"
+    });
 
     const timeline: Timeline = new Timeline({
       id: "screen1",
@@ -147,7 +147,7 @@ describe("Screens reducer", () => {
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter even if a track for the region exists", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        {regionId: "region1", timelineElements: List()}
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
       ])})
     ]);
 
@@ -157,6 +157,7 @@ describe("Screens reducer", () => {
     );
 
     expect(transformedState.get(0).timelineTracks.count()).toEqual(2);
+    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track1");
     expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
     expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
   });

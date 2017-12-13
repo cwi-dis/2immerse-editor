@@ -12,9 +12,16 @@ export interface TimelineElement {
   color?: string;
 }
 
-export interface TimelineTrack {
+export interface TimelineTrackAttributes {
+  id: string;
   regionId: string;
-  timelineElements: List<TimelineElement>;
+  timelineElements?: List<TimelineElement>;
+}
+
+export class TimelineTrack extends Record<TimelineTrackAttributes>({id: "", regionId: "", timelineElements: List()}) {
+  constructor(params?: TimelineTrackAttributes) {
+    params ? super(params) : super();
+  }
 }
 
 export interface TimelineAttributes {
@@ -64,10 +71,10 @@ actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMEL
   }
 
   return state.updateIn([id, "timelineTracks"], (tracks: List<TimelineTrack>) => {
-    return tracks.push({
-      regionId,
-      timelineElements: List()
-    });
+    return tracks.push(new TimelineTrack({
+      id: shortid.generate(),
+      regionId
+    }));
   });
 });
 
