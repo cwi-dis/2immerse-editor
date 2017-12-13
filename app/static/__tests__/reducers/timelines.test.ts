@@ -1,7 +1,36 @@
 /// <reference types="jest" />
 
 import { List } from "immutable";
-import reducer, { Timeline, TimelineState, TimelineTrack } from "../../js/editor/reducers/timelines";
+import reducer, { Timeline, TimelineElement, TimelineState, TimelineTrack } from "../../js/editor/reducers/timelines";
+
+describe("TimelineTrack class", () => {
+  it("should instantiate a new object with the default attributes", () => {
+    const track = new TimelineTrack();
+
+    expect(track.id).toEqual("");
+    expect(track.regionId).toEqual("");
+    expect(track.timelineElements).toEqual(List());
+  });
+
+  it("should instantiate a new object with all given attributes", () => {
+    const timelineElement: TimelineElement = {
+      id: "element1",
+      componentId: "component1",
+      width: 12,
+      x: 34
+    };
+
+    const track: TimelineTrack = new TimelineTrack({
+      id: "track1",
+      regionId: "region1",
+      timelineElements: List([timelineElement])
+    });
+
+    expect(track.regionId).toEqual("region1");
+    expect(track.timelineElements.count()).toEqual(1);
+    expect(track.timelineElements.get(0)).toEqual(timelineElement);
+  });
+});
 
 describe("Timeline class", () => {
   it("should instantiate a new object with the default attributes", () => {
