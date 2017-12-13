@@ -32,12 +32,11 @@ describe("Timeline actions", () => {
       type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
       payload: {
         chapterId: "chapter1",
-        regionId: "region1",
         trackId: "track1",
         componentId: "component1"
       }
     };
 
-    expect(actionCreators.addElementToTimelineTrack("chapter1", "region1", "track1", "component1")).toEqual(expected);
+    expect(actionCreators.addElementToTimelineTrack("chapter1", "track1", "component1")).toEqual(expected);
   });
 });
