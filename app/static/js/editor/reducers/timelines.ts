@@ -19,7 +19,7 @@ export interface TimelineTrack {
 export interface TimelineAttributes {
   id: string;
   chapterId: string;
-  timelineTracks: List<TimelineTrack>;
+  timelineTracks?: List<TimelineTrack>;
 }
 
 export class Timeline extends Record<TimelineAttributes>({id: "", chapterId: "", timelineTracks: List()}) {
