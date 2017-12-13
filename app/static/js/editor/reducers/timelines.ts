@@ -34,4 +34,21 @@ export const initialState: TimelineState = List([]);
 
 const actionHandler = new ActionHandler<TimelineState>(initialState);
 
+actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) => {
+  const { chapterId } = action.payload;
+
+  const result = state.find((timeline) => {
+    return timeline.chapterId === chapterId;
+  });
+
+  if (result !== undefined) {
+    return state;
+  }
+
+  return state.push(new Timeline({
+    id: shortid.generate(),
+    chapterId
+  }));
+});
+
 export default actionHandler.getReducer();
