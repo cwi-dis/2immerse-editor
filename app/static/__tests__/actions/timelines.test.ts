@@ -20,10 +20,24 @@ describe("Timeline actions", () => {
       type: "ADD_TIMELINE_TRACK",
       payload: {
         chapterId: "chapter1",
-        regionId: "component1"
+        regionId: "region1"
       }
     };
 
-    expect(actionCreators.addTimelineTrack("chapter1", "component1")).toEqual(expected);
+    expect(actionCreators.addTimelineTrack("chapter1", "region1")).toEqual(expected);
+  });
+
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action", () => {
+    const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
+      type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
+      payload: {
+        chapterId: "chapter1",
+        regionId: "region1",
+        trackId: 0,
+        componentId: "component1"
+      }
+    };
+
+    expect(actionCreators.addElementToTimelineTrack("chapter1", "region1", 0, "component1")).toEqual(expected);
   });
 });
