@@ -22,12 +22,24 @@ function addTimelineTrack(chapterId: string, regionId: string): ADD_TIMELINE_TRA
   };
 }
 
+export type ADD_ELEMENT_TO_TIMELINE_TRACK = PayloadAction<"ADD_ELEMENT_TO_TIMELINE_TRACK", {chapterId: string, regionId: string, trackId: number, componentId: string}>;
+function addElementToTimelineTrack(chapterId: string, regionId: string, trackId: number, componentId: string): ADD_ELEMENT_TO_TIMELINE_TRACK {
+  return {
+    type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
+    payload: {
+      chapterId, regionId, trackId, componentId
+    }
+  };
+}
+
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   addTimelineTrack: (chapterId: string, regionId: string) => ADD_TIMELINE_TRACK;
+  addElementToTimelineTrack: (chapterId: string, regionId: string, trackId: number, componentId: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
 }
 
 export const actionCreators: TimelineActions = {
   addTimeline,
-  addTimelineTrack
+  addTimelineTrack,
+  addElementToTimelineTrack
 };
