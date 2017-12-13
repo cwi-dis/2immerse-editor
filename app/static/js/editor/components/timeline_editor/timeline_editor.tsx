@@ -1,7 +1,6 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
-import { List, Record } from "immutable";
 
 import { ApplicationState } from "../../store";
 import { RouterProps } from "../../util";
@@ -32,14 +31,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
-          <TimelineTrack elements={timelineTracks.getIn([0, "timelineElements"])}
+          <TimelineTrack elements={timelineTracks!.getIn([0, "timelineElements"])}
                     elementPositionUpdated={this.elementPositionUpdated.bind(this, 0)}
                     width={1000} height={40} />
-          <TimelineTrack elements={timelineTracks.getIn([1, "timelineElements"])}
+          <TimelineTrack elements={timelineTracks!.getIn([1, "timelineElements"])}
                     elementPositionUpdated={this.elementPositionUpdated.bind(this, 1)}
                     width={1000} height={40} snapDistance={15} />
           <br/>
-          {timelineTracks.map((track, i) => {
+          {timelineTracks!.map((track, i) => {
             return (
               <p key={i}>
                 <b>Track {i + 1}</b>
