@@ -14,7 +14,7 @@ describe("Timeline class", () => {
 
   it("should instantiate a new object with all given attributes", () => {
     const track: TimelineTrack = {
-      componentId: "component1",
+      regionId: "region1",
       timelineElements: List()
     };
 
@@ -28,7 +28,7 @@ describe("Timeline class", () => {
     expect(timeline.chapterId).toEqual("chapter1");
 
     expect(timeline.timelineTracks.count()).toEqual(1);
-    expect(timeline.timelineTracks.get(0).componentId).toEqual("component1");
+    expect(timeline.timelineTracks.get(0).regionId).toEqual("region1");
     expect(timeline.timelineTracks.get(0).timelineElements.count()).toEqual(0);
   });
 });
@@ -109,7 +109,7 @@ describe("Screens reducer", () => {
   it("should return the state untransformed on ADD_TIMELINE_TRACK if the state is empty", () => {
     const state = reducer(
       undefined,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
     );
 
     expect(state).toBeInstanceOf(List);
@@ -123,41 +123,41 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter2", componentId: "component1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter2", regionId: "region1" }} as any
     );
 
     expect(initialState).toEqual(transformedState);
   });
 
-  it("should add a new track for the given component on ADD_TIMELINE_TRACK for the given chapter", () => {
+  it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1"})
     ]);
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
     );
 
     expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).componentId).toEqual("component1");
+    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
     expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
   });
 
-  it("should add a new track for the given component on ADD_TIMELINE_TRACK for the given chapter even if a track for the component exists", () => {
+  it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter even if a track for the region exists", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        {componentId: "component1", timelineElements: List()}
+        {regionId: "region1", timelineElements: List()}
       ])})
     ]);
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
     );
 
     expect(transformedState.get(0).timelineTracks.count()).toEqual(2);
-    expect(transformedState.get(0).timelineTracks.get(0).componentId).toEqual("component1");
-    expect(transformedState.get(0).timelineTracks.get(1).componentId).toEqual("component1");
+    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
+    expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
   });
 });

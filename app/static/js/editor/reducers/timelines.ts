@@ -6,13 +6,14 @@ import * as actions from "../actions/timelines";
 
 export interface TimelineElement {
   id: string;
+  componentId: string;
   x: number;
   width: number;
   color?: string;
 }
 
 export interface TimelineTrack {
-  componentId: string;
+  regionId: string;
   timelineElements: List<TimelineElement>;
 }
 
@@ -52,7 +53,7 @@ actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) =
 });
 
 actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
-  const { chapterId, componentId } = action.payload;
+  const { chapterId, regionId } = action.payload;
 
   const id = state.findIndex((timeline) => {
     return timeline.chapterId === chapterId;
@@ -64,7 +65,7 @@ actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMEL
 
   return state.updateIn([id, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     return tracks.push({
-      componentId,
+      regionId,
       timelineElements: List()
     });
   });

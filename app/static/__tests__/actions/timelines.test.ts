@@ -20,7 +20,7 @@ describe("Timeline actions", () => {
       type: "ADD_TIMELINE_TRACK",
       payload: {
         chapterId: "chapter1",
-        componentId: "component1"
+        regionId: "component1"
       }
     };
 
