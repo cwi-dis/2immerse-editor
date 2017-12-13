@@ -105,4 +105,59 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).timelineTracks).toBeInstanceOf(List);
     expect(transformedState.get(0).timelineTracks.count()).toEqual(0);
   });
+
+  it("should return the state untransformed on ADD_TIMELINE_TRACK if the state is empty", () => {
+    const state = reducer(
+      undefined,
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+    );
+
+    expect(state).toBeInstanceOf(List);
+    expect(state.count()).toEqual(0);
+  });
+
+  it("should return the state untransformed on ADD_TIMELINE_TRACK if the given chapter has no timeline", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1"})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter2", componentId: "component1" }} as any
+    );
+
+    expect(initialState).toEqual(transformedState);
+  });
+
+  it("should add a new track for the given component on ADD_TIMELINE_TRACK for the given chapter", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1"})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).componentId).toEqual("component1");
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
+  });
+
+  it("should add a new track for the given component on ADD_TIMELINE_TRACK for the given chapter even if a track for the component exists", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        {componentId: "component1", timelineElements: List()}
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", componentId: "component1" }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.count()).toEqual(2);
+    expect(transformedState.get(0).timelineTracks.get(0).componentId).toEqual("component1");
+    expect(transformedState.get(0).timelineTracks.get(1).componentId).toEqual("component1");
+  });
 });
