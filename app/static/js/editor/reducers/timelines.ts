@@ -51,4 +51,23 @@ actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) =
   }));
 });
 
+actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
+  const { chapterId, componentId } = action.payload;
+
+  const id = state.findIndex((timeline) => {
+    return timeline.chapterId === chapterId;
+  });
+
+  if (id < 0) {
+    return state;
+  }
+
+  return state.updateIn([id, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+    return tracks.push({
+      componentId,
+      timelineElements: List()
+    });
+  });
+});
+
 export default actionHandler.getReducer();
