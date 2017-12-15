@@ -12,7 +12,7 @@ export interface TimelineElementAttributes {
   color?: string;
 }
 
-export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", x: 0, width: 10}) {
+export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", x: 0, width: 10, color: undefined}) {
   constructor(params?: TimelineElementAttributes) {
     params ? super(params) : super();
   }

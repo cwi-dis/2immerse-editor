@@ -3,6 +3,34 @@
 import { List } from "immutable";
 import reducer, { Timeline, TimelineElement, TimelineState, TimelineTrack } from "../../js/editor/reducers/timelines";
 
+describe("TimelineElement class", () => {
+  it("should instantiate a new object with the default attributes", () => {
+    const element = new TimelineElement();
+
+    expect(element.id).toEqual("");
+    expect(element.componentId).toEqual("");
+    expect(element.x).toEqual(0);
+    expect(element.width).toEqual(10);
+    expect(element.color).toBeUndefined();
+  });
+
+  it("should instantiate a new object with all given attributes", () => {
+    const element = new TimelineElement({
+      id: "element1",
+      componentId: "component1",
+      width: 12,
+      x: 34,
+      color: "#FF0000"
+    });
+
+    expect(element.id).toEqual("element1");
+    expect(element.componentId).toEqual("component1");
+    expect(element.x).toEqual(34);
+    expect(element.width).toEqual(12);
+    expect(element.color).toEqual("#FF0000");
+  });
+});
+
 describe("TimelineTrack class", () => {
   it("should instantiate a new object with the default attributes", () => {
     const track = new TimelineTrack();
