@@ -13,12 +13,12 @@ describe("TimelineTrack class", () => {
   });
 
   it("should instantiate a new object with all given attributes", () => {
-    const timelineElement: TimelineElement = {
+    const timelineElement = new TimelineElement({
       id: "element1",
       componentId: "component1",
       width: 12,
       x: 34
-    };
+    });
 
     const track: TimelineTrack = new TimelineTrack({
       id: "track1",
@@ -231,7 +231,7 @@ describe("Screens reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
-          {id: "element1", componentId: "component1", x: 10, width: 30}
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
     ]);

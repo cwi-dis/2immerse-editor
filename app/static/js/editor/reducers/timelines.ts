@@ -4,12 +4,18 @@ import * as shortid from "shortid";
 import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/timelines";
 
-export interface TimelineElement {
+export interface TimelineElementAttributes {
   id: string;
   componentId: string;
   x: number;
   width: number;
   color?: string;
+}
+
+export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", x: 0, width: 10}) {
+  constructor(params?: TimelineElementAttributes) {
+    params ? super(params) : super();
+  }
 }
 
 export interface TimelineTrackAttributes {
@@ -100,12 +106,12 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
         x = lastElement.x + lastElement.width;
       }
 
-      return elements.push({
+      return elements.push(new TimelineElement({
         id: shortid.generate(),
         componentId,
         x,
         width: 10
-      });
+      }));
     });
   });
 });
