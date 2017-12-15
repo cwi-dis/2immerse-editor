@@ -1,7 +1,7 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
-import { ActionHandler } from "../util";
+import { ActionHandler, findById } from "../util";
 import * as actions from "../actions/timelines";
 
 export interface TimelineElement {
@@ -75,6 +75,38 @@ actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMEL
       id: shortid.generate(),
       regionId
     }));
+  });
+});
+
+actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
+  const { chapterId, trackId, componentId } = action.payload;
+
+  const timelineId = state.findIndex((timeline) => {
+    return timeline.chapterId === chapterId;
+  });
+
+  if (timelineId < 0) {
+    return state;
+  }
+
+  return state.updateIn([timelineId, "timelineTracks"], (tracks) => {
+    const [tracknum] = findById(tracks, trackId);
+
+    return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
+      let x = 0;
+      const lastElement = elements.maxBy((element) => element.x);
+
+      if (lastElement) {
+        x = lastElement.x + lastElement.width;
+      }
+
+      return elements.push({
+        id: shortid.generate(),
+        componentId,
+        x,
+        width: 10
+      });
+    });
   });
 });
 
