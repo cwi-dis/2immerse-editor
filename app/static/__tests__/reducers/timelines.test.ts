@@ -190,4 +190,63 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
     expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
   });
+
+  it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK when the track is empty", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter1", trackId: "track1", componentId: "component1" }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(1);
+
+    expect(elements.get(0).componentId).toEqual("component1");
+    expect(elements.get(0).x).toEqual(0);
+    expect(elements.get(0).width).toEqual(10);
+  });
+
+  it("should return the state untransformed if the timeline does not exist on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter2", trackId: "track1", componentId: "component1" }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          {id: "element1", componentId: "component1", x: 10, width: 30}
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter1", trackId: "track1", componentId: "component2" }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(2);
+
+    expect(elements.get(1).componentId).toEqual("component2");
+    expect(elements.get(1).x).toEqual(40);
+    expect(elements.get(1).width).toEqual(10);
+  });
 });
