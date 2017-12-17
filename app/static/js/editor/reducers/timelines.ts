@@ -66,17 +66,10 @@ actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) =
 });
 
 actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
-  const { chapterId, regionId } = action.payload;
+  const { timelineId, regionId } = action.payload;
+  const [timelinenum] = findById(state, timelineId);
 
-  const id = state.findIndex((timeline) => {
-    return timeline.chapterId === chapterId;
-  });
-
-  if (id < 0) {
-    return state;
-  }
-
-  return state.updateIn([id, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+  return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     return tracks.push(new TimelineTrack({
       id: shortid.generate(),
       regionId
@@ -85,17 +78,10 @@ actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMEL
 });
 
 actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
-  const { chapterId, trackId, componentId } = action.payload;
+  const { timelineId, trackId, componentId } = action.payload;
+  const [timelinenum] = findById(state, timelineId);
 
-  const timelineId = state.findIndex((timeline) => {
-    return timeline.chapterId === chapterId;
-  });
-
-  if (timelineId < 0) {
-    return state;
-  }
-
-  return state.updateIn([timelineId, "timelineTracks"], (tracks) => {
+  return state.updateIn([timelinenum, "timelineTracks"], (tracks) => {
     const [tracknum] = findById(tracks, trackId);
 
     return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
@@ -117,21 +103,15 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
 });
 
 actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDATE_ELEMENT_POSITION) => {
-  const { chapterId, trackId, elementId, newPosition } = action.payload;
+  const { timelineId, trackId, elementId, newPosition } = action.payload;
 
   if (newPosition < 0) {
     return state;
   }
 
-  const timelineId = state.findIndex((timeline) => {
-    return timeline.chapterId === chapterId;
-  });
+  const [timelinenum] = findById(state, timelineId);
 
-  if (timelineId < 0) {
-    return state;
-  }
-
-  return state.updateIn([timelineId, "timelineTracks"], (tracks) => {
+  return state.updateIn([timelinenum, "timelineTracks"], (tracks) => {
     const [tracknum] = findById(tracks, trackId);
 
     return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
