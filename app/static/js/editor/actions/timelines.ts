@@ -32,12 +32,12 @@ function addElementToTimelineTrack(chapterId: string, trackId: string, component
   };
 }
 
-export type UPDATE_ELEMENT_POSITION = PayloadAction<"UPDATE_ELEMENT_POSITION", {chapterId: string, trackId: string, elementId: string}>;
-function updateElementPosition(chapterId: string, trackId: string, elementId: string): UPDATE_ELEMENT_POSITION {
+export type UPDATE_ELEMENT_POSITION = PayloadAction<"UPDATE_ELEMENT_POSITION", {chapterId: string, trackId: string, elementId: string, newPosition: number}>;
+function updateElementPosition(chapterId: string, trackId: string, elementId: string, newPosition: number): UPDATE_ELEMENT_POSITION {
   return {
     type: "UPDATE_ELEMENT_POSITION",
     payload: {
-      chapterId, trackId, elementId
+      chapterId, trackId, elementId, newPosition
     }
   };
 }
@@ -46,7 +46,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   addTimelineTrack: (chapterId: string, regionId: string) => ADD_TIMELINE_TRACK;
   addElementToTimelineTrack: (chapterId: string, trackId: string, componentId: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
-  updateElementPosition: (chapterId: string, trackId: string, elementId: string) => UPDATE_ELEMENT_POSITION;
+  updateElementPosition: (chapterId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
 }
 
 export const actionCreators: TimelineActions = {

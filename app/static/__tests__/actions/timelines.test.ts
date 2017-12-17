@@ -46,10 +46,11 @@ describe("Timeline actions", () => {
       payload: {
         chapterId: "chapter1",
         trackId: "track1",
-        elementId: "element1"
+        elementId: "element1",
+        newPosition: 345
       }
     };
 
-    expect(actionCreators.updateElementPosition("chapter1", "track1", "element1")).toEqual(expected);
+    expect(actionCreators.updateElementPosition("chapter1", "track1", "element1", 345)).toEqual(expected);
   });
 });
