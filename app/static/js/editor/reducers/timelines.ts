@@ -116,4 +116,32 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
   });
 });
 
+actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDATE_ELEMENT_POSITION) => {
+  const { chapterId, trackId, elementId, newPosition } = action.payload;
+
+  if (newPosition < 0) {
+    return state;
+  }
+
+  const timelineId = state.findIndex((timeline) => {
+    return timeline.chapterId === chapterId;
+  });
+
+  if (timelineId < 0) {
+    return state;
+  }
+
+  return state.updateIn([timelineId, "timelineTracks"], (tracks) => {
+    const [tracknum] = findById(tracks, trackId);
+
+    return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
+      const [elementnum] = findById(elements, elementId);
+
+      return elements.update(elementnum, (element) => {
+        return element.set("x", newPosition);
+      });
+    });
+  });
+});
+
 export default actionHandler.getReducer();
