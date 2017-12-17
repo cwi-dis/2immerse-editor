@@ -163,29 +163,6 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).timelineTracks.count()).toEqual(0);
   });
 
-  it("should return the state untransformed on ADD_TIMELINE_TRACK if the state is empty", () => {
-    const state = reducer(
-      undefined,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
-    );
-
-    expect(state).toBeInstanceOf(List);
-    expect(state.count()).toEqual(0);
-  });
-
-  it("should return the state untransformed on ADD_TIMELINE_TRACK if the given chapter has no timeline", () => {
-    const initialState = List([
-      new Timeline({id: "timeline1", chapterId: "chapter1"})
-    ]);
-
-    const transformedState = reducer(
-      initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter2", regionId: "region1" }} as any
-    );
-
-    expect(initialState).toEqual(transformedState);
-  });
-
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1"})
@@ -193,7 +170,7 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1" }} as any
     );
 
     expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
@@ -210,7 +187,7 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_TIMELINE_TRACK", payload: { chapterId: "chapter1", regionId: "region1" }} as any
+      { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1" }} as any
     );
 
     expect(transformedState.get(0).timelineTracks.count()).toEqual(2);
@@ -228,7 +205,7 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter1", trackId: "track1", componentId: "component1" }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1" }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
@@ -238,21 +215,6 @@ describe("Screens reducer", () => {
     expect(elements.get(0).componentId).toEqual("component1");
     expect(elements.get(0).x).toEqual(0);
     expect(elements.get(0).width).toEqual(10);
-  });
-
-  it("should return the state untransformed if the timeline does not exist on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
-    const initialState = List([
-      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
-      ])})
-    ]);
-
-    const transformedState = reducer(
-      initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter2", trackId: "track1", componentId: "component1" }} as any
-    );
-
-    expect(transformedState).toBe(initialState);
   });
 
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -266,7 +228,7 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { chapterId: "chapter1", trackId: "track1", componentId: "component2" }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2" }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
@@ -289,28 +251,11 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter1", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
+      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
     expect(elements.first().x).toBe(55);
-  });
-
-  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the timeline does not exist", () => {
-    const initialState = List([
-      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
-        ])})
-      ])})
-    ]);
-
-    const transformedState = reducer(
-      initialState,
-      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter2", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
-    );
-
-    expect(transformedState).toBe(initialState);
   });
 
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the the new position is less than 0", () => {
@@ -324,7 +269,7 @@ describe("Screens reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter1", trackId: "track1", elementId: "element1", newPosition: -12 }} as any
+      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", newPosition: -12 }} as any
     );
 
     expect(transformedState).toBe(initialState);
