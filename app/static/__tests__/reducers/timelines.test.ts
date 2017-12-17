@@ -277,4 +277,56 @@ describe("Screens reducer", () => {
     expect(elements.get(1).x).toEqual(40);
     expect(elements.get(1).width).toEqual(10);
   });
+
+  it("should update and element's position on UPDATE_ELEMENT_POSITION", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter1", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+    expect(elements.first().x).toBe(55);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter2", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the the new position is less than 0", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { chapterId: "chapter1", trackId: "track1", elementId: "element1", newPosition: -12 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
 });
