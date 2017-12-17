@@ -39,4 +39,17 @@ describe("Timeline actions", () => {
 
     expect(actionCreators.addElementToTimelineTrack("chapter1", "track1", "component1")).toEqual(expected);
   });
+
+  it("should create an UPDATE_ELEMENT_POSITION action", () => {
+    const expected: actionTypes.UPDATE_ELEMENT_POSITION = {
+      type: "UPDATE_ELEMENT_POSITION",
+      payload: {
+        chapterId: "chapter1",
+        trackId: "track1",
+        elementId: "element1"
+      }
+    };
+
+    expect(actionCreators.updateElementPosition("chapter1", "track1", "element1")).toEqual(expected);
+  });
 });
