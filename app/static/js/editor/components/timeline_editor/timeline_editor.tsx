@@ -18,8 +18,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
     super(props);
   }
 
-  private elementPositionUpdated(index: number, id: string, x: number) {
-    // XXX IMPLEMENT ME
+  private elementPositionUpdated(timelineId: string, trackId: string, componentId: string, x: number) {
+    this.props.timelineActions.updateElementPosition(timelineId, trackId, componentId, x);
   }
 
   public render() {
