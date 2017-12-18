@@ -18,7 +18,7 @@ function removeTimeline(timelineId: string): REMOVE_TIMELINE {
     payload: {
       timelineId
     }
-  }
+  };
 }
 
 export type ADD_TIMELINE_TRACK = PayloadAction<"ADD_TIMELINE_TRACK", {timelineId: string, regionId: string}>;
@@ -39,7 +39,7 @@ function removeTimelineTrack(timelineId: string, trackId: string): REMOVE_TIMELI
     payload: {
       timelineId, trackId
     }
-  }
+  };
 }
 
 export type ADD_ELEMENT_TO_TIMELINE_TRACK = PayloadAction<"ADD_ELEMENT_TO_TIMELINE_TRACK", {timelineId: string, trackId: string, componentId: string}>;

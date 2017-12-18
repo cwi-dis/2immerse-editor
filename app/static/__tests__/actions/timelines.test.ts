@@ -53,4 +53,40 @@ describe("Timeline actions", () => {
 
     expect(actionCreators.updateElementPosition("timeline1", "track1", "element1", 345)).toEqual(expected);
   });
+
+  it("should create a REMOVE_TIMELINE action", () => {
+    const expected: actionTypes.REMOVE_TIMELINE = {
+      type: "REMOVE_TIMELINE",
+      payload: {
+        timelineId: "timeline1"
+      }
+    };
+
+    expect(actionCreators.removeTimeline("timeline1")).toEqual(expected);
+  });
+
+  it("should create a REMOVE_TIMELINE_TRACK action", () => {
+    const expected: actionTypes.REMOVE_TIMELINE_TRACK = {
+      type: "REMOVE_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1"
+      }
+    };
+
+    expect(actionCreators.removeTimelineTrack("timeline1", "track1")).toEqual(expected);
+  });
+
+  it("should create a REMOVE_ELEMENT_FROM_TIMELINE_TRACK action", () => {
+    const expected: actionTypes.REMOVE_ELEMENT_FROM_TIMELINE_TRACK = {
+      type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        elementId: "element1"
+      }
+    };
+
+    expect(actionCreators.removeElementFromTimelineTrack("timeline1", "track1", "element1")).toEqual(expected);
+  });
 });
