@@ -31,12 +31,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
-          <TimelineTrack elements={timelineTracks!.getIn([0, "timelineElements"])}
-                    elementPositionUpdated={this.elementPositionUpdated.bind(this, 0)}
-                    width={1000} height={40} />
-          <TimelineTrack elements={timelineTracks!.getIn([1, "timelineElements"])}
-                    elementPositionUpdated={this.elementPositionUpdated.bind(this, 1)}
-                    width={1000} height={40} snapDistance={15} />
+          {timelineTracks!.map((timelineTrack, i) => {
+            return (
+              <TimelineTrack elements={timelineTrack.timelineElements!}
+                             elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
+                             width={1000} height={40} snapDistance={15}
+                             key={i} />
+            );
+          })}
           <br/>
           {timelineTracks!.map((track, i) => {
             return (
