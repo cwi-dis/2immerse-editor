@@ -25,6 +25,7 @@ interface TimelineProps {
   elements: List<TimelineElement>;
   elementPositionUpdated: (id: string, x: number) => void;
   snapDistance?: number;
+  scrubberPosition?: number;
 }
 
 interface TimelineState {
@@ -43,7 +44,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   }
 
   public render() {
-    const {width, height, elements} = this.props;
+    const {width, height, elements, scrubberPosition} = this.props;
     const snapDistance = (this.props.snapDistance) ? this.props.snapDistance : 0;
 
     const dragBoundFunc = (currentId: string, pos: Vector2d): Vector2d => {
@@ -73,6 +74,15 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       };
     };
 
+    const scrubber = () => {
+      if (scrubberPosition) {
+        return (
+          <Line strokeWidth={1} stroke={"#2B98F0"}
+                points={[scrubberPosition, 0, scrubberPosition, height]} />
+        );
+      }
+    };
+
     return (
       <Stage width={width} height={height}>
         <Layer>
@@ -88,7 +98,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
                     dragBoundFunc={dragBoundFunc.bind(this, element.id)} />
             );
           })}
-          <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#000000" strokeWidth={1} />
+          {scrubber()}
+          <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#262626" strokeWidth={1} />
         </Layer>
       </Stage>
     );
