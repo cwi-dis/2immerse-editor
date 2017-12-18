@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Layer, RegularPolygon, Stage } from "react-konva";
 
-import { toRadians } from "../../util";
 import { Vector2d } from "konva";
 
 interface ScrubberHeadProps {
@@ -38,8 +37,8 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
 
     const height = 14;
 
-    const a = height / Math.sin(toRadians(60));
-    const r = (a / 2) / Math.sin(toRadians(60));
+    const a = (2 * height) / Math.sqrt(3);
+    const r = a / Math.sqrt(3);
 
     const dragBoundFunc = (pos: Vector2d): Vector2d => {
       return {
