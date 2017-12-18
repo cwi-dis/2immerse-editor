@@ -6,6 +6,8 @@ import { ApplicationState } from "../../store";
 import { RouterProps } from "../../util";
 import { TimelineState } from "../../reducers/timelines";
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
+
+import ScrubberHead from "./scrubber_head";
 import TimelineTrack from "./timeline_track";
 
 interface TimelineEditorProps extends RouterProps {
@@ -13,9 +15,17 @@ interface TimelineEditorProps extends RouterProps {
   timelineActions: TimelineActions;
 }
 
-class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
+interface TimelineEditorState {
+  scrubberPosition: number;
+}
+
+class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
   public constructor(props: TimelineEditorProps) {
     super(props);
+
+    this.state = {
+      scrubberPosition: 0
+    };
   }
 
   public componentDidMount() {
@@ -42,11 +52,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
+
+          <ScrubberHead width={1000} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+
           {timelineTracks!.map((timelineTrack, i) => {
             return (
               <TimelineTrack elements={timelineTrack.timelineElements!}
                              elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                             width={1000} height={40} snapDistance={15}
+                             width={1000} height={40} snapDistance={15} scrubberPosition={this.state.scrubberPosition}
                              key={i} />
             );
           })}
