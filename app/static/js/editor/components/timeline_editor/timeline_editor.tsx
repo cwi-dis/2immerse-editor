@@ -18,6 +18,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
     super(props);
   }
 
+  public componentDidMount() {
+    const { match: { params } } = this.props;
+    this.props.timelineActions.addTimeline(params.chapterid);
+  }
+
   private elementPositionUpdated(timelineId: string, trackId: string, componentId: string, x: number) {
     this.props.timelineActions.updateElementPosition(timelineId, trackId, componentId, x);
   }
@@ -25,6 +30,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, {}> {
   public render() {
     const { match: { params } } = this.props;
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
+
+    if (timeline === undefined) {
+      console.log("no timeline for current chapter");
+      return null;
+    }
+
     const { timelineTracks } = timeline;
 
     return (
