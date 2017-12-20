@@ -1102,7 +1102,7 @@ class DocumentServe:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
         rawLayoutElement.text = layoutJSON
 
-    def get_client(self, timeline, layout, base=None):
+    def get_client(self, timeline, layout, base=None, mode=None):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
         if base:
@@ -1141,9 +1141,11 @@ class DocumentServe:
         #
         # And we set the playback mode
         #
+        if not mode:
+            mode = self.document.settings().playerMode
         # Note that this should be user-settable, depending on this flag the preview will run
         # in single-device (standalone) or TV mode.
-        clientDoc['mode'] = self.document.settings().playerMode
+        clientDoc['mode'] = mode
 
         return json.dumps(clientDoc)
 

@@ -322,8 +322,9 @@ def get_client_document(documentId):
         abort(404)
     serve = document.serve()
     assert serve
+    mode = request.args.get('mode')
     docRoot = '%s/document/%s/serve/' % (get_docRoot(), documentId)
-    config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'))
+    config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'), mode=mode)
     return Response(config, mimetype="application/json")
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
@@ -371,9 +372,13 @@ def update_document_state(documentId):
 @app.route(API_ROOT + "/document/<uuid:documentId>/preview")
 def get_preview(documentId):
     clientDocUrl = get_docRoot() + "/document/%s/serve/client.json" % documentId
-    base = request.args.get('base')
-    if base:
-        clientDocUrl += '?' + urllib.urlencode(dict(base=base))
+    clientArgs = {}
+    if 'base' in request.args:
+        clientArgs['base'] = request.args['base']
+    if 'mode' in request.args:
+        clientArgs['mode'] = request.args['mode']
+    if clientArgs:
+        clientDocUrl += '?' + urllib.urlencode(clientArgs)
     clientApiUrl = "%s#?inputDocument=%s" % (GlobalSettings.clientApiUrl, clientDocUrl)
     return redirect(clientApiUrl)
 
@@ -384,7 +389,9 @@ short_urls = []
 def expand_shorturl(id):
     if id >= len(short_urls):
         abort(400, "ID not found")
-
+    newUrl = short_urls[id]
+    if 'mode' in request.args:
+        newUrl += '?' + urllib.urlencode(dict(mode=mode))
     return redirect(short_urls[id])
 
 @app.route("/shorturl", methods=["POST"])
