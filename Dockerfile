@@ -7,7 +7,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
 RUN apt-get install -y nodejs yarn && \
-    npm install --global webpack jest
+    npm install --unsafe-perm --global webpack jest
 
 RUN mkdir -p /code/app/static/
 
