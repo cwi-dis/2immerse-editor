@@ -225,6 +225,22 @@ describe("Timelines reducer", () => {
     expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
   });
 
+  it("should return the state untransformed on REMOVE_TIMELINE_TRACK if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()}),
+        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List()})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_TIMELINE_TRACK", payload: { timelineId: "timeline2", trackId: "track1" }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
   it("should remove a given track on REMOVE_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([

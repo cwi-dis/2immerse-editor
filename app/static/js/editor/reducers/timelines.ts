@@ -91,7 +91,13 @@ actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMEL
 
 actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE_TIMELINE_TRACK) => {
   const { timelineId, trackId } = action.payload;
-  const [timelinenum] = findById(state, timelineId);
+  const result = findById(state, timelineId);
+
+  if (result === undefined) {
+    return state;
+  }
+
+  const [timelinenum] = result;
 
   return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     const [tracknum] = findById(tracks, trackId);
