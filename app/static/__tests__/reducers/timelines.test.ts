@@ -354,4 +354,73 @@ describe("Timelines reducer", () => {
 
     expect(transformedState).toBe(initialState);
   });
+
+  it("should remove a given element from a track on REMOVE_ELEMENT_FROM_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1" }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+    expect(elements.count()).toBe(0);
+  });
+
+  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline2", trackId: "track1", elementId: "element1" }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
+  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track2", elementId: "element1" }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
+  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element2" }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
 });
