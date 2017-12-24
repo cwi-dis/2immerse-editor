@@ -163,6 +163,35 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).timelineTracks.count()).toEqual(0);
   });
 
+  it("should remove a timeline on REMOVE_TIMELINE", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1"}),
+      new Timeline({id: "timeline2", chapterId: "chapter2"})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_TIMELINE", payload: { timelineId: "timeline1" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).id).toEqual("timeline2");
+    expect(transformedState.get(0).chapterId).toEqual("chapter2");
+  });
+
+  it("should return the state untransformed if the timeline does not exist on REMOVE_TIMELINE", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1"})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_TIMELINE", payload: { timelineId: "timeline2" }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1"})
