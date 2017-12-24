@@ -158,4 +158,19 @@ actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDA
   });
 });
 
+actionHandler.addHandler("REMOVE_ELEMENT_FROM_TIMELINE_TRACK", (state, action: actions.REMOVE_ELEMENT_FROM_TIMELINE_TRACK) => {
+  const { timelineId, trackId, elementId } = action.payload;
+  const [timelinenum] = findById(state, timelineId);
+
+  return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+    const [tracknum] = findById(tracks, trackId);
+
+    return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
+      const [elementnum] = findById(elements, elementId);
+
+      return elements.remove(elementnum);
+    });
+  });
+});
+
 export default actionHandler.getReducer();
