@@ -90,7 +90,7 @@ describe("Timeline class", () => {
   });
 });
 
-describe("Screens reducer", () => {
+describe("Timelines reducer", () => {
   it("should return the initial state on an unknown action", () => {
     const initialState: TimelineState = List();
 
@@ -223,6 +223,25 @@ describe("Screens reducer", () => {
     expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track1");
     expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
     expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
+  });
+
+  it("should remove a given track on REMOVE_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()}),
+        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List()})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "REMOVE_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
+    );
+
+    expect(transformedState.get(0).id).toEqual("timeline1");
+    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track2");
+    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region2");
   });
 
   it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK when the track is empty", () => {
