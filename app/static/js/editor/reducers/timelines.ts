@@ -65,6 +65,18 @@ actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) =
   }));
 });
 
+actionHandler.addHandler("REMOVE_TIMELINE", (state, action: actions.REMOVE_TIMELINE) => {
+  const { timelineId } = action.payload;
+  const result = findById(state, timelineId);
+
+  if (result) {
+    const [timelinenum] = result;
+    return state.remove(timelinenum);
+  }
+
+  return state;
+});
+
 actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
   const { timelineId, regionId } = action.payload;
   const [timelinenum] = findById(state, timelineId);
@@ -111,7 +123,7 @@ actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDA
 
   const [timelinenum] = findById(state, timelineId);
 
-  return state.updateIn([timelinenum, "timelineTracks"], (tracks) => {
+  return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     const [tracknum] = findById(tracks, trackId);
 
     return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
