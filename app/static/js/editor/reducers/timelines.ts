@@ -100,7 +100,13 @@ actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE
   const [timelinenum] = result;
 
   return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
-    const [tracknum] = findById(tracks, trackId);
+    const result = findById(tracks, trackId);
+
+    if (result === undefined) {
+      return tracks;
+    }
+
+    const [tracknum] = result;
     return tracks.remove(tracknum);
   });
 });
