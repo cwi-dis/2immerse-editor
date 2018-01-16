@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Layer, RegularPolygon, Stage } from "react-konva";
+import { RegularPolygon } from "react-konva";
 
 import { Vector2d } from "konva";
 

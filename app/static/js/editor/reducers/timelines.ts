@@ -178,4 +178,26 @@ actionHandler.addHandler("REMOVE_ELEMENT_FROM_TIMELINE_TRACK", (state, action: a
   }
 });
 
+actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE_ELEMENT_LENGTH) => {
+  const { timelineId, trackId, elementId, length } = action.payload;
+
+  try {
+    const [timelinenum] = findById(state, timelineId);
+
+    return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+      const [tracknum] = findById(tracks, trackId);
+
+      return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
+        const [elementnum] = findById(elements, elementId);
+
+        return elements.update(elementnum, (element) => {
+          return element.set("width", length);
+        });
+      });
+    });
+   } catch {
+    return state;
+  }
+});
+
 export default actionHandler.getReducer();
