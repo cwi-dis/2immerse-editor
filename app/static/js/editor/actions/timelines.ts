@@ -72,6 +72,16 @@ function removeElementFromTimelineTrack(timelineId: string, trackId: string, ele
   };
 }
 
+export type UPDATE_ELEMENT_LENGTH = PayloadAction<"UPDATE_ELEMENT_LENGTH", {timelineId: string, trackId: string, elementId: string, length: number}>;
+function updateElementLength(timelineId: string, trackId: string, elementId: string, length: number): UPDATE_ELEMENT_LENGTH {
+  return {
+    type: "UPDATE_ELEMENT_LENGTH",
+    payload: {
+      timelineId, trackId, elementId, length
+    }
+  };
+}
+
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
@@ -80,6 +90,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, length?: number) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementPosition: (timelineId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
   removeElementFromTimelineTrack: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT_FROM_TIMELINE_TRACK;
+  updateElementLength: (timelineId: string, trackId: string, elementId: string, length: number) => UPDATE_ELEMENT_LENGTH;
 }
 
 export const actionCreators: TimelineActions = {
@@ -89,5 +100,6 @@ export const actionCreators: TimelineActions = {
   removeTimelineTrack,
   addElementToTimelineTrack,
   updateElementPosition,
-  removeElementFromTimelineTrack
+  removeElementFromTimelineTrack,
+  updateElementLength
 };
