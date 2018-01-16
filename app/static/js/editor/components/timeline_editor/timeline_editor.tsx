@@ -1,6 +1,7 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
+import { Layer, Stage } from "react-konva";
 
 import { ApplicationState } from "../../store";
 import { RouterProps } from "../../util";
@@ -55,14 +56,18 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <ScrubberHead width={1000} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
-          {timelineTracks!.map((timelineTrack, i) => {
-            return (
-              <TimelineTrack elements={timelineTrack.timelineElements!}
-                             elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                             width={1000} height={40} snapDistance={15} scrubberPosition={this.state.scrubberPosition}
-                             key={i} />
-            );
-          })}
+          <Stage width={1000} height={40 * timelineTracks!.count()}>
+            <Layer>
+              {timelineTracks!.map((timelineTrack, i) => {
+                return (
+                  <TimelineTrack elements={timelineTrack.timelineElements!}
+                                elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
+                                width={1000} height={40} snapDistance={15} scrubberPosition={this.state.scrubberPosition}
+                                key={i} index={i} />
+                );
+              })}
+            </Layer>
+          </Stage>
           <br/>
           {timelineTracks!.map((track, i) => {
             return (
