@@ -27,17 +27,32 @@ describe("Timeline actions", () => {
     expect(actionCreators.addTimelineTrack("timeline1", "region1")).toEqual(expected);
   });
 
-  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action", () => {
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with default length 10", () => {
     const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
       type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
       payload: {
         timelineId: "timeline1",
         trackId: "track1",
-        componentId: "component1"
+        componentId: "component1",
+        length: 10
       }
     };
 
     expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1")).toEqual(expected);
+  });
+
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with the given length", () => {
+    const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
+      type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        componentId: "component1",
+        length: 123
+      }
+    };
+
+    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 123)).toEqual(expected);
   });
 
   it("should create an UPDATE_ELEMENT_POSITION action", () => {
