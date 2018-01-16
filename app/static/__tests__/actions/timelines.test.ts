@@ -104,4 +104,18 @@ describe("Timeline actions", () => {
 
     expect(actionCreators.removeElementFromTimelineTrack("timeline1", "track1", "element1")).toEqual(expected);
   });
+
+  it("should create a UPDATE_ELEMENT_LENGTH action", () => {
+    const expected: actionTypes.UPDATE_ELEMENT_LENGTH = {
+      type: "UPDATE_ELEMENT_LENGTH",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        elementId: "element1",
+        length: 456
+      }
+    };
+
+    expect(actionCreators.updateElementLength("timeline1", "track1", "element1", 456)).toEqual(expected);
+  });
 });
