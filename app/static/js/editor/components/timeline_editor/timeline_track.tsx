@@ -22,7 +22,6 @@ function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElemen
 interface TimelineProps {
   width: number;
   height: number;
-  index: number;
   elements: List<TimelineElement>;
   elementPositionUpdated: (id: string, x: number) => void;
   snapDistance?: number;
@@ -45,7 +44,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   }
 
   public render() {
-    const {width, height, index, elements, scrubberPosition} = this.props;
+    const {width, height, elements, scrubberPosition} = this.props;
     const snapDistance = (this.props.snapDistance) ? this.props.snapDistance : 0;
 
     const dragBoundFunc = (currentId: string, pos: Vector2d): Vector2d => {
@@ -79,14 +78,14 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       if (scrubberPosition) {
         return (
           <Line strokeWidth={1} stroke={"#2B98F0"}
-                points={[scrubberPosition, index * height, scrubberPosition, (index + 1) * height]} />
+                points={[scrubberPosition, 0, scrubberPosition, height]} />
         );
       }
     };
 
     return (
       <Group>
-        <Rect x={0} y={height * index} width={width} height={height} fill="#555555" />
+        <Rect x={0} y={0} width={width} height={height} fill="#555555" />
         {elements.map((element, i) => {
           return (
             <Rect key={i}
@@ -99,7 +98,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
           );
         })}
         {scrubber()}
-        <Line points={[0, ((index + 1) * height) - 0.5, width, ((index + 1) * height) - 0.5]} stroke="#262626" strokeWidth={1} />
+        <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#262626" strokeWidth={1} />
       </Group>
     );
   }

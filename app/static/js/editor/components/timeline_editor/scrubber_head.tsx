@@ -48,16 +48,12 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
     };
 
     return (
-      <Stage width={width} height={height}>
-        <Layer>
-          <RegularPolygon sides={3} radius={r} rotation={60}
-                          x={headPosition} y={height - r}
-                          draggable={true}
-                          onDragMove={this.headPositionUpdated.bind(this)}
-                          dragBoundFunc={dragBoundFunc}
-                          fill="#2B98F0" />
-        </Layer>
-      </Stage>
+      <RegularPolygon sides={3} radius={r} rotation={60}
+                      x={headPosition} y={height - r}
+                      draggable={true}
+                      onDragMove={this.headPositionUpdated.bind(this)}
+                      dragBoundFunc={dragBoundFunc}
+                      fill="#2B98F0" />
     );
   }
 }
