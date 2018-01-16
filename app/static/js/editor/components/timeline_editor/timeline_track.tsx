@@ -34,6 +34,7 @@ interface TimelineState {
 
 class Timeline extends React.Component<TimelineProps, TimelineState> {
   private updatedXPosition: number;
+  private absoluteYPosition: number | null;
 
   public constructor(props: TimelineProps) {
     super(props);
@@ -70,7 +71,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
       return {
         x: newX,
-        y: 0
+        y: this.absoluteYPosition || 0
       };
     };
 
@@ -85,7 +86,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
     return (
       <Group>
-        <Rect x={0} y={0} width={width} height={height} fill="#555555" />
+        <Rect x={0} y={0} width={width} height={height} fill="#555555"
+              ref={(e) => this.absoluteYPosition = e && (e as any).getAbsolutePosition().y} />
         {elements.map((element, i) => {
           return (
             <Rect key={i}
