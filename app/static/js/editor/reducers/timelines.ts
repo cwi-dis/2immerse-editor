@@ -112,7 +112,7 @@ actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE
 });
 
 actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
-  const { timelineId, trackId, componentId } = action.payload;
+  const { timelineId, trackId, componentId, length } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   return state.updateIn([timelinenum, "timelineTracks"], (tracks) => {
@@ -130,7 +130,7 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
         id: shortid.generate(),
         componentId,
         x,
-        width: 10
+        width: length
       }));
     });
   });

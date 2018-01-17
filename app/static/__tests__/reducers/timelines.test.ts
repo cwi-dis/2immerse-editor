@@ -320,6 +320,29 @@ describe("Timelines reducer", () => {
     expect(elements.get(1).width).toEqual(10);
   });
 
+  it("should insert a new element with the given width to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", length: 200 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(2);
+
+    expect(elements.get(1).componentId).toEqual("component2");
+    expect(elements.get(1).x).toEqual(40);
+    expect(elements.get(1).width).toEqual(200);
+  });
+
   it("should update and element's position on UPDATE_ELEMENT_POSITION", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
