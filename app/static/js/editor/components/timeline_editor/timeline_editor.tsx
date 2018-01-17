@@ -18,6 +18,7 @@ interface TimelineEditorProps extends RouterProps {
 
 interface TimelineEditorState {
   scrubberPosition: number;
+  snapEnabled: boolean;
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
@@ -25,7 +26,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     super(props);
 
     this.state = {
-      scrubberPosition: 0
+      scrubberPosition: 0,
+      snapEnabled: true
     };
   }
 
@@ -53,6 +55,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
+          <label>
+            <input type="checkbox"
+                   checked={this.state.snapEnabled}
+                   onChange={(e) => this.setState({snapEnabled: e.target.checked})} />
+            &emsp;Snap enabled
+          </label>
+
+          <br/><br/>
 
           <Stage width={1000} height={40 * timelineTracks!.count() + 14}>
             <Layer>
@@ -62,8 +72,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                 return (
                   <Group key={i} y={i * 40 + 14}>
                     <TimelineTrack elements={timelineTrack.timelineElements!}
-                                  elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                                  width={1000} height={40} snapDistance={15} scrubberPosition={this.state.scrubberPosition} />
+                                   elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
+                                   width={1000} height={40}
+                                   snapDistance={(this.state.snapEnabled) ? 15 : 0}
+                                   scrubberPosition={this.state.scrubberPosition} />
                   </Group>
                 );
               })}
