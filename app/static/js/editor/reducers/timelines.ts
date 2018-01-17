@@ -185,6 +185,10 @@ actionHandler.addHandler("REMOVE_ELEMENT_FROM_TIMELINE_TRACK", (state, action: a
 actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE_ELEMENT_LENGTH) => {
   const { timelineId, trackId, elementId, length } = action.payload;
 
+  if (length <= 0) {
+    return state;
+  }
+
   try {
     const [timelinenum] = findById(state, timelineId);
 

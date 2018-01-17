@@ -499,6 +499,40 @@ describe("Timelines reducer", () => {
     expect(element.width).toBe(23);
   });
 
+  it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing 0", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: 0 }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing a negative number", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: -45 }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
