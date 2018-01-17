@@ -115,6 +115,10 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
   const { timelineId, trackId, componentId, length } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
+  if (length <= 0) {
+    return state;
+  }
+
   return state.updateIn([timelinenum, "timelineTracks"], (tracks) => {
     const [tracknum] = findById(tracks, trackId);
 
