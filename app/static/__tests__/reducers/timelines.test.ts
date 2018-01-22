@@ -395,7 +395,7 @@ describe("Timelines reducer", () => {
     expect(elements.first().x).toBe(55);
   });
 
-  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the the new position is less than 0", () => {
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the new position is less than 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
@@ -407,6 +407,57 @@ describe("Timelines reducer", () => {
     const transformedState = reducer(
       initialState,
       { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", newPosition: -12 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline2", trackId: "track1", elementId: "element1", newPosition: 12 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the track does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track2", elementId: "element1", newPosition: 12 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the element does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element2", newPosition: 12 }} as any
     );
 
     expect(transformedState).toBe(initialState);
