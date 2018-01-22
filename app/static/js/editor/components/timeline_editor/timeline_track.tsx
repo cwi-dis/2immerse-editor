@@ -4,7 +4,6 @@ import { Group, Line, Rect } from "react-konva";
 import { Vector2d } from "konva";
 
 import { findById } from "../../util";
-import { ScreenRegion } from "../../reducers/screens";
 import { TimelineElement } from "../../reducers/timelines";
 
 function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
@@ -23,17 +22,20 @@ interface TimelineProps {
   width: number;
   height: number;
   elements: List<TimelineElement>;
+
   elementPositionUpdated: (id: string, x: number) => void;
+  elementRemoved: (id: string) => void;
+
   snapDistance?: number;
   scrubberPosition?: number;
 }
 
 interface TimelineState {
-  regions: Array<ScreenRegion>;
 }
 
 class Timeline extends React.Component<TimelineProps, TimelineState> {
   private updatedXPosition: number;
+  private initialYPosition?: number;
   private absoluteYPosition: number | null;
 
   public constructor(props: TimelineProps) {
@@ -42,6 +44,22 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
   private onDragEnd(id: string) {
     this.props.elementPositionUpdated(id, this.updatedXPosition);
+  }
+
+  private onDragMove(id: string, e: any) {
+    if (this.initialYPosition === undefined) {
+      return;
+    }
+
+    const { clientY } = e.evt;
+    const offsetY = Math.abs(this.initialYPosition - clientY);
+
+    if (offsetY > 100) {
+      console.log("removing element with id", id);
+
+      this.initialYPosition = undefined;
+      this.props.elementRemoved(id);
+    }
   }
 
   public render() {
@@ -96,6 +114,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
                   fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
                   draggable={true} dragDistance={25}
                   onDragEnd={this.onDragEnd.bind(this, element.id)}
+                  onDragMove={this.onDragMove.bind(this, element.id)}
+                  onDragStart={(e) => this.initialYPosition = e.evt.clientY}
                   dragBoundFunc={dragBoundFunc.bind(this, element.id)} />
           );
         })}

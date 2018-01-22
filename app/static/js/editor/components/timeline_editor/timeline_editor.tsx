@@ -104,6 +104,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   <Group key={i} y={i * 40 + 14}>
                     <TimelineTrack elements={timelineTrack.timelineElements!}
                                    elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
+                                   elementRemoved={this.props.timelineActions.removeElementFromTimelineTrack.bind(this, timeline.id, timelineTrack.id)}
                                    width={1000} height={40}
                                    snapDistance={(this.state.snapEnabled) ? 15 : 0}
                                    scrubberPosition={this.state.scrubberPosition} />
