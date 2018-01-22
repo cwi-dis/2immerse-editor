@@ -43,6 +43,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.props.timelineActions.updateElementPosition(timelineId, trackId, componentId, x);
   }
 
+  private elementRemoved(timelineId: string, trackId: string, elementId: string) {
+    this.props.timelineActions.removeElementFromTimelineTrack(timelineId, trackId, elementId);
+  }
+
   public render() {
     const { match: { params } } = this.props;
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
@@ -104,7 +108,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   <Group key={i} y={i * 40 + 14}>
                     <TimelineTrack elements={timelineTrack.timelineElements!}
                                    elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                                   elementRemoved={this.props.timelineActions.removeElementFromTimelineTrack.bind(this, timeline.id, timelineTrack.id)}
+                                   elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
                                    width={1000} height={40}
                                    snapDistance={(this.state.snapEnabled) ? 15 : 0}
                                    scrubberPosition={this.state.scrubberPosition} />
