@@ -147,19 +147,23 @@ actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDA
     return state;
   }
 
-  const [timelinenum] = findById(state, timelineId);
+  try {
+    const [timelinenum] = findById(state, timelineId);
 
-  return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
-    const [tracknum] = findById(tracks, trackId);
+    return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+      const [tracknum] = findById(tracks, trackId);
 
-    return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
-      const [elementnum] = findById(elements, elementId);
+      return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
+        const [elementnum] = findById(elements, elementId);
 
-      return elements.update(elementnum, (element) => {
-        return element.set("x", newPosition);
+        return elements.update(elementnum, (element) => {
+          return element.set("x", newPosition);
+        });
       });
     });
-  });
+  } catch {
+    return state;
+  }
 });
 
 actionHandler.addHandler("REMOVE_ELEMENT_FROM_TIMELINE_TRACK", (state, action: actions.REMOVE_ELEMENT_FROM_TIMELINE_TRACK) => {
