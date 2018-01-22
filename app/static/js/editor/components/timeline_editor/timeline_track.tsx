@@ -43,7 +43,10 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   }
 
   private onDragEnd(id: string) {
-    this.props.elementPositionUpdated(id, this.updatedXPosition);
+    if (this.initialYPosition) {
+      console.log("drag end on ", id, "with x position", this.updatedXPosition);
+      this.props.elementPositionUpdated(id, this.updatedXPosition);
+    }
   }
 
   private onDragMove(id: string, e: any) {
@@ -59,6 +62,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
       this.initialYPosition = undefined;
       this.props.elementRemoved(id);
+      this.forceUpdate();
     }
   }
 
@@ -108,7 +112,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
               ref={(e) => this.absoluteYPosition = e && (e as any).getAbsolutePosition().y} />
         {elements.map((element, i) => {
           return (
-            <Rect key={i}
+            <Rect key={element.id}
                   x={element.x} y={0}
                   width={element.width} height={height}
                   fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
