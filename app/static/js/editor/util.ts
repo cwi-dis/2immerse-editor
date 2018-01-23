@@ -127,6 +127,11 @@ export function getRandomInt(min: number = 0, max: number = 10) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+export function between(x: number, lowerBound: number, higherBound: number, inclusive = false): boolean {
+  return (inclusive) ? x >= lowerBound && x <= higherBound
+                     : x > lowerBound && x < higherBound;
+}
+
 export function countLeafNodes(chapter: Chapter): number {
   const children = chapter.get("children") as List<Chapter>;
 
