@@ -67,7 +67,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   }
 
   public render() {
-    const {width, height, elements, scrubberPosition} = this.props;
+    const { width, height, elements, scrubberPosition } = this.props;
     const snapDistance = (this.props.snapDistance) ? this.props.snapDistance : 0;
 
     const dragBoundFunc = (currentId: string, pos: Vector2d): Vector2d => {
@@ -87,6 +87,16 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
         newX = rightNeighbor.x - current.width;
       } else if (pos.x + current.width > width) {
         newX = width - current.width;
+      }
+
+      if (scrubberPosition) {
+        if (pos.x > scrubberPosition - snapDistance && pos.x < scrubberPosition + snapDistance) {
+          newX = scrubberPosition;
+        }
+
+        if (pos.x + current.width > scrubberPosition - snapDistance && pos.x + current.width < scrubberPosition + snapDistance) {
+          newX = scrubberPosition - current.width;
+        }
       }
 
       this.updatedXPosition = newX;
