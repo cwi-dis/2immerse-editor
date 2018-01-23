@@ -243,6 +243,32 @@ describe("Utility function getChapterKeyPath()", () => {
   });
 });
 
+describe("Utility function between()", () => {
+  it("should return true if the given value is within bounds", () => {
+    expect(util.between(10, 5, 15)).toBeTruthy();
+  });
+
+  it("should return false if the given value is outside the bounds", () => {
+    expect(util.between(3, 5, 15)).toBeFalsy();
+  });
+
+  it("should return false if the given value is on the lower bound and inclusive set to false", () => {
+    expect(util.between(5, 5, 15)).toBeFalsy();
+  });
+
+  it("should return false if the given value is on the higher bound and inclusive set to false", () => {
+    expect(util.between(15, 5, 15)).toBeFalsy();
+  });
+
+  it("should return true if the given value is on the lower bound and inclusive set to true", () => {
+    expect(util.between(5, 5, 15, true)).toBeTruthy();
+  });
+
+  it("should return true if the given value is on the higher bound and inclusive set to true", () => {
+    expect(util.between(15, 5, 15, true)).toBeTruthy();
+  });
+});
+
 describe("The ActionHandler class", () => {
   it("should return the initial state when no handlers are installed", () => {
     const handler = new util.ActionHandler({key: "value"});
