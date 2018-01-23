@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { Group, Line, Rect } from "react-konva";
 import { Vector2d } from "konva";
 
-import { findById } from "../../util";
+import { between, findById } from "../../util";
 import { TimelineElement } from "../../reducers/timelines";
 
 function getClosestNeighbors(target: TimelineElement, rects: List<TimelineElement>): [TimelineElement | undefined, TimelineElement | undefined] {
@@ -90,11 +90,11 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       }
 
       if (scrubberPosition) {
-        if (pos.x > scrubberPosition - snapDistance && pos.x < scrubberPosition + snapDistance) {
+        if (between(pos.x, scrubberPosition - snapDistance, scrubberPosition + snapDistance)) {
           newX = scrubberPosition;
         }
 
-        if (pos.x + current.width > scrubberPosition - snapDistance && pos.x + current.width < scrubberPosition + snapDistance) {
+        if (between(pos.x + current.width, scrubberPosition - snapDistance, scrubberPosition + snapDistance)) {
           newX = scrubberPosition - current.width;
         }
       }
