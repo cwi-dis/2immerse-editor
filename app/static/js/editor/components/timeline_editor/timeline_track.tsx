@@ -126,7 +126,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
                   x={element.x} y={0}
                   width={element.width} height={height}
                   fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
-                  draggable={true} dragDistance={25}
+                  draggable={true} dragDistance={snapDistance}
                   onDragEnd={this.onDragEnd.bind(this, element.id)}
                   onDragMove={this.onDragMove.bind(this, element.id)}
                   onDragStart={(e) => this.initialYPosition = e.evt.clientY}
