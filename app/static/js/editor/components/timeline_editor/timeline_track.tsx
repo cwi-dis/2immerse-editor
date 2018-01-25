@@ -28,6 +28,7 @@ interface TimelineProps {
 
   snapDistance?: number;
   scrubberPosition?: number;
+  locked?: boolean;
 }
 
 interface TimelineState {
@@ -116,6 +117,14 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       }
     };
 
+    const trackLock = () => {
+      if (this.props.locked !== undefined && this.props.locked === true) {
+        return (
+          <Rect x={0} y={0} width={width} height={height} fill="#555555" opacity={0.5} />
+        );
+      }
+    };
+
     return (
       <Group>
         <Rect x={0} y={0} width={width} height={height} fill="#555555"
@@ -134,6 +143,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
           );
         })}
         {scrubber()}
+        {trackLock()}
         <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#262626" strokeWidth={1} />
       </Group>
     );
