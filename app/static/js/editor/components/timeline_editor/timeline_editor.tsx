@@ -87,11 +87,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             </div>
 
             <div className="control">
-              <input className="input" type="number" min={1} defaultValue="100" ref={(e) => this.lengthInput = e} />
+              <input className="input" type="number" min={1} max={100} defaultValue="10" ref={(e) => this.lengthInput = e} />
             </div>
 
             <div className="control">
-              <button className="button" onClick={() => this.props.timelineActions.addElementToTimelineTrack(timeline.id, this.trackSelect!.value, "component1", this.lengthInput!.valueAsNumber)}>
+              <button className="button" onClick={() => this.props.timelineActions.addElementToTimelineTrack(timeline.id, this.trackSelect!.value, "component1", this.lengthInput!.valueAsNumber / 100)}>
                 Add element to track
               </button>
             </div>
