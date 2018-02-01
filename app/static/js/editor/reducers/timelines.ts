@@ -214,4 +214,22 @@ actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE
   }
 });
 
+actionHandler.addHandler("TOGGLE_TRACK_LOCK", (state, action: actions.TOGGLE_TRACK_LOCK) => {
+  const { timelineId, trackId } = action.payload;
+
+  try {
+    const [timelinenum] = findById(state, timelineId);
+
+    return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
+      const [tracknum] = findById(tracks, trackId);
+
+      return tracks.updateIn([tracknum, "locked"], (locked: boolean) => {
+        return !locked;
+      });
+    });
+  } catch {
+    return state;
+  }
+});
+
 export default actionHandler.getReducer();
