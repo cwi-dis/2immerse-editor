@@ -21,10 +21,11 @@ export class TimelineElement extends Record<TimelineElementAttributes>({id: "", 
 export interface TimelineTrackAttributes {
   id: string;
   regionId: string;
+  locked: boolean;
   timelineElements?: List<TimelineElement>;
 }
 
-export class TimelineTrack extends Record<TimelineTrackAttributes>({id: "", regionId: "", timelineElements: List()}) {
+export class TimelineTrack extends Record<TimelineTrackAttributes>({id: "", regionId: "", locked: false, timelineElements: List()}) {
   constructor(params?: TimelineTrackAttributes) {
     params ? super(params) : super();
   }
@@ -78,13 +79,14 @@ actionHandler.addHandler("REMOVE_TIMELINE", (state, action: actions.REMOVE_TIMEL
 });
 
 actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
-  const { timelineId, regionId } = action.payload;
+  const { timelineId, regionId, locked } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     return tracks.push(new TimelineTrack({
       id: shortid.generate(),
-      regionId
+      regionId,
+      locked
     }));
   });
 });
