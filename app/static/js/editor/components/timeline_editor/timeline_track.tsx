@@ -46,7 +46,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   private onDragEnd(id: string) {
     if (this.initialYPosition) {
       console.log("drag end on ", id, "with x position", this.updatedXPosition);
-      this.props.elementPositionUpdated(id, this.updatedXPosition);
+      this.props.elementPositionUpdated(id, this.updatedXPosition / this.props.width);
     }
   }
 
@@ -78,16 +78,16 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
       const [leftNeighbor, rightNeighbor] = getClosestNeighbors(current, elements);
       let newX = pos.x;
 
-      if (leftNeighbor && pos.x - snapDistance < leftNeighbor.x + leftNeighbor.width) {
-        newX = leftNeighbor.x + leftNeighbor.width;
+      if (leftNeighbor && pos.x - snapDistance < (leftNeighbor.x + leftNeighbor.width) * width) {
+        newX = (leftNeighbor.x + leftNeighbor.width) * width;
       } else if (pos.x < 0) {
         newX = 0;
       }
 
-      if (rightNeighbor && pos.x + current.width > rightNeighbor.x - snapDistance) {
-        newX = rightNeighbor.x - current.width;
-      } else if (pos.x + current.width > width) {
-        newX = width - current.width;
+      if (rightNeighbor && pos.x + current.width * width > rightNeighbor.x * width - snapDistance) {
+        newX = (rightNeighbor.x - current.width) * width;
+      } else if (pos.x + (current.width * width) > width) {
+        newX = width - current.width * width;
       }
 
       if (scrubberPosition) {
@@ -95,8 +95,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
           newX = scrubberPosition;
         }
 
-        if (between(pos.x + current.width, scrubberPosition - snapDistance, scrubberPosition + snapDistance)) {
-          newX = scrubberPosition - current.width;
+        if (between(pos.x + current.width * width, scrubberPosition - snapDistance, scrubberPosition + snapDistance)) {
+          newX = scrubberPosition - current.width * width;
         }
       }
 
@@ -132,8 +132,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
         {elements.map((element, i) => {
           return (
             <Rect key={element.id}
-                  x={element.x} y={0}
-                  width={element.width} height={height}
+                  x={width * element.x} y={0}
+                  width={width * element.width} height={height}
                   fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
                   draggable={true} dragDistance={snapDistance}
                   onDragEnd={this.onDragEnd.bind(this, element.id)}
