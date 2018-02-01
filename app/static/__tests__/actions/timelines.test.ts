@@ -132,4 +132,16 @@ describe("Timeline actions", () => {
 
     expect(actionCreators.updateElementLength("timeline1", "track1", "element1", 456)).toEqual(expected);
   });
+
+  it("should create a TOGGLE_TRACK_LOCK action", () => {
+    const expected: actionTypes.TOGGLE_TRACK_LOCK = {
+      type: "TOGGLE_TRACK_LOCK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1"
+      }
+    };
+
+    expect(actionCreators.toggleTrackLock("timeline1", "track1")).toEqual(expected);
+  });
 });

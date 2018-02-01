@@ -83,6 +83,16 @@ function updateElementLength(timelineId: string, trackId: string, elementId: str
   };
 }
 
+export type TOGGLE_TRACK_LOCK = PayloadAction<"TOGGLE_TRACK_LOCK", {timelineId: string, trackId: string}>;
+function toggleTrackLock(timelineId: string, trackId: string): TOGGLE_TRACK_LOCK {
+  return {
+    type: "TOGGLE_TRACK_LOCK",
+    payload: {
+      timelineId, trackId
+    }
+  };
+}
+
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
@@ -92,6 +102,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   updateElementPosition: (timelineId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
   removeElementFromTimelineTrack: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT_FROM_TIMELINE_TRACK;
   updateElementLength: (timelineId: string, trackId: string, elementId: string, length: number) => UPDATE_ELEMENT_LENGTH;
+  toggleTrackLock: (timelineId: string, trackId: string) => TOGGLE_TRACK_LOCK;
 }
 
 export const actionCreators: TimelineActions = {
@@ -102,5 +113,6 @@ export const actionCreators: TimelineActions = {
   addElementToTimelineTrack,
   updateElementPosition,
   removeElementFromTimelineTrack,
-  updateElementLength
+  updateElementLength,
+  toggleTrackLock
 };
