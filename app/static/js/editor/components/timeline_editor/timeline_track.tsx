@@ -142,8 +142,8 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
                   dragBoundFunc={dragBoundFunc.bind(this, element.id)} />
           );
         })}
-        {scrubber()}
         {trackLock()}
+        {scrubber()}
         <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#262626" strokeWidth={1} />
       </Group>
     );
