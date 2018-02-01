@@ -15,16 +15,30 @@ describe("Timeline actions", () => {
     expect(actionCreators.addTimeline("chapter1")).toEqual(expected);
   });
 
-  it("should create an ADD_TIMELINE_TRACK action", () => {
+  it("should create an ADD_TIMELINE_TRACK action with default value false for property 'locked'", () => {
     const expected: actionTypes.ADD_TIMELINE_TRACK = {
       type: "ADD_TIMELINE_TRACK",
       payload: {
         timelineId: "timeline1",
-        regionId: "region1"
+        regionId: "region1",
+        locked: false
       }
     };
 
     expect(actionCreators.addTimelineTrack("timeline1", "region1")).toEqual(expected);
+  });
+
+  it("should create an ADD_TIMELINE_TRACK action with property 'locked' set to true", () => {
+    const expected: actionTypes.ADD_TIMELINE_TRACK = {
+      type: "ADD_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        regionId: "region1",
+        locked: true
+      }
+    };
+
+    expect(actionCreators.addTimelineTrack("timeline1", "region1", true)).toEqual(expected);
   });
 
   it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with default length 10", () => {
