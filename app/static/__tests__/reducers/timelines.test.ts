@@ -652,4 +652,62 @@ describe("Timelines reducer", () => {
 
     expect(transformedState).toEqual(initialState);
   });
+
+  it("should toggle the property 'locked' on a timeline track on TOGGLE_TRACK_LOCK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    let transformedState = reducer(
+      initialState,
+      { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeTruthy();
+
+    transformedState = reducer(
+      transformedState,
+      { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeFalsy();
+  });
+
+  it("should return the state untransformed on TOGGLE_TRACK_LOCK is the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    let transformedState = reducer(
+      initialState,
+      { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline2", trackId: "track1" }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
+
+  it("should return the state untransformed on TOGGLE_TRACK_LOCK is the track does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+        ])})
+      ])})
+    ]);
+
+    let transformedState = reducer(
+      initialState,
+      { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track2" }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
+  });
 });
