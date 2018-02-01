@@ -209,6 +209,22 @@ describe("Timelines reducer", () => {
     expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
   });
 
+  it("should add a new locked track for the given region on ADD_TIMELINE_TRACK for the given chapter", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1"})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1", locked: true }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
+    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeTruthy();
+  });
+
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter even if a track for the region exists", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
