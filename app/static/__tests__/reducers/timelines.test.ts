@@ -51,7 +51,8 @@ describe("TimelineTrack class", () => {
     const track: TimelineTrack = new TimelineTrack({
       id: "track1",
       regionId: "region1",
-      timelineElements: List([timelineElement])
+      timelineElements: List([timelineElement]),
+      locked: false
     });
 
     expect(track.regionId).toEqual("region1");
@@ -72,7 +73,8 @@ describe("Timeline class", () => {
   it("should instantiate a new object with all given attributes", () => {
     const track: TimelineTrack = new TimelineTrack({
       id: "track1",
-      regionId: "region1"
+      regionId: "region1",
+      locked: false
     });
 
     const timeline: Timeline = new Timeline({
@@ -210,7 +212,7 @@ describe("Timelines reducer", () => {
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter even if a track for the region exists", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false})
       ])})
     ]);
 
@@ -228,8 +230,8 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on REMOVE_TIMELINE_TRACK if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()}),
-        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List()})
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false}),
+        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List(), locked: false})
       ])})
     ]);
 
@@ -244,8 +246,8 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on REMOVE_TIMELINE_TRACK if the track does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()}),
-        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List()})
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false}),
+        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List(), locked: false})
       ])})
     ]);
 
@@ -260,8 +262,8 @@ describe("Timelines reducer", () => {
   it("should remove a given track on REMOVE_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()}),
-        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List()})
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false}),
+        new TimelineTrack({id: "track2", regionId: "region2", timelineElements: List(), locked: false})
       ])})
     ]);
 
@@ -279,7 +281,7 @@ describe("Timelines reducer", () => {
   it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK when the track is empty", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List()})
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false})
       ])})
     ]);
 
@@ -300,7 +302,7 @@ describe("Timelines reducer", () => {
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -323,7 +325,7 @@ describe("Timelines reducer", () => {
   it("should insert a new element with the given length to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -346,7 +348,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length is 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -363,7 +365,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length is negative", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -380,7 +382,7 @@ describe("Timelines reducer", () => {
   it("should update and element's position on UPDATE_ELEMENT_POSITION", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -398,7 +400,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the new position is less than 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -415,7 +417,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -432,7 +434,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the track does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -449,7 +451,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the element does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -466,7 +468,7 @@ describe("Timelines reducer", () => {
   it("should remove a given element from a track on REMOVE_ELEMENT_FROM_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -484,7 +486,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -501,7 +503,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -518,7 +520,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -535,7 +537,7 @@ describe("Timelines reducer", () => {
   it("should update a given element's length on UPDATE_ELEMENT_LENGTH", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -553,7 +555,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -570,7 +572,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing a negative number", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -587,7 +589,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -604,7 +606,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH if the track does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
@@ -621,7 +623,7 @@ describe("Timelines reducer", () => {
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH if the element does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
-        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
           new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
         ])})
       ])})
