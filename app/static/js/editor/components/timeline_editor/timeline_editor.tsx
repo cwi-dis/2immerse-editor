@@ -19,6 +19,7 @@ interface TimelineEditorProps extends RouterProps {
 interface TimelineEditorState {
   scrubberPosition: number;
   snapEnabled: boolean;
+  trackLocked: boolean;
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
@@ -30,7 +31,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     this.state = {
       scrubberPosition: 0,
-      snapEnabled: true
+      snapEnabled: true,
+      trackLocked: false
     };
   }
 
@@ -71,7 +73,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br/><br/>
 
-          <button className="button" onClick={() => this.props.timelineActions.addTimelineTrack(timeline.id, "region1")}>
+          <label>
+            <input type="checkbox"
+                   checked={this.state.trackLocked}
+                   onChange={(e) => this.setState({trackLocked: e.target.checked})} />
+            &emsp;Lock new track&emsp;
+          </label>
+          <button className="button" onClick={() => this.props.timelineActions.addTimelineTrack(timeline.id, "region1", this.state.trackLocked)}>
             Add new track
           </button>
 
@@ -107,6 +115,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                 return (
                   <Group key={i} y={i * 40 + 14}>
                     <TimelineTrack elements={timelineTrack.timelineElements!}
+                                   locked={timelineTrack.locked}
                                    elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
                                    elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
                                    width={1000} height={40}
