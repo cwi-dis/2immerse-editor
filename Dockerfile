@@ -1,12 +1,8 @@
-FROM python:2.7
+FROM alpine:3.7
 
 ENV PYTHONUNBUFFERED 1
 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    curl -sL https://deb.nodesource.com/setup_8.x | bash -
-
-RUN apt-get install -y nodejs yarn && \
+RUN apk add --no-cache nodejs yarn python2 py2-pip git && \
     npm install --unsafe-perm --global webpack jest
 
 RUN mkdir -p /code/app/static/
@@ -26,7 +22,7 @@ RUN cd app/static && \
     webpack
 
 RUN npm uninstall -g webpack && \
-    apt-get remove -y yarn
+    apk del py2-pip yarn git
 
 EXPOSE 8000
 CMD ["python", "run.py"]
