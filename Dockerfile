@@ -22,7 +22,8 @@ RUN cd app/static && \
     webpack
 
 RUN npm uninstall -g webpack && \
-    apk del py2-pip yarn git
+    apk del py2-pip git && \
+    rm -rf app/static/node_modules
 
 EXPOSE 8000
 CMD ["python", "run.py"]
