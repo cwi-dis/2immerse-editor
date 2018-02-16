@@ -1,29 +1,27 @@
-FROM alpine:3.7
+FROM alpine:3.7 AS build
 
-ENV PYTHONUNBUFFERED 1
-
-RUN apk add --no-cache nodejs yarn python2 py2-pip git && \
-    npm install --unsafe-perm --global webpack jest
-
-RUN mkdir -p /code/app/static/
-
-ADD requirements.txt /code/
-ADD app/static/package.json app/static/yarn.lock /code/app/static/
-
-WORKDIR /code
-
-RUN pip install -r requirements.txt && \
-    cd app/static && \
-    yarn install
+RUN apk add --no-cache nodejs yarn git && \
+    npm install --unsafe-perm --global webpack
 
 ADD . /code/
+WORKDIR /code
 
 RUN cd app/static && \
+    yarn install && \
     webpack
 
 RUN npm uninstall -g webpack && \
-    apk del py2-pip git && \
-    rm -rf app/static/node_modules
+    yarn cache clean && \
+    rm -r app/static/node_modules/
+
+FROM alpine:3.7
+ENV PYTHONUNBUFFERED 1
+
+WORKDIR /code
+COPY --from=build /code .
+
+RUN apk add --no-cache python2 py2-pip && \
+    pip install -r requirements.txt
 
 EXPOSE 8000
 CMD ["python", "run.py"]
