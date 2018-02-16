@@ -1,18 +1,13 @@
 FROM alpine:3.7 AS build
 
-RUN apk add --no-cache nodejs yarn git && \
-    npm install --unsafe-perm --global webpack
-
 ADD . /code/
-WORKDIR /code
 
-RUN cd app/static && \
+RUN apk add --no-cache nodejs yarn git && \
+    cd /code/app/static && \
     yarn install && \
-    webpack
-
-RUN npm uninstall -g webpack && \
+    yarn run webpack && \
     yarn cache clean && \
-    rm -r app/static/node_modules/
+    rm -r node_modules/
 
 FROM alpine:3.7
 ENV PYTHONUNBUFFERED 1
