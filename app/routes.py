@@ -45,4 +45,4 @@ def version():
 
 @app.route("/healthcheck")
 def healthcheck():
-    return ("", 204)
+    return ("", 200)
