@@ -15,7 +15,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 COPY --from=build /code .
 
-RUN apk add --no-cache python2 py2-pip && \
+RUN apk add --no-cache python2 py2-pip py-gevent && \
     pip install -r requirements.txt
 
 EXPOSE 8000
