@@ -48,6 +48,6 @@ def broadcast_trigger_events(document_id, events):
 
         trigger.emit(
             "BROADCAST_EVENTS",
-            document_id,
+            str(document_id),
             events
         )
