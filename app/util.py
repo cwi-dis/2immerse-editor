@@ -1,4 +1,6 @@
 from hashlib import sha256
+from socketIO_client import SocketIO, SocketIONamespace
+from api.globalSettings import GlobalSettings
 
 
 def hash_file(path):
@@ -38,3 +40,14 @@ def get_head_revision():
                 raise IOError("Could not determine revision")
 
             return branch, revision
+
+
+def broadcast_trigger_events(document_id, events):
+    with SocketIO(GlobalSettings.websocketService) as socket:
+        trigger = socket.define(SocketIONamespace, "/trigger")
+
+        trigger.emit(
+            "BROADCAST_EVENTS",
+            document_id,
+            events
+        )
