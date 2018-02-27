@@ -8,6 +8,7 @@ import urllib
 import globalSettings
 from globalSettings import GlobalSettings
 from app import myLogging
+from ..util import broadcast_trigger_events
 
 myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)
 
@@ -199,6 +200,7 @@ def document_events_trigger(documentId, id):
 
     events = document.events()
     assert events
+    broadcast_trigger_events(documentId, events.get())
 
     parameters = request.get_json()
     if not isinstance(parameters, list):
@@ -216,6 +218,7 @@ def document_events_modify(documentId, id):
 
     events = document.events()
     assert events
+    broadcast_trigger_events(documentId, events.get())
 
     parameters = request.get_json()
     if not isinstance(parameters, list):
