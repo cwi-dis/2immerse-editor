@@ -43,7 +43,12 @@ def get_head_revision():
 
 
 def broadcast_trigger_events(document_id, events):
-    with SocketIO(GlobalSettings.websocketService) as socket:
+    websocket_service = GlobalSettings.websocketService
+
+    if websocket_service[-1] == "/":
+        websocket_service = websocket_service[:-1]
+
+    with SocketIO(websocket_service) as socket:
         trigger = socket.define(SocketIONamespace, "/trigger")
 
         trigger.emit(
