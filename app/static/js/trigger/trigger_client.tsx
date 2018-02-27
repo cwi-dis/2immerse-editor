@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
+import * as io from "socket.io-client";
 
 import { makeRequest, parseQueryString } from "../editor/util";
 import EventList from "./event_list";
@@ -99,6 +100,29 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     });
   }
 
+  private subscribeToEventUpdates() {
+    makeRequest("GET", "/api/v1/configuration").then((data) => {
+      const { websocketService } = JSON.parse(data);
+      const { documentId } = this.props;
+
+      console.log("Connecting to", websocketService + "/trigger");
+      const socket = io(websocketService, { path: "/trigger", secure: true });
+
+      socket.on("connect", () => {
+        console.log("Connected to websocket-service");
+
+        socket.emit("JOIN", documentId, () => {
+          console.log("Joined channel for document ID", documentId);
+        });
+      });
+
+      socket.on("EVENTS", (data: any) => {
+        console.log("Received trigger events:");
+        console.log(data);
+      });
+    });
+  }
+
   public componentDidMount() {
     const query = parseQueryString(location.hash);
 
@@ -117,6 +141,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     this.pollingInterval = setInterval(() => {
       this.fetchEvents();
     }, this.pollingFrequency);
+
+    this.subscribeToEventUpdates();
   }
 
   public componentWillUnmount() {
