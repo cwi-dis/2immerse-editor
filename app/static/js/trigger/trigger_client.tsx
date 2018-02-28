@@ -105,12 +105,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const { websocketService } = JSON.parse(data);
       const { documentId } = this.props;
 
-      console.log("Connecting to", websocketService + "/trigger");
-      const socket = io(websocketService, {
-        path: "/trigger",
-        secure: true,
-        transports: ["websocket"]
-      });
+      const url = (websocketService as string).replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
+      console.log("Connecting to", url);
+
+      const socket = io(url, { transports: ["websocket"] });
 
       socket.on("connect", () => {
         console.log("Connected to websocket-service");
