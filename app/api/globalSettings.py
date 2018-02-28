@@ -18,15 +18,15 @@ class GlobalSettings(object):
     # URLs for 2immerse services
     layoutService = os.getenv(
         "LAYOUT_SERVICE_URL",
-        "https://layout-service-edge.platform.2immerse.eu/layout/v4"
+        "https://layout-service.edge.platform.2immerse.eu/layout/v4"
     )
     websocketService = os.getenv(
         "WEBSOCKET_SERVICE_URL",
-        "https://websocket-service-edge.platform.2immerse.eu/"
+        "https://websocket-service.edge.platform.2immerse.eu/"
     )
     timelineService = os.getenv(
         "TIMELINE_SERVICE_URL",
-        "https://timeline-service-edge.platform.2immerse.eu/timeline/v1"
+        "https://timeline-service.edge.platform.2immerse.eu/timeline/v1"
     )
     kibanaService = os.getenv(
         "KIBANA_SERVICE_URL",
