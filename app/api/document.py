@@ -1281,11 +1281,6 @@ class DocumentServe:
             if not operations and not wantStateUpdates:
                 break
 
-        broadcast_trigger_events(
-            self.document.documentId,
-            self.document.events().get()
-        )
-
         for callback in toRemove:
             self.logger.info('removeCallback(%s)'%callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
