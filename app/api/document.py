@@ -11,7 +11,6 @@ import os
 import time
 import requests
 from globalSettings import GlobalSettings
-from ..util import broadcast_trigger_events
 import clocks
 
 import logging
@@ -91,6 +90,23 @@ def edit(method):
             self.document._forwardToOthers(toForward)
         return rv
     return wrapper
+
+
+def broadcast_trigger_events(document_id, events):
+    websocket_service = GlobalSettings.websocketService
+
+    if websocket_service[-1] == "/":
+        websocket_service = websocket_service[:-1]
+
+    with SocketIO(websocket_service) as socket:
+        trigger = socket.define(SocketIONamespace, "/trigger")
+
+        trigger.emit(
+            "BROADCAST_EVENTS",
+            str(document_id),
+            events
+        )
+
 
 class EditManager:
     """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
