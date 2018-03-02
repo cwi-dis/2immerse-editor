@@ -102,10 +102,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   private subscribeToEventUpdates() {
     makeRequest("GET", "/api/v1/configuration").then((data) => {
-      const { websocketService } = JSON.parse(data);
+      const { websocketService }: { [index: string]: string } = JSON.parse(data);
       const { documentId } = this.props;
 
-      const url = (websocketService as string).replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
+      const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
       console.log("Connecting to", url);
 
       const socket = io(url, { transports: ["websocket"] });
@@ -118,7 +118,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         });
       });
 
-      socket.on("EVENTS", (data: any) => {
+      socket.on("EVENTS", (data: Object) => {
         console.log("Received trigger events:");
         console.log(data);
       });
