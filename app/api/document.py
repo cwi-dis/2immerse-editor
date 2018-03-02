@@ -11,6 +11,7 @@ import os
 import time
 import requests
 from globalSettings import GlobalSettings
+from ..util import broadcast_trigger_events
 import clocks
 
 import logging
@@ -1263,6 +1264,12 @@ class DocumentServe:
             # Only continue if we have anything to say...
             if not operations and not wantStateUpdates:
                 break
+
+        broadcast_trigger_events(
+            self.document.documentId,
+            self.document.events().get()
+        )
+
         for callback in toRemove:
             self.logger.info('removeCallback(%s)'%callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
