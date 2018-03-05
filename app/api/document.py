@@ -1,4 +1,5 @@
 from flask import Response, request, abort
+from socketIO_client import SocketIO, SocketIONamespace
 import urllib2
 import urllib
 import urlparse

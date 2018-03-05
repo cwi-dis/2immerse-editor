@@ -1,5 +1,4 @@
 from hashlib import sha256
-from socketIO_client import SocketIO, SocketIONamespace
 from api.globalSettings import GlobalSettings
 
 
