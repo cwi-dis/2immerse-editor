@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@types/socket.io-client": "^1.4.32",
-    "bulma": "^0.4.2",
+    "bulma": "^0.6.2",
     "classnames": "^2.2.5",
     "immutable": "4.0.0-rc.7",
     "konva": "https://github.com/konvajs/konva",
