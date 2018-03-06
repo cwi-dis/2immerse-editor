@@ -30,6 +30,27 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     };
   }
 
+  private loadTemplate(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const layout = JSON.parse(reader.result);
+
+        if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
+          alert("Received invalid file or layout model is not 'template'");
+        } else {
+          alert("Now that's something I can work with...");
+        }
+
+        return;
+      };
+
+      reader.readAsText(file);
+    }
+  }
+
   public componentDidMount() {
     this.setState({
       personalScreenWidth: this.personalColumn.clientWidth,
