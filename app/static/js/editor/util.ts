@@ -1,5 +1,6 @@
 import { Collection, List, Map } from "immutable";
 import { ThunkAction } from "redux-thunk";
+import { validate } from "jsonschema";
 
 import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
@@ -188,6 +189,21 @@ export function shortenUrl(originalUrl: string): Promise<string> {
       resolve(shortUrl);
     }).catch((err) => {
       reject(err);
+    });
+  });
+}
+
+export function validateLayout(layout: any): Promise<void> {
+  return new Promise((resolve, reject) => {
+    makeRequest("GET", "/static/dist/v4-document-schema.json").then((data) => {
+      const schema = JSON.parse(data);
+      const result = validate(layout, schema);
+
+      if (result.valid) {
+        resolve();
+      } else {
+        reject(result.errors);
+      }
     });
   });
 }
