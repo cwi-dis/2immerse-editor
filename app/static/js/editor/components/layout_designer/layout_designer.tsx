@@ -49,7 +49,22 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
 
         <div className="block">
           <a style={{marginRight: 10}} className="button is-info" onClick={screenActions.addDevice.bind(null, "communal")}>Add communal device</a>
-          <a className="button is-info" onClick={screenActions.addDevice.bind(null, "personal")}>Add personal device</a>
+          <a style={{marginRight: 10}} className="button is-info" onClick={screenActions.addDevice.bind(null, "personal")}>Add personal device</a>
+          <div className="field" style={{display: "inline-block"}}>
+            <div className="file is-info">
+              <label className="file-label">
+                <input className="file-input" type="file" accept=".json" onChange={this.loadTemplate.bind(this)} />
+                <span className="file-cta">
+                  <span className="file-icon">
+                    <i className="fas fa-upload"></i>
+                  </span>
+                  <span className="file-label">
+                    Load template
+                  </span>
+                </span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <br/>
