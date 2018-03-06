@@ -31,14 +31,16 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 
   private loadTemplate(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
+    if (e.target.files && e.target.files.length >= 1) {
       const file = e.target.files[0];
       const reader = new FileReader();
 
       reader.onload = () => {
         const layout = JSON.parse(reader.result);
 
-        if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
+        if (layout.version === undefined || layout.version !== 4) {
+          alert("Can only process version 4 layout documents");
+        } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
           alert("Received invalid file or layout model is not 'template'");
         } else {
           alert("Now that's something I can work with...");
