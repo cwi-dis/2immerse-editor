@@ -6,6 +6,7 @@ import { ApplicationState } from "../../store";
 import { ScreenState } from "../../reducers/screens";
 import { actionCreators as screenActionCreators, ScreenActions } from "../../actions/screens";
 import ScreenContainer from "./screen_container";
+import { validateLayout } from "../../util";
 
 type LayoutDesignerProps = {
   screens: ScreenState
@@ -38,15 +39,18 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       reader.onload = () => {
         const layout = JSON.parse(reader.result);
 
-        if (layout.version === undefined || layout.version !== 4) {
-          alert("Can only process version 4 layout documents");
-        } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
-          alert("Received invalid file or layout model is not 'template'");
-        } else {
-          alert("Now that's something I can work with...");
-        }
-
-        return;
+        validateLayout(layout).then(() => {
+          if (layout.version === undefined || layout.version !== 4) {
+            alert("Can only process version 4 layout documents");
+          } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
+            alert("Received invalid file or layout model is not 'template'");
+          } else {
+            alert("Now that's something I can work with...");
+          }
+        }).catch((errors) => {
+          alert("Layout validation failed");
+          console.error(errors);
+        });
       };
 
       reader.readAsText(file);
