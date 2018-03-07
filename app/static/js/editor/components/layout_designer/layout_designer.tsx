@@ -8,6 +8,28 @@ import { actionCreators as screenActionCreators, ScreenActions } from "../../act
 import ScreenContainer from "./screen_container";
 import { validateLayout } from "../../util";
 
+interface TemplateRegion {
+  region: {
+    id: string,
+    position: { x: number, y: number },
+    size: { width: number, height: number }
+  };
+}
+
+interface LayoutTemplate {
+  deviceType: string;
+  layout: {
+    communal: {
+      portrait: Array<TemplateRegion>,
+      landscape: Array<TemplateRegion>
+    },
+    personal: {
+      portrait: Array<TemplateRegion>,
+      landscape: Array<TemplateRegion>
+    }
+  };
+}
+
 type LayoutDesignerProps = {
   screens: ScreenState
   screenActions: ScreenActions
