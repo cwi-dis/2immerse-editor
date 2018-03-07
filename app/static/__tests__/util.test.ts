@@ -726,3 +726,41 @@ describe("Utility function pluck()", () => {
     expect(util.pluck(original, [])).toEqual({});
   });
 });
+
+describe("Utility function validateLayout()", () => {
+  it("should resolve if the schema matches the data", () => {
+    XHRmock.setup();
+
+    XHRmock.get("/static/dist/v4-document-schema.json", (req, res) => {
+      return res.body(JSON.stringify({
+        type: "number"
+      }));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.validateLayout(1)
+    ).resolves.toBeUndefined().then(() => {
+      XHRmock.teardown();
+    });
+  });
+
+  it("should reject with error if the schema does not match the data", () => {
+    XHRmock.setup();
+
+    XHRmock.get("/static/dist/v4-document-schema.json", (req, res) => {
+      return res.body(JSON.stringify({
+        type: "string"
+      }));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.validateLayout(1)
+    ).rejects.not.toBeUndefined().then(() => {
+      XHRmock.teardown();
+    });
+  });
+});
