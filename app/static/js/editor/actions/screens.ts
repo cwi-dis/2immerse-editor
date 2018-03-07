@@ -1,6 +1,6 @@
 import { ActionCreatorsMapObject } from "redux";
 
-import { PayloadAction, AsyncAction, findById } from "../util";
+import { Coords, PayloadAction, AsyncAction, findById } from "../util";
 import { actionCreators as masterActionCreators } from "./masters";
 
 export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
@@ -56,6 +56,16 @@ function updateSelectedScreen(screenId?: string): UPDATE_SELECTED_SCREEN {
   };
 }
 
+export type PLACE_REGION_ON_SCREEN = PayloadAction<"PLACE_REGION_ON_SCREEN", {screenId: string, position: Coords, size: Coords}>;
+function placeRegionOnScreen(screenId: string, position: Coords, size: Coords): PLACE_REGION_ON_SCREEN {
+  return {
+    type: "PLACE_REGION_ON_SCREEN",
+    payload: {
+      screenId, position, size
+    }
+  };
+}
+
 function removeDeviceAndUpdateMasters(id: string): AsyncAction<void> {
   return (dispatch, getState) => {
     const { currentScreen } = getState().screens;
@@ -94,6 +104,7 @@ export interface ScreenActions extends ActionCreatorsMapObject {
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
   undoLastSplitAndUpdateMasters: (screenId: string) => AsyncAction<void>;
   updateSelectedScreen: (screenId?: string) => UPDATE_SELECTED_SCREEN;
+  placeRegionOnScreen: (screenId: string, position: Coords, size: Coords) => PLACE_REGION_ON_SCREEN;
 }
 
 export const actionCreators: ScreenActions = {
@@ -103,5 +114,6 @@ export const actionCreators: ScreenActions = {
   splitRegion,
   undoLastSplit,
   undoLastSplitAndUpdateMasters,
-  updateSelectedScreen
+  updateSelectedScreen,
+  placeRegionOnScreen
 };
