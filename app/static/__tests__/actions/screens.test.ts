@@ -91,6 +91,19 @@ describe("Screen actions", () => {
     expect(actionCreators.updateSelectedScreen()).toEqual(expected);
     expect(actionCreators.updateSelectedScreen(undefined)).toEqual(expected);
   });
+
+  it("should create a PLACE_REGION_ON_SCREEN action with the given arguments", () => {
+    const expected: actionTypes.PLACE_REGION_ON_SCREEN = {
+      type: "PLACE_REGION_ON_SCREEN",
+      payload: {
+        screenId: "screen1",
+        position: [1, 0.6],
+        size: [0.5, 0.4]
+      }
+    };
+
+    expect(actionCreators.placeRegionOnScreen("screen1", [1, 0.6], [0.5, 0.4])).toEqual(expected);
+  });
 });
 
 describe("Async screen actions", () => {
