@@ -3,12 +3,14 @@ import { ActionCreatorsMapObject } from "redux";
 import { Coords, PayloadAction, AsyncAction, findById } from "../util";
 import { actionCreators as masterActionCreators } from "./masters";
 
-export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal"}>
-function addDevice(type: "personal" | "communal"): ADD_DEVICE {
+export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>
+function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"): ADD_DEVICE {
   return {
     type: "ADD_DEVICE",
     payload: {
-      type
+      type,
+      name,
+      orientation
     }
   };
 }
@@ -97,7 +99,7 @@ function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
 }
 
 export interface ScreenActions extends ActionCreatorsMapObject {
-  addDevice: (type: "personal" | "communal") => ADD_DEVICE;
+  addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
   removeDeviceAndUpdateMasters: (id: string) => AsyncAction<void>;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
