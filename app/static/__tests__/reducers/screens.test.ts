@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 
 import { List } from "immutable";
+import { Coords } from "../../js/editor/util";
 import reducer, { Screen, ScreenRegion, ScreenState } from "../../js/editor/reducers/screens";
 
 describe("Screen class", () => {
@@ -524,7 +525,7 @@ describe("Screens reducer", () => {
     expect(transformedState.currentScreen).toEqual("screen1");
   });
 
-  it("should reset the current screen when passing undefined", () => {
+  it("should reset the current screen when passing undefined on UPDATE_SELECTED_SCREEN", () => {
     const state: ScreenState = new ScreenState({previewScreens: List([
       new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
       new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
@@ -545,5 +546,47 @@ describe("Screens reducer", () => {
     );
 
     expect(transformedState.currentScreen).toBeUndefined();
+  });
+
+  it("should add a new region on PLACE_REGION_ON_SCREEN", () => {
+    const state: ScreenState = new ScreenState({previewScreens: List([
+      new Screen({ id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List()}),
+      new Screen({ id: "screen2", name: "Screen 2", type: "communal", orientation: "landscape", regions: List()})
+    ])});
+
+    const transformedState = reducer(
+      state,
+      { type: "PLACE_REGION_ON_SCREEN", payload: { screenId: "screen1", position: [0, 0.2], size: [1, 0.8] } } as any
+    );
+
+    const screen = transformedState.previewScreens.get(0);
+
+    expect(screen.regions.count()).toEqual(1);
+    expect(screen.regions.get(0).position).toEqual([0, 0.2]);
+    expect(screen.regions.get(0).size).toEqual([1, 0.8]);
+  });
+
+  it("should add a new region on PLACE_REGION_ON_SCREEN at the end of the list of regions", () => {
+    const state: ScreenState = new ScreenState({
+      previewScreens: List([
+        new Screen({
+          id: "screen1", name: "Screen 1", type: "personal", orientation: "portrait", regions: List([
+            { id: "region1", position: [0, 0] as Coords, size: [1, 1] as Coords, splitFrom: [null]},
+            { id: "region2", position: [0.2, 0.2] as Coords, size: [0.3, 0.3] as Coords, splitFrom: [null]},
+          ])
+        }),
+      ])
+    });
+
+    const transformedState = reducer(
+      state,
+      { type: "PLACE_REGION_ON_SCREEN", payload: { screenId: "screen1", position: [0, 0.2], size: [1, 0.8] } } as any
+    );
+
+    const screen = transformedState.previewScreens.get(0);
+
+    expect(screen.regions.count()).toEqual(3);
+    expect(screen.regions.get(2).position).toEqual([0, 0.2]);
+    expect(screen.regions.get(2).size).toEqual([1, 0.8]);
   });
 });
