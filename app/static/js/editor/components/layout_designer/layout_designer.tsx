@@ -53,6 +53,45 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     };
   }
 
+  private parseTemplateRegions(regions: {portrait: Array<TemplateRegion>, landscape: Array<TemplateRegion>}, name: string, type: "communal" | "personal") {
+    const { portrait, landscape } = regions;
+
+    if (portrait.length > 0) {
+      this.props.screenActions.addDevice(type, name, "portrait");
+      const newScreen = this.props.screens.previewScreens.last()!;
+
+      portrait.forEach(({ region }) => {
+        this.props.screenActions.placeRegionOnScreen(
+          newScreen.id,
+          [region.position.x, region.position.y],
+          [region.size.width, region.size.height]
+        );
+      });
+    }
+
+    if (landscape.length > 0) {
+      this.props.screenActions.addDevice(type, name, "landscape");
+      const newScreen = this.props.screens.previewScreens.last()!;
+
+      landscape.forEach(({ region }) => {
+        this.props.screenActions.placeRegionOnScreen(
+          newScreen.id,
+          [region.position.x, region.position.y],
+          [region.size.width, region.size.height]
+        );
+      });
+    }
+  }
+
+  private parseLayoutTemplates(templates: Array<LayoutTemplate>): void {
+    templates.forEach((template) => {
+      const { communal, personal } = template.layout;
+
+      this.parseTemplateRegions(communal, template.deviceType, "communal");
+      this.parseTemplateRegions(personal, template.deviceType, "personal");
+    });
+  }
+
   private loadTemplate(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length >= 1) {
       const file = e.target.files[0];
@@ -65,9 +104,9 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
           if (layout.version === undefined || layout.version !== 4) {
             alert("Can only process version 4 layout documents");
           } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
-            alert("Received invalid file or layout model is not 'template'");
+            alert("Can only process files with layout model 'template'");
           } else {
-            alert("Now that's something I can work with...");
+            this.parseLayoutTemplates(layout.templates);
           }
         }).catch((errors) => {
           alert("Layout validation failed");
@@ -76,6 +115,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       };
 
       reader.readAsText(file);
+      e.target.value = "";
     }
   }
 
