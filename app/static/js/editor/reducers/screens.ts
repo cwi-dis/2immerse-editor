@@ -4,7 +4,6 @@ import * as shortid from "shortid";
 import * as actions from "../actions/screens";
 import { ActionHandler, Coords, findById, getRandomInt } from "../util";
 
-
 export interface ScreenRegion {
   id: string;
   position: Coords;
@@ -190,6 +189,20 @@ actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDAT
   }
 
   return state.set("currentScreen", result[1].id);
+});
+
+actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE_REGION_ON_SCREEN) => {
+  const { screenId, position, size } = action.payload;
+  const [screenIndex] = findById(state.previewScreens, screenId);
+
+  return state.updateIn(["previewScreens", screenIndex, "regions"], (regions: Array<ScreenRegion>) => {
+    return regions.push({
+      id: shortid.generate(),
+      position,
+      size,
+      splitFrom: [null]
+    });
+  });
 });
 
 export default actionHandler.getReducer();
