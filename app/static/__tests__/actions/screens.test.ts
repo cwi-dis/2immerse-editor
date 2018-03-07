@@ -31,6 +31,19 @@ describe("Screen actions", () => {
     expect(actionCreators.addDevice("personal")).toEqual(expected);
   });
 
+  it("should create an ADD_DEVICE action for a personal screen with the given name and orientation", () => {
+    const expected: actionTypes.ADD_DEVICE = {
+      type: "ADD_DEVICE",
+      payload: {
+        type: "personal",
+        name: "my screen",
+        orientation: "landscape"
+      }
+    };
+
+    expect(actionCreators.addDevice("personal", "my screen", "landscape")).toEqual(expected);
+  });
+
   it("should create a REMOVE_DEVICE action with the given ID", () => {
     const expected: actionTypes.REMOVE_DEVICE = {
       type: "REMOVE_DEVICE",

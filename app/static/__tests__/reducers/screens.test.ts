@@ -76,6 +76,22 @@ describe("Screens reducer", () => {
     expect(previewScreens.get(0).regions.get(0).size).toEqual([1, 1]);
   });
 
+  it("should add a new personal screen to the end of the list on ADD_DEVICE with the given name and orientation", () => {
+    const state = reducer(new ScreenState({previewScreens: List()}), { type: "ADD_DEVICE", payload: { type: "personal", name: "my screen", orientation: "landscape" }} as any);
+    const { previewScreens } = state;
+
+    expect(previewScreens.count()).toEqual(1);
+
+    expect(previewScreens.get(0).type).toEqual("personal");
+    expect(previewScreens.get(0).orientation).toEqual("landscape");
+    expect(previewScreens.get(0).name).toEqual("my screen");
+
+    expect(previewScreens.get(0).regions.count()).toEqual(1);
+
+    expect(previewScreens.get(0).regions.get(0).position).toEqual([0, 0]);
+    expect(previewScreens.get(0).regions.get(0).size).toEqual([1, 1]);
+  });
+
   it("should add a new communal screen to the end of the list on ADD_DEVICE", () => {
     const state = reducer(new ScreenState({previewScreens: List()}), { type: "ADD_DEVICE", payload: { type: "communal" }} as any);
     const { previewScreens } = state;
