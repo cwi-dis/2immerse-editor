@@ -30,7 +30,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
-    const dropRegion = regions.findEntry((region) => {
+    const dropRegion = regions.reverse().findEntry((region) => {
       const topLeft = region.position;
       const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
 
