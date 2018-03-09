@@ -91,13 +91,15 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
     splitFrom: region.splitFrom.concat(newRegionId),
     splitDirection: region.splitDirection,
     position: region.position,
-    size: size1
+    size: size1,
+    color: region.color
   }, {
     id: newRegionId,
     splitFrom: [region.id],
     splitDirection: orientation,
     position: position2,
-    size: size2
+    size: size2,
+    color: region.color
   }];
 }
 
