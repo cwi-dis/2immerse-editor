@@ -26,7 +26,7 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
           return (
             <Rect x={x * width} y={y * height}
                   width={w * width} height={h * height}
-                  fill="transparent" stroke="black" strokeWidth={1}
+                  fill={region.color || "transparent"} stroke="black" strokeWidth={1}
                   key={i} />
           );
         })}

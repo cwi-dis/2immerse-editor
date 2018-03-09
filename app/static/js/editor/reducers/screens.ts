@@ -11,6 +11,7 @@ export interface ScreenRegion {
   splitFrom: Array<string | null>;
   splitDirection?: "horizontal" | "vertical";
   zIndex?: number;
+  color?: string;
 }
 
 export interface ScreenAttributes {
@@ -51,7 +52,8 @@ function createNewScreen(type: "communal" | "personal", name?: string, orientati
     id: shortid.generate(),
     position: [0, 0],
     size: [1, 1],
-    splitFrom: [null]
+    splitFrom: [null],
+    color: "#FFFFFF"
   };
 
   return new Screen({
@@ -195,7 +197,7 @@ actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE
   const { screenId, position, size } = action.payload;
   const [screenIndex] = findById(state.previewScreens, screenId);
 
-  return state.updateIn(["previewScreens", screenIndex, "regions"], (regions: Array<ScreenRegion>) => {
+  return state.updateIn(["previewScreens", screenIndex, "regions"], (regions: List<ScreenRegion>) => {
     return regions.push({
       id: shortid.generate(),
       position,
