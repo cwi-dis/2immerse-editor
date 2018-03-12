@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Stage } from "react-konva";
 
-import { ApplicationState } from "../../store";
+import { ApplicationState, navigate } from "../../store";
 import { RouterProps } from "../../util";
 import { TimelineState } from "../../reducers/timelines";
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
@@ -39,6 +39,16 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     };
   }
 
+  public componentWillMount() {
+    const { match: { params } } = this.props;
+    const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
+
+    if (timeline === undefined) {
+      console.log("Chapter has no timeline yet, redirecting to ProgramAuthor");
+      navigate("/program");
+    }
+  }
+
   public componentDidMount() {
     console.log("main column width:", this.mainColumn && this.mainColumn.clientWidth);
 
@@ -59,8 +69,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   public render() {
     const { match: { params } } = this.props;
-
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
+
+    if (timeline === undefined) {
+      return null;
+    }
+
     const { timelineTracks } = timeline;
 
     return (
