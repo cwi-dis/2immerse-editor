@@ -32,13 +32,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.state = {
       scrubberPosition: 0,
       snapEnabled: true,
-      trackLocked: false
+      trackLocked: false,
     };
   }
 
   public componentDidMount() {
-    const { match: { params } } = this.props;
-    this.props.timelineActions.addTimeline(params.chapterid);
   }
 
   private elementPositionUpdated(timelineId: string, trackId: string, componentId: string, x: number) {
@@ -51,13 +49,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   public render() {
     const { match: { params } } = this.props;
+
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
-
-    if (timeline === undefined) {
-      console.log("no timeline for current chapter");
-      return null;
-    }
-
     const { timelineTracks } = timeline;
 
     return (

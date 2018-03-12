@@ -11,7 +11,9 @@ import { Chapter } from "../../reducers/chapters";
 import { ApplicationState, navigate } from "../../store";
 import { ChapterState } from "../../reducers/chapters";
 import { MasterState } from "../../reducers/masters";
+import { TimelineState } from "../../reducers/timelines";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../../actions/chapters";
+import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
@@ -19,7 +21,9 @@ import NodeConnectors from "./node_connectors";
 interface ProgramAuthorProps {
   chapters: ChapterState;
   masters: MasterState;
+  timelines: TimelineState;
   chapterActions: ChapterActions;
+  timelineActions: TimelineActions;
 }
 
 class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
@@ -42,6 +46,12 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private handleBoxClick(accessPath: Array<number>): void {
     const keyPath = generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
+
+    const timeline = this.props.timelines.find((timeline) => timeline.chapterId === chapter.id)!;
+    if (timeline === undefined) {
+      console.log("Adding new timeline for chapter");
+      this.props.timelineActions.addTimeline(chapter.id);
+    }
 
     navigate(`/timeline/${chapter.id}`);
   }
@@ -230,13 +240,15 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   return {
     chapters: state.chapters,
-    masters: state.masters
+    masters: state.masters,
+    timelines: state.timelines
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): Partial<ProgramAuthorProps> {
   return {
-    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch)
+    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch),
+    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch)
   };
 }
 
