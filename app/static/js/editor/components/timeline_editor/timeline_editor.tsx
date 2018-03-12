@@ -20,11 +20,13 @@ interface TimelineEditorState {
   scrubberPosition: number;
   snapEnabled: boolean;
   trackLocked: boolean;
+  mainColumnWidth: number;
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
   private trackSelect: HTMLSelectElement | null;
   private lengthInput: HTMLInputElement | null;
+  private mainColumn: HTMLDivElement | null;
 
   public constructor(props: TimelineEditorProps) {
     super(props);
@@ -33,10 +35,18 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       scrubberPosition: 0,
       snapEnabled: true,
       trackLocked: false,
+      mainColumnWidth: 0
     };
   }
 
   public componentDidMount() {
+    console.log("main column width:", this.mainColumn && this.mainColumn.clientWidth);
+
+    if (this.mainColumn) {
+      this.setState({
+        mainColumnWidth: this.mainColumn.clientWidth
+      });
+    }
   }
 
   private elementPositionUpdated(timelineId: string, trackId: string, componentId: string, x: number) {
@@ -55,7 +65,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     return (
       <div className="columnlayout">
-        <div className="column-content" style={{flexGrow: 1}}>
+        <div className="column-content" style={{flexGrow: 1}} ref={(e) => this.mainColumn = e}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
           <label>
             <input type="checkbox"
@@ -100,9 +110,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br/><br/>
 
-          <Stage width={1000} height={40 * timelineTracks!.count() + 14}>
+          <Stage width={this.state.mainColumnWidth} height={40 * timelineTracks!.count() + 14} style={{margin: "0 0 0 -18px"}}>
             <Layer>
-              <ScrubberHead width={1000} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+              <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
               {timelineTracks!.map((timelineTrack, i) => {
                 return (
@@ -111,7 +121,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                                    locked={timelineTrack.locked}
                                    elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
                                    elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
-                                   width={1000} height={40}
+                                   width={this.state.mainColumnWidth} height={40}
                                    snapDistance={(this.state.snapEnabled) ? 15 : 0}
                                    scrubberPosition={this.state.scrubberPosition} />
                   </Group>
