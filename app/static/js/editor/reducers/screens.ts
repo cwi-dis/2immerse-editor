@@ -2,7 +2,7 @@ import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
 import * as actions from "../actions/screens";
-import { ActionHandler, Coords, findById, getRandomInt } from "../util";
+import { ActionHandler, Coords, findById, getRandomInt, colorPalette } from "../util";
 
 export interface ScreenRegion {
   id: string;
@@ -204,7 +204,8 @@ actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE
       id: shortid.generate(),
       position,
       size,
-      splitFrom: [null]
+      splitFrom: [null],
+      color: colorPalette[regions.count() % colorPalette.length]
     });
   });
 });
