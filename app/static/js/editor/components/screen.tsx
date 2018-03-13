@@ -22,16 +22,12 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
 
       const components = props.placedComponents.filter((p) => p.region === region.id);
 
-      return (
-        <Group key={`labels-${region.id}`}>
-          {components.map((component, i) => {
-            return <Text x={x * width} y={y * height + i * 20}
-                         width={w * width} fontSize={15} padding={5}
-                         text={component.component} key={`${region.id}-${i}`}
-                         onClick={() => console.log("clicked component", component.component, "in region", component.region)} />;
-          })}
-        </Group>
-      );
+      return components.map((component, i) => {
+        return <Text x={x * width} y={y * height + i * 20}
+                      width={w * width} fontSize={15} padding={5}
+                      text={component.component} key={`${region.id}-${i}`}
+                      onClick={() => console.log("clicked component", component.component, "in region", component.region)} />;
+      });
     }
 
     return null;
