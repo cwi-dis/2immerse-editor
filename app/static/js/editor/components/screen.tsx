@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { Layer, Rect, Group, Text } from "react-konva";
 
 import { findById } from "../util";
-import { Screen as ScreenModel } from "../reducers/screens";
+import { Screen as ScreenModel, ScreenRegion } from "../reducers/screens";
 import { ComponentPlacement } from "../reducers/masters";
 
 export interface ScreenProps {
@@ -16,6 +16,28 @@ export interface ScreenProps {
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   const { width, height, screenInfo: screen } = props;
 
+  const renderLabels = (region: ScreenRegion) => {
+    if (props.placedComponents) {
+      const [x, y] = region.position;
+      const [w] = region.size;
+
+      const components = props.placedComponents.filter((p) => p.region === region.id);
+
+      return (
+        <Group key={`labels-${region.id}`}>
+          {components.map((component, i) => {
+            return <Text x={x * width} y={y * height + i * 20}
+                         width={w * width} fontSize={15} padding={5}
+                         text={component.component} key={`${region.id}-${i}`}
+                         onClick={() => console.log("clicked component", component.component, "in region", component.region)} />;
+          })}
+        </Group>
+      );
+    }
+
+    return null;
+  };
+
   const renderRegions = (width: number, height: number) => {
     return (
       <Group>
@@ -24,50 +46,22 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
           const [w, h] = region.size;
 
           return (
-            <Rect x={x * width} y={y * height}
-                  width={w * width} height={h * height}
-                  fill={region.color || "transparent"} stroke="black" strokeWidth={1}
-                  key={i} />
+            <Group key={i}>
+              <Rect x={x * width} y={y * height}
+                    width={w * width} height={h * height}
+                    fill={region.color || "transparent"} stroke="black" strokeWidth={1} />
+              {renderLabels(region)}
+            </Group>
           );
         })}
       </Group>
     );
   };
 
-  const renderLabels = (width: number, height: number) => {
-    if (props.placedComponents) {
-      const regionMap = props.placedComponents.groupBy((p) => p.region);
-
-      return (
-        <Group>
-          {regionMap.map((placedComponents, regionId) => {
-            const [, region] = findById(props.screenInfo.regions, regionId);
-            const [x, y] = region.position;
-            const [w] = region.size;
-
-            return (
-              <Group key={`labels-${regionId}`}>
-                {placedComponents.map((p, i) => {
-                  return <Text x={x * width} y={y * height + i * 20}
-                               width={w * width} fontSize={15} padding={5}
-                               text={p.component} key={`${p.region}-${i}`}
-                               onClick={() => console.log("clicked component", p.component, "in region", p.region)} />;
-                })}
-              </Group>
-            );
-          }).toList()}
-        </Group>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <Layer>
       <Rect x={0} y={0} width={width} height={height} fill="white" />
       {renderRegions(width, height)}
-      {renderLabels(width, height)}
     </Layer>
   );
 };
