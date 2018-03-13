@@ -2,7 +2,6 @@ import * as React from "react";
 import { List } from "immutable";
 import { Layer, Rect, Group, Text } from "react-konva";
 
-import { findById } from "../util";
 import { Screen as ScreenModel, ScreenRegion } from "../reducers/screens";
 import { ComponentPlacement } from "../reducers/masters";
 
