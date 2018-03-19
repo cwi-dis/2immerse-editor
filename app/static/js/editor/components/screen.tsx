@@ -10,10 +10,19 @@ export interface ScreenProps {
   width: number;
   height: number;
   placedComponents?: List<ComponentPlacement>;
+  componentClicked?: (componentId: string, regionId: string) => void;
 }
 
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   const { width, height, screenInfo: screen } = props;
+
+  const componentClicked = (componentId: string, regionId: string) => {
+    if (props.componentClicked === undefined) {
+      console.log(`Component ${componentId} clicked in region ${regionId}`);
+    } else {
+      props.componentClicked(componentId, regionId);
+    }
+  };
 
   const renderLabels = (region: ScreenRegion) => {
     if (props.placedComponents) {
@@ -23,10 +32,12 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
       const components = props.placedComponents.filter((p) => p.region === region.id);
 
       return components.map((component, i) => {
-        return <Text x={x * width} y={y * height + i * 20}
-                      width={w * width} fontSize={15} padding={5}
-                      text={component.component} key={`${region.id}-${i}`}
-                      onClick={() => console.log("clicked component", component.component, "in region", component.region)} />;
+        return (
+          <Text x={x * width} y={y * height + i * 20}
+                width={w * width} fontSize={15} padding={5}
+                text={component.component} key={`${region.id}-${i}`}
+                onClick={componentClicked.bind(null, component.component, component.region)} />
+        );
       });
     }
 
