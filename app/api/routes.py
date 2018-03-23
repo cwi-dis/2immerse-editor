@@ -11,6 +11,7 @@ from app import myLogging
 
 myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)
 
+
 #
 # Disable CORS problems
 def add_cors_headers(response):
@@ -24,6 +25,7 @@ def add_cors_headers(response):
 app.after_request(add_cors_headers)
 
 API_ROOT = '/api/v1'
+
 
 #
 # Get externally accessible URL for an endpoint. Only call while inside a request.
@@ -84,19 +86,23 @@ def api_verb(verb):
         abort(404)
     return func()
 
+
 @app.route(API_ROOT + "/document", methods=["GET", "POST"])
 def document():
     return api.document()
 
+
 @app.route(API_ROOT + "/configuration", methods=["GET"])
 def get_configuration():
     return json.dumps(globalSettings._get())+'\n'
+
 
 @app.route(API_ROOT + "/configuration", methods=["PUT"])
 def put_configuration():
     globalSettings._put(request.get_json())
     myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)
     return 'OK\n'
+
 
 #
 # Per-document commands, load and save and such
@@ -110,6 +116,7 @@ def document_instance(documentId):
         abort(404)
     return document.index()
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>", methods=["DELETE"])
 def delete_document(documentId):
     try:
@@ -118,6 +125,7 @@ def delete_document(documentId):
         abort(404)
 
     return ""
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/<string:verb>")
 def document_instance_verb(documentId, verb):
@@ -130,6 +138,7 @@ def document_instance_verb(documentId, verb):
     except AttributeError:
         abort(404)
     return func()
+
 
 #
 # per-document, xml aspect, cut/copy/paste and such on the xml structure
@@ -148,6 +157,7 @@ def document_xml_paste(documentId):
     rv = xml.copy(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
     return rv
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/move", methods=["POST"])
 def document_xml_move(documentId):
     try:
@@ -158,6 +168,7 @@ def document_xml_move(documentId):
     assert xml
     rv = xml.move(path=request.args['path'], where=request.args['where'], sourcepath=request.args['sourcepath'])
     return rv
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/xml/modifyData", methods=["PUT"])
 def document_xml_modify(documentId):
@@ -189,6 +200,7 @@ def document_events_get(documentId):
     assert events
     rv = events.get()
     return Response(json.dumps(rv), mimetype="application/json")
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/trigger", methods=["POST"])
 def document_events_trigger(documentId, id):
@@ -223,6 +235,7 @@ def document_events_modify(documentId, id):
 
     return events.modify(id, parameters)
 
+
 #
 # per-document, settings and debug links
 #
@@ -236,6 +249,7 @@ def document_settings_get(documentId):
     assert settings
     rv = settings.get(frontend=get_docRoot("/trigger"), backend=get_docRoot())
     return Response(json.dumps(rv), mimetype="application/json")
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/settings", methods=["PUT"])
 def document_settings_put(documentId):
@@ -251,6 +265,7 @@ def document_settings_put(documentId):
         abort(405)
     return settings.set(**parameters)
 
+
 #
 # per-document, remote control of playback
 #
@@ -265,6 +280,7 @@ def document_remote_get(documentId):
     rv = remote.get()
     return Response(json.dumps(rv), mimetype="application/json")
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/remote/control", methods=["POST"])
 def document_remote_control(documentId):
     try:
@@ -276,6 +292,7 @@ def document_remote_control(documentId):
     command = request.get_json()
     rv = remote.get()
     return remote.control(command)
+
 
 #
 # Per-document, serve aspect, for consumption of views on the document
@@ -291,6 +308,7 @@ def get_timeline_document(documentId):
     assert serve
     return Response(serve.get_timeline(), mimetype="application/xml")
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json")
 def get_layout_document(documentId):
     try:
@@ -300,6 +318,7 @@ def get_layout_document(documentId):
     serve = document.serve()
     assert serve
     return Response(serve.get_layout(), mimetype="application/json")
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
 def put_layout_document(documentId):
@@ -314,6 +333,7 @@ def put_layout_document(documentId):
     serve.put_layout(layoutJSON)
     return ''
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json")
 def get_client_document(documentId):
     try:
@@ -326,6 +346,7 @@ def get_client_document(documentId):
     docRoot = '%s/document/%s/serve/' % (get_docRoot(), documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'), mode=mode)
     return Response(config, mimetype="application/json")
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
 def put_client_document(documentId):
@@ -340,6 +361,7 @@ def put_client_document(documentId):
     serve.put_client(clientJSON)
     return ''
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/addcallback", methods=["POST"])
 def set_callback(documentId):
     try:
@@ -350,6 +372,7 @@ def set_callback(documentId):
     assert serve
     serve.setCallback(url=request.args.get('url'), contextID=request.args.get('contextID', None))
     return ''
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/updatedocstate", methods=["PUT"])
 def update_document_state(documentId):
@@ -364,6 +387,7 @@ def update_document_state(documentId):
         abort(405)
     serve.setDocumentState(documentState)
     return ''
+
 
 #
 # Preview player redirect
@@ -385,6 +409,7 @@ def get_preview(documentId):
 
 short_urls = []
 
+
 @app.route("/shorturl/<int:id>", methods=["GET"])
 def expand_shorturl(id):
     if id >= len(short_urls):
@@ -393,6 +418,7 @@ def expand_shorturl(id):
     if 'mode' in request.args:
         newUrl += '?' + urllib.urlencode(dict(mode=mode))
     return redirect(short_urls[id])
+
 
 @app.route("/shorturl", methods=["POST"])
 def generate_shorturl():

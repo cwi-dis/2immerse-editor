@@ -18,7 +18,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Pattern to find AVT-like interpolation expressions
-INTERPOLATION=re.compile(r'\{[^}]+\}')
+INTERPOLATION = re.compile(r'\{[^}]+\}')
+
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -26,7 +27,7 @@ class NameSpace:
         self.url = url
 
     def ns(self):
-        return { self.namespace : self.url }
+        return {self.namespace: self.url}
 
     def __call__(self, str):
         return "{%s}%s" % (self.url, str)
@@ -60,9 +61,10 @@ for k, v in NAMESPACES.items():
     ET.register_namespace(k, v)
 
 # regular expression to decompose xml:id fields that end in a -number
-FIND_ID_INDEX=re.compile(r'(.+)-([0-9]+)')
-FIND_NAME_INDEX=re.compile(r'(.+) \(([0-9]+)\)')
-FIND_PATH_ATTRIBUTE=re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
+FIND_ID_INDEX = re.compile(r'(.+)-([0-9]+)')
+FIND_NAME_INDEX = re.compile(r'(.+) \(([0-9]+)\)')
+FIND_PATH_ATTRIBUTE = re.compile(r'(.+)/@([a-zA-Z0-9_\-.:]+)')
+
 
 # Decorator: obtain self.lock during the operation
 def synchronized(method):
@@ -71,6 +73,7 @@ def synchronized(method):
         with self.lock:
             return method(self, *args, **kwargs)
     return wrapper
+
 
 # Decorator: obtain self.lock during the operation, and record all edits
 def edit(method):
@@ -144,6 +147,7 @@ class EditManager:
         self.document.lock.release()
         return rv
 
+
 class Document:
     def __init__(self, documentId):
         self.documentId = documentId
@@ -151,8 +155,8 @@ class Document:
         self.tree = None
         self.url = None
         self.base = None
-        self.documentElement = None # Nasty trick to work around elementtree XPath incompleteness
-        self.baseAdded = False # True if tim:base attribute was added by us
+        self.documentElement = None  # Nasty trick to work around elementtree XPath incompleteness
+        self.baseAdded = False  # True if tim:base attribute was added by us
         # Data strcutures for mapping over the tree
         self.parentMap = None
         self.idMap = None
@@ -167,7 +171,7 @@ class Document:
         self.settingsHandler = None
         self.lock = threading.RLock()
         self.editManager = None
-        self.companionTimelineIsActive = False # Mainly for warning triggertool operator if it is not
+        self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
         self.lastErrorMessage = None
         self.logger = logger
         self.clock = clocks.PausableClock(clocks.SystemClock())
@@ -179,10 +183,10 @@ class Document:
 
     def clearError(self):
         self.lastErrorMessage = None
-        
+
     def setError(self, msg):
         self.lastErrorMessage = msg
-        
+
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -198,7 +202,7 @@ class Document:
     @synchronized
     def _documentLoaded(self):
         """Creates paremtMap and idMap and various other data structures after loading a document."""
-        self.parentMap = {c:p for p in self.tree.iter() for c in p}
+        self.parentMap = {c: p for p in self.tree.iter() for c in p}
         # Workaround for XPath nastiness in ET: it does not handle / correctly so we help it a bit.
         self.documentElement = ET.Element('')
         self.documentElement.append(self.tree.getroot())
@@ -224,7 +228,8 @@ class Document:
     def _ensureId(self, elt):
         """Add an xml:id to an element if it doesn't have one already"""
         id = elt.get(NS_XML("id"))
-        if id: return
+        if id:
+            return
         id = 'ttadded'
         while id in self.idMap:
             match = FIND_ID_INDEX.match(id)
@@ -240,11 +245,11 @@ class Document:
     def _elementAdded(self, elt, parent, recursive=False):
         """Updates paremtMap and idMap and various other data structures after a new element is added.
         Returns edit operation which can be forwarded to slaved documents."""
-        assert not elt in self.parentMap
+        assert elt not in self.parentMap
         self.parentMap[elt] = parent
         id = elt.get(NS_XML('id'))
         if id:
-            assert not id in self.idMap
+            assert id not in self.idMap
             self.idMap[id] = elt
         name = elt.get(NS_TRIGGER('name'))
         if name:
@@ -262,7 +267,7 @@ class Document:
         if not recursive and self.editManager:
             self.editManager.delete(elt, parent)
         del self.parentMap[elt]
-        assert not elt in parent
+        assert elt not in parent
         id = elt.get(NS_XML('id'))
         if id and id in self.idMap:
             del self.idMap[id]
@@ -509,17 +514,17 @@ class Document:
         return self.parentMap.get(element, None)
 
     def _toET(self, tag, data, mimetype):
-        if type(data) == ET.Element:
+        if isinstance(data, ET.Element):
             # Cop-out. It's an ElementTree object already
-            assert tag == None
+            assert tag is None
             assert mimetype == 'application/x-python-object'
             return data
         if mimetype in {'application/x-python-object', 'application/json'}:
-            if data == None:
+            if data is None:
                 data = {}
             elif mimetype == 'application/json':
                 data = json.loads(data)
-            assert type(data) == type({})
+            assert isinstance(data, dict)
             assert tag
             newElement = ET.Element(tag, data)
         elif mimetype == 'application/xml':
@@ -532,7 +537,7 @@ class Document:
     def _fromET(self, element, mimetype):
         """Encode an element as xml"""
         if mimetype == 'application/x-python-object':
-            # assert element.getroot() == None
+            # assert element.getroot() is None
             return element
         elif mimetype == 'application/json':
             assert len(list(element)) == 0
@@ -578,6 +583,7 @@ class Document:
     def _getElementByID(self, id):
         return self.idMap.get(id)
 
+
 class DocumentXml:
     def __init__(self, document):
         self.document = document
@@ -602,8 +608,8 @@ class DocumentXml:
         #
         # Sanity checks
         #
-        # assert newElement.getroot() == None
-        # assert element.getroot() != None
+        # assert newElement.getroot() is None
+        # assert element.getroot() is not None
         #
         # Insert the new element
         #
@@ -624,13 +630,13 @@ class DocumentXml:
             self.document._elementChanged(element)
         elif where == 'before':
             parent = self.document._getParent(element)
-            assert parent != None
+            assert parent is not None
             pos = list(parent).index(element)
             parent.insert(pos, newElement)
             self.document._elementAdded(newElement, parent)
         elif where == 'after':
             parent = self.document._getParent(element)
-            assert parent != None
+            assert parent is not None
             pos = list(parent).index(element)
             if pos == len(list(parent)):
                 parent.append(newElement)
@@ -668,10 +674,10 @@ class DocumentXml:
         else:
             self.setError('Internal error: unexpected mimetype %s' % mimetype)
             abort(400, 'Unexpected mimetype %s' % mimetype)
-        assert type(attrs) == type({})
+        assert isinstance(attrs, dict)
         existingAttrs = element.attrib
         for k, v in attrs.items():
-            if v == None:
+            if v is None:
                 if k in existingAttrs:
                     existingAttrs.pop(k)
             else:
@@ -684,7 +690,7 @@ class DocumentXml:
     def modifyData(self, path, data):
         self.logger.info('modifyData(%s, ...)' % (path), extra=self.getLoggerExtra())
         element = self.document._getElementByPath(path)
-        if data == None:
+        if data is None:
             element.text = None
             element.tail = None
         else:
@@ -711,6 +717,7 @@ class DocumentXml:
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
+
 
 class DocumentEvents:
     def __init__(self, document):
@@ -764,7 +771,7 @@ class DocumentEvents:
         #
         for paramElt in parameterElements:
             pData = dict(name=paramElt.get(NS_TRIGGER('name')))
-            parameter=paramElt.get(NS_TRIGGER('parameter'))
+            parameter = paramElt.get(NS_TRIGGER('parameter'))
             if parameter:
                 #
                 # If tt:parameter is set this parameter has a single location to store the parameter
@@ -794,13 +801,13 @@ class DocumentEvents:
                 # Get indirectly (probably from an au:assetList)
                 optionListId = paramElt.get(NS_TRIGGER('optionListId'))
                 optionListElt = self.document._getElementByID(optionListId)
-                if optionListElt == None:
+                if optionListElt is None:
                     self._documentError('tt:parameter optionListId does not exist: %s' % optionListId)
                 optionValues = self._getOptions(optionListElt)
-                #self.logger.debug('_getDescription: got %d selection options from element %s' % (len(optionValues), optionListId), extra=self.getLoggerExtra())
+                # self.logger.debug('_getDescription: got %d selection options from element %s' % (len(optionValues), optionListId), extra=self.getLoggerExtra())
             else:
                 optionValues = self._getOptions(paramElt)
-                #self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
+                # self.logger.debug('_getDescription: got %d selection options from self' % len(optionValues), extra=self.getLoggerExtra())
             if optionValues:
                 pData['options'] = optionValues
             if pData.get('type') == 'selection' and not pData.get('options'):
@@ -843,7 +850,7 @@ class DocumentEvents:
                 "value": optionElt.get(NS_AUTH("value"))
             })
         return optionValues
-        
+
     @synchronized
     def _getParameterDestinations(self, parameter):
         """For a parameter/value coming from the front end, returns what to set where"""
@@ -860,7 +867,7 @@ class DocumentEvents:
         # The XPath has no attribute designator, assume it's a node XPath and collect the
         # tt:destination children there.
         elt = self.document._getElementByPath(parPath)
-        if elt == None:
+        if elt is None:
             self._documentError('XPath in parameter does not refer to existing element')
         destElements = elt.findall('./tt:destination', NAMESPACES)
         rv = []
@@ -870,7 +877,6 @@ class DocumentEvents:
             dPath, dAttr = self._splitXPath(dXPath)
             rv.append((dPath, dAttr, dValue))
         return rv
-            
 
     def _splitXPath(self, parPath):
         """Split off the attribute bit of an xpath"""
@@ -915,12 +921,12 @@ class DocumentEvents:
         """Return current clock value for an element"""
 
         epoch = element.get(NS_TIMELINE_INTERNAL("epoch"))
-        if epoch != None:
+        if epoch is not None:
             curTime = self.document.clock.now() - float(epoch)
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
             return str(curTime)
         self.logger.debug("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
-        #self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
+        # self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
         return "0"
 
     @edit
@@ -947,7 +953,7 @@ class DocumentEvents:
         newElement = copy.deepcopy(element)
         newElement.set(NS_TRIGGER("wantstatus"), "true")
         self.document._afterCopy(newElement, triggerAttributes=True)
-        
+
         for par in parameters:
             parValue = par['value']
             for path, attr, value in self._getParameterDestinations(par):
@@ -1014,7 +1020,7 @@ class DocumentRemote:
 
     @synchronized
     def get(self):
-        if self.statusElement == None:
+        if self.statusElement is None:
             eventParents = self.tree.getroot().findall('.//tt:events/..', NAMESPACES)
             if eventParents:
                 self.statusElement = eventParents[0]
@@ -1038,7 +1044,7 @@ class DocumentRemote:
 
     @synchronized
     def control(self, command):
-        if type(command) != type({}):
+        if not isinstance(command, dict):
             self.logger.error('remote/control: requires JSON object', extra=self.getLoggerExtra())
             self.document.setError('Internal error: remote/control requires JSON object')
             abort(400, 'remote/control requires JSON object')
@@ -1059,6 +1065,7 @@ class DocumentRemote:
         self.document.clearError()
         return ""
 
+
 class DocumentAuthoring:
     def __init__(self, document):
         self.document = document
@@ -1068,6 +1075,7 @@ class DocumentAuthoring:
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
+
 
 class DocumentServe:
     def __init__(self, document):
@@ -1105,7 +1113,7 @@ class DocumentServe:
         layout document data."""
         self.logger.info('serving layout.json document', extra=self.getLoggerExtra())
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
-        if rawLayoutElement == None:
+        if rawLayoutElement is None:
             self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
             self.document.setError('No au:rawLayout element in document')
             abort(404, 'No au:rawLayout element in document')
@@ -1116,7 +1124,7 @@ class DocumentServe:
         """Temporary method, stores the raw layout document data in the authoring document."""
         self.logger.info('storing layout.json document', extra=self.getLoggerExtra())
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
-        if rawLayoutElement == None:
+        if rawLayoutElement is None:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
         rawLayoutElement.text = layoutJSON
 
@@ -1133,7 +1141,7 @@ class DocumentServe:
         # Next we override from the document (if overrides are present)
         #
         clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
-        if clientExtraElement != None and clientExtraElement.text:
+        if clientExtraElement is not None and clientExtraElement.text:
             clientExtra = json.loads(clientExtraElement.text)
             for k, v in clientExtra.items():
                 clientDoc[k] = v
@@ -1172,13 +1180,13 @@ class DocumentServe:
         """Temporary method, store per-dmapp client.json settings in the authoring document"""
         self.logger.info('storing additions to client.json document', extra=self.getLoggerExtra())
         rawClientElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
-        if rawClientElement == None:
+        if rawClientElement is None:
             rawClientElement = ET.SubElement(self.tree.getroot(), 'au:rawClient')
         rawClientElement.text = layoutJSON
 
     @synchronized
     def setCallback(self, url, contextID=None):
-        if contextID != None and contextID != self.contextID:
+        if contextID is not None and contextID != self.contextID:
                 self.logger.info('overriding contextID with %s' % contextID)
                 self.contextID = contextID
                 self.document._loggerExtra['contextID'] = contextID
@@ -1192,7 +1200,7 @@ class DocumentServe:
         self.document.companionTimelineIsActive = True
         for eltId, eltState in documentState.items():
             elt = self.document._getElementByID(eltId)
-            if elt == None:
+            if elt is None:
                 self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
                 continue
             changed = self._elementStateChanged(elt, eltState)
@@ -1261,7 +1269,7 @@ class DocumentServe:
         wantStateUpdates = True
         for callback in self.callbacks:
             try:
-                requestStartTime = time.time() # Debugging: sometimes requests take a very long time
+                requestStartTime = time.time()  # Debugging: sometimes requests take a very long time
                 args = dict(generation=gen, operations=operations)
                 # for the first successful one, add updateState=True
                 if wantStateUpdates:
@@ -1283,15 +1291,16 @@ class DocumentServe:
                 break
 
         for callback in toRemove:
-            self.logger.info('removeCallback(%s)'%callback, extra=self.getLoggerExtra())
+            self.logger.info('removeCallback(%s)' % callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
+
 
 class DocumentSettings:
     def __init__(self, document):
         self.document = document
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('settings')
-        
+
         self.startPaused = False
         self.playerMode = GlobalSettings.mode
 
@@ -1304,21 +1313,21 @@ class DocumentSettings:
             playerMode=self.playerMode,
             debugLinks=self._getDebugLinks(frontend, backend)
             )
-            
+
     def set(self, startPaused=None, playerMode=None):
-        if startPaused != None:
+        if startPaused is not None:
             self.startPaused = startPaused
-        if playerMode != None:
+        if playerMode is not None:
             self.playerMode = playerMode
         return ""
-            
+
     def _getDebugLinks(self, frontend, backend):
         frontendURL = frontend + "#documentID=%s" % self.document.documentId
         backendURL = backend + "/document/%s" % self.document.documentId
         rv = {
-            "Open This Document Again" : frontendURL,
-            "Backend REST Endpoint" : backendURL
-            }
+            "Open This Document Again": frontendURL,
+            "Backend REST Endpoint": backendURL
+        }
         contextID = self.document.serve().contextID
         if contextID:
             kibanaCommand = "#/discover/All-2-Immerse-prefixed-logs-without-Websocket-Service?_g=(refreshInterval:(display:'10%%20seconds',pause:!f,section:1,value:10000),time:(from:now-15m,mode:quick,to:now))&_a=(columns:!(sourcetime,source,subSource,verb,logmessage,contextID,message),filters:!(),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'rawmessage:%%22%%2F%%5E2-Immerse%%2F%%22%%20AND%%20NOT%%20source:%%22WebsocketService%%22%%20AND%%20contextID:%%22%s%%22')),sort:!(sourcetime,desc))"

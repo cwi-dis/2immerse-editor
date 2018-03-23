@@ -5,11 +5,11 @@ import time
 logging.basicConfig()
 
 # Default logging configuration: INFO for document and timeline (useful to app developers), WARNING for everything else.
-#DEFAULT_LOG_CONFIG="document:INFO,WARNING"
-DEFAULT_LOG_CONFIG="INFO"
+# DEFAULT_LOG_CONFIG="document:INFO,WARNING"
+DEFAULT_LOG_CONFIG = "INFO"
+
 
 class MyFormatter(logging.Formatter):
-
     def format(self, record):
         contextID = None
         documentID = None
@@ -45,14 +45,16 @@ class MyFormatter(logging.Formatter):
         rvList.append('logmessage:%s' % logmessage)
         return ' '.join(rvList)
 
-class MyLoggerAdapter(logging.LoggerAdapter):
 
-	def process(self, msg, kwargs):
-		if 'extra' in kwargs:
-			kwargs['extra'].update(self.extra)
-		else:
-			kwargs['extra'] = self.extra
-		return msg, kwargs
+class MyLoggerAdapter(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        if 'extra' in kwargs:
+            kwargs['extra'].update(self.extra)
+        else:
+            kwargs['extra'] = self.extra
+
+        return msg, kwargs
+
 
 def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
     if noKibana:
@@ -72,15 +74,19 @@ def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
     rootLogger = logging.getLogger()
     rootLogger.handlers[0].setFormatter(currentFormatterClass())
 
+
 # Make stdout unbuffered
 class Unbuffered(object):
-   def __init__(self, stream):
-       self.stream = stream
-   def write(self, data):
-       self.stream.write(data)
-       self.stream.flush()
-   def __getattr__(self, attr):
-       return getattr(self.stream, attr)
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, data):
+        self.stream.write(data)
+        self.stream.flush()
+
+    def __getattr__(self, attr):
+        return getattr(self.stream, attr)
+
 
 import sys
 sys.stdout = Unbuffered(sys.stdout)

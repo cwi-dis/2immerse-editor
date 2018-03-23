@@ -5,8 +5,8 @@ app = Flask(__name__)
 app.config.from_object("config")
 
 from app import routes
-
 import util
+
 
 def print_version(out=sys.stderr):
     branch = 'unknown'
