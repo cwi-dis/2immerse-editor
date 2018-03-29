@@ -5,6 +5,7 @@ import { List } from "immutable";
 import { capitalize, makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
+import EventModal from "./utils/event_modal";
 
 interface EventContainerProps {
   documentId: string;
@@ -17,6 +18,7 @@ interface EventContainerState {
   flashSuccess: boolean;
   flashError: boolean;
   params: List<EventParams>;
+  showEventModal: boolean;
 }
 
 const paramDefaults: {[key: string]: string} = {
@@ -34,7 +36,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       isLoading: false,
       flashSuccess: false,
       flashError: false,
-      params: this.convertParams(props.event.parameters)
+      params: this.convertParams(props.event.parameters),
+      showEventModal: false
     };
   }
 
@@ -113,6 +116,24 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     return "Trigger";
   }
 
+  private renderEventModal() {
+    if (!this.state.showEventModal) {
+      return null;
+    }
+
+    return (
+      <div className="modal is-active">
+        <div className="modal-background"></div>
+        <div className="modal-content">
+          <EventModal event={this.props.event} />
+        </div>
+        <button className="modal-close is-large"
+                onClick={() => this.setState({showEventModal: false})}>
+        </button>
+      </div>
+    );
+  }
+
   private renderParamTable() {
     const { params } = this.state;
 
@@ -168,12 +189,12 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                               "button",
                               "is-info",
                               {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                  disabled={!submitEnabled}
-                  onClick={this.launchEvent.bind(this)}
+                  onClick={() => (params.count() === 0) ? this.launchEvent.bind(this) : this.setState({showEventModal: true})}
                   onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
             {this.getButtonLabel()}
           </button>
         </div>
+        {this.renderEventModal()}
       </div>
     );
   }
