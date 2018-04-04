@@ -136,6 +136,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
     return (
       <div className="box">
+        <h3 style={{color: "#555555", borderBottom: "1px solid #E2E2E2", paddingBottom: 10}}>{this.props.event.name}</h3>
         {this.renderParamTable()}
         <br/>
         <button className="button is-info"
