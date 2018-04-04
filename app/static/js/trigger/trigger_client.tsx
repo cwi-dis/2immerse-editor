@@ -39,7 +39,7 @@ interface TriggerClientState {
   showSettingsModal: boolean;
   flashTab: boolean;
   abstractEvents: Array<Event>;
-  instantiatedEvents: Array<any>;
+  instantiatedEvents: Array<Event>;
   pageIsLoading: boolean;
   fetchError?: {status: number, statusText: string};
 }
@@ -139,10 +139,17 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                       documentId={this.props.documentId} />
       );
     } else {
+      const events = this.state.abstractEvents.map((event) => {
+        const result = this.state.instantiatedEvents.find((instantiated) => {
+          return instantiated.name.startsWith(event.name);
+        });
+
+        return result || event;
+      });
+
       return (
-        <EventList key="abstract"
-                   documentId={this.props.documentId}
-                   events={this.state.abstractEvents}
+        <EventList documentId={this.props.documentId}
+                   events={events}
                    fetchEvents={this.fetchEvents.bind(this, true)} />
       );
     }
