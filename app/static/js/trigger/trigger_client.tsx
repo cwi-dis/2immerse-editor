@@ -140,12 +140,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       );
     } else {
       return (
-        <div className="content" style={{marginTop: 0, overflowY: "scroll"}}>
-          <EventList key="abstract"
-                     documentId={this.props.documentId}
-                     events={this.state.abstractEvents}
-                     fetchEvents={this.fetchEvents.bind(this, true)} />;
-        </div>
+        <EventList key="abstract"
+                   documentId={this.props.documentId}
+                   events={this.state.abstractEvents}
+                   fetchEvents={this.fetchEvents.bind(this, true)} />
       );
     }
   }
@@ -153,7 +151,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   public render() {
     return (
       <div>
-        <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "hidden"}}>
+        <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "scroll"}}>
           {this.renderMainContent()}
         </div>
 
