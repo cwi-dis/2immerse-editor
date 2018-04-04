@@ -1,8 +1,7 @@
 import * as React from "react";
-import * as classNames from "classnames";
 import * as io from "socket.io-client";
 
-import { makeRequest, parseQueryString } from "../editor/util";
+import { makeRequest } from "../editor/util";
 import EventList from "./event_list";
 import LoadingSpinner from "./utils/loading_spinner";
 import ErrorMessage from "./utils/error_message";
@@ -36,7 +35,6 @@ export interface Event {
 }
 
 interface TriggerClientState {
-  activeTab: "abstract" | "instantiated";
   showPreviewModal: boolean;
   showSettingsModal: boolean;
   flashTab: boolean;
@@ -54,7 +52,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     super(props);
 
     this.state = {
-      activeTab: "abstract",
       showPreviewModal: false,
       showSettingsModal: false,
       flashTab: false,
@@ -62,15 +59,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       instantiatedEvents: [],
       pageIsLoading: true
     };
-  }
-
-  private changeActiveTab(nextTab: "abstract" | "instantiated") {
-    const query = parseQueryString(location.hash).set("activeTab", nextTab);
-    location.hash = query.entrySeq().map(([k, v]) => `${k}=${v}`).join("&");
-
-    this.setState({
-      activeTab: nextTab
-    });
   }
 
   private fetchEvents(flash = false) {
@@ -126,18 +114,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public componentDidMount() {
-    const query = parseQueryString(location.hash);
-
-    if (query.has("activeTab")) {
-      const activeTab = query.get("activeTab");
-
-      if (activeTab === "abstract" || activeTab === "instantiated") {
-        this.setState({
-          activeTab: activeTab
-        });
-      }
-    }
-
     this.fetchEvents();
 
     this.pollingInterval = setInterval(() => {
@@ -163,43 +139,14 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                       documentId={this.props.documentId} />
       );
     } else {
-      const { activeTab, abstractEvents, instantiatedEvents } = this.state;
-
       return (
-        <div>
-          <div className="tabs is-centered">
-            <ul>
-              <li className={classNames({"is-active": activeTab === "abstract"})}>
-                <a onClick={this.changeActiveTab.bind(this, "abstract")}>Events ({abstractEvents.length})</a>
-              </li>
-              <li className={classNames({"is-active": activeTab === "instantiated"})}>
-                <a onClick={this.changeActiveTab.bind(this, "instantiated")}>
-                  <span onAnimationEnd={() => this.setState({flashTab: false})}
-                        className={classNames({"pulse-animation": this.state.flashTab})}>
-                    Live Events ({instantiatedEvents.length})
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="content" style={{marginTop: 0, overflowY: "scroll", height: "calc(100vh - 160px)"}}>
-            {this.renderActiveTab()}
-          </div>
+        <div className="content" style={{marginTop: 0, overflowY: "scroll"}}>
+          <EventList key="abstract"
+                     documentId={this.props.documentId}
+                     events={this.state.abstractEvents}
+                     fetchEvents={this.fetchEvents.bind(this, true)} />;
         </div>
       );
-    }
-  }
-
-  private renderActiveTab(): JSX.Element {
-    if (this.state.activeTab === "abstract") {
-      return <EventList key="abstract"
-                        documentId={this.props.documentId}
-                        events={this.state.abstractEvents}
-                        fetchEvents={this.fetchEvents.bind(this, true)} />;
-    } else {
-      return <EventList key="instantiated"
-                        documentId={this.props.documentId}
-                        events={this.state.instantiatedEvents} />;
     }
   }
 
