@@ -30,13 +30,17 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   }
 
   private getButtonLabel(): string {
-    const { parameters } = this.props.event;
+    const { event } = this.props;
 
-    if (parameters.filter((param) => param.type !== "set").length > 0) {
-      return "configure";
+    if (event.parameters.filter((param) => param.type !== "set").length > 0) {
+      return "Configure";
+    } else if (event.verb) {
+      return event.verb;
+    } else if (event.modify) {
+      return "Modify";
     }
 
-    return "show";
+    return "Show";
   }
 
   private renderEventModal() {
@@ -82,8 +86,10 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { isLoading, flashSuccess, flashError } = this.state;
 
+    const borderColor = (event.modify) ? "#23d160" : "#161616";
+
     return (
-      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", width: 400, border: "1px solid #161616", borderRadius: 5, boxShadow: "0 0 10px #161616", margin: 10, padding: 25}}>
+      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", width: 400, border: `1px solid ${borderColor}`, borderRadius: 5, boxShadow: "0 0 10px #161616", margin: 10, padding: 25}}>
         <div style={{display: "flex"}}>
           <div style={{width: 100, height: 100, margin: "0 15px 0 0"}}>
             {(event.previewUrl) && <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />}
