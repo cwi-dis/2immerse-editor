@@ -2,7 +2,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { Event } from "./trigger_client";
-import EventModal from "./utils/event_modal";
+import EventModal from "./event_modal";
 
 interface EventContainerProps {
   documentId: string;

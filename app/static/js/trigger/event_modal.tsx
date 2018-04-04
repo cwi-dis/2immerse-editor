@@ -1,9 +1,9 @@
 import * as React from "react";
 import { List } from "immutable";
 
-import { capitalize, makeRequest } from "../../editor/util";
-import { Event, EventParams } from "../trigger_client";
-import ParamInputField from "../param_input_field";
+import { capitalize, makeRequest } from "../editor/util";
+import { Event, EventParams } from "./trigger_client";
+import ParamInputField from "./param_input_field";
 
 interface EventModalProps {
   event: Event;
