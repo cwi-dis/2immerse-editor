@@ -98,7 +98,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     }
 
     return (
-      <p>{count} parameter{(count === 1) ? "" : "s"}</p>
+      <p style={{fontStyle: "italic"}}>{count} parameter{(count === 1) ? "" : "s"}</p>
     );
   }
 
@@ -111,8 +111,16 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const borderColor = (event.modify) ? "#23D160" : "#161616";
     const bgColor = (event.modify) ? "#0C4620" : "transparent";
 
+    const boxStyle: React.CSSProperties = {
+      display: "flex", flexDirection: "column", justifyContent: "space-between",
+      width: 380,
+      backgroundColor: bgColor, boxShadow: "0 0 10px #161616",
+      border: `1px solid ${borderColor}`, borderRadius: 5,
+      margin: 10, padding: 25
+    };
+
     return (
-      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: bgColor, width: 380, border: `1px solid ${borderColor}`, borderRadius: 5, boxShadow: "0 0 10px #161616", margin: 10, padding: 25}}>
+      <div style={boxStyle}>
         <div style={{display: "flex"}}>
           <div style={{width: 100, height: 100, margin: "0 15px 0 0", backgroundColor: "transparent"}}>
             {(event.previewUrl) && <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />}
