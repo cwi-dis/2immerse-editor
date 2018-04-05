@@ -33,14 +33,14 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
 
     if (event.parameters.filter((param) => param.type !== "set").length > 0) {
-      return "Configure";
+      return "configure";
     } else if (event.verb) {
       return event.verb;
     } else if (event.modify) {
-      return "Modify";
+      return "modify";
     }
 
-    return "Show";
+    return "show";
   }
 
   private renderEventModal() {
@@ -86,12 +86,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { isLoading, flashSuccess, flashError } = this.state;
 
-    const borderColor = (event.modify) ? "#23d160" : "#161616";
+    const borderColor = (event.modify) ? "#23D160" : "#161616";
+    const bgColor = (event.modify) ? "#0C4620" : "transparent";
 
     return (
-      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", width: 400, border: `1px solid ${borderColor}`, borderRadius: 5, boxShadow: "0 0 10px #161616", margin: 10, padding: 25}}>
+      <div style={{display: "flex", flexDirection: "column", justifyContent: "space-between", backgroundColor: bgColor, width: 380, border: `1px solid ${borderColor}`, borderRadius: 5, boxShadow: "0 0 10px #161616", margin: 10, padding: 25}}>
         <div style={{display: "flex"}}>
-          <div style={{width: 100, height: 100, margin: "0 15px 0 0"}}>
+          <div style={{width: 100, height: 100, margin: "0 15px 0 0", backgroundColor: "transparent"}}>
             {(event.previewUrl) && <img src={event.previewUrl} style={{maxWidth: 98, maxHeight: 98}} />}
           </div>
           <div>
