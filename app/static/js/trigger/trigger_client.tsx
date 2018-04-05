@@ -140,8 +140,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       );
     } else {
       const events = this.state.abstractEvents.map((event) => {
+        const eventRegex = RegExp(`${event.name} \\([0-9]+\\)`);
+
         const result = this.state.instantiatedEvents.find((instantiated) => {
-          return instantiated.name.startsWith(event.name);
+          return eventRegex.test(instantiated.name);
         });
 
         return result || event;
