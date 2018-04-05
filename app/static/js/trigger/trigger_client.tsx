@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as escapeStringRegex from "escape-string-regexp";
 import * as io from "socket.io-client";
 
 import { makeRequest } from "../editor/util";
@@ -140,7 +141,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       );
     } else {
       const events = this.state.abstractEvents.map((event) => {
-        const eventRegex = RegExp(`${event.name} \\([0-9]+\\)`);
+        const eventRegex = RegExp(`${escapeStringRegex(event.name)} \\([0-9]+\\)`);
 
         const result = this.state.instantiatedEvents.find((instantiated) => {
           return eventRegex.test(instantiated.name);
