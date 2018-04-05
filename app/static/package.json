@@ -51,9 +51,11 @@
     "xhr-mock": "^1.9.1"
   },
   "dependencies": {
+    "@types/escape-string-regexp": "^0.0.32",
     "@types/socket.io-client": "^1.4.32",
     "bulma": "^0.6.2",
     "classnames": "^2.2.5",
+    "escape-string-regexp": "^1.0.5",
     "immutable": "4.0.0-rc.7",
     "jsonschema": "^1.2.2",
     "konva": "https://github.com/konvajs/konva",
