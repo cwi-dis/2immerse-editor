@@ -9,7 +9,7 @@ interface EventModalProps {
   event: Event;
   documentId: string;
 
-  onTriggered: (status: "success" | "error") => void;
+  onTriggered: (status: "success" | "error" | "close") => void;
 }
 
 interface EventModalState {
@@ -29,6 +29,15 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
     this.state = {
       params: this.convertParams(props.event.parameters)
+    };
+  }
+
+  public componentDidMount() {
+    window.onkeyup = (ev: KeyboardEvent) => {
+      if (ev.which === 27) {
+        console.log("ESC key pressed");
+        this.props.onTriggered("close");
+      }
     };
   }
 
