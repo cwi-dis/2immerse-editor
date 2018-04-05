@@ -87,7 +87,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
     if (params.count() > 0) {
       return (
-        <table className="table is-narrow" style={{margin: "20px 0 15px 0"}}>
+        <table className="table is-narrow" style={{width: "100%", margin: "20px 0 15px 0"}}>
           <tbody>
             {params.map((param, i) => {
               if (param.type === "set") {
@@ -96,10 +96,10 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
               return (
                 <tr key={i}>
-                  <td style={{width: "20%", verticalAlign: "middle", border: "none", color: "#000000"}}>
+                  <td style={{minWidth: "25%", verticalAlign: "middle", border: "none", color: "#000000"}}>
                     {capitalize(param.name)}
                   </td>
-                  <td style={{width: "80%", border: "none"}}>
+                  <td style={{maxWidth: "75%", border: "none"}}>
                     <ParamInputField {...param}
                                      onChange={this.updateParamField.bind(this, i)} />
                   </td>
