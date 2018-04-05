@@ -129,11 +129,6 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
     const submitEnabled = params.filter((p) => p.required)
                                 .every((p) => p.value !== undefined && p.value !== "");
 
-    if (params.filter((param) => param.type !== "set").count() === 0) {
-      this.launchEvent();
-      return null;
-    }
-
     return (
       <div className="box">
         <h3 style={{color: "#555555", borderBottom: "1px solid #E2E2E2", paddingBottom: 10}}>{this.props.event.name}</h3>

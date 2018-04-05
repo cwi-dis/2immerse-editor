@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as classNames from "classnames";
 
+import { makeRequest } from "../editor/util";
 import { Event } from "./trigger_client";
 import EventModal from "./event_modal";
 
@@ -69,10 +70,29 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     );
   }
 
-  private paramCount() {
-    const { event } = this.props;
-    const count = event.parameters.filter((param) => param.type !== "set").length;
+  private launchEvent() {
+    const { event, documentId } = this.props;
 
+    const endpoint = event.modify ? "modify" : "trigger";
+    const requestMethod = event.modify ? "PUT" : "POST";
+
+    const url = `/api/v1/document/${documentId}/events/${event.id}/${endpoint}`;
+    const data = JSON.stringify(event.parameters.map((param) => {
+      return { parameter: param.parameter, value: param.value };
+    }));
+
+    console.log("Launching basic event at url", url, "with data", data);
+
+    makeRequest(requestMethod, url, data, "application/json").then((data) => {
+      console.log("success");
+      this.setState({ flashSuccess: true});
+    }).catch((err) => {
+      console.log("error:", err);
+      this.setState({ flashError: true});
+    });
+  }
+
+  private renderParamCount(count: number) {
     if (count === 0) {
       return null;
     }
@@ -86,6 +106,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { isLoading, flashSuccess, flashError } = this.state;
 
+    const paramCount = event.parameters.filter((param) => param.type !== "set").length;
+
     const borderColor = (event.modify) ? "#23D160" : "#161616";
     const bgColor = (event.modify) ? "#0C4620" : "transparent";
 
@@ -98,7 +120,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
           <div>
             <h3 style={{color: "#E9E9E9"}}>{event.name}</h3>
             {(event.longdesc) && <p>{event.longdesc}</p>}
-            {this.paramCount()}
+            {this.renderParamCount(paramCount)}
           </div>
         </div>
 
@@ -107,7 +129,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                               "button",
                               "is-info",
                               {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                  onClick={() => this.setState({showEventModal: true})}
+                  onClick={() => (paramCount === 0) ? this.launchEvent() : this.setState({showEventModal: true})}
                   onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
             {this.getButtonLabel()}
           </button>
