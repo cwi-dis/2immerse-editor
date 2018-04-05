@@ -38,7 +38,6 @@ export interface Event {
 interface TriggerClientState {
   showPreviewModal: boolean;
   showSettingsModal: boolean;
-  flashTab: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<Event>;
   pageIsLoading: boolean;
@@ -55,14 +54,13 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     this.state = {
       showPreviewModal: false,
       showSettingsModal: false,
-      flashTab: false,
       abstractEvents: [],
       instantiatedEvents: [],
       pageIsLoading: true
     };
   }
 
-  private fetchEvents(flash = false) {
+  private fetchEvents() {
     const url = `/api/v1/document/${this.props.documentId}/events`;
     console.log("updating events");
 
@@ -74,12 +72,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         instantiatedEvents: events.filter((ev) => ev.modify),
         pageIsLoading: false
       });
-
-      if (flash) {
-        this.setState({
-          flashTab: true
-        });
-      }
     }).catch((err) => {
       console.error("Could not fetch triggers:", err);
       this.setState({
@@ -153,7 +145,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       return (
         <EventList documentId={this.props.documentId}
                    events={events}
-                   fetchEvents={this.fetchEvents.bind(this, true)} />
+                   fetchEvents={this.fetchEvents.bind(this)} />
       );
     }
   }
