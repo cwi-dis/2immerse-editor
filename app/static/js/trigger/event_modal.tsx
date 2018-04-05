@@ -24,6 +24,8 @@ const paramDefaults: {[key: string]: string} = {
 };
 
 class EventModal extends React.Component<EventModalProps, EventModalState> {
+  private prevKeyHandler: (this: Window, ev: KeyboardEvent) => void;
+
   public constructor(props: EventModalProps) {
     super(props);
 
@@ -33,12 +35,20 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
   }
 
   public componentDidMount() {
+    this.prevKeyHandler = window.onkeyup;
+
     window.onkeyup = (ev: KeyboardEvent) => {
       if (ev.which === 27) {
         console.log("ESC key pressed");
         this.props.onTriggered("close");
       }
+
+      this.prevKeyHandler.call(window, ev);
     };
+  }
+
+  public componentWillUnmount() {
+    window.onkeyup = this.prevKeyHandler;
   }
 
   private convertParams(parameters: Array<EventParams>) {
