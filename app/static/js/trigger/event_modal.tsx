@@ -24,7 +24,7 @@ const paramDefaults: {[key: string]: string} = {
 };
 
 class EventModal extends React.Component<EventModalProps, EventModalState> {
-  private prevKeyHandler: (this: Window, ev: KeyboardEvent) => void;
+  private prevKeyHandler: ((this: Window, ev: KeyboardEvent) => any) | null;
 
   public constructor(props: EventModalProps) {
     super(props);
@@ -43,12 +43,14 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
         this.props.onTriggered("close");
       }
 
-      this.prevKeyHandler.call(window, ev);
+      this.prevKeyHandler && this.prevKeyHandler.call(window, ev);
     };
   }
 
   public componentWillUnmount() {
-    window.onkeyup = this.prevKeyHandler;
+    if (this.prevKeyHandler !== null) {
+      window.onkeyup = this.prevKeyHandler;
+    }
   }
 
   private convertParams(parameters: Array<EventParams>) {

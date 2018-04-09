@@ -69,13 +69,13 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
             </li>
             <li className={classNames({"is-active": currentTab === "preview"})}
                 onClick={() => fetchError || this.setState({currentTab: "preview"})}>
-              <a style={{pointerEvents: fetchError ? "none" : "", color: fetchError ? "#E2E2E2" : ""}}>
+              <a style={{pointerEvents: fetchError ? "none" : "auto", color: fetchError ? "#E2E2E2" : ""}}>
                 Preview
               </a>
             </li>
             <li className={classNames({"is-active": currentTab === "settings"})}
                 onClick={() => fetchError || this.setState({currentTab: "settings"})}>
-              <a style={{pointerEvents: fetchError ? "none" : "", color: fetchError ? "#E2E2E2" : ""}}>
+              <a style={{pointerEvents: fetchError ? "none" : "auto", color: fetchError ? "#E2E2E2" : ""}}>
                 Settings
               </a>
             </li>
