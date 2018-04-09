@@ -10,6 +10,8 @@ interface RemoteControlProps {
   documentId: string;
   fetchError?: {status: number, statusText: string};
   clearSession: () => void;
+  triggerMode: "trigger" | "enqueue";
+  triggerModeUpdated: (mode: string) => void;
 }
 
 interface PreviewStatus {
@@ -187,6 +189,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public render() {
+    const { triggerMode, triggerModeUpdated} = this.props;
     const { previewStatus, showdirty } = this.state;
 
     const containerStyle: React.CSSProperties = {
@@ -223,6 +226,13 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
                 onClick={() => this.setState({showSettingsModal: true})}>
           <i className="fa fa-cog"></i>
         </button>
+
+        <div className="select" style={{position: "absolute", left: 70}}>
+          <select value={triggerMode} onChange={(ev) => triggerModeUpdated(ev.target.value)}>
+            <option>trigger</option>
+            <option>enqueue</option>
+          </select>
+        </div>
 
         {this.renderSettingsModal()}
 
