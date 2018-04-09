@@ -41,6 +41,7 @@ interface TriggerClientState {
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<Event>;
   pageIsLoading: boolean;
+  triggerMode: "trigger" | "enqueue";
   fetchError?: {status: number, statusText: string};
 }
 
@@ -56,7 +57,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       showSettingsModal: false,
       abstractEvents: [],
       instantiatedEvents: [],
-      pageIsLoading: true
+      pageIsLoading: true,
+      triggerMode: "trigger"
     };
   }
 
@@ -150,6 +152,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
+  private updateTriggerMode(triggerMode: "trigger" | "enqueue") {
+    console.log("updating trigger mode:", triggerMode);
+    this.setState({ triggerMode });
+  }
+
   public render() {
     return (
       <div>
@@ -159,6 +166,8 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
         <RemoteControl documentId={this.props.documentId}
                        fetchError={this.state.fetchError}
+                       triggerMode={this.state.triggerMode}
+                       triggerModeUpdated={this.updateTriggerMode.bind(this)}
                        clearSession={this.props.clearSession} />
       </div>
     );
