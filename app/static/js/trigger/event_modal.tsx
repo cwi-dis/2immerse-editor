@@ -4,6 +4,7 @@ import { List } from "immutable";
 import { capitalize, makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
+import { TriggerModeContext } from "./trigger_client";
 
 interface EventModalProps {
   event: Event;
@@ -74,11 +75,17 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
     });
   }
 
-  private launchEvent() {
+  private launchEvent(triggerMode = "trigger") {
     const { event, documentId, onTriggered } = this.props;
+    let endpoint: string, requestMethod: "PUT" | "POST";
 
-    const endpoint = event.modify ? "modify" : "trigger";
-    const requestMethod = event.modify ? "PUT" : "POST";
+    if (triggerMode === "trigger") {
+      endpoint = event.modify ? "modify" : "trigger";
+      requestMethod = event.modify ? "PUT" : "POST";
+    } else {
+      endpoint = "enqueue";
+      requestMethod = "POST";
+    }
 
     const url = `/api/v1/document/${documentId}/events/${event.id}/${endpoint}`;
     const data = JSON.stringify(this.collectParams());
@@ -133,16 +140,20 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
     }
   }
 
-  private getButtonLabel(): string {
+  private getButtonLabel(triggerMode = "trigger"): string {
     const { event } = this.props;
+
+    if (triggerMode === "enqueue") {
+      return "enqueue";
+    }
 
     if (event.verb) {
       return event.verb;
     } else if (event.modify) {
-      return "Modify";
+      return "modify";
     }
 
-    return "Trigger";
+    return "trigger";
   }
 
   public render() {
@@ -155,9 +166,13 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
         <h3 style={{color: "#555555", borderBottom: "1px solid #E2E2E2", paddingBottom: 10}}>{this.props.event.name}</h3>
         {this.renderParamTable()}
         <br/>
-        <button className="button is-info"
-                onClick={this.launchEvent.bind(this)}
-                disabled={!submitEnabled}>{this.getButtonLabel()}</button>
+        <TriggerModeContext.Consumer>
+          {(triggerMode) =>
+            <button className="button is-info"
+                    onClick={this.launchEvent.bind(this, triggerMode)}
+                    disabled={!submitEnabled}>{this.getButtonLabel(triggerMode)}</button>
+          }
+        </TriggerModeContext.Consumer>
       </div>
     );
   }

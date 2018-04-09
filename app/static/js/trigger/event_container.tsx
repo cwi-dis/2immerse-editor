@@ -4,6 +4,7 @@ import * as classNames from "classnames";
 import { makeRequest } from "../editor/util";
 import { Event } from "./trigger_client";
 import EventModal from "./event_modal";
+import { TriggerModeContext } from "./trigger_client";
 
 interface EventContainerProps {
   documentId: string;
@@ -30,11 +31,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     };
   }
 
-  private getButtonLabel(): string {
+  private getButtonLabel(triggerMode = "trigger"): string {
     const { event } = this.props;
 
     if (event.parameters.filter((param) => param.type !== "set").length > 0) {
       return "configure";
+    } else if (triggerMode === "enqueue") {
+      return "enqueue";
     } else if (event.verb) {
       return event.verb;
     } else if (event.modify) {
@@ -70,11 +73,17 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     );
   }
 
-  private launchEvent() {
+  private launchEvent(triggerMode = "trigger") {
     const { event, documentId } = this.props;
+    let endpoint: string, requestMethod: "PUT" | "POST";
 
-    const endpoint = event.modify ? "modify" : "trigger";
-    const requestMethod = event.modify ? "PUT" : "POST";
+    if (triggerMode === "trigger") {
+      endpoint = event.modify ? "modify" : "trigger";
+      requestMethod = event.modify ? "PUT" : "POST";
+    } else {
+      endpoint = "enqueue";
+      requestMethod = "POST";
+    }
 
     const url = `/api/v1/document/${documentId}/events/${event.id}/${endpoint}`;
     const data = JSON.stringify(event.parameters.map((param) => {
@@ -133,14 +142,18 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
         </div>
 
         <div style={{ marginTop: 20 }}>
-          <button className={classNames(
-                              "button",
-                              "is-info",
-                              {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                  onClick={() => (paramCount === 0) ? this.launchEvent() : this.setState({showEventModal: true})}
-                  onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
-            {this.getButtonLabel()}
-          </button>
+          <TriggerModeContext.Consumer>
+            {(triggerMode) =>
+              <button className={classNames(
+                                  "button",
+                                  "is-info",
+                                  {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                      onClick={() => (paramCount === 0) ? this.launchEvent(triggerMode) : this.setState({showEventModal: true})}
+                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
+                {this.getButtonLabel(triggerMode)}
+              </button>
+            }
+          </TriggerModeContext.Consumer>
         </div>
         {this.renderEventModal()}
       </div>
