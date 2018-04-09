@@ -9,19 +9,31 @@ interface EventListProps {
   fetchEvents?: () => void;
 }
 
+const findOptimalContainerWidth = (blockWidth = 400) => {
+  for (let containerWidth = window.outerWidth; containerWidth >= blockWidth; containerWidth--) {
+    if (containerWidth % blockWidth === 0) {
+      return containerWidth;
+    }
+  }
+
+  return blockWidth;
+};
+
 const EventList: React.SFC<EventListProps> = (props) => {
   const { documentId, events, fetchEvents } = props;
 
   return (
-    <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
-      {events.map((event, i) => {
-        return (
-          <EventContainer key={`event.${i}`}
-                          documentId={documentId}
-                          event={event}
-                          onTriggered={fetchEvents} />
-        );
-      })}
+    <div style={{width: findOptimalContainerWidth(), margin: "0 auto"}}>
+      <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
+        {events.map((event, i) => {
+          return (
+            <EventContainer key={`event.${i}`}
+                            documentId={documentId}
+                            event={event}
+                            onTriggered={fetchEvents} />
+          );
+        })}
+      </div>
     </div>
   );
 };
