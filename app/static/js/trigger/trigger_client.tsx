@@ -45,6 +45,8 @@ interface TriggerClientState {
   fetchError?: {status: number, statusText: string};
 }
 
+export const TriggerModeContext = React.createContext("trigger");
+
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private pollingFrequency: number = 2000;
   private pollingInterval: any;
@@ -161,7 +163,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     return (
       <div>
         <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "scroll"}}>
-          {this.renderMainContent()}
+          <TriggerModeContext.Provider value={this.state.triggerMode}>
+            {this.renderMainContent()}
+          </TriggerModeContext.Provider>
         </div>
 
         <RemoteControl documentId={this.props.documentId}
