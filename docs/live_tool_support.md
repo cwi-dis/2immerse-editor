@@ -3,11 +3,13 @@ title = "Live Editing"
 weight = 3
 +++
 
-# Support for the live editing tool
+# Support for the live editing tools
 
 The basic principle behind the live editing - or triggering - tool is that the timeline document has pre-edited snippets for various events that can happen. These snippets can then be inserted into the timeline document, possibly after filling in some parameters. These snippets are called _events_, because that term seems to be closest to how television producers or directors think of them (even though the name has the disadvantage that it already means many different things in the technical domain).
 
-The list of currently triggerable events and their parameters is retrieved from the backend authoring service, and the live editing tool will populate its GUI from this. This allows events to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new events into the live document as it is playing, using the preproduction tool operating on the live document.
+These _events_ come in two flavors: _abstract events_ that still need some parameters to be filled in and _ready events_ which can be triggered as-is. The intention is that _The Tool That Still Needs A Good Name_ is used to fill the parameters in an abstract event and then it _enqueues_ it. This makes a copy of the abstract event appear in the ready event list, where a single button press will trigger it.
+
+The list of currently abstract and ready events and their parameters is retrieved from the backend authoring service, and the live editing tool will populate its GUI from this. This allows events to be active only during certain parts of the experience (which would make life easier for the person operating the live triggering tool). It may eventually also allow a second operator to edit new events into the live document as it is playing, using the preproduction tool operating on the live document.
 
 We also want to modify events after they have been triggered (for example to manually stop an event by setting its ending time to "now"). This requires that the list of events is retrieved live.
 ## Requirements Considerations
@@ -35,8 +37,9 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 	- `previewUrl`: optional URL of an image that can be used as a preview icon, so the trigger tool operator can quickly distinguish the various triggerable events.
 	- `longdesc`: optional text that is shown to the trigger tool operator to help understand what the intention of this trigger is.
 	- `id`: trigger identity, to be passed to the `trigger` call later.
-	- `trigger`: (boolean) true if this item can be passed to `trigger` currently.
-	- `modify`: (boolean) true if this item can be passed to `modify` currently. Note that exactly one of `trigger` and `modify` will be true for any event.
+	-  `trigger`: (boolean) true if this item can be passed to `trigger` currently. _TEMPORARY, for compatability._
+	- `modify`: (boolean) true if this item can be passed to `modify` currently. Note that exactly one of `trigger` and `modify` will be true for any event. _TEMPORARY, for compatability._
+	- `state`: (string) one of `'abstract'`, `'ready'` or `'active'`.
 	- `parameters`: list of parameters, of the form:
 		- `name`: Human-readable name for the parameter (only for the UI).
 		- `parameter`: parameter identity, to be passed to the `trigger` or `modify` call later.
@@ -48,9 +51,9 @@ The triggering tool API endpoint is `/api/v1/document/<documentId>/events`
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings)
 	
-- `propose` (method `POST`) is very similar to trigger, but in stead of the event copy being inserted into the timeline it is inserted into the 
+- `enqueue` (method `POST`) is very similar to trigger, but in stead of the event copy being inserted into the timeline it is inserted into the list of ready events.
 
-- `modify` (method `PUT`) modifies a previously triggered item. Returns a success indicator.   The body is an `application/json` object, with the following keys:
+- `modify` (method `PUT`) modifies a previously triggered (active) item. Returns a success indicator.   The body is an `application/json` object, with the following keys:
 	- `id`: the item to trigger (string)
 	- `parameters`: list of `parameter`, `value` pairs (strings).
 
@@ -93,9 +96,11 @@ The general structure of an event that can be stopped interactively is as follow
 
 ```
 <tl:seq tt:name="..." xml:id="..." >
-    <tt:parameters>
-        <tt:parameter tt:name="begin time" tt:parameter="tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(..)}" />
+	<tt:parameters>
 	</tt:parameters>
+    <tt:readyparameters>
+        <tt:parameter tt:name="begin time" tt:parameter="tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(..)}" />
+	</tt:readyparameters>
 	<tt:modparameters>
 	    <tt:parameter tt:name="duration" tt:parameter="tl:par/tl:sleep/@tl:dur" tt:type="set" tt:value="{tt:clock(.)}" />
 	</tt:modparameters>
@@ -109,11 +114,13 @@ The general structure of an event that can be stopped interactively is as follow
 
 An event has a `tt:name` attribute and a `<tt:parameters>` child element (with `<tt:parameter name= parameter= type= required= />` children).  An event has optional attributes `tt:target` (XPath indicating where the copy should be inserted), `tt:verb`, `tt:modVerb`, `tt:longdesc` and `tt:previewUrl`.
 
-There is a second set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (which is probably a different set of parameters than those for _trigger_).
+A second set of parameters is stored inside `<tt:readyparameters>`, these should be automatic (`tt:type='set'`) and will be set during triggering.
+
+There is a third set of parameters `<tt:modparameters>` to signify the parameters that can be changed with _modify_ (usually these will be `set` type parameters to end the event).
 
 The `value` can be an _Attribute Value Template_, in which case the expression is evaluated and the result stored in the attribute to be modified.
 
-At the moment, exactly two AVTs are implemented (hardcoded), to record current time point and duration and another one to refer to the value entered by the user (the default). These are used to set the `tl:dur` attribute of `tl:sleep` elements dynamically. See the examples above for how to use these:
+At the moment, exactly three AVTs are implemented (hardcoded), to record current time point and duration and another one to refer to the value entered by the user (the default). These are used to set the `tl:dur` attribute of `tl:sleep` elements dynamically. See the examples above for how to use these:
 
 - `{tt:clock(..)}` refers to the current clock value progress of the parent element. This corresponds roughly to the current time in the presentation.
 - `{tt:clock(.)}` refers to the current clock value progress of the current element. This corresponds roughly to the current duration of the current element.

@@ -219,6 +219,23 @@ def document_events_trigger(documentId, id):
     return events.trigger(id, parameters)
 
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/enqueue", methods=["POST"])
+def document_events_enqueue(documentId, id):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+
+    events = document.events()
+    assert events
+
+    parameters = request.get_json()
+    if not isinstance(parameters, list):
+        abort(405)
+
+    return events.enqueue(id, parameters)
+
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
 def document_events_modify(documentId, id):
     try:

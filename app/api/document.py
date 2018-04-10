@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 # Pattern to find AVT-like interpolation expressions
 INTERPOLATION = re.compile(r'\{[^}]+\}')
 
+OLD_EVENT_PARAMETERS=True
+NEW_EVENT_PARAMETERS=True
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -745,13 +747,15 @@ class DocumentEvents:
         elementsComplete = self.tree.getroot().findall(exprComplete, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
         rv = []
-        for elt in elementsTriggerable + elementsComplete:
-            rv.append(self._getDescription(elt, trigger=True))
+        for elt in elementsTriggerable:
+            rv.append(self._getDescription(elt, trigger=True, state='abstract'))
+        for elt in elementsComplete:
+            rv.append(self._getDescription(elt, trigger=True, state='ready'))
         for elt in elementsModifyable:
             # Weed out events that are already finished
             if elt.get(NS_TIMELINE_INTERNAL("state")) == "finished":
                 continue
-            rv.append(self._getDescription(elt, trigger=False))
+            rv.append(self._getDescription(elt, trigger=False, state='active'))
         self.logger.debug('get: %d triggerable, %d complete-triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsComplete), len(elementsModifyable)), extra=self.getLoggerExtra())
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
@@ -760,10 +764,17 @@ class DocumentEvents:
         return rv
 
     @synchronized
-    def _getDescription(self, elt, trigger):
+    def _getDescription(self, elt, trigger, state=None):
         """Returns description of a triggerable or modifiable event for the front end"""
         # xxxjack should move to ElementDelegate
-        parameterExpr = './tt:parameters/tt:parameter' if trigger else './tt:modparameters/tt:parameter'
+        if state == 'abstract':
+            parameterExpr = './tt:parameters/tt:parameter'
+        elif state == 'ready':
+            parameterExpr = './tt:readyparameters/tt:parameter'
+        elif state == 'active':
+            parameterExpr = './tt:modparameters/tt:parameter'
+        else:
+            assert 0
         parameterElements = elt.findall(parameterExpr, NAMESPACES)
         parameters = []
         #
@@ -824,6 +835,11 @@ class DocumentEvents:
         name = elt.get(NS_TRIGGER('name'))
         idd = elt.get(NS_XML('id'))
         rv = dict(name=name, id=idd, trigger=trigger, modify=not trigger, parameters=parameters)
+        if OLD_EVENT_PARAMETERS:
+            rv['trigger'] = trigger
+            rv['modify'] = not trigger
+        if NEW_EVENT_PARAMETERS and state:
+            rv['state'] = state
         if trigger and NS_TRIGGER("verb") in elt.attrib:
             rv["verb"] = elt.get(NS_TRIGGER("verb"))
         if not trigger and NS_TRIGGER("modVerb") in elt.attrib:
@@ -838,7 +854,7 @@ class DocumentEvents:
             rv["longdesc"] = elt.get(NS_TRIGGER("longdesc"))
 
         return rv
-
+            
     @synchronized
     def _getOptions(self, optionListElt):
         optionElements = optionListElt.findall('./au:item', NAMESPACES)
@@ -974,6 +990,56 @@ class DocumentEvents:
         return newElement.get(NS_XML('id'))
 
     @edit
+    def enqueue(self, id, parameters):
+        """REST trigger command: copies an abstract event with all parameters filled in on the ready list"""
+        self.logger.info('enqueue(%s, %s)' % (id, repr(parameters)), extra=self.getLoggerExtra())
+        element = self.document.idMap.get(id)
+
+        if element is None:
+            self.logger.error("enqueue: no such xml:id: %s" % id, extra=self.getLoggerExtra())
+            self.document.setError('No such xml:id: %s' % id)
+            abort(404, 'No such xml:id: %s' % id)
+
+        if False:
+            # Cannot get above starting point with elementTree:-(
+            newParentPath = element.get(NS_TRIGGER('target'), '..')
+            newParent = element.find(newParentPath)
+        else:
+            tmp = self.document._getParent(element)
+            tmp2 = self.document._getParent(tmp)
+            allComplete = tmp2.findall('./tt:completeEvents', NAMESPACES)
+            if len(allComplete) != 1:
+                self.logger.error("enqueue: %d tt:completeEvents in %s" % (len(allComplete), self.document._getXPath(tmp2)))
+                self.document.setError("enqueue: %d tt:completeEvents in %s" % (len(allComplete), self.document._getXPath(tmp2)))
+                abort(404, "enqueue: %d tt:completeEvents in %s" % (len(allComplete), self.document._getXPath(tmp2)))
+            newParent = allComplete[0]
+
+        assert newParent is not None
+
+        newElement = copy.deepcopy(element)
+        newElement.set(NS_TRIGGER("wantstatus"), "true")
+        self.document._afterCopy(newElement, triggerAttributes=True)
+
+        for par in parameters:
+            parValue = par['value']
+            for path, attr, value in self._getParameterDestinations(par):
+                e = newElement.find(path, NAMESPACES)
+
+                value = self._minimalAVT(value, parValue, newElement, newParent)
+
+                if e is None:
+                    self._documentError("No element matches XPath %s" % path)
+
+                e.set(attr, value)
+
+        newParent.append(newElement)
+        self.document._elementAdded(newElement, newParent)
+
+        self.document.companionTimelineIsActive = False
+        self.document.clearError()
+        return newElement.get(NS_XML('id'))
+
+    @edit
     def modify(self, id, parameters):
         """REST modify command: modifies a running event"""
         self.logger.info('modify(%s, ...)' % (id), extra=self.getLoggerExtra())
@@ -1005,7 +1071,6 @@ class DocumentEvents:
         self.document.companionTimelineIsActive = False
         self.document.clearError()
         return ""
-
 
 class DocumentRemote:
     def __init__(self, document):
