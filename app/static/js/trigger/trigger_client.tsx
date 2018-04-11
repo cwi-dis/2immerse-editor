@@ -33,6 +33,7 @@ export interface Event {
   longdesc?: string;
   previewUrl?: string;
   verb?: string;
+  state: "abstract" | "ready" | "active";
 }
 
 interface TriggerClientState {
@@ -40,6 +41,7 @@ interface TriggerClientState {
   showSettingsModal: boolean;
   abstractEvents: Array<Event>;
   instantiatedEvents: Array<Event>;
+  readyEvents: Array<Event>;
   pageIsLoading: boolean;
   triggerMode: "trigger" | "enqueue";
   fetchError?: {status: number, statusText: string};
@@ -58,6 +60,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       showPreviewModal: false,
       showSettingsModal: false,
       abstractEvents: [],
+      readyEvents: [],
       instantiatedEvents: [],
       pageIsLoading: true,
       triggerMode: "trigger"
@@ -72,8 +75,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const events: Array<Event> = JSON.parse(data);
 
       this.setState({
-        abstractEvents: events.filter((ev) => ev.trigger),
-        instantiatedEvents: events.filter((ev) => ev.modify),
+        abstractEvents: events.filter((ev) => ev.state === "abstract"),
+        instantiatedEvents: events.filter((ev) => ev.state === "active"),
+        readyEvents: events.filter((ev) => ev.state === "ready"),
         pageIsLoading: false
       });
     }).catch((err) => {
@@ -138,9 +142,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     } else {
       const events = this.state.abstractEvents.map((event) => {
         const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
+        const replacementEvents = (this.state.triggerMode === "enqueue") ? this.state.readyEvents : this.state.instantiatedEvents;
 
-        const result = this.state.instantiatedEvents.find((instantiated) => {
-          return eventRegex.test(instantiated.id);
+        const result = replacementEvents.find((replacement) => {
+          return eventRegex.test(replacement.id);
         });
 
         return result || event;

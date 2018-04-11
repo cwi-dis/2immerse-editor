@@ -19,6 +19,18 @@ interface EventContainerState {
   showEventModal: boolean;
 }
 
+const borderColors = {
+  "abstract": "#161616",
+  "ready": "#C95A26",
+  "active": "#23D160"
+}
+
+const bgColors = {
+  "abstract": "transparent",
+  "ready": "#795341",
+  "active": "#0C4620"
+};
+
 class EventContainer extends React.Component<EventContainerProps, EventContainerState> {
   constructor(props: EventContainerProps) {
     super(props);
@@ -117,14 +129,11 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     const paramCount = event.parameters.filter((param) => param.type !== "set").length;
 
-    const borderColor = (event.modify) ? "#23D160" : "#161616";
-    const bgColor = (event.modify) ? "#0C4620" : "transparent";
-
     const boxStyle: React.CSSProperties = {
       display: "flex", flexDirection: "column", justifyContent: "space-between",
       width: 380,
-      backgroundColor: bgColor, boxShadow: "0 0 10px #161616",
-      border: `1px solid ${borderColor}`, borderRadius: 5,
+      backgroundColor: bgColors[event.state], boxShadow: "0 0 10px #161616",
+      border: `1px solid ${borderColors[event.state]}`, borderRadius: 5,
       margin: 10, padding: 25
     };
 
@@ -149,7 +158,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                                   "is-info",
                                   {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
                       onClick={() => (paramCount === 0) ? this.launchEvent(triggerMode) : this.setState({showEventModal: true})}
-                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
+                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}
+                      disabled={event.state === "ready"}>
                 {this.getButtonLabel(triggerMode)}
               </button>
             }
