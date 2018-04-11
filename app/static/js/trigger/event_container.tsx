@@ -23,7 +23,7 @@ const borderColors = {
   "abstract": "#161616",
   "ready": "#C95A26",
   "active": "#23D160"
-}
+};
 
 const bgColors = {
   "abstract": "transparent",
@@ -76,6 +76,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
                           flashSuccess: status === "success",
                           flashError: status === "error"
                         });
+
+                        this.props.onTriggered && this.props.onTriggered();
                       }} />
         </div>
         <button className="modal-close is-large"
@@ -107,6 +109,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     makeRequest(requestMethod, url, data, "application/json").then((data) => {
       console.log("success");
       this.setState({ flashSuccess: true});
+      this.props.onTriggered && this.props.onTriggered();
     }).catch((err) => {
       console.log("error:", err);
       this.setState({ flashError: true});
