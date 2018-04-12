@@ -10,9 +10,12 @@ import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 
 interface AppState {
   documentId: Nullable<string>;
+  triggerMode: "trigger" | "enqueue";
   isLoading: boolean;
   ajaxError?: {status: number, statusText: string, message?: string};
 }
+
+export const TriggerModeContext = React.createContext("trigger");
 
 class App extends React.Component<{}, AppState> {
   constructor(props: never) {
@@ -20,6 +23,7 @@ class App extends React.Component<{}, AppState> {
 
     this.state = {
       documentId: localStorage.getItem("documentId"),
+      triggerMode: "trigger",
       isLoading: false,
     };
   }
@@ -74,6 +78,10 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
+  private triggerModeUpdated(triggerMode: "trigger" | "enqueue") {
+    this.setState({ triggerMode });
+  }
+
   private renderContent() {
     const { documentId, isLoading, ajaxError } = this.state;
 
@@ -86,13 +94,17 @@ class App extends React.Component<{}, AppState> {
                             clearSession={this.clearSession.bind(this)} />;
     }
 
-    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)} />;
+    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)}
+                            triggerMode={this.state.triggerMode}
+                            triggerModeUpdated={this.triggerModeUpdated.bind(this)} />;
   }
 
   public render() {
     return (
       <div>
-        {this.renderContent()}
+        <TriggerModeContext.Provider value={this.state.triggerMode}>
+          {this.renderContent()}
+        </TriggerModeContext.Provider>
         <CurrentVersion />
       </div>
     );

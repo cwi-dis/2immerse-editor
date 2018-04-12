@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 import { makeRequest } from "../editor/util";
 import { Event } from "./trigger_client";
 import EventModal from "./event_modal";
-import { TriggerModeContext } from "./trigger_client";
+import { TriggerModeContext } from "./app";
 
 interface EventContainerProps {
   documentId: string;

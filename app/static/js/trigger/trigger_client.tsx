@@ -47,8 +47,6 @@ interface TriggerClientState {
   fetchError?: {status: number, statusText: string};
 }
 
-export const TriggerModeContext = React.createContext("trigger");
-
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private pollingFrequency: number = 2000;
   private pollingInterval: any;
@@ -159,24 +157,15 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
-  private updateTriggerMode(triggerMode: "trigger" | "enqueue") {
-    console.log("updating trigger mode:", triggerMode);
-    this.setState({ triggerMode });
-  }
-
   public render() {
     return (
       <div>
         <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "scroll"}}>
-          <TriggerModeContext.Provider value={this.state.triggerMode}>
             {this.renderMainContent()}
-          </TriggerModeContext.Provider>
         </div>
 
         <RemoteControl documentId={this.props.documentId}
                        fetchError={this.state.fetchError}
-                       triggerMode={this.state.triggerMode}
-                       triggerModeUpdated={this.updateTriggerMode.bind(this)}
                        clearSession={this.props.clearSession} />
       </div>
     );

@@ -4,7 +4,7 @@ import { List } from "immutable";
 import { capitalize, makeRequest } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
-import { TriggerModeContext } from "./trigger_client";
+import { TriggerModeContext } from "./app";
 
 interface EventModalProps {
   event: Event;
