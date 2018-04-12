@@ -1308,7 +1308,7 @@ class DocumentServe:
         if newState:
             elt.set(NS_TIMELINE_INTERNAL("state"), newState)
         else:
-            elt.attrib.pop(NS_TIMELINE_INTERNAL("state"))
+            elt.attrib.pop(NS_TIMELINE_INTERNAL("state"), None)
         if newEpoch:
             elt.set(NS_TIMELINE_INTERNAL("epoch"), str(newEpoch))
         elif NS_TIMELINE_INTERNAL("epoch") in elt.attrib:
