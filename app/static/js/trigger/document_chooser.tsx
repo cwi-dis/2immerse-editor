@@ -5,6 +5,8 @@ import { makeRequest, Nullable } from "../editor/util";
 
 interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
+  triggerModeUpdated: (triggerMode: string) => void;
+  triggerMode: "trigger" | "enqueue";
 }
 
 type InputMethod = "upload" | "url" | "id";
@@ -158,6 +160,19 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
               </div>
             </div>
           }
+
+          <div className="field">
+            <label className="label">Trigger Mode</label>
+            <div className="control">
+              <div className="select is-fullwidth is-info">
+                <select className="is-info" value={this.props.triggerMode} onChange={(ev) => this.props.triggerModeUpdated(ev.target.value)}>
+                  <option value="trigger">Trigger directly</option>
+                  <option value="enqueue">Queue events</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="field" style={{marginTop: 25}}>
             <div className="control">
               <button className={classNames("button", "is-info", {"is-loading": this.state.isLoading})}>
