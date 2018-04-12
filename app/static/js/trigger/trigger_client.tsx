@@ -7,6 +7,7 @@ import EventList from "./event_list";
 import LoadingSpinner from "./utils/loading_spinner";
 import ErrorMessage from "./utils/error_message";
 import RemoteControl from "./remote_control";
+import { TriggerModeContext } from "./app";
 
 interface TriggerClientProps {
   documentId: string;
@@ -124,7 +125,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     clearInterval(this.pollingInterval);
   }
 
-  private renderMainContent(): JSX.Element {
+  private renderMainContent(triggerMode): JSX.Element {
     if (this.state.pageIsLoading) {
       return <LoadingSpinner />;
     } else if (this.state.fetchError) {
@@ -138,7 +139,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     } else {
       const events = this.state.abstractEvents.map((event) => {
         const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
-        const replacementEvents = (this.state.triggerMode === "enqueue") ? this.state.readyEvents : this.state.instantiatedEvents;
+        const replacementEvents = (triggerMode === "enqueue") ? this.state.readyEvents : this.state.instantiatedEvents;
 
         const result = replacementEvents.find((replacement) => {
           return eventRegex.test(replacement.id);
@@ -159,7 +160,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     return (
       <div>
         <div style={{height: "calc(100vh - 85px)", margin: "0 auto", overflowY: "scroll"}}>
-            {this.renderMainContent()}
+          <TriggerModeContext.Consumer>
+            {(triggerMode) => this.renderMainContent(triggerMode)}
+          </TriggerModeContext.Consumer>
         </div>
 
         <RemoteControl documentId={this.props.documentId}
