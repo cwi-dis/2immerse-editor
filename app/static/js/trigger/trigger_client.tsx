@@ -125,7 +125,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     clearInterval(this.pollingInterval);
   }
 
-  private renderMainContent(triggerMode): JSX.Element {
+  private renderMainContent(triggerMode: string): JSX.Element {
     if (this.state.pageIsLoading) {
       return <LoadingSpinner />;
     } else if (this.state.fetchError) {
