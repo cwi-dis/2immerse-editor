@@ -43,7 +43,6 @@ interface TriggerClientState {
   instantiatedEvents: Array<Event>;
   readyEvents: Array<Event>;
   pageIsLoading: boolean;
-  triggerMode: "trigger" | "enqueue";
   fetchError?: {status: number, statusText: string};
 }
 
@@ -61,7 +60,6 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       readyEvents: [],
       instantiatedEvents: [],
       pageIsLoading: true,
-      triggerMode: "trigger"
     };
   }
 
