@@ -852,6 +852,8 @@ class DocumentEvents:
                 rv["previewUrl"] = previewUrl
         if NS_TRIGGER("longdesc") in elt.attrib:
             rv["longdesc"] = elt.get(NS_TRIGGER("longdesc"))
+        rv["productionId"] = elt.get(NS_TRIGGER("productionId"), idd)
+        rv["productionGroup"] = elt.get(NS_TRIGGER("productionGroup"), rv["productionId"])
 
         return rv
             
@@ -1019,6 +1021,11 @@ class DocumentEvents:
         newElement = copy.deepcopy(element)
         newElement.set(NS_TRIGGER("wantstatus"), "true")
         self.document._afterCopy(newElement, triggerAttributes=True)
+        # The new element should have a productionId (which is used to combine multiple instances of the event
+        # in the UI). Invent one if needed, and record we should remove references after it becomes inactive
+        if not NS_TRIGGER("productionId") in newElement:
+            newElement.set(NS_TRIGGER("productionId"), newElement.get(NS_XML("id")))
+            newElement.set(NS_TRIGGER("productionIdTransient"), "true")
 
         for par in parameters:
             parValue = par['value']
@@ -1072,6 +1079,16 @@ class DocumentEvents:
         self.document.clearError()
         return ""
 
+    def _productionIdFinished(self, productionId):
+        """Called when a transient productionId has finished running. Remove from completeEvents"""
+        events = self.tree.getroot().findall(".//tt:completeEvents/*[@tt:productionId='%s']" % productionId, NAMESPACES)
+        self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events))
+        for elt in events:
+            parent = self.document._getParent(elt)
+            parent.remove(element)
+            self.document._elementDeleted(element)
+
+        
 class DocumentRemote:
     def __init__(self, document):
         self.document = document
@@ -1271,6 +1288,14 @@ class DocumentServe:
             changed = self._elementStateChanged(elt, eltState)
             if changed:
                 self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
+                # If this was one of our events and it has become inactive we may want to remove the trigger
+                # that caused this
+                if elt.get(NS_TRIGGER("productionIdTransient"), False):
+                    if elt.get(NS_TIMELINE_INTERNAL("state"), None) in {"finished", "idle", None}:
+                        productionId = elt.get(NS_TRIGGER("productionId"), None)
+                        if productionId:
+                            self.document.events()._productionIdFinished(productionId)
+                    
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
