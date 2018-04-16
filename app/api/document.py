@@ -1082,7 +1082,7 @@ class DocumentEvents:
     def _productionIdFinished(self, productionId):
         """Called when a transient productionId has finished running. Remove from completeEvents"""
         events = self.tree.getroot().findall(".//tt:completeEvents/*[@tt:productionId='%s']" % productionId, NAMESPACES)
-        self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events))
+        self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events)))
         for elt in events:
             parent = self.document._getParent(elt)
             parent.remove(element)
