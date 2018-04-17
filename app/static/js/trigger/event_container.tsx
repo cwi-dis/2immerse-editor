@@ -19,18 +19,6 @@ interface EventContainerState {
   showEventModal: boolean;
 }
 
-const borderColors = {
-  "abstract": "#161616",
-  "ready": "#C95A26",
-  "active": "#23D160"
-};
-
-const bgColors = {
-  "abstract": "transparent",
-  "ready": "#795341",
-  "active": "#0C4620"
-};
-
 class EventContainer extends React.Component<EventContainerProps, EventContainerState> {
   constructor(props: EventContainerProps) {
     super(props);
@@ -135,8 +123,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const boxStyle: React.CSSProperties = {
       display: "flex", flexDirection: "column", justifyContent: "space-between",
       width: 380,
-      backgroundColor: bgColors[event.state], boxShadow: "0 0 10px #161616",
-      border: `1px solid ${borderColors[event.state]}`, borderRadius: 5,
+      backgroundColor: (event.state === "active") ? "#0C4620" : "transparent", boxShadow: "0 0 10px #161616",
+      border: `1px solid ${(event.state === "active") ? "#23D160" : "#161616"}`, borderRadius: 5,
       margin: 10, padding: 25
     };
 
