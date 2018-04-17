@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as escapeStringRegex from "escape-string-regexp";
 import * as io from "socket.io-client";
 
 import { makeRequest } from "../editor/util";
@@ -35,6 +34,7 @@ export interface Event {
   previewUrl?: string;
   verb?: string;
   state: "abstract" | "ready" | "active";
+  productionId: string;
 }
 
 interface TriggerClientState {
@@ -142,23 +142,20 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
       if (triggerMode === "trigger") {
         events = readyEvents.concat(abstractEvents).map((event) => {
-          const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
           const activeResult = instantiatedEvents.find((replacement) => {
-            return eventRegex.test(replacement.id);
+            return replacement.productionId === event.productionId;
           });
 
           return activeResult || event;
         });
       } else {
         events = abstractEvents.map((event) => {
-          const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
-
           const readyResult = readyEvents.find((replacement) => {
-            return eventRegex.test(replacement.id);
+            return replacement.productionId === event.productionId;
           });
 
           const activeResult = instantiatedEvents.find((replacement) => {
-            return eventRegex.test(replacement.id);
+            return replacement.productionId === event.productionId;
           });
 
           return readyResult || activeResult || event;
