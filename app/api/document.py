@@ -1293,6 +1293,7 @@ class DocumentServe:
                 if elt.get(NS_TRIGGER("productionIdTransient"), False):
                     if elt.get(NS_TIMELINE_INTERNAL("state"), None) in {"finished", "idle", None}:
                         productionId = elt.get(NS_TRIGGER("productionId"), None)
+                        self.logger.debug('setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
                     
