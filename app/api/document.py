@@ -646,7 +646,7 @@ class DocumentXml:
                 parent.insert(pos+1, newElement)
             self.document._elementAdded(newElement, parent)
         else:
-            self.setError('Internal error: unknown relative position %s' % where)
+            self.document.setError('Internal error: unknown relative position %s' % where)
             abort(400, 'Unknown relative position %s' % where)
         return self.document._getXPath(newElement)
 
@@ -674,7 +674,7 @@ class DocumentXml:
         elif mimetype == 'application/json':
             attrs = json.loads(attrs)
         else:
-            self.setError('Internal error: unexpected mimetype %s' % mimetype)
+            self.document.setError('Internal error: unexpected mimetype %s' % mimetype)
             abort(400, 'Unexpected mimetype %s' % mimetype)
         assert isinstance(attrs, dict)
         existingAttrs = element.attrib
@@ -1371,7 +1371,7 @@ class DocumentServe:
                 wantStateUpdates = False
             except requests.exceptions.RequestException:
                 self.logger.warning("forward: PUT failed for %s" % callback, extra=self.getLoggerExtra())
-                self.setError("Error communicating to timeline service")
+                self.document.setError("Error communicating to timeline service")
                 toRemove.append(callback)
             else:
                 requestDuration = time.time() - requestStartTime
