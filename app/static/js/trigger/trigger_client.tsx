@@ -137,16 +137,33 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                       documentId={this.props.documentId} />
       );
     } else {
-      const events = this.state.abstractEvents.map((event) => {
-        const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
-        const replacementEvents = (triggerMode === "enqueue") ? this.state.readyEvents : this.state.instantiatedEvents;
+      const { abstractEvents, readyEvents, instantiatedEvents } = this.state;
+      let events: Array<Event>;
 
-        const result = replacementEvents.find((replacement) => {
-          return eventRegex.test(replacement.id);
+      if (triggerMode === "trigger") {
+        events = readyEvents.concat(abstractEvents).map((event) => {
+          const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
+          const activeResult = instantiatedEvents.find((replacement) => {
+            return eventRegex.test(replacement.id);
+          });
+
+          return activeResult || event;
         });
+      } else {
+        events = abstractEvents.map((event) => {
+          const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
 
-        return result || event;
-      });
+          const readyResult = readyEvents.find((replacement) => {
+            return eventRegex.test(replacement.id);
+          });
+
+          const activeResult = instantiatedEvents.find((replacement) => {
+            return eventRegex.test(replacement.id);
+          });
+
+          return readyResult || activeResult || event;
+        });
+      }
 
       return (
         <EventList documentId={this.props.documentId}
