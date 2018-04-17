@@ -64,7 +64,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     let formData: FormData | undefined;
 
     if (this.fileInput && this.fileInput.files) {
-      const document = this.fileInput.files.item(0);
+      const document = this.fileInput.files.item(0)!;
 
       formData = new FormData();
       formData.append("document", document, document.name);
