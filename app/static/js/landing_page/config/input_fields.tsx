@@ -115,7 +115,7 @@ export class FileInputField extends React.Component<FileInputFieldProps, {}> {
 
   private readSelectedFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
-      const file = e.target.files.item(0);
+      const file = e.target.files.item(0)!;
       const reader = new FileReader();
 
       reader.onloadend = () => {
