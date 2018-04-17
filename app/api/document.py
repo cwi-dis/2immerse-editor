@@ -1290,6 +1290,7 @@ class DocumentServe:
                 self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
                 # If this was one of our events and it has become inactive we may want to remove the trigger
                 # that caused this
+                self.logger.debug("xxxjack productionIdTransient %s, state %s, productionId %s" % (elt.get(NS_TRIGGER("productionIdTransient"), False), elt.get(NS_TIMELINE_INTERNAL("state"), None), elt.get(NS_TRIGGER("productionId"), None)))
                 if elt.get(NS_TRIGGER("productionIdTransient"), False):
                     if elt.get(NS_TIMELINE_INTERNAL("state"), None) in {"finished", "idle", None}:
                         productionId = elt.get(NS_TRIGGER("productionId"), None)
