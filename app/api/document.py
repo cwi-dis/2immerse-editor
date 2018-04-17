@@ -1085,8 +1085,8 @@ class DocumentEvents:
         self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events)))
         for elt in events:
             parent = self.document._getParent(elt)
-            parent.remove(element)
-            self.document._elementDeleted(element)
+            parent.remove(elt)
+            self.document._elementDeleted(elt)
 
         
 class DocumentRemote:
