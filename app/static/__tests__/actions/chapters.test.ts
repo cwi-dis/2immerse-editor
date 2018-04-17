@@ -1,6 +1,6 @@
 /// <reference types="jest" />
 
-import configureMockStore from "redux-mock-store";
+import * as configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import { List } from "immutable";
 
