@@ -928,8 +928,20 @@ class DocumentEvents:
         elif expr == "tt:value()":
             exprValue = userValue
         else:
-            self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
-            exprValue = "{" + expr + "}"
+            # Presume it is an XPath expression leading to a variable in the document.
+            matchedElements = self.tree.getroot().findall(exprValue, NAMESPACES)
+            if matchedElements:
+                v = ''
+                for e in matchedElements:
+                    if e.text:
+                        v += e.text.strip()
+                    if e.tail:
+                        v += e.tail.strip()
+                exprValue = e
+            else:
+                self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
+                exprValue = "{" + expr + "}"
+
         exprValue = str(exprValue)
         value = value[:match.start()] + exprValue + value[match.end():]
         return value
