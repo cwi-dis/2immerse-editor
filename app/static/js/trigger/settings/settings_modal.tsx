@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as classNames from "classnames";
 
 import GeneralSettings from "./general_settings";
 import PreviewLauncher from "./preview_launcher";
@@ -11,30 +10,7 @@ interface SettingsModalProps {
   clearSession: () => void;
 }
 
-interface SettingsModalState {
-  currentTab: "settings" | "preview" | "session";
-}
-
-class SettingsModal extends React.Component<SettingsModalProps, SettingsModalState> {
-  public constructor(props: SettingsModalProps) {
-    super(props);
-
-    this.state = {
-      currentTab: "session"
-    };
-  }
-
-  private renderCurrentTab() {
-    switch (this.state.currentTab) {
-    case "session":
-      return <SessionSettings {...this.props} />;
-    case "preview":
-      return <PreviewLauncher documentId={this.props.documentId} />;
-    case "settings":
-      return <GeneralSettings documentId={this.props.documentId} />;
-    }
-  }
-
+class SettingsModal extends React.Component<SettingsModalProps, {}> {
   private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
     const apiUrl = `${location.origin}/api/v1/document/${this.props.documentId}`;
 
@@ -45,7 +21,6 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
   }
 
   public render() {
-    const { currentTab } = this.state;
     const { fetchError } = this.props;
 
     const containerStyle: React.CSSProperties = {
@@ -53,7 +28,8 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
       height: "calc(100vh - 80px)", width: "20vw",
       backgroundColor: "#FFFFFF", color: "#000000",
       padding: 20,
-      boxShadow: "0 0 5px #555555"
+      boxShadow: "0 0 5px #555555",
+      overflow: "auto"
     };
 
     return (
@@ -69,28 +45,11 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
           </i>
         </p>
 
-        <div className="tabs">
-          <ul>
-            <li className={classNames({"is-active": currentTab === "session"})}
-                onClick={() => this.setState({currentTab: "session"})}>
-              <a>Session</a>
-            </li>
-            <li className={classNames({"is-active": currentTab === "preview"})}
-                onClick={() => fetchError || this.setState({currentTab: "preview"})}>
-              <a style={{pointerEvents: fetchError ? "none" : "auto", color: fetchError ? "#E2E2E2" : ""}}>
-                Preview
-              </a>
-            </li>
-            <li className={classNames({"is-active": currentTab === "settings"})}
-                onClick={() => fetchError || this.setState({currentTab: "settings"})}>
-              <a style={{pointerEvents: fetchError ? "none" : "auto", color: fetchError ? "#E2E2E2" : ""}}>
-                Settings
-              </a>
-            </li>
-          </ul>
+        <div>
+          <SessionSettings {...this.props} />
+          {(fetchError) ? null : <PreviewLauncher documentId={this.props.documentId} />}
+          {(fetchError) ? null : <GeneralSettings documentId={this.props.documentId} />}
         </div>
-
-        {this.renderCurrentTab()}
       </div>
     );
   }
