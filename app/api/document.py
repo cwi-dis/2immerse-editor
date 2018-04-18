@@ -929,7 +929,7 @@ class DocumentEvents:
             exprValue = userValue
         else:
             # Presume it is an XPath expression leading to a variable in the document.
-            matchedElements = self.tree.getroot().findall(exprValue, NAMESPACES)
+            matchedElements = self.tree.getroot().findall(expr, NAMESPACES)
             if matchedElements:
                 v = ''
                 for e in matchedElements:
