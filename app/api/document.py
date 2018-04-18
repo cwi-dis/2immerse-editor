@@ -937,7 +937,7 @@ class DocumentEvents:
                         v += e.text.strip()
                     if e.tail:
                         v += e.tail.strip()
-                exprValue = e
+                exprValue = v
             else:
                 self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
                 exprValue = "{" + expr + "}"
