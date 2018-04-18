@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import * as classNames from "classnames";
 
 import SettingsModal from "./settings/settings_modal";
@@ -173,16 +174,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       return;
     }
 
-    return (
-      <div className="modal is-active">
-        <div className="modal-background"></div>
-        <div className="modal-content">
-          <SettingsModal {...this.props} />
-        </div>
-        <button className="modal-close is-large"
-                onClick={() => this.setState({showSettingsModal: false})}>
-        </button>
-      </div>
+    return createPortal(
+      <SettingsModal {...this.props} />,
+      document.getElementById("modal-root")!
     );
   }
 
@@ -220,7 +214,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     return (
       <div style={containerStyle}>
         <button className="button is-info" style={{position: "absolute"}}
-                onClick={() => this.setState({showSettingsModal: true})}>
+                onClick={() => this.setState({showSettingsModal: !this.state.showSettingsModal})}>
           <i className="fa fa-cog"></i>
         </button>
 

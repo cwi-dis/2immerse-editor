@@ -48,8 +48,16 @@ class SettingsModal extends React.Component<SettingsModalProps, SettingsModalSta
     const { currentTab } = this.state;
     const { fetchError } = this.props;
 
+    const containerStyle: React.CSSProperties = {
+      position: "absolute", top: 0, left: 0, zIndex: 100,
+      height: "calc(100vh - 80px)", width: "20vw",
+      backgroundColor: "#FFFFFF", color: "#000000",
+      padding: 20,
+      boxShadow: "0 0 5px #555555"
+    };
+
     return (
-      <div className="box" style={{height: 600}}>
+      <div style={containerStyle}>
         <p style={{ textAlign: "center", borderBottom: "1px solid #DBDBDB", paddingBottom: 15 }}>
           <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
           &emsp;&emsp;
