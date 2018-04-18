@@ -50,24 +50,22 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
     const { shortUrl } = this.state;
 
     return (
-      <div>
-        Scan the QR Code below to open the preview on a mobile device:
-        <br/><br/>
-        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
-                ref={(el) => this.qrCanvas = el}>
-        </canvas>
-        <br/>
-        Click the button below to open the preview in your browser:
-        <br/><br/>
+      <div style={{ marginTop: 10, paddingBottom: 10, borderBottom: "1px solid #DBDBDB" }}>
         <a style={{display: "block", margin: "0 auto 0 auto"}}
            className="button is-info" href={previewUrl}
            target="_blank">
           Open preview in new tab
         </a>
-        <br/>
-        Preview URL for external devices:
-        <br/><br/>
-        <div style={{textAlign: "center", fontSize: 20}}>
+        <p style={{margin: "10px auto"}}>
+          Scan the QR Code below to open the preview on a mobile device:
+        </p>
+        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
+                ref={(el) => this.qrCanvas = el}>
+        </canvas>
+        <p style={{margin: "10px auto"}}>
+          Preview URL for external devices:
+        </p>
+        <div style={{textAlign: "center", fontSize: 18}}>
           {(shortUrl !== "") ? <a href={shortUrl}>{shortUrl}</a> : <i>Loading...</i>}
         </div>
       </div>

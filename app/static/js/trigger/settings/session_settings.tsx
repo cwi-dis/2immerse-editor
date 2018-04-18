@@ -23,7 +23,7 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
   };
 
   return (
-    <div>
+    <div style={{borderBottom: "1px solid #DBDBDB", paddingBottom: 15}}>
       {fetchError === undefined ?
         <a href={downloadUrl}
             download="document.xml"
@@ -37,16 +37,18 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
           Save Document
         </button>
       }
-      <a onClick={clearSession}
-          style={{display: "block", margin: "10px auto 0 auto"}}
-          className="button is-warning">
-        Clear Session
-      </a>
-      <a onClick={deleteSession}
-          style={{display: "block", margin: "10px auto 0 auto"}}
-          className="button is-danger">
-        Clear &amp; Delete Session
-      </a>
+      <div className="buttons has-addons" style={{marginTop: 10}}>
+        <span onClick={clearSession}
+              style={{width: "50%"}}
+              className="button is-warning">
+          Clear Session
+        </span>
+        <span onClick={deleteSession}
+              style={{width: "50%"}}
+              className="button is-danger">
+          Delete Session
+        </span>
+      </div>
     </div>
   );
 };

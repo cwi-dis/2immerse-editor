@@ -127,30 +127,25 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
 
     return (
-      <div>
+      <div style={{marginTop: 10}}>
         {this.renderNotification()}
-        <b>Preview player mode</b>
-        <br/>
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Preview player mode</p>
         <div className="select">
           <select value={settings.playerMode} onChange={this.changePlayerMode.bind(this)}>
             <option>standalone</option>
             <option>tv</option>
           </select>
         </div>
-        <br/><br/>
 
-        <b>Start paused</b>
-        <br/>
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Start paused</p>
         <div className="select">
           <select value={settings.startPaused ? "true" : "false"} onChange={this.changeStartPaused.bind(this)}>
             <option>true</option>
             <option>false</option>
           </select>
         </div>
-        <br/><br/>
 
-        <b>Debug Links</b>
-        <br/>
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Debug links</p>
         {this.renderDebugLinks(settings.debugLinks)}
       </div>
     );
