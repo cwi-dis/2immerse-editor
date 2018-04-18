@@ -213,3 +213,19 @@ html, body {
     transform: rotate(360deg);
   }
 }
+
+.settings-modal {
+  position: "absolute";
+  top: 0;
+  z-index: 100;
+
+  height: "calc(100vh - 80px)";
+  width: "20vw";
+
+  background-color: "#FFFFFF";
+  color: "#000000";
+
+  padding: 20;
+  box-shadow: "0 0 5px #555555";
+  overflow: "auto";
+}
