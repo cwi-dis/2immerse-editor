@@ -228,4 +228,16 @@ html, body {
   padding: 20;
   box-shadow: "0 0 5px #555555";
   overflow: "auto";
+
+  animation: settings-modal-slidein linear 100ms;
+}
+
+@keyframes settings-modal-slidein {
+  from {
+    left: -20vw;
+  }
+
+  to {
+    left: 0;
+  }
 }
