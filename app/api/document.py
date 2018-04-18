@@ -1026,6 +1026,7 @@ class DocumentEvents:
         if not NS_TRIGGER("productionId") in newElement:
             newElement.set(NS_TRIGGER("productionId"), newElement.get(NS_XML("id")))
             newElement.set(NS_TRIGGER("productionIdTransient"), "true")
+            newElement.set(NS_TRIGGER("productionParent"), id)
 
         for par in parameters:
             parValue = par['value']
