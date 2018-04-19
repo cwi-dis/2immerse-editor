@@ -24,7 +24,7 @@ class SettingsModal extends React.Component<SettingsModalProps, {}> {
     const { fetchError } = this.props;
 
     return (
-      <div className="settings-modal-slidein">
+      <div className="settings-modal">
         <p style={{ textAlign: "center", borderBottom: "1px solid #DBDBDB", paddingBottom: 15 }}>
           <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
           &emsp;&emsp;

@@ -215,19 +215,19 @@ html, body {
 }
 
 .settings-modal {
-  position: "absolute";
+  position: absolute;
   top: 0;
   z-index: 100;
 
-  height: "calc(100vh - 80px)";
-  width: "20vw";
+  height: calc(100vh - 80px);
+  width: 20vw;
 
-  background-color: "#FFFFFF";
-  color: "#000000";
+  background-color: #FFFFFF;
+  color: #000000;
 
-  padding: 20;
-  box-shadow: "0 0 5px #555555";
-  overflow: "auto";
+  padding: 20px;
+  box-shadow: 0 0 5px #555555;
+  overflow: auto;
 
   animation: settings-modal-slidein linear 100ms;
 }
