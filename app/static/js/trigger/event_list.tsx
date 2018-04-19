@@ -6,6 +6,7 @@ import EventContainer from "./event_container";
 interface EventListProps {
   documentId: string;
   events: Array<Event>;
+  triggerMode: string;
   fetchEvents?: () => void;
 }
 
@@ -20,19 +21,39 @@ const findOptimalContainerWidth = (blockWidth = 400) => {
 };
 
 const EventList: React.SFC<EventListProps> = (props) => {
-  const { documentId, events, fetchEvents } = props;
+  const { documentId, events, fetchEvents, triggerMode } = props;
+
+  const abstractEvents = events.filter((ev) => ev.state === "abstract");
+  const instantiatedEvents = events.filter((ev) => ev.state === "active");
+  const readyEvents = events.filter((ev) => ev.state === "ready");
+
+  let renderedEvents: Array<Event> = [];
+
+  if (triggerMode === "trigger") {
+    renderedEvents = readyEvents.concat(abstractEvents).map((event) => {
+      const activeResult = instantiatedEvents.find((replacement) => {
+        return replacement.productionId === event.productionId;
+      });
+
+      return activeResult || event;
+    });
+  } else {
+    renderedEvents = abstractEvents;
+  }
 
   return (
-    <div style={{width: findOptimalContainerWidth(), margin: "0 auto"}}>
-      <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
-        {events.map((event, i) => {
-          return (
-            <EventContainer key={`event.${i}`}
-                            documentId={documentId}
-                            event={event}
-                            onTriggered={fetchEvents} />
-          );
-        })}
+    <div>
+      <div style={{width: findOptimalContainerWidth(), margin: "0 auto"}}>
+        <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
+          {renderedEvents.map((event, i) => {
+            return (
+              <EventContainer key={`event.${i}`}
+                              documentId={documentId}
+                              event={event}
+                              onTriggered={fetchEvents} />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

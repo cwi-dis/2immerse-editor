@@ -40,9 +40,7 @@ export interface Event {
 interface TriggerClientState {
   showPreviewModal: boolean;
   showSettingsModal: boolean;
-  abstractEvents: Array<Event>;
-  instantiatedEvents: Array<Event>;
-  readyEvents: Array<Event>;
+  events: Array<Event>;
   pageIsLoading: boolean;
   fetchError?: {status: number, statusText: string};
 }
@@ -57,9 +55,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     this.state = {
       showPreviewModal: false,
       showSettingsModal: false,
-      abstractEvents: [],
-      readyEvents: [],
-      instantiatedEvents: [],
+      events: [],
       pageIsLoading: true,
     };
   }
@@ -72,9 +68,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const events: Array<Event> = JSON.parse(data);
 
       this.setState({
-        abstractEvents: events.filter((ev) => ev.state === "abstract"),
-        instantiatedEvents: events.filter((ev) => ev.state === "active"),
-        readyEvents: events.filter((ev) => ev.state === "ready"),
+        events,
         pageIsLoading: false
       });
     }).catch((err) => {
@@ -137,34 +131,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                       documentId={this.props.documentId} />
       );
     } else {
-      const { abstractEvents, readyEvents, instantiatedEvents } = this.state;
-      let events: Array<Event>;
-
-      if (triggerMode === "trigger") {
-        events = readyEvents.concat(abstractEvents).map((event) => {
-          const activeResult = instantiatedEvents.find((replacement) => {
-            return replacement.productionId === event.productionId;
-          });
-
-          return activeResult || event;
-        });
-      } else {
-        events = abstractEvents.map((event) => {
-          const readyResult = readyEvents.find((replacement) => {
-            return replacement.productionId === event.productionId;
-          });
-
-          const activeResult = instantiatedEvents.find((replacement) => {
-            return replacement.productionId === event.productionId;
-          });
-
-          return readyResult || activeResult || event;
-        });
-      }
+      const { events } = this.state;
 
       return (
         <EventList documentId={this.props.documentId}
                    events={events}
+                   triggerMode={triggerMode}
                    fetchEvents={this.fetchEvents.bind(this)} />
       );
     }
