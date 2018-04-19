@@ -8,9 +8,11 @@ import TriggerClient from "./trigger_client";
 
 import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 
+type TriggerMode = "trigger" | "enqueue";
+
 interface AppState {
   documentId: Nullable<string>;
-  triggerMode: "trigger" | "enqueue";
+  triggerMode: TriggerMode;
   isLoading: boolean;
   ajaxError?: {status: number, statusText: string, message?: string};
 }
@@ -21,9 +23,11 @@ class App extends React.Component<{}, AppState> {
   constructor(props: never) {
     super(props);
 
+    const selectedTriggerMode = localStorage.getItem("triggerMode") as TriggerMode;
+
     this.state = {
       documentId: localStorage.getItem("documentId"),
-      triggerMode: "trigger",
+      triggerMode: selectedTriggerMode || "trigger",
       isLoading: false,
     };
   }
@@ -79,6 +83,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   private triggerModeUpdated(triggerMode: "trigger" | "enqueue") {
+    localStorage.setItem("triggerMode", triggerMode);
     this.setState({ triggerMode });
   }
 
