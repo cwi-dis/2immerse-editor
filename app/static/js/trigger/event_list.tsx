@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Event } from "./trigger_client";
 import EventContainer from "./event_container";
+import QueuedEventList from "./queued_event_list";
 
 interface EventListProps {
   documentId: string;
@@ -28,6 +29,7 @@ const EventList: React.SFC<EventListProps> = (props) => {
   const readyEvents = events.filter((ev) => ev.state === "ready");
 
   let renderedEvents: Array<Event> = [];
+  let queuedEvents: Array<Event> = [];
 
   if (triggerMode === "trigger") {
     renderedEvents = readyEvents.concat(abstractEvents).map((event) => {
@@ -39,10 +41,12 @@ const EventList: React.SFC<EventListProps> = (props) => {
     });
   } else {
     renderedEvents = abstractEvents;
+    queuedEvents = readyEvents.concat(instantiatedEvents);
   }
 
   return (
     <div>
+      {(triggerMode === "enqueue") ? <QueuedEventList events={queuedEvents} /> : null}
       <div style={{width: findOptimalContainerWidth(), margin: "0 auto"}}>
         <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
           {renderedEvents.map((event, i) => {
