@@ -57,17 +57,22 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       <div className="modal is-active">
         <div className="modal-background"></div>
         <div className="modal-content">
-          <EventModal event={this.props.event}
-                      documentId={this.props.documentId}
-                      onTriggered={(status) => {
-                        this.setState({
-                          showEventModal: false,
-                          flashSuccess: status === "success",
-                          flashError: status === "error"
-                        });
+          <TriggerModeContext.Consumer>
+            {(triggerMode) =>
+              <EventModal event={this.props.event}
+                          documentId={this.props.documentId}
+                          triggerMode={triggerMode}
+                          onTriggered={(status) => {
+                            this.setState({
+                              showEventModal: false,
+                              flashSuccess: status === "success",
+                              flashError: status === "error"
+                            });
 
-                        this.props.onTriggered && this.props.onTriggered();
-                      }} />
+                            this.props.onTriggered && this.props.onTriggered();
+                          }} />
+            }
+          </TriggerModeContext.Consumer>
         </div>
         <button className="modal-close is-large"
                 onClick={() => this.setState({showEventModal: false})}>
