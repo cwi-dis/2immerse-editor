@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createPortal } from "react-dom";
 import * as classNames from "classnames";
 
 import { makeRequest } from "../editor/util";
@@ -52,7 +53,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       return null;
     }
 
-    return (
+    return createPortal(
       <div className="modal is-active">
         <div className="modal-background"></div>
         <div className="modal-content">
@@ -71,7 +72,8 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
         <button className="modal-close is-large"
                 onClick={() => this.setState({showEventModal: false})}>
         </button>
-      </div>
+      </div>,
+      document.getElementById("modal-root")!
     );
   }
 
