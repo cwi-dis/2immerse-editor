@@ -220,7 +220,7 @@ html, body {
   z-index: 100;
 
   height: calc(100vh - 80px);
-  width: 20vw;
+  width: 330px;
 
   background-color: #FFFFFF;
   color: #000000;

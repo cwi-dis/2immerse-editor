@@ -42,6 +42,12 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
       if (ev.which === 27) {
         console.log("ESC key pressed");
         this.props.onTriggered("close");
+      } else if (ev.which === 13) {
+        console.log("enter key pressed");
+
+        if (this.isSubmitEnabled()) {
+          this.launchEvent();
+        }
       }
 
       this.prevKeyHandler && this.prevKeyHandler.call(window, ev);
