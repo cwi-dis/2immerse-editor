@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as escapeStringRegex from "escape-string-regexp";
 
 import { Event } from "./trigger_client";
 import EventContainer from "./event_container";
@@ -33,8 +34,9 @@ const EventList: React.SFC<EventListProps> = (props) => {
 
   if (triggerMode === "trigger") {
     renderedEvents = readyEvents.concat(abstractEvents).map((event) => {
+      const eventRegex = RegExp(`^${escapeStringRegex(event.id)}-[0-9]+$`);
       const activeResult = instantiatedEvents.find((replacement) => {
-        return replacement.productionId === event.productionId;
+        return eventRegex.test(replacement.id);
       });
 
       return activeResult || event;
