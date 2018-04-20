@@ -1,7 +1,7 @@
 import * as React from "react";
 import { List } from "immutable";
 
-import { capitalize, makeRequest } from "../editor/util";
+import { capitalize, makeRequest, Nullable } from "../editor/util";
 import { Event, EventParams } from "./trigger_client";
 import ParamInputField from "./param_input_field";
 
@@ -25,6 +25,7 @@ const paramDefaults: {[key: string]: string} = {
 };
 
 class EventModal extends React.Component<EventModalProps, EventModalState> {
+  private tableRef: Nullable<HTMLTableElement>;
   private prevKeyHandler: ((this: Window, ev: KeyboardEvent) => any) | null;
 
   public constructor(props: EventModalProps) {
@@ -52,6 +53,11 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
       this.prevKeyHandler && this.prevKeyHandler.call(window, ev);
     };
+
+    if (this.tableRef) {
+      const firstInput = this.tableRef.querySelector("input");
+      firstInput && firstInput.focus();
+    }
   }
 
   public componentWillUnmount() {
@@ -121,7 +127,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
     if (params.count() > 0) {
       return (
-        <table className="table is-narrow" style={{width: "100%", margin: "20px 0 15px 0"}}>
+        <table ref={(el) => this.tableRef = el} className="table is-narrow" style={{width: "100%", margin: "20px 0 15px 0"}}>
           <tbody>
             {params.map((param, i) => {
               if (param.type === "set") {
