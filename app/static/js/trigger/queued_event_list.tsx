@@ -28,7 +28,7 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
 
   return (
     <div style={containerStyle}>
-      {event.name} ({event.state})
+      {event.name}
     </div>
   );
 };
