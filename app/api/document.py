@@ -1226,6 +1226,12 @@ class DocumentServe:
     def get_client(self, timeline, layout, base=None, mode=None):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
+        docClock = self.document.clock.now()
+        if docClock:
+            # The document is already running (or has been running)
+            # Adapt the URL for the timeline so that it fast-forwards to the current position.
+            timeline = timeline + "#t=%f" % docClock
+            self.logger.info('Fast-forward new client to %f' % docClock)
         if base:
             clientDocData = urllib.urlopen(base).read()
         else:
