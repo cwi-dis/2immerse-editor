@@ -1251,7 +1251,7 @@ class DocumentServe:
             timeline = timeline + "#t=%f" % curClock
             self.logger.info('Fast-forward new client to %f' % curClock)
             # And we set the new player to the same playing/paused mode as the old one
-            startPaused = playing
+            startPaused = not playing
             
         if base:
             clientDocData = urllib.urlopen(base).read()
