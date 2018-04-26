@@ -1114,7 +1114,7 @@ class DocumentRemote:
         return self.document.getLoggerExtra()
 
     @synchronized
-    def get(self):
+    def _getClockState(self):
         if self.statusElement is None:
             eventParents = self.tree.getroot().findall('.//tt:events/..', NAMESPACES)
             if eventParents:
@@ -1125,6 +1125,18 @@ class DocumentRemote:
         curClock = self.document.events()._getClock(self.statusElement)
         clockRunning = self.statusElement.get(NS_TIMELINE_INTERNAL("clockRunning"))
         playing = not not (clockRunning and clockRunning != "false")
+        return curClock, playing
+        
+    @synchronized
+    def get(self):
+        if self.statusElement is None:
+            eventParents = self.tree.getroot().findall('.//tt:events/..', NAMESPACES)
+            if eventParents:
+                self.statusElement = eventParents[0]
+            else:
+                # If there are no events in the document we use the first child of the root.
+                self.statusElement = list(self.tree.getroot())[0]
+        curClock, playing = self._getClockState()
         active = not not (self.document.serve().contextID)
         rv = dict(active=active)
         if not active:
@@ -1177,6 +1189,7 @@ class DocumentServe:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.allContextIDs = []
         self.contextID = None
         self.callbacks = set()
         self.logger = self.document.logger.getChild('serve')
@@ -1226,12 +1239,17 @@ class DocumentServe:
     def get_client(self, timeline, layout, base=None, mode=None):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
-        docClock = self.document.clock.now()
-        if docClock:
+        
+        startPaused = self.document.settings().startPaused
+        curClock, playing = self._getClockState()
+        if curClock:
             # The document is already running (or has been running)
             # Adapt the URL for the timeline so that it fast-forwards to the current position.
-            timeline = timeline + "#t=%f" % docClock
-            self.logger.info('Fast-forward new client to %f' % docClock)
+            timeline = timeline + "#t=%f" % curClock
+            self.logger.info('Fast-forward new client to %f' % curClock)
+            # And we set the new player to the same playing/paused mode as the old one
+            startPaused = playing
+            
         if base:
             clientDocData = urllib.urlopen(base).read()
         else:
@@ -1260,7 +1278,7 @@ class DocumentServe:
                 )
         #
         # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
-        if self.document.settings().startPaused:
+        if startPaused:
             rcValue = dict(playing=False)
         else:
             rcValue = True
@@ -1288,6 +1306,7 @@ class DocumentServe:
     @synchronized
     def setCallback(self, url, contextID=None):
         if contextID is not None and contextID != self.contextID:
+                self.allContextIDs.append(contextID)
                 self.logger.info('overriding contextID with %s' % contextID)
                 self.contextID = contextID
                 self.document._loggerExtra['contextID'] = contextID
