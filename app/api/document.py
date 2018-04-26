@@ -1123,6 +1123,10 @@ class DocumentRemote:
                 # If there are no events in the document we use the first child of the root.
                 self.statusElement = list(self.tree.getroot())[0]
         curClock = self.document.events()._getClock(self.statusElement)
+        if curClock:
+            curClock = float(curClock)
+        else:
+            curClock = 0
         clockRunning = self.statusElement.get(NS_TIMELINE_INTERNAL("clockRunning"))
         playing = not not (clockRunning and clockRunning != "false")
         return curClock, playing
