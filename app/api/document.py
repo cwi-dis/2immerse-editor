@@ -1156,20 +1156,19 @@ class DocumentRemote:
             self.document.setError('Internal error: remote/control requires JSON object')
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
-        contextID = self.document.serve().contextID
-        if not contextID:
+        for contextID in self.document.serve().allContextIDs:
+            wsUrl = GlobalSettings.websocketService + "bus-message/remote-control-clock-" + contextID
+            try:
+                r = requests.post(wsUrl, json=command)
+                r.raise_for_status
+            except requests.exceptions.RequestException:
+                self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
+                self.document.setError("Cannot communicate with preview client")
+            self.document.clearError()
+        else:
             self.logger.error("remote/control: no contextID for preview client", extra=self.getLoggerExtra())
             self.document.setError('No preview client is running')
             abort(500, 'remote/control: no contextID for preview client')
-        wsUrl = GlobalSettings.websocketService + "bus-message/remote-control-clock-" + contextID
-        try:
-            r = requests.post(wsUrl, json=command)
-            r.raise_for_status
-        except requests.exceptions.RequestException:
-            self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
-            self.document.setError("Cannot communicate with preview client")
-            abort(500, "remote/control: POST to preview client failed")
-        self.document.clearError()
         return ""
 
 
@@ -1241,7 +1240,7 @@ class DocumentServe:
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
         
         startPaused = self.document.settings().startPaused
-        curClock, playing = self._getClockState()
+        curClock, playing = self.document.remote()._getClockState()
         if curClock:
             # The document is already running (or has been running)
             # Adapt the URL for the timeline so that it fast-forwards to the current position.
