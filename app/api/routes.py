@@ -236,6 +236,19 @@ def document_events_enqueue(documentId, id):
     return events.enqueue(id, parameters)
 
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/dequeue", methods=["POST"])
+def document_events_dequeue(documentId, id):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+
+    events = document.events()
+    assert events
+
+    return events.dequeue(id)
+
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
 def document_events_modify(documentId, id):
     try:
