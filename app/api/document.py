@@ -1075,7 +1075,7 @@ class DocumentEvents:
         assert parent is not None
         parent.remove(element)
 
-        return element in parent.getchildren()
+        return element not in parent.getchildren()
 
     @edit
     def modify(self, id, parameters):
@@ -1148,7 +1148,7 @@ class DocumentRemote:
         clockRunning = self.statusElement.get(NS_TIMELINE_INTERNAL("clockRunning"))
         playing = not not (clockRunning and clockRunning != "false")
         return curClock, playing
-        
+
     @synchronized
     def get(self):
         if self.statusElement is None:
@@ -1260,7 +1260,7 @@ class DocumentServe:
     def get_client(self, timeline, layout, base=None, mode=None):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
-        
+
         startPaused = self.document.settings().startPaused
         curClock, playing = self.document.remote()._getClockState()
         if curClock:
@@ -1270,7 +1270,7 @@ class DocumentServe:
             self.logger.info('Fast-forward new client to %f' % curClock)
             # And we set the new player to the same playing/paused mode as the old one
             startPaused = not playing
-            
+
         if base:
             clientDocData = urllib.urlopen(base).read()
         else:
