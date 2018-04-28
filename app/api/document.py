@@ -20,8 +20,9 @@ logger = logging.getLogger(__name__)
 # Pattern to find AVT-like interpolation expressions
 INTERPOLATION = re.compile(r'\{[^}]+\}')
 
-OLD_EVENT_PARAMETERS=True
-NEW_EVENT_PARAMETERS=True
+OLD_EVENT_PARAMETERS = True
+NEW_EVENT_PARAMETERS = True
+
 
 class NameSpace:
     def __init__(self, namespace, url):
@@ -856,7 +857,7 @@ class DocumentEvents:
         rv["productionGroup"] = elt.get(NS_TRIGGER("productionGroup"), rv["productionId"])
 
         return rv
-            
+
     @synchronized
     def _getOptions(self, optionListElt):
         optionElements = optionListElt.findall('./au:item', NAMESPACES)
@@ -1060,6 +1061,23 @@ class DocumentEvents:
         return newElement.get(NS_XML('id'))
 
     @edit
+    def dequeue(self, id):
+        """ Drop the event with the given id from the list of queued events """
+        element = self.document.idMap.get(id)
+
+        if element is None:
+            self.logger.error("dequeue: no such xml:id: %s" % id, extra=self.getLoggerExtra())
+            self.document.setError('No such xml:id: %s' % id)
+            abort(404, 'No such xml:id: %s' % id)
+
+        parent = self.document._getParent(element)
+
+        assert parent is not None
+        parent.remove(element)
+
+        return element in parent.getchildren()
+
+    @edit
     def modify(self, id, parameters):
         """REST modify command: modifies a running event"""
         self.logger.info('modify(%s, ...)' % (id), extra=self.getLoggerExtra())
@@ -1101,7 +1119,7 @@ class DocumentEvents:
             parent.remove(elt)
             self.document._elementDeleted(elt)
 
-        
+
 class DocumentRemote:
     def __init__(self, document):
         self.document = document
@@ -1338,7 +1356,6 @@ class DocumentServe:
                         self.logger.debug('setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
-                    
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
