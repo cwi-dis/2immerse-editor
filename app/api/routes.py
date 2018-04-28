@@ -246,7 +246,9 @@ def document_events_dequeue(documentId, id):
     events = document.events()
     assert events
 
-    return events.dequeue(id)
+    return jsonify({
+        "status": events.dequeue(id)
+    })
 
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/modify", methods=["PUT"])
