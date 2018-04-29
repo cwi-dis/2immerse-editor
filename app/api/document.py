@@ -1066,9 +1066,7 @@ class DocumentEvents:
         element = self.document.idMap.get(id)
 
         if element is None:
-            self.logger.error("dequeue: no such xml:id: %s" % id, extra=self.getLoggerExtra())
-            self.document.setError("No such xml:id: %s" % id)
-            abort(404, "No such xml:id: %s" % id)
+            return True
 
         parent = self.document._getParent(element)
 
@@ -1078,9 +1076,7 @@ class DocumentEvents:
             parent.remove(element)
             return element not in parent.getchildren()
         except:
-            self.logger.error("dequeue: element not in queue: %s" % id, extra=self.getLoggerExtra())
-            self.document.setError("Element not in queue: %s" % id)
-            abort(404, "Element not in queue: %s" % id)
+            return True
 
     @edit
     def modify(self, id, parameters):
