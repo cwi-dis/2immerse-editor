@@ -98,23 +98,6 @@ def edit(method):
         return rv
     return wrapper
 
-
-def broadcast_trigger_events(document_id, events):
-    websocket_service = GlobalSettings.websocketService
-
-    if websocket_service[-1] == "/":
-        websocket_service = websocket_service[:-1]
-
-    with SocketIO(websocket_service) as socket:
-        trigger = socket.define(SocketIONamespace, "/trigger")
-
-        trigger.emit(
-            "BROADCAST_EVENTS",
-            str(document_id),
-            events
-        )
-
-
 class EditManager:
     """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
     def __init__(self, document, reason=None):
@@ -727,6 +710,7 @@ class DocumentEvents:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
+        self.socketIOChannel = None
         self.logger = self.document.logger.getChild('events')
 
     def getLoggerExtra(self):
@@ -739,7 +723,7 @@ class DocumentEvents:
         abort(400, message)
 
     @synchronized
-    def get(self):
+    def get(self, caller='get'):
         """REST get command: returns list of triggerable and modifiable events to the front end UI"""
         exprTriggerable = './/tt:events/*[@tt:name]'
         exprComplete = './/tt:completeEvents/*[@tt:name]'
@@ -747,23 +731,53 @@ class DocumentEvents:
         elementsTriggerable = self.tree.getroot().findall(exprTriggerable, NAMESPACES)
         elementsComplete = self.tree.getroot().findall(exprComplete, NAMESPACES)
         elementsModifyable = self.tree.getroot().findall(exprModifyable, NAMESPACES)
-        rv = []
+        eventList = []
         for elt in elementsTriggerable:
-            rv.append(self._getDescription(elt, trigger=True, state='abstract'))
+            eventList.append(self._getDescription(elt, trigger=True, state='abstract'))
         for elt in elementsComplete:
-            rv.append(self._getDescription(elt, trigger=True, state='ready'))
+            eventList.append(self._getDescription(elt, trigger=True, state='ready'))
         for elt in elementsModifyable:
             # Weed out events that are already finished
             if elt.get(NS_TIMELINE_INTERNAL("state")) == "finished":
                 continue
-            rv.append(self._getDescription(elt, trigger=False, state='active'))
-        self.logger.debug('get: %d triggerable, %d complete-triggerable, %d modifyable' % (len(elementsTriggerable), len(elementsComplete), len(elementsModifyable)), extra=self.getLoggerExtra())
+            eventList.append(self._getDescription(elt, trigger=False, state='active'))
+        self.logger.debug('%s: %d triggerable, %d complete-triggerable, %d modifyable' % (caller, len(elementsTriggerable), len(elementsComplete), len(elementsModifyable)), extra=self.getLoggerExtra())
+        if True:
+            rv = eventList
+        else:
+            # To be activated once front end understands it
+            rv = self.document.remote().get()
+            rv['events'] = eventList
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
-            self.logger.debug("get: asking document for setDocumentState calls", extra=self.getLoggerExtra())
+            self.logger.debug("%s: asking document for setDocumentState calls", caller, extra=self.getLoggerExtra())
             self.document.forwardHandler.forward([])
         return rv
 
+    @synchronized
+    def broadcastEventsToFrontends(self):
+        print 'xxxjack broadcasteventstofrontends'
+        events = self.get(caller='broadcast')
+        if self.socketIOChannel is None:
+            websocket_service = GlobalSettings.websocketService
+            # Remove trailing slash (not sure why it's there in the first place?)
+            if websocket_service[-1] == "/":
+                websocket_service = websocket_service[:-1]
+
+            webSock = SocketIO(websocket_service)
+            self.socketIOChannel = webSock.define(SocketIONamespace, "/trigger")
+            print 'xxxjack created socketiochannel'
+        self.socketIOChannel.emit(
+            "BROADCAST_EVENTS",
+            str(self.document.documentId),
+            events
+        )
+            
+    @synchronized
+    def requestBroadcastToFrontends(self):
+        print 'xxxjack requestBroadcastToFrontends'
+        self.broadcastEventsToFrontends()
+        
     @synchronized
     def _getDescription(self, elt, trigger, state=None):
         """Returns description of a triggerable or modifiable event for the front end"""
@@ -1002,6 +1016,7 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
+        self.requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1058,6 +1073,7 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
+        self.requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1071,12 +1087,13 @@ class DocumentEvents:
         parent = self.document._getParent(element)
 
         assert parent is not None
-
+        # xxxjack don't like this, should ensure parentmap is updated
         try:
             parent.remove(element)
-            return element not in parent.getchildren()
         except:
-            return True
+            pass
+        self.requestBroadcastToFrontends()
+        return True
 
     @edit
     def modify(self, id, parameters):
@@ -1365,6 +1382,7 @@ class DocumentServe:
                         self.logger.debug('setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
+        self.document.events().requestBroadcastToFrontends()
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
