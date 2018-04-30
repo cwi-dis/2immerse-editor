@@ -1214,6 +1214,8 @@ class DocumentServe:
         self.allContextIDs = []
         self.contextID = None
         self.callbacks = set()
+        self.lastClientServed = None
+        self.lastClientToTimelineServedDeltaT = None
         self.logger = self.document.logger.getChild('serve')
 
     def getLoggerExtra(self):
@@ -1233,6 +1235,9 @@ class DocumentServe:
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
+        if self.lastClientServed:
+            self.lastClientToTimelineServedDeltaT = time.time() - self.lastClientServed
+            self.logger.info('delta-T between client.json and timeline.xml set to %f', self.lastClientToTimelineServedDeltaT)
         return ET.tostring(self.tree.getroot())
 
     @synchronized
@@ -1261,12 +1266,15 @@ class DocumentServe:
     def get_client(self, timeline, layout, base=None, mode=None):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
-
+        self.lastClientServed = time.time()
         startPaused = self.document.settings().startPaused
         curClock, playing = self.document.remote()._getClockState()
         if curClock:
             # The document is already running (or has been running)
             # Adapt the URL for the timeline so that it fast-forwards to the current position.
+            if self.lastClientToTimelineServedDeltaT:
+                self.logger.info('Augment document time-position %f with delta-t %f', curClock, self.lastClientToTimelineServedDeltaT)
+                curClock += self.lastClientToTimelineServedDeltaT
             timeline = timeline + "#t=%f" % curClock
             self.logger.info('Fast-forward new client to %f' % curClock)
             # And we set the new player to the same playing/paused mode as the old one
