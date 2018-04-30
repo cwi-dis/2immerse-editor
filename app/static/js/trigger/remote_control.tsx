@@ -61,12 +61,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }, 10);
   }
 
-  public componentDidUpdate() {
-    this.setState({
-      position: this.props.previewStatus.position || 0
-    });
-  }
-
   public componentWillUnmount() {
     this.timerInterval && clearInterval(this.timerInterval);
   }
