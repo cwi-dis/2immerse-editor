@@ -756,7 +756,6 @@ class DocumentEvents:
 
     @synchronized
     def broadcastEventsToFrontends(self):
-        print 'xxxjack broadcasteventstofrontends'
         events = self.get(caller='broadcast')
         if self.socketIOChannel is None:
             websocket_service = GlobalSettings.websocketService
@@ -766,7 +765,6 @@ class DocumentEvents:
 
             webSock = SocketIO(websocket_service)
             self.socketIOChannel = webSock.define(SocketIONamespace, "/trigger")
-            print 'xxxjack created socketiochannel'
         self.socketIOChannel.emit(
             "BROADCAST_EVENTS",
             str(self.document.documentId),
@@ -775,7 +773,6 @@ class DocumentEvents:
             
     @synchronized
     def requestBroadcastToFrontends(self):
-        print 'xxxjack requestBroadcastToFrontends'
         self.broadcastEventsToFrontends()
         
     @synchronized
@@ -1233,6 +1230,7 @@ class DocumentServe:
         self.callbacks = set()
         self.lastClientServed = None
         self.lastClientToTimelineServedDeltaT = None
+        self.operationHistory = []
         self.logger = self.document.logger.getChild('serve')
 
     def getLoggerExtra(self):
@@ -1442,6 +1440,8 @@ class DocumentServe:
         else:
             self.logger.debug('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
         gen = self._nextGeneration(not operations)
+        if not operations:
+            self._memorizeOperations(gen, operations)
         toRemove = []
         wantStateUpdates = True
         for callback in self.callbacks:
@@ -1471,7 +1471,23 @@ class DocumentServe:
             self.logger.info('removeCallback(%s)' % callback, extra=self.getLoggerExtra())
             self.callbacks.discard(callback)
 
-
+    @synchronized
+    def _memorizeOperations(self, gen, operations):
+        """Remember old operations, solater clients can refresh in case they missed some between getting the document and
+        starting to listen to the broadcasts."""
+        assert len(self.operationHistory) <= gen
+        while len(self.operationHistory) < gen:
+            self.operationHistory.append((len(self.operationHistory), []))
+        self.operationHistory.append((gen, operations))
+        
+    @synchronized
+    def gethistory(self, oldest=None):
+        if not oldest:
+            oldest = 0
+        oldest = int(oldest)
+        rv = self.operationHistory[oldest:]
+        return rv
+        
 class DocumentSettings:
     def __init__(self, document):
         self.document = document

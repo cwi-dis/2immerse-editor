@@ -420,6 +420,18 @@ def update_document_state(documentId):
     serve.setDocumentState(documentState)
     return ''
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/gethistory")
+def get_history(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    oldest = request.args.get('oldest', None)
+    history = serve.gethistory(oldest=oldest)
+    return Response(json.dumps(history), mimetype="application/json")
+
 
 #
 # Preview player redirect
