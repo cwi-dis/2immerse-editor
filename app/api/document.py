@@ -742,12 +742,12 @@ class DocumentEvents:
                 continue
             eventList.append(self._getDescription(elt, trigger=False, state='active'))
         self.logger.debug('%s: %d triggerable, %d complete-triggerable, %d modifyable' % (caller, len(elementsTriggerable), len(elementsComplete), len(elementsModifyable)), extra=self.getLoggerExtra())
-        if True:
-            rv = eventList
-        else:
-            # To be activated once front end understands it
-            rv = self.document.remote().get()
-            rv['events'] = eventList
+
+        rv = {
+            "remote": self.document.remote().get(),
+            "events": eventList
+        }
+
         # See if we need to ask the timeline server for updates
         if self.document.forwardHandler and not self.document.companionTimelineIsActive:
             self.logger.debug("%s: asking document for setDocumentState calls", caller, extra=self.getLoggerExtra())
