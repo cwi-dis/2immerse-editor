@@ -34,7 +34,7 @@ class TestEvents(unittest.TestCase):
         oldCount = d._count()
 
         e = d.events()
-        allEvents = e.get()
+        allEvents = e.get()["events"]
 
         self.assertEqual(len(allEvents), 4)
         self.assertEqual(d._count(), oldCount)

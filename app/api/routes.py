@@ -199,7 +199,7 @@ def document_events_get(documentId):
     events = document.events()
     assert events
     rv = events.get()
-    return Response(json.dumps(rv), mimetype="application/json")
+    return Response(json.dumps(rv["events"]), mimetype="application/json")
 
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/events/<id>/trigger", methods=["POST"])

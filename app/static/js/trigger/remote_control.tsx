@@ -7,94 +7,72 @@ import TimecodePopup from "./utils/timecode_popup";
 
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
-interface RemoteControlProps {
-  documentId: string;
-  fetchError?: {status: number, statusText: string};
-  clearSession: () => void;
-}
-
-interface PreviewStatus {
+export interface PreviewStatus {
   active: boolean;
   status: string;
   playing?: boolean;
   position?: number;
 }
 
-interface RemoteControlState {
+interface RemoteControlProps {
+  documentId: string;
   previewStatus: PreviewStatus;
+  fetchError?: {status: number, statusText: string};
+  clearSession: () => void;
+}
+
+interface RemoteControlState {
   timeOffset: number;
   lastPositionUpdate?: number;
+  position: number;
   showdirty: boolean;
   timecodePopup?: { top: number, left: number };
   showSettingsModal: boolean;
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
-  private statusInterval: any;
   private timerInterval: any;
-
   private timecodeBox: Nullable<HTMLDivElement>;
 
   public constructor(props: RemoteControlProps) {
     super(props);
 
     this.state = {
-      previewStatus: {
-        active: false,
-        status: "Preview player is not running"
-      },
       timeOffset: 0,
+      position: props.previewStatus.position || 0,
       showdirty: false,
       showSettingsModal: false
     };
   }
 
   public componentDidMount() {
-    this.statusInterval = setInterval(() => {
-      makeRequest("GET", `/api/v1/document/${this.props.documentId}/remote`).then((data) => {
-        const previewStatus = JSON.parse(data);
-
-        this.setState({
-          previewStatus,
-          lastPositionUpdate: Date.now() / 1000
-        });
-      }).catch((err) => {
-        console.error("Could not fetch preview status:", err);
-      });
-    }, 1000);
-
     this.timerInterval = setInterval(() => {
-      const { lastPositionUpdate, previewStatus } = this.state;
+      const { lastPositionUpdate } = this.state;
+      const { previewStatus } = this.props;
 
       if (previewStatus.playing && previewStatus.position && lastPositionUpdate) {
         const delta = (Date.now() / 1000) - lastPositionUpdate;
 
         this.setState({
-          previewStatus: {
-            ...previewStatus,
-            position: previewStatus.position + delta
-          },
+          position: previewStatus.position + delta,
           lastPositionUpdate: Date.now() / 1000
         });
       }
     }, 10);
   }
 
+  public componentDidUpdate() {
+    this.setState({
+      position: this.props.previewStatus.position || 0
+    });
+  }
+
   public componentWillUnmount() {
-    this.statusInterval && clearInterval(this.statusInterval);
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
   private togglePlayback() {
-    const { previewStatus } = this.state;
-
-    this.setState({
-      previewStatus: {
-        ...previewStatus,
-        playing: !previewStatus.playing
-      }
-    });
-
+    const { previewStatus } = this.props;
     this.sendControlCommand({ playing: !previewStatus.playing });
   }
 
@@ -106,7 +84,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private sendControlCommand(command: any) {
-    const { previewStatus } = this.state;
+    const { previewStatus } = this.props;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
 
     if (previewStatus.active) {
@@ -124,7 +102,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
   private renderTimestamp() {
     const { timeOffset } = this.state;
-    let { previewStatus: { position } } = this.state;
+    let { position } = this.state;
 
     if (position) {
       position += timeOffset || 0;
@@ -181,7 +159,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public render() {
-    const { previewStatus, showdirty } = this.state;
+    const { showdirty } = this.state;
+    const { previewStatus } = this.props;
 
     const containerStyle: React.CSSProperties = {
       position: "fixed",

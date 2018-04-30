@@ -5,7 +5,7 @@ import { makeRequest } from "../editor/util";
 import EventList from "./event_list";
 import LoadingSpinner from "./utils/loading_spinner";
 import ErrorMessage from "./utils/error_message";
-import RemoteControl from "./remote_control";
+import RemoteControl, { PreviewStatus } from "./remote_control";
 import { TriggerModeContext } from "./app";
 
 interface TriggerClientProps {
@@ -42,6 +42,7 @@ interface TriggerClientState {
   showSettingsModal: boolean;
   events: Array<Event>;
   pageIsLoading: boolean;
+  previewStatus: PreviewStatus;
   fetchError?: {status: number, statusText: string};
 }
 
@@ -56,6 +57,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       showSettingsModal: false,
       events: [],
       pageIsLoading: true,
+      previewStatus: {
+        active: false,
+        status: "Preview player is not running"
+      },
     };
   }
 
@@ -97,11 +102,13 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         });
       });
 
-      this.socket.on("EVENTS", (events: Array<Event>) => {
+      this.socket.on("EVENTS", (data: { events: Array<Event>, remote: PreviewStatus }) => {
         console.log("Received trigger event update");
+        const { events, remote } = data;
 
         this.setState({
           events,
+          previewStatus: remote,
           pageIsLoading: false
         });
       });
@@ -151,6 +158,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
         <RemoteControl documentId={this.props.documentId}
                        fetchError={this.state.fetchError}
+                       previewStatus={this.state.previewStatus}
                        clearSession={this.props.clearSession} />
       </div>
     );
