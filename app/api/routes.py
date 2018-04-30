@@ -380,7 +380,7 @@ def get_client_document(documentId):
     return Response(config, mimetype="application/json")
 
 
-@app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json", methods=["PUT"])
 def put_client_document(documentId):
     try:
         document = api.documents[documentId]
