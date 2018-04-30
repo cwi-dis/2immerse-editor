@@ -1235,7 +1235,7 @@ class DocumentServe:
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
-        if self.lastClientServed:
+        if self.lastClientServed and self.lastClientToTimelineServedDeltaT == None:
             self.lastClientToTimelineServedDeltaT = time.time() - self.lastClientServed
             self.logger.info('delta-T between client.json and timeline.xml set to %f', self.lastClientToTimelineServedDeltaT)
         return ET.tostring(self.tree.getroot())
