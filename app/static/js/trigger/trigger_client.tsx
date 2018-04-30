@@ -97,8 +97,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         });
       });
 
-      this.socket.on("EVENTS", (events: Array<Event>) => {
+      this.socket.on("EVENTS", (data: { events: Array<Event> }) => {
         console.log("Received trigger event update");
+        const { events } = data;
 
         this.setState({
           events,
@@ -150,6 +151,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         </div>
 
         <RemoteControl documentId={this.props.documentId}
+                       socket={this.socket}
                        fetchError={this.state.fetchError}
                        clearSession={this.props.clearSession} />
       </div>

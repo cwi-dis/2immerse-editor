@@ -106,7 +106,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       this.setState({ flashSuccess: true});
       this.props.onTriggered && this.props.onTriggered();
     }).catch((err) => {
-      console.log("error:", err);
+      console.error("error:", err);
       this.setState({ flashError: true});
     });
   }

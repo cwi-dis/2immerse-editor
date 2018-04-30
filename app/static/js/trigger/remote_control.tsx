@@ -9,6 +9,7 @@ import { makeRequest, Nullable, padStart } from "../editor/util";
 
 interface RemoteControlProps {
   documentId: string;
+  socket: SocketIOClient.Socket;
   fetchError?: {status: number, statusText: string};
   clearSession: () => void;
 }
@@ -30,9 +31,7 @@ interface RemoteControlState {
 }
 
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
-  private statusInterval: any;
   private timerInterval: any;
-
   private timecodeBox: Nullable<HTMLDivElement>;
 
   public constructor(props: RemoteControlProps) {
@@ -49,19 +48,22 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     };
   }
 
-  public componentDidMount() {
-    this.statusInterval = setInterval(() => {
-      makeRequest("GET", `/api/v1/document/${this.props.documentId}/remote`).then((data) => {
-        const previewStatus = JSON.parse(data);
+  private subscribeToEventUpdates() {
+    const { socket } = this.props;
 
-        this.setState({
-          previewStatus,
-          lastPositionUpdate: Date.now() / 1000
-        });
-      }).catch((err) => {
-        console.error("Could not fetch preview status:", err);
+    socket.on("EVENTS", (data: { remote: PreviewStatus }) => {
+      console.log("Received remote control data update");
+      const { remote } = data;
+
+      this.setState({
+        previewStatus: remote,
+        lastPositionUpdate: Date.now() / 1000
       });
-    }, 1000);
+    });
+  }
+
+  public componentDidMount() {
+    this.subscribeToEventUpdates();
 
     this.timerInterval = setInterval(() => {
       const { lastPositionUpdate, previewStatus } = this.state;
@@ -81,7 +83,6 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public componentWillUnmount() {
-    this.statusInterval && clearInterval(this.statusInterval);
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
