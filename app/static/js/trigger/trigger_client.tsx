@@ -46,8 +46,7 @@ interface TriggerClientState {
 }
 
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
-  private pollingFrequency: number = 2000;
-  private pollingInterval: any;
+  private socket: SocketIOClient.Socket;
 
   constructor(props: TriggerClientProps) {
     super(props);
@@ -88,35 +87,34 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
       console.log("Connecting to", url);
 
-      const socket = io(url, { transports: ["websocket"] });
+      this.socket = io(url, { transports: ["websocket"] });
 
-      socket.on("connect", () => {
+      this.socket.on("connect", () => {
         console.log("Connected to websocket-service");
 
-        socket.emit("JOIN", documentId, () => {
+        this.socket.emit("JOIN", documentId, () => {
           console.log("Joined channel for document ID", documentId);
         });
       });
 
-      socket.on("EVENTS", (data: Object) => {
-        console.log("Received trigger events:");
-        console.log(data);
+      this.socket.on("EVENTS", (events: Array<Event>) => {
+        console.log("Received trigger event update");
+
+        this.setState({
+          events,
+          pageIsLoading: false
+        });
       });
     });
   }
 
   public componentDidMount() {
     this.fetchEvents();
-
-    this.pollingInterval = setInterval(() => {
-      this.fetchEvents();
-    }, this.pollingFrequency);
-
     this.subscribeToEventUpdates();
   }
 
   public componentWillUnmount() {
-    clearInterval(this.pollingInterval);
+    this.socket.close();
   }
 
   private renderMainContent(triggerMode: string): JSX.Element {
@@ -136,8 +134,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       return (
         <EventList documentId={this.props.documentId}
                    events={events}
-                   triggerMode={triggerMode}
-                   fetchEvents={this.fetchEvents.bind(this)} />
+                   triggerMode={triggerMode} />
       );
     }
   }
