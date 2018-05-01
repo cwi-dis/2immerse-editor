@@ -1440,7 +1440,7 @@ class DocumentServe:
         else:
             self.logger.debug('forward %d operations to %d callbacks' % (len(operations), len(self.callbacks)), extra=self.getLoggerExtra())
         gen = self._nextGeneration(not operations)
-        if not operations:
+        if operations:
             self._memorizeOperations(gen, operations)
         toRemove = []
         wantStateUpdates = True
