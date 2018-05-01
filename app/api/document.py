@@ -155,6 +155,7 @@ class Document:
         self.xmlHandler = None
         self.remoteHandler = None
         self.settingsHandler = None
+        self.asyncUpdateHandler = None
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
@@ -338,17 +339,24 @@ class Document:
 
     @synchronized
     def remote(self):
-        """Returns the control handler (after creating it if needed)"""
+        """Returns the remote control handler (after creating it if needed)"""
         if not self.remoteHandler:
             self.remoteHandler = DocumentRemote(self)
         return self.remoteHandler
 
     @synchronized
     def settings(self):
-        """Returns the control handler (after creating it if needed)"""
+        """Returns the asynchronous (socketIO) update handler (after creating it if needed)"""
         if not self.settingsHandler:
             self.settingsHandler = DocumentSettings(self)
         return self.settingsHandler
+
+    @synchronized
+    def asyncUpdate(self):
+        """Returns the document settings handler (after creating it if needed)"""
+        if not self.asyncUpdateHandler:
+            self.asyncUpdateHandler = DocumentAsyncUpdate(self)
+        return self.asyncUpdateHandler
 
     @synchronized
     def _startListening(self, reason=None):
@@ -703,8 +711,7 @@ class DocumentXml:
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
-
-
+   
 class DocumentEvents:
     def __init__(self, document):
         self.document = document
@@ -1219,7 +1226,6 @@ class DocumentAuthoring:
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
-
 class DocumentServe:
     def __init__(self, document):
         self.document = document
@@ -1232,6 +1238,8 @@ class DocumentServe:
         self.lastClientToTimelineServedDeltaT = None
         self.operationHistory = []
         self.logger = self.document.logger.getChild('serve')
+        print 'xxxjack temp create asyncUpdate'
+        _ = self.document.asyncUpdate()
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
@@ -1527,3 +1535,33 @@ class DocumentSettings:
             rv["Kibana Log"] = GlobalSettings.kibanaService + (kibanaCommand % contextID)
             rv["Timeline Dump"] = GlobalSettings.timelineService + '/context/' + contextID + '/dump'
         return rv
+
+
+class DocumentAsyncUpdate(threading.Thread):
+    def __init__(self, document):
+        print 'xxxjack DocumentAsyncUpdate created'
+        self.document = document
+        threading.Thread.__init__(self)
+        websocket_service = GlobalSettings.websocketService
+        # Remove trailing slash (not sure why it's there in the first place?)
+        if websocket_service[-1] == "/":
+            websocket_service = websocket_service[:-1]
+
+        webSock = SocketIO(websocket_service)
+        print 'xxxjack created socket', webSock
+        self.incomingChannel = webSock.define(SocketIONamespace, "/stateUpdate/%s" % self.document.documentId)
+        print 'xxxjack websocketservice',websocket_service, 'channel /stateUpdate/%s' % self.document.documentId
+        self.incomingChannel.on('testEvent', self.on_testEvent)
+        self.running = True
+        self.start()
+    
+    def stop(self):
+        self.running = False
+        
+    def run(self):
+        print 'xxxjack DocumentAsyncUpdate thread started'
+        self.incomingChannel.wait()
+        print 'xxxjack DocumentAsyncUpdate thread stopped'
+            
+    def on_testEvent(self, *args, **kwargs):
+        print 'xxxjack onTestEvent args %s kwargs %s' % (args, kwargs)
