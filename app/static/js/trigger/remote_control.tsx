@@ -61,14 +61,16 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }, 10);
   }
 
-  public componentDidUpdate() {
-    this.setState({
-      position: this.props.previewStatus.position || 0
-    });
-  }
-
   public componentWillUnmount() {
     this.timerInterval && clearInterval(this.timerInterval);
+  }
+
+  static getDerivedStateFromProps(nextProps: RemoteControlProps, prevState: RemoteControlState): RemoteControlState {
+    return {
+      ...prevState,
+      position: nextProps.previewStatus.position || prevState.position,
+      lastPositionUpdate: Date.now() / 1000
+    };
   }
 
   private togglePlayback() {
@@ -101,8 +103,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private renderTimestamp() {
-    const { timeOffset } = this.state;
-    let { position } = this.state;
+    let { position, timeOffset } = this.state;
 
     if (position) {
       position += timeOffset || 0;
