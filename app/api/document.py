@@ -98,6 +98,7 @@ def edit(method):
         return rv
     return wrapper
 
+
 class EditManager:
     """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
     def __init__(self, document, reason=None):
@@ -770,11 +771,11 @@ class DocumentEvents:
             str(self.document.documentId),
             events
         )
-            
+
     @synchronized
     def requestBroadcastToFrontends(self):
         self.broadcastEventsToFrontends()
-        
+
     @synchronized
     def _getDescription(self, elt, trigger, state=None):
         """Returns description of a triggerable or modifiable event for the front end"""
@@ -1123,6 +1124,8 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
+        self.requestBroadcastToFrontends()
+
         return ""
 
     def _productionIdFinished(self, productionId):
@@ -1250,7 +1253,7 @@ class DocumentServe:
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
-        if self.lastClientServed and self.lastClientToTimelineServedDeltaT == None:
+        if self.lastClientServed and self.lastClientToTimelineServedDeltaT is None:
             self.lastClientToTimelineServedDeltaT = time.time() - self.lastClientServed
             self.logger.info('delta-T between client.json and timeline.xml set to %f', self.lastClientToTimelineServedDeltaT)
         return ET.tostring(self.tree.getroot())
@@ -1479,7 +1482,7 @@ class DocumentServe:
         while len(self.operationHistory) < gen:
             self.operationHistory.append((len(self.operationHistory), []))
         self.operationHistory.append((gen, operations))
-        
+
     @synchronized
     def gethistory(self, oldest=None):
         if not oldest:
@@ -1487,7 +1490,8 @@ class DocumentServe:
         oldest = int(oldest)
         rv = self.operationHistory[oldest:]
         return rv
-        
+
+
 class DocumentSettings:
     def __init__(self, document):
         self.document = document

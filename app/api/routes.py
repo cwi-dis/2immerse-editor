@@ -420,6 +420,7 @@ def update_document_state(documentId):
     serve.setDocumentState(documentState)
     return ''
 
+
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/gethistory")
 def get_history(documentId):
     try:
