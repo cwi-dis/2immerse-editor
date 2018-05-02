@@ -1368,6 +1368,7 @@ class DocumentServe:
         self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
         self.callbacks.add(url)
         self.document.forwardHandler = self
+        self.document.events().requestBroadcastToFrontends()
 
     @synchronized
     def setDocumentState(self, documentState):
