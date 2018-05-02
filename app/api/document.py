@@ -161,6 +161,7 @@ class Document:
         self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
         self.lastErrorMessage = None
         self.logger = logger
+        self.timeOpened = time.time()
         self.clock = clocks.PausableClock(clocks.SystemClock())
         self._loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
@@ -174,6 +175,12 @@ class Document:
     def setError(self, msg):
         self.lastErrorMessage = msg
 
+    def getDescription(self):
+        rv = str(self.documentId)
+        rv += time.strftime(", %d-%b-%y %H:%M UTC", time.gmtime(self.timeOpened))
+        if self.url:
+            rv += ', ' + self.url
+        return rv
     @synchronized
     def index(self):
         if request.method == 'PUT':
