@@ -23,7 +23,9 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
     backgroundColor: bgColors[event.state],
     boxShadow: "0 0 10px #161616",
     border: `1px solid ${borderColors[event.state]}`,
-    borderRadius: 5
+    borderRadius: 5,
+    display: "inline",
+    float: "left"
   };
 
   return (
