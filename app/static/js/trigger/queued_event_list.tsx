@@ -19,17 +19,13 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
   const { event } = props;
 
   const containerStyle: React.CSSProperties = {
-    margin: "10px 5px", padding: 9,
     backgroundColor: bgColors[event.state],
-    boxShadow: "0 0 10px #161616",
     border: `1px solid ${borderColors[event.state]}`,
-    borderRadius: 5,
-    display: "inline",
     float: "left"
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="queued-event-container" style={containerStyle}>
       {event.name}
     </div>
   );

@@ -143,6 +143,14 @@ html, body {
   overflow: hidden;
 }
 
+.queued-event-container {
+  margin: 10px 5px;
+  padding: 9px;
+  box-shadow: 0 0 10px #161616;
+  border-radius: 5px;
+  display: inline;
+}
+
 .pulse-animation {
   animation: pulse 400ms 2;
 }
