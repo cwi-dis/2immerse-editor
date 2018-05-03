@@ -47,14 +47,14 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
 
   public componentDidMount() {
     this.timerInterval = setInterval(() => {
-      const { lastPositionUpdate } = this.state;
-      const { previewStatus } = this.props;
+      const { position, lastPositionUpdate } = this.state;
+      const { previewStatus: { playing } } = this.props;
 
-      if (previewStatus.playing && previewStatus.position && lastPositionUpdate) {
+      if (playing && position && lastPositionUpdate) {
         const delta = (Date.now() / 1000) - lastPositionUpdate;
 
         this.setState({
-          position: previewStatus.position + delta,
+          position: position + delta,
           lastPositionUpdate: Date.now() / 1000
         });
       }
@@ -65,7 +65,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
-  static getDerivedStateFromProps(nextProps: RemoteControlProps, prevState: RemoteControlState): RemoteControlState {
+  static getDerivedStateFromProps(nextProps: RemoteControlProps, prevState: RemoteControlState): Nullable<RemoteControlState> {
     return {
       ...prevState,
       position: nextProps.previewStatus.position || prevState.position,

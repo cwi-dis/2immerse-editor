@@ -43,11 +43,12 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
               className="button is-warning">
           Clear Session
         </span>
-        <span onClick={deleteSession}
-              style={{width: "50%"}}
-              className="button is-danger">
+        <button onClick={deleteSession}
+                disabled={fetchError !== undefined}
+                style={{width: "50%"}}
+                className="button is-danger">
           Delete Session
-        </span>
+        </button>
       </div>
     </div>
   );

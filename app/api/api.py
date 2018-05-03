@@ -34,6 +34,10 @@ class API:
 
             return jsonify(documentId=documentId)
 
-        return jsonify(self.documents.keys())
+        rv = []
+        for k, d in self.documents.items():
+            descr = d.getDescription()
+            rv.append(dict(id=k, description=descr))
+        return jsonify(rv)
 
 api = API()

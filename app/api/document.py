@@ -98,6 +98,7 @@ def edit(method):
         return rv
     return wrapper
 
+
 class EditManager:
     """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
     def __init__(self, document, reason=None):
@@ -161,6 +162,7 @@ class Document:
         self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
         self.lastErrorMessage = None
         self.logger = logger
+        self.timeOpened = time.time()
         self.clock = clocks.PausableClock(clocks.SystemClock())
         self._loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
@@ -174,6 +176,12 @@ class Document:
     def setError(self, msg):
         self.lastErrorMessage = msg
 
+    def getDescription(self):
+        rv = str(self.documentId)
+        rv += time.strftime(", %d-%b-%y %H:%M UTC", time.gmtime(self.timeOpened))
+        if self.url:
+            rv += ', ' + self.url
+        return rv
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -260,8 +268,11 @@ class Document:
             del self.idMap[id]
         # We do not remove tt:name, it may occur multiple times so we are not
         # sure it has really disappeared
-        for ch in elt:
-            self._elementDeleted(ch)
+        toDelete = [ch for ch in elt]
+
+        for ch in toDelete:
+            elt.remove(ch)
+            self._elementDeleted(ch, recursive=True)
 
     @synchronized
     def _elementChanged(self, elt):
@@ -777,11 +788,11 @@ class DocumentEvents:
             str(self.document.documentId),
             events
         )
-            
+
     @synchronized
     def requestBroadcastToFrontends(self):
         self.broadcastEventsToFrontends()
-        
+
     @synchronized
     def _getDescription(self, elt, trigger, state=None):
         """Returns description of a triggerable or modifiable event for the front end"""
@@ -1130,13 +1141,14 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
+
         return ""
 
     def _productionIdFinished(self, productionId):
         """Called when a transient productionId has finished running. Remove from completeEvents"""
         events = self.tree.getroot().findall(".//tt:completeEvents/*[@tt:productionId='%s']" % productionId, NAMESPACES)
         self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events)))
-        for elt in events:
+        for elt in events[:1]:
             parent = self.document._getParent(elt)
             parent.remove(elt)
             self.document._elementDeleted(elt)
@@ -1258,7 +1270,7 @@ class DocumentServe:
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
-        if self.lastClientServed and self.lastClientToTimelineServedDeltaT == None:
+        if self.lastClientServed and self.lastClientToTimelineServedDeltaT is None:
             self.lastClientToTimelineServedDeltaT = time.time() - self.lastClientServed
             self.logger.info('delta-T between client.json and timeline.xml set to %f', self.lastClientToTimelineServedDeltaT)
         return ET.tostring(self.tree.getroot())
@@ -1366,6 +1378,7 @@ class DocumentServe:
         self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
         self.callbacks.add(url)
         self.document.forwardHandler = self
+        self.document.events().requestBroadcastToFrontends()
 
     @synchronized
     def setDocumentState(self, documentState):
@@ -1487,7 +1500,7 @@ class DocumentServe:
         while len(self.operationHistory) < gen:
             self.operationHistory.append((len(self.operationHistory), []))
         self.operationHistory.append((gen, operations))
-        
+
     @synchronized
     def gethistory(self, oldest=None):
         if not oldest:
@@ -1495,7 +1508,8 @@ class DocumentServe:
         oldest = int(oldest)
         rv = self.operationHistory[oldest:]
         return rv
-        
+
+
 class DocumentSettings:
     def __init__(self, document):
         self.document = document

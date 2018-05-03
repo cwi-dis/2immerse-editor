@@ -1,6 +1,7 @@
 import logging
 import datetime
 import time
+import sys
 
 logging.basicConfig()
 
@@ -75,18 +76,16 @@ def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
     rootLogger.handlers[0].setFormatter(currentFormatterClass())
 
 
-# Make stdout unbuffered
-class Unbuffered(object):
-    def __init__(self, stream):
-        self.stream = stream
+# Send stdout and stderr to the logger as well.
+class StreamToLogger(object):
+   def __init__(self, logger, log_level=logging.INFO):
+      self.logger = logger
+      self.log_level = log_level
+      self.linebuf = ''
 
-    def write(self, data):
-        self.stream.write(data)
-        self.stream.flush()
+   def write(self, buf):
+      for line in buf.rstrip().splitlines():
+         self.logger.log(self.log_level, line.rstrip())
 
-    def __getattr__(self, attr):
-        return getattr(self.stream, attr)
-
-
-import sys
-sys.stdout = Unbuffered(sys.stdout)
+sys.stdout = StreamToLogger(logging.getLogger('stdout'), logging.INFO)
+sys.stderr = StreamToLogger(logging.getLogger('stderr'), logging.INFO)

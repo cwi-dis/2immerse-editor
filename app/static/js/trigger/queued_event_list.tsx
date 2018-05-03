@@ -23,7 +23,9 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
     backgroundColor: bgColors[event.state],
     boxShadow: "0 0 10px #161616",
     border: `1px solid ${borderColors[event.state]}`,
-    borderRadius: 5
+    borderRadius: 5,
+    display: "inline",
+    float: "left"
   };
 
   return (
@@ -51,7 +53,7 @@ class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
     });
 
     return (
-      <div style={{display: "flex", flexDirection: "row", width: "100vw", height: 65, borderBottom: "2px solid #161616", padding: "0 5px"}}>
+      <div className="queued-event-list">
         {queuedEvents.map((event, i) => {
           return <QueuedEventContainer key={i} event={event} />;
         })}

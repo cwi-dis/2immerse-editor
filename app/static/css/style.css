@@ -135,6 +135,14 @@ html, body {
   color: #319aee;
 }
 
+.queued-event-list {
+  width: 100vw;
+  height: 65px;
+  border-bottom: 2px solid #161616;
+  padding: 0 5px;
+  overflow: hidden;
+}
+
 .pulse-animation {
   animation: pulse 400ms 2;
 }

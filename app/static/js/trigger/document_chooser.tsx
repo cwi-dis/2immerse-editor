@@ -15,7 +15,7 @@ interface DocumentChooserState {
   selectedMethod: InputMethod;
   isLoading: boolean;
   ajaxError?: {status: number, statusText: string};
-  existingDocuments: Array<string>;
+  existingDocuments: Array<{ id: string, description: string }>;
 }
 
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
@@ -152,8 +152,8 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
               <div className="control">
                 <div className="select is-fullwidth is-info">
                   <select key="id" ref={(e) => this.idInput = e} required={true}>
-                    {this.state.existingDocuments.map((documentId, i) => {
-                      return <option key={i} value={documentId}>{documentId}</option>;
+                    {this.state.existingDocuments.map((document, i) => {
+                      return <option key={i} value={document.id}>{document.description}</option>;
                     })}
                   </select>
                 </div>
