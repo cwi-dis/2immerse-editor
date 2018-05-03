@@ -1561,11 +1561,18 @@ class DocumentAsyncUpdate(threading.Thread):
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
 
-        webSock = SocketIO(websocket_service)
-        print 'xxxjack created socket', webSock
-        self.incomingChannel = webSock.define(SocketIONamespace, "/stateUpdate/%s" % self.document.documentId)
-        print 'xxxjack websocketservice',websocket_service, 'channel /stateUpdate/%s' % self.document.documentId
+        self.webSock = SocketIO(websocket_service)
+        print 'xxxjack created socket', self.webSock, 'at', websocket_service
+        self.incomingChannel = self.webSock.define(SocketIONamespace, "/trigger")
+        print 'xxxjack websocketservice incomingChannel', self.incomingChannel
+        self.channelName = 'toBackend-%s' % self.document.documentId
+        self.incomingChannel.on('JOIN', self.on_JOIN)
         self.incomingChannel.on('testEvent', self.on_testEvent)
+        self.incomingChannel.on('EVENTS', self.on_EVENTS)
+        self.incomingChannel.on('BROADCAST_EVENTS', self.on_BROADCAST_EVENTS)
+        print 'xxxjack registered callbacks'
+        self.incomingChannel.emit('JOIN', self.channelName)
+        print 'xxxjack emitted JOIN'
         self.running = True
         self.start()
     
@@ -1574,8 +1581,17 @@ class DocumentAsyncUpdate(threading.Thread):
         
     def run(self):
         print 'xxxjack DocumentAsyncUpdate thread started'
-        self.incomingChannel.wait()
+        self.webSock.wait()
         print 'xxxjack DocumentAsyncUpdate thread stopped'
+            
+    def on_JOIN(self, *args, **kwargs):
+        print 'xxxjack onJOIN args %s kwargs %s' % (args, kwargs)
             
     def on_testEvent(self, *args, **kwargs):
         print 'xxxjack onTestEvent args %s kwargs %s' % (args, kwargs)
+            
+    def on_EVENTS(self, *args, **kwargs):
+        print 'xxxjack onEVENTS args %s kwargs %s' % (args, kwargs)
+            
+    def on_BROADCAST_EVENTS(self, *args, **kwargs):
+        print 'xxxjack onBROADCAST_EVENTS args %s kwargs %s' % (args, kwargs)
