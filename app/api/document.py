@@ -267,8 +267,11 @@ class Document:
             del self.idMap[id]
         # We do not remove tt:name, it may occur multiple times so we are not
         # sure it has really disappeared
-        for ch in elt:
-            self._elementDeleted(ch)
+        toDelete = [ch for ch in elt]
+
+        for ch in toDelete:
+            elt.remove(ch)
+            self._elementDeleted(ch, recursive=True)
 
     @synchronized
     def _elementChanged(self, elt):
@@ -1131,7 +1134,6 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
-        self.requestBroadcastToFrontends()
 
         return ""
 
