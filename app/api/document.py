@@ -1439,6 +1439,13 @@ class DocumentServe:
         gen = self._nextGeneration(not operations)
         if operations:
             self._memorizeOperations(gen, operations)
+        #
+        # Forward to websocket listeners first
+        #
+        self.document.async().forwardDocumentModifications(dict(generation=gen, operations=operations))
+        #
+        # Now forward to REST listeners (code to be removed soon)
+        #
         toRemove = []
         wantStateUpdates = True
         for callback in self.callbacks:
@@ -1586,3 +1593,5 @@ class DocumentAsync(threading.Thread):
         events = self.document.events().get(caller='broadcast')
         self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
 
+    def forwardDocumentModifications(self, modifications):
+        self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
