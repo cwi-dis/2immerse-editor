@@ -25,9 +25,20 @@ const QueuedEventContainer: React.SFC<{ event: Event, documentId: string }> = (p
     float: "left"
   };
 
+  const dequeueEvent = () => {
+    console.log("Dequeueing event", event.id);
+    const url = `/api/v1/document/${documentId}/events/${event.id}/dequeue`;
+
+    makeRequest("POST", url).then(() => {
+      console.log("Event dequeued successfully");
+    }).catch((err) => {
+      console.error("Could not dequeue event", err);
+    });
+  };
+
   return (
     <div className="queued-event-container" style={containerStyle}>
-      <span>&times;</span>
+      <span onClick={dequeueEvent}>&times;</span>
       {event.name}
     </div>
   );
