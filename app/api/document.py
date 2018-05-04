@@ -1357,6 +1357,21 @@ class DocumentServe:
         self.document.async().requestBroadcastToFrontends()
 
     @synchronized
+    def getLiveInfo(self, contextID=None):
+        rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
+        if contextID is not None and self.contextID is  None:
+                self.allContextIDs.append(contextID)
+                self.logger.info('overriding contextID with %s' % contextID)
+                self.contextID = contextID
+                self.document._loggerExtra['contextID'] = contextID
+                rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
+        self.logger.info('getLiveInfo(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
+        self.callbacks.add(url)
+        self.document.forwardHandler = self
+        self.document.async().requestBroadcastToFrontends()
+        return rv
+
+    @synchronized
     def setDocumentState(self, documentState):
         self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.getLoggerExtra())
         self.document.companionTimelineIsActive = True
@@ -1539,6 +1554,7 @@ class DocumentAsync(threading.Thread):
         print 'xxxjack DocumentAsync created'
         self.document = document
         self.lock = self.document.lock
+        self.logger = self.document.logger.getChild('async')
         threading.Thread.__init__(self)
         self.socket = None
         self.channel = None
@@ -1554,35 +1570,40 @@ class DocumentAsync(threading.Thread):
         self.roomUpdates = 'toBackend-' + str(self.document.documentId)
         self.roomModifications = 'toTimelines-' + str(self.document.documentId)
         
-#        self.channel.on('JOIN', self.on_JOIN)
-#        self.channel.on('testEvent', self.on_testEvent)
-#        self.channel.on('EVENTS', self.on_EVENTS)
-#        self.channel.on('BROADCAST_EVENTS', self.on_BROADCAST_EVENTS)
-#        print 'xxxjack registered callbacks'
-#        self.channel.emit('JOIN', self.channelName)
-#        print 'xxxjack emitted JOIN'
-#        self.running = True
-#        self.start()
+        self.channel.on('STATUS', self.incomingDocumentStatus)
+        
+        self.channel.emit('JOIN', self.roomUpdates)
+
+        self.running = True
+        self.start()
     
-#     def stop(self):
-#         self.running = False
-#         
-#     def run(self):
-#         print 'xxxjack DocumentAsync thread started'
-#         self.socket.wait()
-#         print 'xxxjack DocumentAsync thread stopped'
-#             
-#     def on_JOIN(self, *args, **kwargs):
-#         print 'xxxjack onJOIN args %s kwargs %s' % (args, kwargs)
-#             
-#     def on_testEvent(self, *args, **kwargs):
-#         print 'xxxjack onTestEvent args %s kwargs %s' % (args, kwargs)
-#             
-#     def on_EVENTS(self, *args, **kwargs):
-#         print 'xxxjack onEVENTS args %s kwargs %s' % (args, kwargs)
-#             
-#     def on_BROADCAST_EVENTS(self, *args, **kwargs):
-#         print 'xxxjack onBROADCAST_EVENTS args %s kwargs %s' % (args, kwargs)
+    def getIncomingConnectionInfo(self):
+        websocket_service = GlobalSettings.websocketService
+        # Remove trailing slash (not sure why it's there in the first place?)
+        if websocket_service[-1] == "/":
+            websocket_service = websocket_service[:-1]
+        return dict(server=websocket_service, channel='/trigger', room=self.roomUpdates)
+    
+    def getOutgoingConnectionInfo(self):
+        websocket_service = GlobalSettings.websocketService
+        # Remove trailing slash (not sure why it's there in the first place?)
+        if websocket_service[-1] == "/":
+            websocket_service = websocket_service[:-1]
+        return dict(server=websocket_service, channel='/trigger', room=self.roomModifications)
+    
+    def stop(self):
+        self.running = False
+        
+    def run(self):
+        self.logger.debug('DocumentAsync listener started')
+        while self.running:
+            try:
+                self.socket.wait(5)
+            except:
+                # I hate bare except clauses, but I don't know what to do else...
+                import traceback
+                traceback.print_exc()
+        self.logger.debug('DocumentAsync listener stopped')
 
     @synchronized
     def requestBroadcastToFrontends(self):
@@ -1595,3 +1616,8 @@ class DocumentAsync(threading.Thread):
 
     def forwardDocumentModifications(self, modifications):
         self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
+        
+    def incomingDocumentStatus(self, documentStateStr):
+        self.logger.debug('DocumentAsync.incomingDocumentStatus()')
+        documentState = json.loads(documentStateStr)
+        self.document.serve().setDocumentState(documentState)

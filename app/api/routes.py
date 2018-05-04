@@ -405,6 +405,17 @@ def set_callback(documentId):
     serve.setCallback(url=request.args.get('url'), contextID=request.args.get('contextID', None))
     return ''
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/serve/getliveinfo", methods=["GET"])
+def get_liveinfo(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    rv = serve.getLiveInfo(contextID=request.args.get('contextID', None))
+    return Response(json.dumps(rv), mimetype="application/json")
+
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/updatedocstate", methods=["PUT"])
 def update_document_state(documentId):
