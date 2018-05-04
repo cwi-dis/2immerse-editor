@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Event } from "./trigger_client";
+import { makeRequest } from "../editor/util";
 
 const borderColors = {
   "abstract": "#161616",
@@ -15,8 +16,8 @@ const bgColors = {
 };
 
 
-const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
-  const { event } = props;
+const QueuedEventContainer: React.SFC<{ event: Event, documentId: string }> = (props) => {
+  const { event, documentId } = props;
 
   const containerStyle: React.CSSProperties = {
     backgroundColor: bgColors[event.state],
@@ -33,12 +34,13 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
 };
 
 interface QueuedEventListProps {
+  documentId: string;
   events: Array<Event>;
 }
 
 class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
   public render() {
-    const { events } = this.props;
+    const { events, documentId } = this.props;
     const activeEvents = events.filter((event) => event.state === "active");
 
     const queuedEvents = events.filter((event) => {
@@ -52,7 +54,7 @@ class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
     return (
       <div className="queued-event-list">
         {queuedEvents.map((event, i) => {
-          return <QueuedEventContainer key={i} event={event} />;
+          return <QueuedEventContainer key={i} event={event} documentId={documentId} />;
         })}
       </div>
     );

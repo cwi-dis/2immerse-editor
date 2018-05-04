@@ -48,7 +48,7 @@ const EventList: React.SFC<EventListProps> = (props) => {
 
   return (
     <div>
-      {(triggerMode === "enqueue") ? <QueuedEventList events={queuedEvents} /> : null}
+      {(triggerMode === "enqueue") ? <QueuedEventList events={queuedEvents} documentId={documentId} /> : null}
       <div style={{width: findOptimalContainerWidth(), margin: "0 auto"}}>
         <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
           {renderedEvents.map((event, i) => {
