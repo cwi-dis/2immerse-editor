@@ -156,7 +156,7 @@ class Document:
         self.xmlHandler = None
         self.remoteHandler = None
         self.settingsHandler = None
-        self.asyncUpdateHandler = None
+        self.asyncHandler = None
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
@@ -363,11 +363,11 @@ class Document:
         return self.settingsHandler
 
     @synchronized
-    def asyncUpdate(self):
+    def async(self):
         """Returns the document settings handler (after creating it if needed)"""
-        if not self.asyncUpdateHandler:
-            self.asyncUpdateHandler = DocumentAsyncUpdate(self)
-        return self.asyncUpdateHandler
+        if not self.asyncHandler:
+            self.asyncHandler = DocumentAsync(self)
+        return self.asyncHandler
 
     @synchronized
     def _startListening(self, reason=None):
@@ -728,7 +728,6 @@ class DocumentEvents:
         self.document = document
         self.tree = document.tree
         self.lock = self.document.lock
-        self.socketIOChannel = None
         self.logger = self.document.logger.getChild('events')
 
     def getLoggerExtra(self):
@@ -771,27 +770,6 @@ class DocumentEvents:
             self.logger.debug("%s: asking document for setDocumentState calls", caller, extra=self.getLoggerExtra())
             self.document.forwardHandler.forward([])
         return rv
-
-    @synchronized
-    def broadcastEventsToFrontends(self):
-        events = self.get(caller='broadcast')
-        if self.socketIOChannel is None:
-            websocket_service = GlobalSettings.websocketService
-            # Remove trailing slash (not sure why it's there in the first place?)
-            if websocket_service[-1] == "/":
-                websocket_service = websocket_service[:-1]
-
-            webSock = SocketIO(websocket_service)
-            self.socketIOChannel = webSock.define(SocketIONamespace, "/trigger")
-        self.socketIOChannel.emit(
-            "BROADCAST_EVENTS",
-            str(self.document.documentId),
-            events
-        )
-
-    @synchronized
-    def requestBroadcastToFrontends(self):
-        self.broadcastEventsToFrontends()
 
     @synchronized
     def _getDescription(self, elt, trigger, state=None):
@@ -1031,7 +1009,7 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
-        self.requestBroadcastToFrontends()
+        self.document.async().requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1088,7 +1066,7 @@ class DocumentEvents:
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
-        self.requestBroadcastToFrontends()
+        self.document.async().requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1107,7 +1085,7 @@ class DocumentEvents:
             parent.remove(element)
         except:
             pass
-        self.requestBroadcastToFrontends()
+        self.document.async().requestBroadcastToFrontends()
         return True
 
     @edit
@@ -1250,8 +1228,6 @@ class DocumentServe:
         self.lastClientToTimelineServedDeltaT = None
         self.operationHistory = []
         self.logger = self.document.logger.getChild('serve')
-        print 'xxxjack temp create asyncUpdate'
-        _ = self.document.asyncUpdate()
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
@@ -1378,7 +1354,7 @@ class DocumentServe:
         self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
         self.callbacks.add(url)
         self.document.forwardHandler = self
-        self.document.events().requestBroadcastToFrontends()
+        self.document.async().requestBroadcastToFrontends()
 
     @synchronized
     def setDocumentState(self, documentState):
@@ -1401,7 +1377,7 @@ class DocumentServe:
                         self.logger.debug('setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
-        self.document.events().requestBroadcastToFrontends()
+        self.document.async().requestBroadcastToFrontends()
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
@@ -1551,47 +1527,62 @@ class DocumentSettings:
         return rv
 
 
-class DocumentAsyncUpdate(threading.Thread):
+class DocumentAsync(threading.Thread):
     def __init__(self, document):
-        print 'xxxjack DocumentAsyncUpdate created'
+        print 'xxxjack DocumentAsync created'
         self.document = document
+        self.lock = self.document.lock
         threading.Thread.__init__(self)
+        self.socket = None
+        self.channel = None
         websocket_service = GlobalSettings.websocketService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
 
-        self.webSock = SocketIO(websocket_service)
-        print 'xxxjack created socket', self.webSock, 'at', websocket_service
-        self.incomingChannel = self.webSock.define(SocketIONamespace, "/trigger")
-        print 'xxxjack websocketservice incomingChannel', self.incomingChannel
-        self.channelName = 'toBackend-%s' % self.document.documentId
-        self.incomingChannel.on('JOIN', self.on_JOIN)
-        self.incomingChannel.on('testEvent', self.on_testEvent)
-        self.incomingChannel.on('EVENTS', self.on_EVENTS)
-        self.incomingChannel.on('BROADCAST_EVENTS', self.on_BROADCAST_EVENTS)
-        print 'xxxjack registered callbacks'
-        self.incomingChannel.emit('JOIN', self.channelName)
-        print 'xxxjack emitted JOIN'
-        self.running = True
-        self.start()
-    
-    def stop(self):
-        self.running = False
+        self.socket = SocketIO(websocket_service)
+        self.channel = self.socket.define(SocketIONamespace, "/trigger")
         
-    def run(self):
-        print 'xxxjack DocumentAsyncUpdate thread started'
-        self.webSock.wait()
-        print 'xxxjack DocumentAsyncUpdate thread stopped'
-            
-    def on_JOIN(self, *args, **kwargs):
-        print 'xxxjack onJOIN args %s kwargs %s' % (args, kwargs)
-            
-    def on_testEvent(self, *args, **kwargs):
-        print 'xxxjack onTestEvent args %s kwargs %s' % (args, kwargs)
-            
-    def on_EVENTS(self, *args, **kwargs):
-        print 'xxxjack onEVENTS args %s kwargs %s' % (args, kwargs)
-            
-    def on_BROADCAST_EVENTS(self, *args, **kwargs):
-        print 'xxxjack onBROADCAST_EVENTS args %s kwargs %s' % (args, kwargs)
+        self.roomFrontend = str(self.document.documentId)
+        self.roomUpdates = 'toBackend-' + str(self.document.documentId)
+        self.roomModifications = 'toTimelines-' + str(self.document.documentId)
+        
+#        self.channel.on('JOIN', self.on_JOIN)
+#        self.channel.on('testEvent', self.on_testEvent)
+#        self.channel.on('EVENTS', self.on_EVENTS)
+#        self.channel.on('BROADCAST_EVENTS', self.on_BROADCAST_EVENTS)
+#        print 'xxxjack registered callbacks'
+#        self.channel.emit('JOIN', self.channelName)
+#        print 'xxxjack emitted JOIN'
+#        self.running = True
+#        self.start()
+    
+#     def stop(self):
+#         self.running = False
+#         
+#     def run(self):
+#         print 'xxxjack DocumentAsync thread started'
+#         self.socket.wait()
+#         print 'xxxjack DocumentAsync thread stopped'
+#             
+#     def on_JOIN(self, *args, **kwargs):
+#         print 'xxxjack onJOIN args %s kwargs %s' % (args, kwargs)
+#             
+#     def on_testEvent(self, *args, **kwargs):
+#         print 'xxxjack onTestEvent args %s kwargs %s' % (args, kwargs)
+#             
+#     def on_EVENTS(self, *args, **kwargs):
+#         print 'xxxjack onEVENTS args %s kwargs %s' % (args, kwargs)
+#             
+#     def on_BROADCAST_EVENTS(self, *args, **kwargs):
+#         print 'xxxjack onBROADCAST_EVENTS args %s kwargs %s' % (args, kwargs)
+
+    @synchronized
+    def requestBroadcastToFrontends(self):
+        self.broadcastEventsToFrontends()
+
+    @synchronized
+    def broadcastEventsToFrontends(self):
+        events = self.document.events().get(caller='broadcast')
+        self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
+
