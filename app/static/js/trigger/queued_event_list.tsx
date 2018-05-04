@@ -26,6 +26,7 @@ const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
 
   return (
     <div className="queued-event-container" style={containerStyle}>
+      <span>&times;</span>
       {event.name}
     </div>
   );
