@@ -38,7 +38,7 @@ const QueuedEventContainer: React.SFC<{ event: Event, documentId: string }> = (p
 
   return (
     <div className="queued-event-container" style={containerStyle}>
-      <span onClick={dequeueEvent}>&times;</span>
+      {(event.state === "active") ? null : <span onClick={dequeueEvent}>&times;</span>}
       {event.name}
     </div>
   );
