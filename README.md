@@ -22,6 +22,21 @@ docker-compose build
 ```
 
 This will download and build all the images and install the application code.
+Note that when making changes to any Python code, the entire container needs to
+be rebuilt, which can take some amount of time. To speed this process up, you
+can invoke the build process and pass in the argument `nojs`:
+
+```
+docker-compose build --build-arg nojs=true
+```
+
+This will skip installation of Node.js, TypeScript and downloading/installing
+all of the packages required for the JS build process. The only caveat of this
+approach is that you need to make sure that your `app/static/dist/bundle.js` is
+up to date. This is done by running the build instructions (starting with the
+line `yarn install`) in the section *Frontend Setup* of this document. This
+only needs to be done after `git pull` has brought in new changes to `*.ts`
+files or if any of these files were changed locally.
 
 ### Frontend Setup
 
