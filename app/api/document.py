@@ -1365,8 +1365,7 @@ class DocumentServe:
                 self.contextID = contextID
                 self.document._loggerExtra['contextID'] = contextID
                 rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
-        self.logger.info('getLiveInfo(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
-        self.callbacks.add(url)
+        self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()
         return rv
@@ -1617,7 +1616,6 @@ class DocumentAsync(threading.Thread):
     def forwardDocumentModifications(self, modifications):
         self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
         
-    def incomingDocumentStatus(self, documentStateStr):
+    def incomingDocumentStatus(self, documentState):
         self.logger.debug('DocumentAsync.incomingDocumentStatus()')
-        documentState = json.loads(documentStateStr)
         self.document.serve().setDocumentState(documentState)
