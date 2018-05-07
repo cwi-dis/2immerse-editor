@@ -1611,11 +1611,13 @@ class DocumentAsync(threading.Thread):
     @synchronized
     def broadcastEventsToFrontends(self):
         events = self.document.events().get(caller='broadcast')
+        self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...)')
         self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
 
     def forwardDocumentModifications(self, modifications):
+        self.logger.debug('DocumentAsync.forwardDocumentModifications(...)' )
         self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
         
     def incomingDocumentStatus(self, documentState):
-        self.logger.debug('DocumentAsync.incomingDocumentStatus()')
+        self.logger.debug('DocumentAsync.incomingDocumentStatus(%s)' % repr(documentState))
         self.document.serve().setDocumentState(documentState)
