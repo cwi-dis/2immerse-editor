@@ -143,6 +143,25 @@ html, body {
   overflow: hidden;
 }
 
+.queued-event-container {
+  margin: 10px 5px;
+  padding: 9px;
+  box-shadow: 0 0 10px #161616;
+  border-radius: 5px;
+  display: inline;
+}
+
+.queued-event-container span {
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  margin-right: 7px;
+}
+
+.queued-event-container span:hover {
+  color: #FFFFFF;
+}
+
 .pulse-animation {
   animation: pulse 400ms 2;
 }

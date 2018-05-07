@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Event } from "./trigger_client";
+import { makeRequest } from "../editor/util";
 
 const borderColors = {
   "abstract": "#161616",
@@ -15,33 +16,42 @@ const bgColors = {
 };
 
 
-const QueuedEventContainer: React.SFC<{ event: Event }> = (props) => {
-  const { event } = props;
+const QueuedEventContainer: React.SFC<{ event: Event, documentId: string }> = (props) => {
+  const { event, documentId } = props;
 
   const containerStyle: React.CSSProperties = {
-    margin: "10px 5px", padding: 9,
     backgroundColor: bgColors[event.state],
-    boxShadow: "0 0 10px #161616",
     border: `1px solid ${borderColors[event.state]}`,
-    borderRadius: 5,
-    display: "inline",
     float: "left"
   };
 
+  const dequeueEvent = () => {
+    console.log("Dequeueing event", event.id);
+    const url = `/api/v1/document/${documentId}/events/${event.id}/dequeue`;
+
+    makeRequest("POST", url).then(() => {
+      console.log("Event dequeued successfully");
+    }).catch((err) => {
+      console.error("Could not dequeue event", err);
+    });
+  };
+
   return (
-    <div style={containerStyle}>
+    <div className="queued-event-container" style={containerStyle}>
+      {(event.state === "active") ? null : <span onClick={dequeueEvent}>&times;</span>}
       {event.name}
     </div>
   );
 };
 
 interface QueuedEventListProps {
+  documentId: string;
   events: Array<Event>;
 }
 
 class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
   public render() {
-    const { events } = this.props;
+    const { events, documentId } = this.props;
     const activeEvents = events.filter((event) => event.state === "active");
 
     const queuedEvents = events.filter((event) => {
@@ -55,7 +65,7 @@ class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
     return (
       <div className="queued-event-list">
         {queuedEvents.map((event, i) => {
-          return <QueuedEventContainer key={i} event={event} />;
+          return <QueuedEventContainer key={i} event={event} documentId={documentId} />;
         })}
       </div>
     );
