@@ -10,6 +10,7 @@ interface DocumentChooserState {
 }
 
 class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
+  private documentInterval: any;
   private idInput: Nullable<HTMLSelectElement>;
 
   constructor(props: {}) {
@@ -22,16 +23,24 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   }
 
   public componentDidMount() {
-    makeRequest("GET", "/api/v1/document").then((data) => {
-      const documents = JSON.parse(data);
-      console.log("Fetched list of documents:", documents);
+    this.documentInterval = setInterval(() => {
+      makeRequest("GET", "/api/v1/document").then((data) => {
+        const documents = JSON.parse(data);
+        console.log("Fetched list of documents:", documents);
 
-      this.setState({
-        existingDocuments: documents
+        this.setState({
+          existingDocuments: documents
+        });
+      }).catch((err) => {
+        console.error("Could not fetch existing documents:", err);
       });
-    }).catch((err) => {
-      console.error("Could not fetch existing documents:", err);
-    });
+    }, 1000);
+  }
+
+  public componentWillUnmount() {
+    if (this.documentInterval) {
+      clearInterval(this.documentInterval);
+    }
   }
 
   private continueClicked() {
