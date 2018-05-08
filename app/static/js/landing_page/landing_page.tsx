@@ -10,6 +10,7 @@ const LandingPage: React.SFC<{}> = () => {
       <div className="landingpage-buttons">
         <a className="button is-info is-medium" href="/editor">Preproduction Authoring</a>
         <a className="button is-info is-medium" href="/trigger">Live Triggering</a>
+        <Link className="button is-info is-medium" to="/view">View</Link>
       </div>
       <p className="landingpage-config">
         <Link to="/config">Config</Link>
