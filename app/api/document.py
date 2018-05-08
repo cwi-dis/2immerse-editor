@@ -768,11 +768,6 @@ class DocumentEvents:
             "remote": self.document.remote().get(),
             "events": eventList
         }
-
-        # See if we need to ask the timeline server for updates
-        if self.document.forwardHandler and not self.document.companionTimelineIsActive:
-            self.logger.debug("%s: asking document for setDocumentState calls", caller, extra=self.getLoggerExtra())
-            self.document.forwardHandler.forward([])
         return rv
 
     @synchronized
@@ -1364,24 +1359,24 @@ class DocumentServe:
         return rv
 
     @synchronized
-    def setDocumentState(self, documentState):
-        self.logger.debug("setDocumentState: got %d element-state items" % len(documentState), extra=self.getLoggerExtra())
+    def _setDocumentState(self, documentState):
+        self.logger.debug("_setDocumentState: got %d element-state items" % len(documentState), extra=self.getLoggerExtra())
         self.document.companionTimelineIsActive = True
         for eltId, eltState in documentState.items():
             elt = self.document._getElementByID(eltId)
             if elt is None:
-                self.logger.warning('setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
+                self.logger.warning('_setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
                 continue
             changed = self._elementStateChanged(elt, eltState)
             if changed:
-                self.logger.debug("setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
+                self.logger.debug("_setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
                 # If this was one of our events and it has become inactive we may want to remove the trigger
                 # that caused this
                 self.logger.debug("xxxjack productionIdTransient %s, state %s, productionId %s" % (elt.get(NS_TRIGGER("productionIdTransient"), False), elt.get(NS_TIMELINE_INTERNAL("state"), None), elt.get(NS_TRIGGER("productionId"), None)))
                 if elt.get(NS_TRIGGER("productionIdTransient"), False):
                     if elt.get(NS_TIMELINE_INTERNAL("state"), None) == "finished":
                         productionId = elt.get(NS_TRIGGER("productionId"), None)
-                        self.logger.debug('setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
+                        self.logger.debug('_setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
         self.document.async().requestBroadcastToFrontends()
@@ -1621,4 +1616,4 @@ class DocumentAsync(threading.Thread):
         
     def incomingDocumentStatus(self, documentState):
         self.logger.debug('DocumentAsync.incomingDocumentStatus(%s)' % repr(documentState))
-        self.document.serve().setDocumentState(documentState)
+        self.document.serve()._setDocumentState(documentState)
