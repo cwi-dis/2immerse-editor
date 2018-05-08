@@ -139,6 +139,7 @@ class Document:
     def __init__(self, documentId):
         self.documentId = documentId
         # The whole document, as an elementtree
+        self.testMode = False
         self.tree = None
         self.url = None
         self.base = None
@@ -176,6 +177,9 @@ class Document:
     def setError(self, msg):
         self.lastErrorMessage = msg
 
+    def setTestMode(self, mode):
+        self.testMode = mode
+        
     def getDescription(self):
         rv = str(self.documentId)
         rv += time.strftime(", %d-%b-%y %H:%M UTC", time.gmtime(self.timeOpened))
@@ -1550,13 +1554,15 @@ class DocumentSettings:
 
 class DocumentAsync(threading.Thread):
     def __init__(self, document):
-        print 'xxxjack DocumentAsync created'
         self.document = document
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('async')
+        self.logger.debug('DocumentAsync: created')
         threading.Thread.__init__(self)
         self.socket = None
         self.channel = None
+        if self.document.testMode:
+            return
         websocket_service = GlobalSettings.websocketService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
@@ -1611,10 +1617,16 @@ class DocumentAsync(threading.Thread):
     @synchronized
     def broadcastEventsToFrontends(self):
         events = self.document.events().get(caller='broadcast')
+        if not self.channel:
+            self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...) skipped (test mode)')
+            return            
         self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...)')
         self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
 
     def forwardDocumentModifications(self, modifications):
+        if not self.channel:
+            self.logger.debug('DocumentAsync.forwardDocumentModifications(...) skipped (test mode)' )
+            return
         self.logger.debug('DocumentAsync.forwardDocumentModifications(...)' )
         self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
         

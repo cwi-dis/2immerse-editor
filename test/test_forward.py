@@ -24,6 +24,7 @@ class TestForward(unittest.TestCase):
 
     def _createDocument(self):
         d = document.Document(uuid.uuid4())
+        d.setTestMode(True)
         docUrl = self._buildUrl()
         d.load(docUrl)
 
