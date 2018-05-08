@@ -12,6 +12,7 @@ interface GeneralSettingsState {
     startPaused: boolean,
     description: string,
     videoOverrideUrl: string,
+    videoOverrideOffset: string,
     debugLinks: {[key: string]: string}
   };
   saveSuccessful?: boolean;
@@ -22,6 +23,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
   private descriptionRef: Nullable<HTMLInputElement>;
   private videoOverrideUrlRef: Nullable<HTMLInputElement>;
+  private videoOverrideOffsetRef: Nullable<HTMLInputElement>;
 
   public constructor(props: GeneralSettingsProps) {
     super(props);
@@ -147,6 +149,30 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     });
   }
 
+  private changeVideoOverrideOffset() {
+    if (this.videoOverrideOffsetRef === null) {
+      return;
+    }
+
+    const { value } = this.videoOverrideOffsetRef;
+
+    makeRequest("PUT", this.settingsUrl, {videoOverrideOffset: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.videoOverrideOffset = value;
+
+        this.setState({
+          settings,
+          saveSuccessful: true
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set override offset:", err);
+      this.setState({ saveSuccessful: false });
+    });
+  }
+
   private renderNotification() {
     const { saveSuccessful } = this.state;
 
@@ -226,6 +252,22 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
           </div>
           <div className="control">
             <a className="button is-info" onClick={this.changeVideoOverrideUrl.bind(this)}>
+              OK
+            </a>
+          </div>
+        </div>
+
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Video override offset</p>
+        <div className="field has-addons">
+          <div className="control">
+            <input className="input"
+                   type="text"
+                   placeholder="Override offset"
+                   defaultValue={settings.videoOverrideOffset}
+                   ref={(e) => this.videoOverrideOffsetRef = e} />
+          </div>
+          <div className="control">
+            <a className="button is-info" onClick={this.changeVideoOverrideOffset.bind(this)}>
               OK
             </a>
           </div>
