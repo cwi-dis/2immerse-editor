@@ -181,14 +181,17 @@ class Document:
 
     def setTestMode(self, mode):
         self.testMode = mode
-        
+
     def _setDescription(self):
         rv = str(self.documentId)
         rv += time.strftime(", %d-%b-%y %H:%M UTC", time.gmtime(self.timeOpened))
         if self.url:
             rv += ', ' + self.url
         self.description = rv
-        
+
+    def getDescription(self):
+        return "%s (%s)" % (self.description, str(self.documentId))
+
     @synchronized
     def index(self):
         if request.method == 'PUT':
