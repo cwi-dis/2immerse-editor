@@ -1349,26 +1349,15 @@ class DocumentServe:
         rawClientElement.text = layoutJSON
 
     @synchronized
-    def setCallback(self, url, contextID=None):
-        if contextID is not None and contextID != self.contextID:
-                self.allContextIDs.append(contextID)
-                self.logger.info('overriding contextID with %s' % contextID)
-                self.contextID = contextID
-                self.document._loggerExtra['contextID'] = contextID
-        self.logger.info('setCallback(%s, %s)' % (url, contextID), extra=self.getLoggerExtra())
-        self.callbacks.add(url)
-        self.document.forwardHandler = self
-        self.document.async().requestBroadcastToFrontends()
-
-    @synchronized
     def getLiveInfo(self, contextID=None):
         rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
-        if contextID is not None and self.contextID is  None:
-                self.allContextIDs.append(contextID)
-                self.logger.info('overriding contextID with %s' % contextID)
-                self.contextID = contextID
-                self.document._loggerExtra['contextID'] = contextID
-                rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
+        if contextID is not None and self.contextID is None:
+            self.logger.info('overriding contextID with %s' % contextID)
+            self.contextID = contextID
+            self.document._loggerExtra['contextID'] = contextID
+            rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
+        if contextID and not contextID in self.allContextIDs:
+            self.allContextIDs.append(contextID)
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()

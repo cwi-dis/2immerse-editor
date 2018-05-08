@@ -393,18 +393,6 @@ def put_client_document(documentId):
     serve.put_client(clientJSON)
     return ''
 
-
-@app.route(API_ROOT + "/document/<uuid:documentId>/serve/addcallback", methods=["POST"])
-def set_callback(documentId):
-    try:
-        document = api.documents[documentId]
-    except KeyError:
-        abort(404)
-    serve = document.serve()
-    assert serve
-    serve.setCallback(url=request.args.get('url'), contextID=request.args.get('contextID', None))
-    return ''
-
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/getliveinfo", methods=["GET"])
 def get_liveinfo(documentId):
     try:
