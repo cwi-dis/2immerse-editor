@@ -35,7 +35,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   }
 
   private continueClicked() {
-    if (this.idInput) {
+    if (this.idInput && this.state.existingDocuments.length > 0) {
       const { value } = this.idInput;
 
       console.log("Continue button clicked:", value);
