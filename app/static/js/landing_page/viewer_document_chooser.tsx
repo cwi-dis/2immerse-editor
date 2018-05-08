@@ -72,7 +72,9 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
 
         <div className="field" style={{marginTop: 25}}>
           <div className="control">
-            <button className={classNames("button", "is-info")} onClick={this.continueClicked.bind(this)}>
+            <button className={classNames("button", "is-info")}
+                    disabled={this.state.existingDocuments.length === 0}
+                    onClick={this.continueClicked.bind(this)}>
               Continue
             </button>
           </div>
