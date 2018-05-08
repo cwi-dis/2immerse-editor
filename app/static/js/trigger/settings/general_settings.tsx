@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { makeRequest } from "../../editor/util";
+import { makeRequest, Nullable } from "../../editor/util";
 
 interface GeneralSettingsProps {
   documentId: string;
@@ -10,6 +10,7 @@ interface GeneralSettingsState {
   settings?: {
     playerMode: string,
     startPaused: boolean,
+    description: string,
     debugLinks: {[key: string]: string}
   };
   saveSuccessful?: boolean;
@@ -17,6 +18,7 @@ interface GeneralSettingsState {
 
 class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSettingsState> {
   private settingsUrl: string;
+  private descriptionRef: Nullable<HTMLInputElement>;
 
   public constructor(props: GeneralSettingsProps) {
     super(props);
@@ -93,6 +95,31 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     });
   }
 
+  private changeDescription() {
+    if (this.descriptionRef === null) {
+      console.log("Ref for description field is empty");
+      return;
+    }
+
+    const { value } = this.descriptionRef;
+
+    makeRequest("PUT", this.settingsUrl, {description: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.description = value;
+
+        this.setState({
+          settings,
+          saveSuccessful: true
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set description:", err);
+      this.setState({ saveSuccessful: false });
+    });
+  }
+
   private renderNotification() {
     const { saveSuccessful } = this.state;
 
@@ -143,6 +170,22 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
             <option>true</option>
             <option>false</option>
           </select>
+        </div>
+
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Description</p>
+        <div className="field has-addons">
+          <div className="control">
+            <input className="input"
+                   type="text"
+                   placeholder="Document description"
+                   defaultValue={settings.description}
+                   ref={(e) => this.descriptionRef = e} />
+          </div>
+          <div className="control">
+            <a className="button is-info" onClick={this.changeDescription.bind(this)}>
+              OK
+            </a>
+          </div>
         </div>
 
         <p style={{margin: "10px auto", fontWeight: "bold"}}>Debug links</p>
