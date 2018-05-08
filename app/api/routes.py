@@ -437,7 +437,7 @@ def get_history(documentId):
 #
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer/timeline.xml")
-def get_timeline_document(documentId):
+def get_viewer_timeline_document(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -448,7 +448,7 @@ def get_timeline_document(documentId):
 
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer/layout.json")
-def get_layout_document(documentId):
+def get_viewer_layout_document(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -459,7 +459,7 @@ def get_layout_document(documentId):
 
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer/client.json")
-def get_client_document(documentId):
+def get_viewer_client_document(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -472,7 +472,7 @@ def get_client_document(documentId):
     return Response(config, mimetype="application/json")
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer/getliveinfo", methods=["GET"])
-def get_liveinfo(documentId):
+def get_viewer_liveinfo(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -483,7 +483,7 @@ def get_liveinfo(documentId):
     return Response(json.dumps(rv), mimetype="application/json")
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer/gethistory")
-def get_history(documentId):
+def get_viewer_history(documentId):
     try:
         document = api.documents[documentId]
     except KeyError:
@@ -496,7 +496,7 @@ def get_history(documentId):
 
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/viewer")
-def get_preview(documentId):
+def get_viewer_preview(documentId):
     clientDocUrl = get_docRoot() + "/document/%s/viewer/client.json" % documentId
     clientArgs = {}
     if 'base' in request.args:
