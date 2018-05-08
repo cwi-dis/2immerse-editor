@@ -11,6 +11,7 @@ interface GeneralSettingsState {
     playerMode: string,
     startPaused: boolean,
     description: string,
+    videoOverrideUrl: string,
     debugLinks: {[key: string]: string}
   };
   saveSuccessful?: boolean;
@@ -18,7 +19,9 @@ interface GeneralSettingsState {
 
 class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSettingsState> {
   private settingsUrl: string;
+
   private descriptionRef: Nullable<HTMLInputElement>;
+  private videoOverrideUrlRef: Nullable<HTMLInputElement>;
 
   public constructor(props: GeneralSettingsProps) {
     super(props);
@@ -120,6 +123,30 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     });
   }
 
+  private changeVideoOverrideUrl() {
+    if (this.videoOverrideUrlRef === null) {
+      return;
+    }
+
+    const { value } = this.videoOverrideUrlRef;
+
+    makeRequest("PUT", this.settingsUrl, {videoOverrideUrl: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.videoOverrideUrl = value;
+
+        this.setState({
+          settings,
+          saveSuccessful: true
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set override url:", err);
+      this.setState({ saveSuccessful: false });
+    });
+  }
+
   private renderNotification() {
     const { saveSuccessful } = this.state;
 
@@ -183,6 +210,22 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
           </div>
           <div className="control">
             <a className="button is-info" onClick={this.changeDescription.bind(this)}>
+              OK
+            </a>
+          </div>
+        </div>
+
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Video override URL</p>
+        <div className="field has-addons">
+          <div className="control">
+            <input className="input"
+                   type="text"
+                   placeholder="Override URL"
+                   defaultValue={settings.videoOverrideUrl}
+                   ref={(e) => this.videoOverrideUrlRef = e} />
+          </div>
+          <div className="control">
+            <a className="button is-info" onClick={this.changeVideoOverrideUrl.bind(this)}>
               OK
             </a>
           </div>
