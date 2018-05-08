@@ -1360,6 +1360,9 @@ class DocumentServe:
             rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
+        curClock, playing = self.document.remote()._getClockState()
+        if curClock:
+            rv['currentTime'] = curClock
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()
