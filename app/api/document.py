@@ -1241,7 +1241,7 @@ class DocumentServe:
         return gen
 
     @synchronized
-    def get_timeline(self):
+    def get_timeline(self, viewer=False):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
@@ -1251,7 +1251,7 @@ class DocumentServe:
         return ET.tostring(self.tree.getroot())
 
     @synchronized
-    def get_layout(self):
+    def get_layout(self, viewer=False):
         """Get the layout document contents (json) for this authoring document.
         At the moment, the layout document JSON representation is stored in a toplevel
         au:rawLayout element. This will change when the authoring tool starts modifying the
@@ -1273,7 +1273,7 @@ class DocumentServe:
             rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
         rawLayoutElement.text = layoutJSON
 
-    def get_client(self, timeline, layout, base=None, mode=None):
+    def get_client(self, timeline, layout, base=None, mode=None, viewer=False):
         """Return the client.api document that describes this dmapp"""
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
         self.lastClientServed = time.time()
@@ -1344,12 +1344,13 @@ class DocumentServe:
         rawClientElement.text = layoutJSON
 
     @synchronized
-    def getLiveInfo(self, contextID=None):
+    def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
-        if contextID is not None and self.contextID is None:
+        if not viewer and contextID is not None and self.contextID is None:
             self.logger.info('overriding contextID with %s' % contextID)
             self.contextID = contextID
             self.document._loggerExtra['contextID'] = contextID
+        if not viewer:
             rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
@@ -1487,7 +1488,7 @@ class DocumentServe:
         self.operationHistory.append((gen, operations))
 
     @synchronized
-    def gethistory(self, oldest=None):
+    def gethistory(self, oldest=None, viewer=False):
         if not oldest:
             oldest = 0
         oldest = int(oldest)

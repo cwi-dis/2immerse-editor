@@ -432,6 +432,82 @@ def get_history(documentId):
     history = serve.gethistory(oldest=oldest)
     return Response(json.dumps(history), mimetype="application/json")
 
+#
+# Per-document, serve aspect, for view-only (non-preview-player) consumption of views on the document
+#
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer/timeline.xml")
+def get_timeline_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    return Response(serve.get_timeline(viewer=True), mimetype="application/xml")
+
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer/layout.json")
+def get_layout_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    return Response(serve.get_layout(viewer=True), mimetype="application/json")
+
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer/client.json")
+def get_client_document(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    mode = request.args.get('mode')
+    docRoot = '%s/document/%s/viewer/' % (get_docRoot(), documentId)
+    config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'), mode=mode, viewer=True)
+    return Response(config, mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer/getliveinfo", methods=["GET"])
+def get_liveinfo(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    rv = serve.getLiveInfo(contextID=request.args.get('contextID', None), viewer=True)
+    return Response(json.dumps(rv), mimetype="application/json")
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer/gethistory")
+def get_history(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    serve = document.serve()
+    assert serve
+    oldest = request.args.get('oldest', None)
+    history = serve.gethistory(oldest=oldest, viewer=True)
+    return Response(json.dumps(history), mimetype="application/json")
+
+
+@app.route(API_ROOT + "/document/<uuid:documentId>/viewer")
+def get_preview(documentId):
+    clientDocUrl = get_docRoot() + "/document/%s/viewer/client.json" % documentId
+    clientArgs = {}
+    if 'base' in request.args:
+        clientArgs['base'] = request.args['base']
+    if 'mode' in request.args:
+        clientArgs['mode'] = request.args['mode']
+    if clientArgs:
+        clientDocUrl += '?' + urllib.urlencode(clientArgs)
+    clientApiUrl = "%s#?inputDocument=%s" % (GlobalSettings.clientApiUrl, clientDocUrl)
+    return redirect(clientApiUrl)
+
 
 #
 # Preview player redirect
