@@ -164,6 +164,8 @@ class Document:
         self.lastErrorMessage = None
         self.logger = logger
         self.timeOpened = time.time()
+        self.description = ''
+        self._setDescription()
         self.clock = clocks.PausableClock(clocks.SystemClock())
         self._loggerExtra = dict(subSource='document', documentID=documentId)
         self.logger.info('created document %s' % documentId)
@@ -180,12 +182,13 @@ class Document:
     def setTestMode(self, mode):
         self.testMode = mode
         
-    def getDescription(self):
+    def _setDescription(self):
         rv = str(self.documentId)
         rv += time.strftime(", %d-%b-%y %H:%M UTC", time.gmtime(self.timeOpened))
         if self.url:
             rv += ', ' + self.url
-        return rv
+        self.description = rv
+        
     @synchronized
     def index(self):
         if request.method == 'PUT':
@@ -1512,14 +1515,23 @@ class DocumentSettings:
         return dict(
             startPaused=self.startPaused,
             playerMode=self.playerMode,
-            debugLinks=self._getDebugLinks(frontend, backend)
+            debugLinks=self._getDebugLinks(frontend, backend),
+            description=self.document.description,
+            videoOverrideUrl="",
+            videoOverrideOffset=""
             )
 
-    def set(self, startPaused=None, playerMode=None):
+    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None):
         if startPaused is not None:
             self.startPaused = startPaused
         if playerMode is not None:
             self.playerMode = playerMode
+        if description is not None:
+            self.document.description = description
+        if videoOverrideUrl is not None:
+            pass
+        if videoOverrideOffset is not None:
+            pass
         return ""
 
     def _getDebugLinks(self, frontend, backend):
