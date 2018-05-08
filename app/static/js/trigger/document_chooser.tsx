@@ -109,6 +109,10 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
     return (
       <div style={boxStyle}>
+        <div style={{position: "absolute", top: 10, left: 10}}>
+          <a className="button is-info" href="/">Home</a>
+        </div>
+
         {(this.state.ajaxError) ?
           <div className="notification is-danger">
             <p>

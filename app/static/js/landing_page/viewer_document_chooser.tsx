@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as classNames from "classnames";
+import { Link } from "react-router-dom";
 
 import { makeRequest, Nullable } from "../editor/util";
 
@@ -53,6 +54,9 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
 
     return (
       <div style={boxStyle}>
+        <div style={{position: "absolute", top: 10, left: 10}}>
+          <Link className="button is-info" to="/">Home</Link>
+        </div>
         <div className="field">
           <label className="label">Document ID</label>
           <div className="control">

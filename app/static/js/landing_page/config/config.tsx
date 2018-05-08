@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 import { makeRequest } from "../../editor/util";
 import CurrentVersion from "../../editor/components/current_version";
@@ -42,6 +43,9 @@ class Config extends React.Component<{}, ConfigState> {
 
     return (
       <div style={boxStyle}>
+        <div style={{position: "absolute", top: 10, left: 10}}>
+          <Link className="button is-info" to="/">Home</Link>
+        </div>
         <h3 style={{fontSize: 25, color: "#555555"}}>Configuration</h3>
         <br/>
         <FileInputForm onSubmit={this.fetchConfigData.bind(this)} />
