@@ -13,6 +13,7 @@ interface GeneralSettingsState {
     description: string,
     videoOverrideUrl: string,
     videoOverrideOffset: string,
+    previewFromWebcam: boolean,
     debugLinks: {[key: string]: string}
   };
   saveSuccessful?: boolean;
@@ -96,6 +97,27 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
       }
     }).catch((err) => {
       console.error("could not set startPaused:", err);
+      this.setState({ saveSuccessful: false });
+    });
+  }
+
+  private changePreviewFromWebcam(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = (e.target.value === "true") ? true : false;
+    console.log("changing previewFromWebcam:", value);
+
+    makeRequest("PUT", this.settingsUrl, {previewFromWebcam: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.previewFromWebcam = value;
+
+        this.setState({
+          settings,
+          saveSuccessful: true
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set previewFromWebcam:", err);
       this.setState({ saveSuccessful: false });
     });
   }
@@ -220,6 +242,14 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         <p style={{margin: "10px auto", fontWeight: "bold"}}>Start paused</p>
         <div className="select">
           <select value={settings.startPaused ? "true" : "false"} onChange={this.changeStartPaused.bind(this)}>
+            <option>true</option>
+            <option>false</option>
+          </select>
+        </div>
+
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Preview uses HW video</p>
+        <div className="select">
+          <select value={settings.previewFromWebcam ? "true" : "false"} onChange={this.changePreviewFromWebcam.bind(this)}>
             <option>true</option>
             <option>false</option>
           </select>
