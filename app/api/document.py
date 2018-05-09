@@ -1340,7 +1340,7 @@ class DocumentServe:
         #
         # And set webcam mode, if requested (and this is a preview player)
         #
-        if not self.viewer and self.document.settings().previewFromWebcam:
+        if not viewer and self.document.settings().previewFromWebcam:
             if not 'localSignalValues' in clientDoc:
                 clientDoc['localSignalValues'] = {}
             clientDoc['localSignalValues']['football-webcam-mode'] = True
