@@ -1337,6 +1337,13 @@ class DocumentServe:
         # Note that this should be user-settable, depending on this flag the preview will run
         # in single-device (standalone) or TV mode.
         clientDoc['mode'] = mode
+        #
+        # And set webcam mode, if requested (and this is a preview player)
+        #
+        if not self.viewer and self.document.settings().previewFromWebcam:
+            if not 'localSignalValues' in clientDoc:
+                clientDoc['localSignalValues'] = {}
+            clientDoc['localSignalValues']['football-webcam-mode'] = True
 
         return json.dumps(clientDoc)
 
@@ -1513,6 +1520,9 @@ class DocumentSettings:
 
         self.startPaused = False
         self.playerMode = GlobalSettings.mode
+        self.previewFromWebcam = False
+        self.videoOverrideUrl = ""
+        self.videoOverrideOffset = ""
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
@@ -1523,11 +1533,12 @@ class DocumentSettings:
             playerMode=self.playerMode,
             debugLinks=self._getDebugLinks(frontend, backend),
             description=self.document.description,
-            videoOverrideUrl="",
-            videoOverrideOffset=""
+            videoOverrideUrl=self.videoOverrideUrl,
+            videoOverrideOffset=self.videoOverrideOffset,
+            previewFromWebcam=self.previewFromWebcam
             )
 
-    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None):
+    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None, previewFromWebcam=None):
         if startPaused is not None:
             self.startPaused = startPaused
         if playerMode is not None:
@@ -1535,9 +1546,11 @@ class DocumentSettings:
         if description is not None:
             self.document.description = description
         if videoOverrideUrl is not None:
-            pass
+            self.videoOverrideUrl = videoOverrideUrl
         if videoOverrideOffset is not None:
-            pass
+            self.videoOverrideOffset = videoOverrideOffset
+        if previewFromWebcam is not None:
+            self.previewFromWebcam = previewFromWebcam
         return ""
 
     def _getDebugLinks(self, frontend, backend):
