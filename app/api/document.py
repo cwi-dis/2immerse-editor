@@ -1353,6 +1353,14 @@ class DocumentServe:
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
         curClock, playing = self.document.remote()._getClockState()
+        if curClock:
+            # This is a temporary hack (xxxjack)
+            # The live Dash feeds are a fairly-fixed amount behind the live feed.
+            # We adapt for that.
+            offset = self.document.settings().videoOverrideOffset
+            if offset and viewer:
+                curClock -= float(offset)
+            rv['currentTime'] = curClock
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()
