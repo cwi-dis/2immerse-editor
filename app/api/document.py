@@ -1319,12 +1319,11 @@ class DocumentServe:
                 rcValue = True
             clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = rcValue
         #
-        # And we set the playback mode
+        # And we set the playback mode (tv or standalone) based on setting supplied
+        # in this call and a default
         #
         if not mode:
             mode = self.document.settings().playerMode
-        # Note that this should be user-settable, depending on this flag the preview will run
-        # in single-device (standalone) or TV mode.
         clientDoc['mode'] = mode
         #
         # And set webcam mode, if requested (and this is a preview player)
@@ -1333,7 +1332,11 @@ class DocumentServe:
             if not 'localSignalValues' in clientDoc:
                 clientDoc['localSignalValues'] = {}
             clientDoc['localSignalValues']['football-webcam-mode'] = True
-
+        #
+        # And allow client-api to differentiate between viewer and preview player
+        #
+        clientDoc["authoringLaunchMode"] = "viewer" if viewer else "preview"
+        
         return json.dumps(clientDoc)
 
     @synchronized
