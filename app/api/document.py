@@ -879,9 +879,11 @@ class DocumentEvents:
         optionValues = []
 
         for optionElt in optionElements:
+            value = optionElt.get(NS_AUTH("value"))
+            label = optionElt.get(NS_AUTH("label"), value)
             optionValues.append({
-                "label": optionElt.get(NS_AUTH("label")),
-                "value": optionElt.get(NS_AUTH("value"))
+                "label": label,
+                "value": value
             })
         return optionValues
 
