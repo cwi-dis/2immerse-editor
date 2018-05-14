@@ -881,6 +881,7 @@ class DocumentEvents:
         for optionElt in optionElements:
             value = optionElt.get(NS_AUTH("value"))
             label = optionElt.get(NS_AUTH("label"), value)
+            self.logger.warn("value=%s label=%s" % (value, label))
             optionValues.append({
                 "label": label,
                 "value": value
@@ -1051,6 +1052,7 @@ class DocumentEvents:
 
         newElement = copy.deepcopy(element)
         newElement.set(NS_TRIGGER("wantstatus"), "true")
+        self.document._ensureId(newElement)
         self.document._afterCopy(newElement, triggerAttributes=True)
         # The new element should have a productionId (which is used to combine multiple instances of the event
         # in the UI). Invent one if needed, and record we should remove references after it becomes inactive
