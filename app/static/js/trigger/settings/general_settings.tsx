@@ -14,6 +14,7 @@ interface GeneralSettingsState {
     videoOverrideUrl: string,
     videoOverrideOffset: string,
     previewFromWebcam: boolean,
+    enableControls: boolean,
     debugLinks: {[key: string]: string}
   };
   saveSuccessful?: boolean;
@@ -118,6 +119,27 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
       }
     }).catch((err) => {
       console.error("could not set previewFromWebcam:", err);
+      this.setState({ saveSuccessful: false });
+    });
+  }
+
+  private changeEnableControls(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = (e.target.value === "true") ? true : false;
+    console.log("changing enableControls:", value);
+
+    makeRequest("PUT", this.settingsUrl, {enableControls: value}, "application/json").then(() => {
+      let { settings } = this.state;
+
+      if (settings) {
+        settings.enableControls = value;
+
+        this.setState({
+          settings,
+          saveSuccessful: true
+        });
+      }
+    }).catch((err) => {
+      console.error("could not set enableControls:", err);
       this.setState({ saveSuccessful: false });
     });
   }
@@ -250,6 +272,14 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         <p style={{margin: "10px auto", fontWeight: "bold"}}>Preview uses HW video</p>
         <div className="select">
           <select value={settings.previewFromWebcam ? "true" : "false"} onChange={this.changePreviewFromWebcam.bind(this)}>
+            <option>true</option>
+            <option>false</option>
+          </select>
+        </div>
+
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Enable as-live preview controls</p>
+        <div className="select">
+          <select value={settings.enableControls ? "true" : "false"} onChange={this.changeEnableControls.bind(this)}>
             <option>true</option>
             <option>false</option>
           </select>

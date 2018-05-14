@@ -1309,11 +1309,12 @@ class DocumentServe:
                 )
         #
         # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
-        if startPaused:
-            rcValue = dict(playing=False)
-        else:
-            rcValue = True
-        clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = rcValue
+        if self.document.settings().enableControls:
+            if startPaused:
+                rcValue = dict(playing=False)
+            else:
+                rcValue = True
+            clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = rcValue
         #
         # And we set the playback mode
         #
@@ -1512,6 +1513,7 @@ class DocumentSettings:
         self.startPaused = False
         self.playerMode = GlobalSettings.mode
         self.previewFromWebcam = False
+        self.enableControls = False
         self.videoOverrideUrl = ""
         self.videoOverrideOffset = ""
 
@@ -1526,10 +1528,11 @@ class DocumentSettings:
             description=self.document.description,
             videoOverrideUrl=self.videoOverrideUrl,
             videoOverrideOffset=self.videoOverrideOffset,
-            previewFromWebcam=self.previewFromWebcam
+            previewFromWebcam=self.previewFromWebcam,
+            enableControls=self.enableControls
             )
 
-    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None, previewFromWebcam=None):
+    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None, previewFromWebcam=None, enableControls=None):
         if startPaused is not None:
             self.startPaused = startPaused
         if playerMode is not None:
@@ -1542,6 +1545,8 @@ class DocumentSettings:
             self.videoOverrideOffset = videoOverrideOffset
         if previewFromWebcam is not None:
             self.previewFromWebcam = previewFromWebcam
+        if enableControls is not None:
+            self.enableControls = enableControls
         return ""
 
     def _getDebugLinks(self, frontend, backend):
