@@ -1088,14 +1088,11 @@ class DocumentEvents:
         if element is None:
             return True
 
-        parent = self.document._getParent(element)
-
-        assert parent is not None
-        # xxxjack don't like this, should ensure parentmap is updated
-        try:
-            parent.remove(element)
-        except:
-            pass
+        # Removing the tt:name attribute will make the event invisible to events().get()
+        oldName = element.attrib.pop(NS_TRIGGER("name"), None)
+        if oldName:
+            element.attrib.set(NS_TRIGGER("oldName"), oldName)
+            
         self.document.async().requestBroadcastToFrontends()
         return True
 
@@ -1135,13 +1132,13 @@ class DocumentEvents:
 
     def _productionIdFinished(self, productionId):
         """Called when a transient productionId has finished running. Remove from completeEvents"""
-        events = self.tree.getroot().findall(".//tt:completeEvents/*[@tt:productionId='%s']" % productionId, NAMESPACES)
+        events = self.tree.getroot().findall(".//tt:completeEvents/*[@tt:name][@tt:productionId='%s']" % productionId, NAMESPACES)
         self.logger.info("productionIdFinished(%s): removing %d events" % (productionId, len(events)))
         for elt in events[:1]:
-            parent = self.document._getParent(elt)
-            parent.remove(elt)
-            self.document._elementDeleted(elt)
-
+            # Removing the tt:name attribute will make the event invisible to events().get()
+            oldName = elt.attrib.pop(NS_TRIGGER("name"), None)
+            if oldName:
+                elt.attrib.set(NS_TRIGGER("oldName"), oldName)
 
 class DocumentRemote:
     def __init__(self, document):
