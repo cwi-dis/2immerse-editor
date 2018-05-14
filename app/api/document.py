@@ -881,7 +881,6 @@ class DocumentEvents:
         for optionElt in optionElements:
             value = optionElt.get(NS_AUTH("value"))
             label = optionElt.get(NS_AUTH("label"), value)
-            self.logger.warn("value=%s label=%s" % (value, label))
             optionValues.append({
                 "label": label,
                 "value": value
