@@ -813,7 +813,10 @@ class DocumentEvents:
             if NS_TRIGGER('type') in paramElt.attrib:
                 pData['type'] = paramElt.get(NS_TRIGGER('type'))
             if NS_TRIGGER('value') in paramElt.attrib:
-                pData['value'] = paramElt.get(NS_TRIGGER('value'))
+                value = paramElt.get(NS_TRIGGER('value'))
+                if pData['type'] == 'string' and '{' in value:
+                    value = self._minimalAVT(value, "", paramElt)
+                pData['value'] = value
             if NS_TRIGGER('required') in paramElt.attrib:
                 required = paramElt.get(NS_TRIGGER('required'))
                 if required and required != 'false':
