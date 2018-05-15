@@ -12,6 +12,7 @@ interface DocumentChooserState {
 class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   private documentInterval: any;
   private idInput: Nullable<HTMLSelectElement>;
+  private modeInput: Nullable<HTMLSelectElement>;
 
   constructor(props: {}) {
     super(props);
@@ -44,11 +45,13 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   }
 
   private continueClicked() {
-    if (this.idInput && this.state.existingDocuments.length > 0) {
+    if (this.idInput && this.modeInput && this.state.existingDocuments.length > 0) {
       const { value } = this.idInput;
+      const mode = this.modeInput.value;
 
       console.log("Continue button clicked:", value);
-      location.href = `/api/v1/document/${value}/viewer`;
+      console.log("Continue button clicked mode:", mode);
+      location.href = `/api/v1/document/${value}/viewer${mode}`;
     }
   }
 
@@ -74,6 +77,18 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
                 {this.state.existingDocuments.map((document, i) => {
                   return <option key={i} value={document.id}>{document.description}</option>;
                 })}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div className="field">
+          <label className="label">Mode</label>
+          <div className="control">
+            <div className="select is-fullwidth is-info">
+              <select key="mode" ref={(e) => this.modeInput = e} required={true}>
+                  <option value="">default</option>
+                  <option value="?mode=TV">TV</option>
+                  <option value="?mode=standalone">Standalone</option>
               </select>
             </div>
           </div>
