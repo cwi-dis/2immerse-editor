@@ -1234,6 +1234,7 @@ class DocumentServe:
         self.callbacks = set()
         self.lastClientServed = None
         self.operationHistory = []
+        self.previewPlayerClockEpoch = None
         self.logger = self.document.logger.getChild('serve')
 
     def getLoggerExtra(self):
@@ -1368,6 +1369,9 @@ class DocumentServe:
             if offset and viewer:
                 curClock -= float(offset)
             rv['currentTime'] = curClock
+        if self.previewPlayerClockEpoch:
+            # If we know what t=0 means for the preview player we tell it to the other viewers
+            rv['clockEpoch'] = self.previewPlayerClockEpoch
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()
@@ -1375,9 +1379,13 @@ class DocumentServe:
 
     @synchronized
     def _setDocumentState(self, documentState):
-        self.logger.debug("_setDocumentState: got %d element-state items" % len(documentState), extra=self.getLoggerExtra())
+        clockEpoch = documentState.get("clockEpoch")
+        if clockEpoch:
+            self.previewPlayerClockEpoch = clockEpoch
+        elementStates = documentState["elementStates"]
+        self.logger.info("_setDocumentState: got %d element-state items, clockEpoch %s" % (len(elementStates), clockEpoch), extra=self.getLoggerExtra())
         self.document.companionTimelineIsActive = True
-        for eltId, eltState in documentState.items():
+        for eltId, eltState in elementStates.items():
             elt = self.document._getElementByID(eltId)
             if elt is None:
                 self.logger.warning('_setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
