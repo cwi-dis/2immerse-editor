@@ -1365,13 +1365,20 @@ class DocumentServe:
             # This is a temporary hack (xxxjack)
             # The live Dash feeds are a fairly-fixed amount behind the live feed.
             # We adapt for that.
-            offset = self.document.settings().videoOverrideOffset
+            offset = self.document.settings().viewerExtraOffset
             if offset and viewer:
                 curClock -= float(offset)
             rv['currentTime'] = curClock
         if self.previewPlayerClockEpoch:
             # If we know what t=0 means for the preview player we tell it to the other viewers
-            rv['clockEpoch'] = self.previewPlayerClockEpoch
+            # This is a temporary hack (xxxjack)
+            # The live Dash feeds are a fairly-fixed amount behind the live feed.
+            # We adapt for that.
+            clockEpoch = self.previewPlayerClockEpoch
+            offset = self.document.settings().viewerExtraOffset
+            if offset:
+                clockEpoch -= float(offset)
+            rv['clockEpoch'] = clockEpoch
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
         self.document.async().requestBroadcastToFrontends()
@@ -1528,8 +1535,7 @@ class DocumentSettings:
         self.playerMode = GlobalSettings.mode
         self.previewFromWebcam = False
         self.enableControls = False
-        self.videoOverrideUrl = ""
-        self.videoOverrideOffset = ""
+        self.viewerExtraOffset = ""
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
@@ -1540,23 +1546,20 @@ class DocumentSettings:
             playerMode=self.playerMode,
             debugLinks=self._getDebugLinks(frontend, backend),
             description=self.document.description,
-            videoOverrideUrl=self.videoOverrideUrl,
-            videoOverrideOffset=self.videoOverrideOffset,
+            viewerExtraOffset=self.viewerExtraOffset,
             previewFromWebcam=self.previewFromWebcam,
             enableControls=self.enableControls
             )
 
-    def set(self, startPaused=None, playerMode=None, description=None, videoOverrideUrl=None, videoOverrideOffset=None, previewFromWebcam=None, enableControls=None):
+    def set(self, startPaused=None, playerMode=None, description=None, viewerExtraOffset=None, previewFromWebcam=None, enableControls=None):
         if startPaused is not None:
             self.startPaused = startPaused
         if playerMode is not None:
             self.playerMode = playerMode
         if description is not None:
             self.document.description = description
-        if videoOverrideUrl is not None:
-            self.videoOverrideUrl = videoOverrideUrl
-        if videoOverrideOffset is not None:
-            self.videoOverrideOffset = videoOverrideOffset
+        if viewerExtraOffset is not None:
+            self.viewerExtraOffset = viewerExtraOffset
         if previewFromWebcam is not None:
             self.previewFromWebcam = previewFromWebcam
         if enableControls is not None:

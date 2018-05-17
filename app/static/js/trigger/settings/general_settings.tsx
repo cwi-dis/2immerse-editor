@@ -11,8 +11,7 @@ interface GeneralSettingsState {
     playerMode: string,
     startPaused: boolean,
     description: string,
-    videoOverrideUrl: string,
-    videoOverrideOffset: string,
+    viewerExtraOffset: string,
     previewFromWebcam: boolean,
     enableControls: boolean,
     debugLinks: {[key: string]: string}
@@ -24,8 +23,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
   private settingsUrl: string;
 
   private descriptionRef: Nullable<HTMLInputElement>;
-  private videoOverrideUrlRef: Nullable<HTMLInputElement>;
-  private videoOverrideOffsetRef: Nullable<HTMLInputElement>;
+  private viewerExtraOffsetRef: Nullable<HTMLInputElement>;
 
   public constructor(props: GeneralSettingsProps) {
     super(props);
@@ -169,42 +167,18 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     });
   }
 
-  private changeVideoOverrideUrl() {
-    if (this.videoOverrideUrlRef === null) {
+  private changeViewerExtraOffset() {
+    if (this.viewerExtraOffsetRef === null) {
       return;
     }
 
-    const { value } = this.videoOverrideUrlRef;
+    const { value } = this.viewerExtraOffsetRef;
 
-    makeRequest("PUT", this.settingsUrl, {videoOverrideUrl: value}, "application/json").then(() => {
+    makeRequest("PUT", this.settingsUrl, {viewerExtraOffset: value}, "application/json").then(() => {
       let { settings } = this.state;
 
       if (settings) {
-        settings.videoOverrideUrl = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set override url:", err);
-      this.setState({ saveSuccessful: false });
-    });
-  }
-
-  private changeVideoOverrideOffset() {
-    if (this.videoOverrideOffsetRef === null) {
-      return;
-    }
-
-    const { value } = this.videoOverrideOffsetRef;
-
-    makeRequest("PUT", this.settingsUrl, {videoOverrideOffset: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.videoOverrideOffset = value;
+        settings.viewerExtraOffset = value;
 
         this.setState({
           settings,
@@ -301,33 +275,17 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
           </div>
         </div>
 
-        <p style={{margin: "10px auto", fontWeight: "bold"}}>Video override URL</p>
-        <div className="field has-addons">
-          <div className="control">
-            <input className="input"
-                   type="text"
-                   placeholder="Override URL"
-                   defaultValue={settings.videoOverrideUrl}
-                   ref={(e) => this.videoOverrideUrlRef = e} />
-          </div>
-          <div className="control">
-            <a className="button is-info" onClick={this.changeVideoOverrideUrl.bind(this)}>
-              OK
-            </a>
-          </div>
-        </div>
-
-        <p style={{margin: "10px auto", fontWeight: "bold"}}>Video override offset</p>
+        <p style={{margin: "10px auto", fontWeight: "bold"}}>Viewer time offset</p>
         <div className="field has-addons">
           <div className="control">
             <input className="input"
                    type="text"
                    placeholder="Override offset"
-                   defaultValue={settings.videoOverrideOffset}
-                   ref={(e) => this.videoOverrideOffsetRef = e} />
+                   defaultValue={settings.viewerExtraOffset}
+                   ref={(e) => this.viewerExtraOffsetRef = e} />
           </div>
           <div className="control">
-            <a className="button is-info" onClick={this.changeVideoOverrideOffset.bind(this)}>
+            <a className="button is-info" onClick={this.changeViewerExtraOffset.bind(this)}>
               OK
             </a>
           </div>
