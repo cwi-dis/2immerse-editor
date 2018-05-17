@@ -1199,7 +1199,7 @@ class DocumentRemote:
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
         for contextID in self.document.serve().allContextIDs:
-            wsUrl = GlobalSettings.websocketService + "bus-message/remote-control-clock-" + contextID
+            wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
             try:
                 r = requests.post(wsUrl, json=command)
                 r.raise_for_status
@@ -1592,7 +1592,7 @@ class DocumentAsync(threading.Thread):
         self.channel = None
         if self.document.testMode:
             return
-        websocket_service = GlobalSettings.websocketService
+        websocket_service = GlobalSettings.websocketInternalService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
@@ -1612,14 +1612,14 @@ class DocumentAsync(threading.Thread):
         self.start()
     
     def getIncomingConnectionInfo(self):
-        websocket_service = GlobalSettings.websocketService
+        websocket_service = GlobalSettings.websocketInternalService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
         return dict(server=websocket_service, channel='/trigger', room=self.roomUpdates)
     
     def getOutgoingConnectionInfo(self):
-        websocket_service = GlobalSettings.websocketService
+        websocket_service = GlobalSettings.websocketInternalService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]

@@ -24,6 +24,10 @@ class GlobalSettings(object):
         "WEBSOCKET_SERVICE_URL",
         "https://websocket-service.edge.platform.2immerse.eu/"
     )
+    websocketInternalService = os.getenv(
+        "WEBSOCKET_INTERNAL_SERVICE_URL",
+        websocketService
+    )
     timelineService = os.getenv(
         "TIMELINE_SERVICE_URL",
         "https://timeline-service.edge.platform.2immerse.eu/timeline/v1"
