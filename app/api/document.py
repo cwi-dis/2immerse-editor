@@ -1091,7 +1091,7 @@ class DocumentEvents:
         # Removing the tt:name attribute will make the event invisible to events().get()
         oldName = element.attrib.pop(NS_TRIGGER("name"), None)
         if oldName:
-            element.attrib.set(NS_TRIGGER("oldName"), oldName)
+            element.attrib.[NS_TRIGGER("oldName")] = oldName
             
         self.document.async().requestBroadcastToFrontends()
         return True
