@@ -49,8 +49,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
       const { value } = this.idInput;
       const mode = this.modeInput.value;
 
-      console.log("Continue button clicked:", value);
-      console.log("Continue button clicked mode:", mode);
+      console.log("Continue button clicked:", value, mode);
       location.href = `/api/v1/document/${value}/viewer${mode}`;
     }
   }
@@ -85,7 +84,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
           <label className="label">Mode</label>
           <div className="control">
             <div className="select is-fullwidth is-info">
-              <select key="mode" ref={(e) => this.modeInput = e} required={true}>
+              <select ref={(e) => this.modeInput = e} required={true}>
                   <option value="">default</option>
                   <option value="?mode=TV">TV</option>
                   <option value="?mode=standalone">Standalone</option>
