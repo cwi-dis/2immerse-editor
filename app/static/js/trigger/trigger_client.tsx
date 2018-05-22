@@ -150,7 +150,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     return (
       <div>
         <div id="modal-root"></div>
-        <div style={{height: "calc(100vh - 80px)", margin: "0 auto", overflowY: "scroll"}}>
+        <div style={{height: "calc(100vh - 80px)", margin: "0 auto", overflowY: "auto", overflowX: "hidden"}}>
           <TriggerModeContext.Consumer>
             {(triggerMode) => this.renderMainContent(triggerMode)}
           </TriggerModeContext.Consumer>
