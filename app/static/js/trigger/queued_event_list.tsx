@@ -3,25 +3,24 @@ import * as React from "react";
 import { Event } from "./trigger_client";
 import { makeRequest } from "../editor/util";
 
-const borderColors = {
-  "abstract": "#161616",
-  "ready": "#C95A26",
-  "active": "#23D160"
-};
+interface QueuedEventContainerProps {
+  documentId: string;
+  event: Event;
+}
 
-const bgColors = {
-  "abstract": "transparent",
-  "ready": "#795341",
-  "active": "#0C4620"
-};
-
-
-const QueuedEventContainer: React.SFC<{ event: Event, documentId: string }> = (props) => {
+const QueuedEventContainer: React.SFC<QueuedEventContainerProps> = (props) => {
   const { event, documentId } = props;
 
+  const colors: { [key: string]: [string, string] } = {
+    "abstract": ["#161616", "transparent"],
+    "ready": ["#C95A26", "#795341"],
+    "active": ["#23D160", "#0C4620"]
+  };
+
+  const [borderColor, bgColor] = colors[event.state];
   const containerStyle: React.CSSProperties = {
-    backgroundColor: bgColors[event.state],
-    border: `1px solid ${borderColors[event.state]}`,
+    border: `1px solid ${borderColor}`,
+    backgroundColor: bgColor,
     float: "left"
   };
 
@@ -49,27 +48,23 @@ interface QueuedEventListProps {
   events: Array<Event>;
 }
 
-class QueuedEventList extends React.Component<QueuedEventListProps, {}> {
-  public render() {
-    const { events, documentId } = this.props;
-    const activeEvents = events.filter((event) => event.state === "active");
+const QueuedEventList: React.SFC<QueuedEventListProps> = (props) => {
+  const { events, documentId } = props;
+  const activeEvents = events.filter((event) => event.state === "active");
 
-    const queuedEvents = events.filter((event) => {
-      return event.state === "ready";
-    }).map((event) => {
-      return activeEvents.find((active) => {
-        return active.productionId === event.productionId;
-      }) || event;
-    });
+  const queuedEvents = events.filter((event) => {
+    return event.state === "ready";
+  }).map((event) => {
+    return activeEvents.find((active) => active.productionId === event.productionId) || event;
+  });
 
-    return (
-      <div className="queued-event-list">
-        {queuedEvents.map((event, i) => {
-          return <QueuedEventContainer key={i} event={event} documentId={documentId} />;
-        })}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="queued-event-list">
+      {queuedEvents.map((event, i) => {
+        return <QueuedEventContainer key={i} event={event} documentId={documentId} />;
+      })}
+    </div>
+  );
+};
 
 export default QueuedEventList;

@@ -75,7 +75,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
           <label className="label">Document ID</label>
           <div className="control">
             <div className="select is-fullwidth is-info">
-              <select key="id" ref={(e) => this.idInput = e} required={true}>
+              <select ref={(e) => this.idInput = e} required={true}>
                 {this.state.existingDocuments.map((document, i) => {
                   return <option key={i} value={document.id}>{document.description}</option>;
                 })}
