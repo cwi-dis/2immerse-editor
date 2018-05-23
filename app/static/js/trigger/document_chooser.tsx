@@ -2,6 +2,7 @@ import * as React from "react";
 import * as classNames from "classnames";
 
 import { makeRequest, Nullable } from "../editor/util";
+import asBackButton from "./utils/back_button";
 
 interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
@@ -106,11 +107,12 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     };
 
     const urlDefaultValue = localStorage.getItem("urlDefault");
+    const BackButton = asBackButton<{ href: string }>("a");
 
     return (
       <div style={boxStyle}>
         <div style={{position: "absolute", top: 10, left: 10}}>
-          <a className="button is-info" href="/">Home</a>
+          <BackButton href="/" />
         </div>
 
         {(this.state.ajaxError) ?

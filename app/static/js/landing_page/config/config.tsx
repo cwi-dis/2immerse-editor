@@ -5,6 +5,7 @@ import { makeRequest } from "../../editor/util";
 import CurrentVersion from "../../editor/components/current_version";
 import ManualInputForm, { FormValues } from "./manual_input_form";
 import FileInputForm from "./file_input_form";
+import asBackButton from "../../trigger/utils/back_button";
 
 interface ConfigState {
   formData: Partial<FormValues>;
@@ -41,10 +42,12 @@ class Config extends React.Component<{}, ConfigState> {
       borderRadius: 15,
     };
 
+    const BackButton = asBackButton(Link);
+
     return (
       <div style={boxStyle}>
         <div style={{position: "absolute", top: 10, left: 10}}>
-          <Link className="button is-info" to="/">Home</Link>
+          <BackButton to="/" />
         </div>
         <h3 style={{fontSize: 25, color: "#555555"}}>Configuration</h3>
         <br/>
