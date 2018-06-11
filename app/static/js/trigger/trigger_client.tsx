@@ -148,7 +148,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
 
   public render() {
     return (
-      <div>
+      <React.Fragment>
         <div id="modal-root"></div>
         <div style={{height: "calc(100vh - 80px)", margin: "0 auto", overflowY: "auto", overflowX: "hidden"}}>
           <TriggerModeContext.Consumer>
@@ -160,7 +160,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
                        fetchError={this.state.fetchError}
                        previewStatus={this.state.previewStatus}
                        clearSession={this.props.clearSession} />
-      </div>
+      </React.Fragment>
     );
   }
 }
