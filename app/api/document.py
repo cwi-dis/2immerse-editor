@@ -1128,7 +1128,6 @@ class DocumentEvents:
         self.document.companionTimelineIsActive = False
         self.document.clearError()
 
-        self.document.async().requestBroadcastToFrontends()
         return ""
 
     def _productionIdFinished(self, productionId):

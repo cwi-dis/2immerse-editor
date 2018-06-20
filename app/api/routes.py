@@ -268,6 +268,18 @@ def document_events_modify(documentId, id):
     return events.modify(id, parameters)
 
 
+@app.route(API_ROOT + "/document/<uuid:documentId>/events/requestbroadcast", methods=["GET"])
+def document_request_broadcast(documentId):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+
+    document.async().requestBroadcastToFrontends()
+
+    return ""
+
+
 #
 # per-document, settings and debug links
 #
