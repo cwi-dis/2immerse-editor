@@ -46,6 +46,8 @@
     "style-loader": "^0.18.2",
     "ts-jest": "^21.0.0",
     "ts-loader": "^2.3.4",
+    "tslint": "^5.10.0",
+    "tslint-react": "^3.6.0",
     "typescript": "^2.7.0",
     "webpack": "^3.5.5",
     "xhr-mock": "^1.9.1"
