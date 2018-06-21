@@ -18,7 +18,7 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
     super(props);
 
     this.state = {
-      headPosition: props.headPosition ? props.headPosition : 0
+      headPosition: props.headPosition || 0
     };
   }
 
