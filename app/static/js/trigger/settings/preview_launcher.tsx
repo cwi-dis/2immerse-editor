@@ -51,17 +51,21 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
 
     return (
       <div style={{ marginTop: 10, paddingBottom: 10, borderBottom: "1px solid #DBDBDB" }}>
-        <a style={{display: "block", margin: "0 auto 0 auto"}}
-           className="button is-info" href={previewUrl}
-           target="_blank">
+        <a
+          style={{display: "block", margin: "0 auto 0 auto"}}
+          className="button is-info"
+          href={previewUrl}
+          target="_blank"
+        >
           Open preview in new tab
         </a>
         <p style={{margin: "10px auto"}}>
           Scan the QR Code below to open the preview on a mobile device:
         </p>
-        <canvas style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
-                ref={(el) => this.qrCanvas = el}>
-        </canvas>
+        <canvas
+          style={{border: "1px #E2E2E2 solid", display: "block", margin: "0 auto 0 auto"}}
+          ref={(el) => this.qrCanvas = el}
+        />
         <p style={{margin: "10px auto"}}>
           Preview URL for external devices:
         </p>

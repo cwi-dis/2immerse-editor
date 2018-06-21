@@ -81,12 +81,14 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
             {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
           </select>
         </div>
-        <br/><br/>
-        <DroppableScreen screenInfo={currentScreen}
-                         currentLayout={currentLayoutId}
-                         width={width}
-                         placedComponents={componentsOnScreen}
-                         assignComponentToMaster={this.props.masterActions.assignComponentToMaster} />
+        <br /><br />
+        <DroppableScreen
+          screenInfo={currentScreen}
+          currentLayout={currentLayoutId}
+          width={width}
+          placedComponents={componentsOnScreen}
+          assignComponentToMaster={this.props.masterActions.assignComponentToMaster}
+        />
       </div>
     );
   }
@@ -102,9 +104,11 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
         </div>
         <div className="column-sidebar">
           <div style={{height: 65, padding: "10px 10px 20px 10px", borderBottom: "1px solid #161616"}}>
-            <button style={{width: "100%"}}
-                    className="button is-info"
-                    onClick={this.addMaster.bind(this)}>
+            <button
+              style={{width: "100%"}}
+              className="button is-info"
+              onClick={this.addMaster.bind(this)}
+            >
               Add new master layout
             </button>
           </div>
@@ -114,9 +118,11 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
               const bgColor = (currentLayout && currentLayout === master.id) ? "#555555" : "#353535";
 
               return (
-                <div key={`master.${i}`}
-                     onClick={this.props.masterActions.updateSelectedLayout.bind(this, master.id)}
-                     style={{backgroundColor: bgColor, width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
+                <div
+                  key={`master.${i}`}
+                  onClick={this.props.masterActions.updateSelectedLayout.bind(this, master.id)}
+                  style={{backgroundColor: bgColor, width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}
+                >
                   {i + 1}. {master.name}
                 </div>
               );

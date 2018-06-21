@@ -33,10 +33,16 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
 
       return components.map((component, i) => {
         return (
-          <Text x={x * width} y={y * height + i * 20}
-                width={w * width} fontSize={15} padding={5}
-                text={component.component} key={`${region.id}-${i}`}
-                onClick={componentClicked.bind(null, component.component, component.region)} />
+          <Text
+            x={x * width}
+            y={y * height + i * 20}
+            width={w * width}
+            fontSize={15}
+            padding={5}
+            text={component.component}
+            key={`${region.id}-${i}`}
+            onClick={componentClicked.bind(null, component.component, component.region)}
+          />
         );
       });
     }
@@ -53,9 +59,15 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
 
           return (
             <Group key={i}>
-              <Rect x={x * width} y={y * height}
-                    width={w * width} height={h * height}
-                    fill={region.color || "transparent"} stroke="black" strokeWidth={1} />
+              <Rect
+                x={x * width}
+                y={y * height}
+                width={w * width}
+                height={h * height}
+                fill={region.color || "transparent"}
+                stroke="black"
+                strokeWidth={1}
+              />
               {renderLabels(region)}
             </Group>
           );

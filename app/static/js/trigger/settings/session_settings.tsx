@@ -25,28 +25,36 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
   return (
     <div style={{borderBottom: "1px solid #DBDBDB", paddingBottom: 15}}>
       {fetchError === undefined ?
-        <a href={downloadUrl}
-            download="document.xml"
-            style={{display: "block", margin: "10px auto 0 auto"}}
-            className={classNames("button", "is-info")}>
+        <a
+          href={downloadUrl}
+          download="document.xml"
+          style={{display: "block", margin: "10px auto 0 auto"}}
+          className={classNames("button", "is-info")}
+        >
           Save Document
         </a> :
-        <button style={{display: "block", margin: "10px auto 0 auto", width: "100%"}}
-                className={classNames("button", "is-info")}
-                disabled={true}>
+        <button
+          style={{display: "block", margin: "10px auto 0 auto", width: "100%"}}
+          className={classNames("button", "is-info")}
+          disabled={true}
+        >
           Save Document
         </button>
       }
       <div className="buttons has-addons" style={{marginTop: 10}}>
-        <span onClick={clearSession}
-              style={{width: "50%"}}
-              className="button is-warning">
+        <span
+          onClick={clearSession}
+          style={{width: "50%"}}
+          className="button is-warning"
+        >
           Clear Session
         </span>
-        <button onClick={deleteSession}
-                disabled={fetchError !== undefined}
-                style={{width: "50%"}}
-                className="button is-danger">
+        <button
+          onClick={deleteSession}
+          disabled={fetchError !== undefined}
+          style={{width: "50%"}}
+          className="button is-danger"
+        >
           Delete Session
         </button>
       </div>

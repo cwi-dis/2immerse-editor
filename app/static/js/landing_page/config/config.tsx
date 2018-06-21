@@ -50,9 +50,9 @@ class Config extends React.Component<{}, ConfigState> {
           <BackButton to="/" />
         </div>
         <h3 style={{fontSize: 25, color: "#555555"}}>Configuration</h3>
-        <br/>
+        <br />
         <FileInputForm onSubmit={this.fetchConfigData.bind(this)} />
-        <br/>
+        <br />
         <ManualInputForm formData={this.state.formData} onSubmit={this.fetchConfigData.bind(this)} />
 
         <CurrentVersion />

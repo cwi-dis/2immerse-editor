@@ -13,9 +13,9 @@ window.onload = () => {
   render(
     <HashRouter>
       <Switch>
-        <Route exact path="/" component={LandingPage} />
-        <Route exact path="/config" component={Config} />
-        <Route exact path="/view" component={ViewerDocumentChooser} />
+        <Route exact={true} path="/" component={LandingPage} />
+        <Route exact={true} path="/config" component={Config} />
+        <Route exact={true} path="/view" component={ViewerDocumentChooser} />
       </Switch>
     </HashRouter>,
     document.getElementById("react")

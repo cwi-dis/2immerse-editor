@@ -111,8 +111,11 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
     const scrubber = () => {
       if (scrubberPosition) {
         return (
-          <Line strokeWidth={1} stroke={"#2B98F0"}
-                points={[scrubberPosition, 0, scrubberPosition, height]} />
+          <Line
+            strokeWidth={1}
+            stroke={"#2B98F0"}
+            points={[scrubberPosition, 0, scrubberPosition, height]}
+          />
         );
       }
     };
@@ -127,19 +130,32 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
 
     return (
       <Group>
-        <Rect x={0} y={0} width={width} height={height} fill="#555555"
-              ref={(e) => this.absoluteYPosition = e && (e as any).getAbsolutePosition().y} />
+        <Rect
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          fill="#555555"
+          ref={(e) => this.absoluteYPosition = e && (e as any).getAbsolutePosition().y}
+        />
         {elements.map((element, i) => {
           return (
-            <Rect key={element.id}
-                  x={width * element.x} y={0}
-                  width={width * element.width} height={height}
-                  fill={(element.color) ? element.color : "#E06C56"} stroke="#000000" strokeWidth={1}
-                  draggable={true} dragDistance={snapDistance}
-                  onDragEnd={this.onDragEnd.bind(this, element.id)}
-                  onDragMove={this.onDragMove.bind(this, element.id)}
-                  onDragStart={(e) => this.initialYPosition = e.evt.clientY}
-                  dragBoundFunc={dragBoundFunc.bind(this, element.id)} />
+            <Rect
+              key={element.id}
+              x={width * element.x}
+              y={0}
+              width={width * element.width}
+              height={height}
+              fill={(element.color) ? element.color : "#E06C56"}
+              stroke="#000000"
+              strokeWidth={1}
+              draggable={true}
+              dragDistance={snapDistance}
+              onDragEnd={this.onDragEnd.bind(this, element.id)}
+              onDragMove={this.onDragMove.bind(this, element.id)}
+              onDragStart={(e) => this.initialYPosition = e.evt.clientY}
+              dragBoundFunc={dragBoundFunc.bind(this, element.id)}
+            />
           );
         })}
         {trackLock()}

@@ -129,8 +129,10 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
                     {capitalize(param.name)}
                   </td>
                   <td style={{maxWidth: "75%", border: "none"}}>
-                    <ParamInputField {...param}
-                                     onChange={this.updateParamField.bind(this, i)} />
+                    <ParamInputField
+                      {...param}
+                      onChange={this.updateParamField.bind(this, i)}
+                    />
                   </td>
                 </tr>
               );
@@ -171,10 +173,14 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
       <div className="box">
         <h3 style={{color: "#555555", borderBottom: "1px solid #E2E2E2", paddingBottom: 10}}>{this.props.event.name}</h3>
         {this.renderParamTable()}
-        <br/>
-        <button className="button is-info"
-                onClick={this.launchEvent.bind(this)}
-                disabled={!this.isSubmitEnabled()}>{this.getButtonLabel()}</button>
+        <br />
+        <button
+          className="button is-info"
+          onClick={this.launchEvent.bind(this)}
+          disabled={!this.isSubmitEnabled()}
+        >
+          {this.getButtonLabel()}
+        </button>
       </div>
     );
   }

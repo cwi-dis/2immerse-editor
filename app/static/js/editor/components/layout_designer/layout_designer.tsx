@@ -145,7 +145,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
                 <input className="file-input" type="file" accept=".json" onChange={this.loadTemplate.bind(this)} />
                 <span className="file-cta">
                   <span className="file-icon">
-                    <i className="fas fa-upload"></i>
+                    <i className="fas fa-upload" />
                   </span>
                   <span className="file-label">
                     Load template
@@ -156,25 +156,29 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
           </div>
         </div>
 
-        <br/>
+        <br />
 
         <div className="columns">
-          <ScreenContainer title="Communal Device"
-                           screens={communalScreens}
-                           numColumns={8}
-                           screenWidth={this.state.communalScreenWidth * 3 / 4}
-                           colRef={(el) => this.communalColumn = el}
-                           removeDevice={screenActions.removeDeviceAndUpdateMasters}
-                           splitRegion={screenActions.splitRegion}
-                           undoLastSplit={screenActions.undoLastSplitAndUpdateMasters} />
-          <ScreenContainer title="Personal Devices"
-                           screens={personalScreens}
-                           numColumns={4}
-                           screenWidth={this.state.personalScreenWidth * 3 / 8}
-                           colRef={(el) => this.personalColumn = el}
-                           removeDevice={screenActions.removeDeviceAndUpdateMasters}
-                           splitRegion={screenActions.splitRegion}
-                           undoLastSplit={screenActions.undoLastSplitAndUpdateMasters} />
+          <ScreenContainer
+            title="Communal Device"
+            screens={communalScreens}
+            numColumns={8}
+            screenWidth={this.state.communalScreenWidth * 3 / 4}
+            colRef={(el) => this.communalColumn = el}
+            removeDevice={screenActions.removeDeviceAndUpdateMasters}
+            splitRegion={screenActions.splitRegion}
+            undoLastSplit={screenActions.undoLastSplitAndUpdateMasters}
+          />
+          <ScreenContainer
+            title="Personal Devices"
+            screens={personalScreens}
+            numColumns={4}
+            screenWidth={this.state.personalScreenWidth * 3 / 8}
+            colRef={(el) => this.personalColumn = el}
+            removeDevice={screenActions.removeDeviceAndUpdateMasters}
+            splitRegion={screenActions.splitRegion}
+            undoLastSplit={screenActions.undoLastSplitAndUpdateMasters}
+          />
         </div>
       </div>
     );

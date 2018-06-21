@@ -109,8 +109,8 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
           <ContextMenuEntry name="Cancel" callback={() => {}} />
         </ContextMenu>
         <p>
-          Name: {screenInfo.name}<br/>
-          Orientation: {screenInfo.orientation}<br/>
+          Name: {screenInfo.name}<br />
+          Orientation: {screenInfo.orientation}<br />
           <span style={{cursor: "pointer", color: "#FF0000"}} onClick={this.props.removeDevice}>
             remove
           </span>
@@ -122,7 +122,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
             </Stage>
           </div>
         </div>
-        <br/>
+        <br />
       </div>
     );
   }

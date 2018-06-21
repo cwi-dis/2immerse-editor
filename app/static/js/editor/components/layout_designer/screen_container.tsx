@@ -21,12 +21,14 @@ const ScreenContainer: React.SFC<ScreenContainerProps> = (props) => {
       <h3 style={{textAlign: "center"}}>{props.title} ({props.screens.count()})</h3>
       <div>{props.screens.map((screen, i) => {
         return (
-          <SplittableScreen key={i}
-                  screenInfo={screen}
-                  width={props.screenWidth}
-                  removeDevice={props.removeDevice.bind(null, screen.id)}
-                  splitRegion={props.splitRegion.bind(null, screen.id)}
-                  undoLastSplit={props.undoLastSplit.bind(null, screen.id)} />
+          <SplittableScreen
+            key={i}
+            screenInfo={screen}
+            width={props.screenWidth}
+            removeDevice={props.removeDevice.bind(null, screen.id)}
+            splitRegion={props.splitRegion.bind(null, screen.id)}
+            undoLastSplit={props.undoLastSplit.bind(null, screen.id)}
+          />
         );
       })}</div>
     </div>

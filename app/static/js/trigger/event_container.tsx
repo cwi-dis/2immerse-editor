@@ -55,28 +55,31 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     return createPortal(
       <div className="modal is-active">
-        <div className="modal-background"></div>
+        <div className="modal-background" />
         <div className="modal-content">
           <TriggerModeContext.Consumer>
             {(triggerMode) =>
-              <EventModal event={this.props.event}
-                          documentId={this.props.documentId}
-                          triggerMode={triggerMode}
-                          onTriggered={(status) => {
-                            this.setState({
-                              showEventModal: false,
-                              flashSuccess: status === "success",
-                              flashError: status === "error"
-                            });
+              <EventModal
+                event={this.props.event}
+                documentId={this.props.documentId}
+                triggerMode={triggerMode}
+                onTriggered={(status) => {
+                  this.setState({
+                    showEventModal: false,
+                    flashSuccess: status === "success",
+                    flashError: status === "error"
+                  });
 
-                            this.props.onTriggered && this.props.onTriggered();
-                          }} />
+                  this.props.onTriggered && this.props.onTriggered();
+                }}
+              />
             }
           </TriggerModeContext.Consumer>
         </div>
-        <button className="modal-close is-large"
-                onClick={() => this.setState({showEventModal: false})}>
-        </button>
+        <button
+          className="modal-close is-large"
+          onClick={() => this.setState({showEventModal: false})}
+        />
       </div>,
       document.getElementById("modal-root")!
     );
@@ -151,12 +154,14 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
         <div style={{ marginTop: 20 }}>
           <TriggerModeContext.Consumer>
             {(triggerMode) =>
-              <button className={classNames(
-                                  "button",
-                                  "is-info",
-                                  {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
-                      onClick={() => (paramCount === 0) ? this.launchEvent(triggerMode) : this.setState({showEventModal: true})}
-                      onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}>
+              <button
+                className={classNames(
+                            "button",
+                            "is-info",
+                            {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                onClick={() => (paramCount === 0) ? this.launchEvent(triggerMode) : this.setState({showEventModal: true})}
+                onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}
+              >
                 {this.getButtonLabel(triggerMode)}
               </button>
             }

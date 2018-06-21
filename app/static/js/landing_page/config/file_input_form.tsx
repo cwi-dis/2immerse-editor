@@ -55,9 +55,9 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
 
     return (
       <div>
-        <br/>
+        <br />
         <div className={classNames(["notification", notificationColor])} style={{padding: 10}}>
-          <button className="delete" onClick={closeNotification}></button>
+          <button className="delete" onClick={closeNotification} />
           {(this.state.submitSuccess)
             ? "Data successfully updated!"
             : "Could not update data!"}
@@ -71,12 +71,12 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
       <div>
         <h4>Upload JSON Config File</h4>
         {this.renderNotification()}
-        <br/>
+        <br />
         <FileInputField label="Config File" clear={this.state.fileData === ""} onChange={(data) => this.setState({ fileData: data })} />
-        <br/>
+        <br />
 
         <div className="field is-horizontal">
-          <div className="field-label"></div>
+          <div className="field-label" />
           <div className="field-body">
             <div className="field">
               <div className="control">

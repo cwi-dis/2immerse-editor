@@ -131,17 +131,21 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
       const { status, statusText } = this.state.fetchError;
 
       return (
-        <ErrorMessage status={status}
-                      statusText={statusText}
-                      documentId={this.props.documentId} />
+        <ErrorMessage
+          status={status}
+          statusText={statusText}
+          documentId={this.props.documentId}
+        />
       );
     } else {
       const { events } = this.state;
 
       return (
-        <EventList documentId={this.props.documentId}
-                   events={events}
-                   triggerMode={triggerMode} />
+        <EventList
+          documentId={this.props.documentId}
+          events={events}
+          triggerMode={triggerMode}
+        />
       );
     }
   }
@@ -149,17 +153,19 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   public render() {
     return (
       <React.Fragment>
-        <div id="modal-root"></div>
+        <div id="modal-root" />
         <div style={{height: "calc(100vh - 80px)", margin: "0 auto", overflowY: "auto", overflowX: "hidden"}}>
           <TriggerModeContext.Consumer>
             {(triggerMode) => this.renderMainContent(triggerMode)}
           </TriggerModeContext.Consumer>
         </div>
 
-        <RemoteControl documentId={this.props.documentId}
-                       fetchError={this.state.fetchError}
-                       previewStatus={this.state.previewStatus}
-                       clearSession={this.props.clearSession} />
+        <RemoteControl
+          documentId={this.props.documentId}
+          fetchError={this.state.fetchError}
+          previewStatus={this.state.previewStatus}
+          clearSession={this.props.clearSession}
+        />
       </React.Fragment>
     );
   }

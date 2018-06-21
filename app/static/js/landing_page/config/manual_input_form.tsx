@@ -90,9 +90,9 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
 
     return (
       <div>
-        <br/>
+        <br />
         <div className={classNames(["notification", notificationColor])} style={{padding: 10}}>
-          <button className="delete" onClick={closeNotification}></button>
+          <button className="delete" onClick={closeNotification} />
           {(this.state.submitSuccess)
             ? "Data successfully updated!"
             : "Could not update data!"}
@@ -121,37 +121,51 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
       <div>
         <h4>Manual Configuration</h4>
         {this.renderNotification()}
-        <br/>
+        <br />
 
-        <URLInputField label="Client API"
-                       value={formData.clientApiUrl}
-                       onChange={(e) => this.updateFormData("clientApiUrl", e.target.value)} />
-        <URLInputField label="Layout Service"
-                       value={formData.layoutService}
-                       onChange={(e) => this.updateFormData("layoutService", e.target.value)} />
-        <URLInputField label="Timeline Service"
-                       value={formData.timelineService}
-                       onChange={(e) => this.updateFormData("timelineService", e.target.value)} />
-        <URLInputField label="Websocket Service"
-                       value={formData.websocketService}
-                       onChange={(e) => this.updateFormData("websocketService", e.target.value)} />
+        <URLInputField
+          label="Client API"
+          value={formData.clientApiUrl}
+          onChange={(e) => this.updateFormData("clientApiUrl", e.target.value)}
+        />
+        <URLInputField
+          label="Layout Service"
+          value={formData.layoutService}
+          onChange={(e) => this.updateFormData("layoutService", e.target.value)}
+        />
+        <URLInputField
+          label="Timeline Service"
+          value={formData.timelineService}
+          onChange={(e) => this.updateFormData("timelineService", e.target.value)}
+        />
+        <URLInputField
+          label="Websocket Service"
+          value={formData.websocketService}
+          onChange={(e) => this.updateFormData("websocketService", e.target.value)}
+        />
 
-        <CheckboxInputField label="Kibana"
-                            description="Disable Kibana"
-                            value={formData.noKibana || false}
-                            onChange={(e) => this.updateFormData("noKibana", e.target.checked)} />
+        <CheckboxInputField
+          label="Kibana"
+          description="Disable Kibana"
+          value={formData.noKibana || false}
+          onChange={(e) => this.updateFormData("noKibana", e.target.checked)}
+        />
 
-        <SelectInputField label="Mode"
-                          options={this.modeValues}
-                          value={formData.mode}
-                          onChange={(e) => this.updateFormData("mode", e.target.value)} />
-        <TextInputField label="Log Level"
-                        value={formData.logLevel}
-                        onChange={(e) => this.updateFormData("logLevel", e.target.value)} />
-        <br/>
+        <SelectInputField
+          label="Mode"
+          options={this.modeValues}
+          value={formData.mode}
+          onChange={(e) => this.updateFormData("mode", e.target.value)}
+        />
+        <TextInputField
+          label="Log Level"
+          value={formData.logLevel}
+          onChange={(e) => this.updateFormData("logLevel", e.target.value)}
+        />
+        <br />
 
         <div className="field is-horizontal">
-          <div className="field-label"></div>
+          <div className="field-label" />
           <div className="field-body">
             <div className="field">
               <div className="control">

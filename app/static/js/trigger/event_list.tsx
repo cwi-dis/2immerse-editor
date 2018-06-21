@@ -53,10 +53,12 @@ const EventList: React.SFC<EventListProps> = (props) => {
         <div style={{display: "flex", flexWrap: "wrap", justifyContent: "flex-start"}}>
           {renderedEvents.map((event, i) => {
             return (
-              <EventContainer key={`event.${i}`}
-                              documentId={documentId}
-                              event={event}
-                              onTriggered={fetchEvents} />
+              <EventContainer
+                key={`event.${i}`}
+                documentId={documentId}
+                event={event}
+                onTriggered={fetchEvents}
+              />
             );
           })}
         </div>

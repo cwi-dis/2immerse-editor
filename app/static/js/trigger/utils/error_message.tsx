@@ -23,7 +23,7 @@ const ErrorMessage: React.SFC<ErrorMessageProps> = (props) => {
 
           <div style={{margin: 25, fontWeight: "bold", textAlign: "center"}}>
             {props.statusText} (HTTP error {props.status})
-            {props.message && <span style={{fontWeight: "normal"}}><br/>{props.message}</span>}
+            {props.message && <span style={{fontWeight: "normal"}}><br />{props.message}</span>}
           </div>
 
           {props.documentId && <span>Try to clear the session and start over.</span>}

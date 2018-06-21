@@ -82,25 +82,29 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         <div className="column-content" style={{flexGrow: 1}} ref={(e) => this.mainColumn = e}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
           <label>
-            <input type="checkbox"
-                   checked={this.state.snapEnabled}
-                   onChange={(e) => this.setState({snapEnabled: e.target.checked})} />
+            <input
+              type="checkbox"
+              checked={this.state.snapEnabled}
+              onChange={(e) => this.setState({snapEnabled: e.target.checked})}
+            />
             &emsp;Snap enabled
           </label>
 
-          <br/><br/>
+          <br /><br />
 
           <label>
-            <input type="checkbox"
-                   checked={this.state.trackLocked}
-                   onChange={(e) => this.setState({trackLocked: e.target.checked})} />
+            <input
+              type="checkbox"
+              checked={this.state.trackLocked}
+              onChange={(e) => this.setState({trackLocked: e.target.checked})}
+            />
             &emsp;Lock new track&emsp;
           </label>
           <button className="button" onClick={() => this.props.timelineActions.addTimelineTrack(timeline.id, "region1", this.state.trackLocked)}>
             Add new track
           </button>
 
-          <br/><br/>
+          <br /><br />
 
           <div className="field is-grouped">
             <div className="control">
@@ -122,7 +126,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             </div>
           </div>
 
-          <br/><br/>
+          <br /><br />
 
           <Stage width={this.state.mainColumnWidth} height={40 * timelineTracks!.count() + 14} style={{margin: "0 0 0 -18px"}}>
             <Layer>
@@ -131,32 +135,35 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
               {timelineTracks!.map((timelineTrack, i) => {
                 return (
                   <Group key={i} y={i * 40 + 14}>
-                    <TimelineTrack elements={timelineTrack.timelineElements!}
-                                   locked={timelineTrack.locked}
-                                   elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                                   elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
-                                   width={this.state.mainColumnWidth} height={40}
-                                   snapDistance={(this.state.snapEnabled) ? 15 : 0}
-                                   scrubberPosition={this.state.scrubberPosition} />
+                    <TimelineTrack
+                      elements={timelineTrack.timelineElements!}
+                      locked={timelineTrack.locked}
+                      elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
+                      elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
+                      width={this.state.mainColumnWidth}
+                      height={40}
+                      snapDistance={(this.state.snapEnabled) ? 15 : 0}
+                      scrubberPosition={this.state.scrubberPosition}
+                    />
                   </Group>
                 );
               })}
             </Layer>
           </Stage>
-          <br/>
+          <br />
           {timelineTracks!.map((track, i) => {
             return (
               <p key={i}>
                 <b>Track {i + 1}</b>
-                <br/>
+                <br />
                 {track.timelineElements!.map((element, i) => {
                   return (
                     <span key={i}>
-                      {element.id} => {element.x} {element.x + element.width}<br/>
+                      {element.id} => {element.x} {element.x + element.width}<br />
                     </span>
                   );
                 })}
-                <br/>
+                <br />
               </p>
             );
           })}

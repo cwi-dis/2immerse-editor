@@ -92,25 +92,34 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
       const currentPath = accessPath.concat(i);
       const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
 
-      let rects = [
-        <ChapterNode key={`group.${currentPath}`} chapter={chapter}
-                     position={[x, y]} size={[boxWidth, this.boxSize[1]]}
-                     currentPath={currentPath}
-                     boxClick={this.handleBoxClick.bind(this)}
-                     nameLabelClick={this.handleLabelClick.bind(this)}
-                     addChapterClick={this.handleAddChapterClick.bind(this)}
-                     removeChapterClick={this.handleRemoveClick.bind(this)} />
-      ].concat(
+      let rects = [(
+        <ChapterNode
+          key={`group.${currentPath}`}
+          chapter={chapter}
+          position={[x, y]}
+          size={[boxWidth, this.boxSize[1]]}
+          currentPath={currentPath}
+          boxClick={this.handleBoxClick.bind(this)}
+          nameLabelClick={this.handleLabelClick.bind(this)}
+          addChapterClick={this.handleAddChapterClick.bind(this)}
+          removeChapterClick={this.handleRemoveClick.bind(this)}
+        />
+      )].concat(
         this.drawChapterTree(
           chapter.get("children")!,
           [x, y + this.boxSize[1] + this.boxMargin[1]],
           currentPath
         )
       ).concat(
-        <NodeConnectors nodeCount={chapters.count()} currentIndex={i}
-                        position={[x, y]} boxSize={[boxWidth, this.boxSize[1]]}
-                        margins={this.boxMargin} hasChildren={hasChildren}
-                        key={`connectors.${currentPath}`} />
+        <NodeConnectors
+          nodeCount={chapters.count()}
+          currentIndex={i}
+          position={[x, y]}
+          boxSize={[boxWidth, this.boxSize[1]]}
+          margins={this.boxMargin}
+          hasChildren={hasChildren}
+          key={`connectors.${currentPath}`}
+        />
       );
 
       startPos[0] += boxWidth + this.boxMargin[0];
@@ -214,9 +223,14 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
             <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
               <Layer>
                 {renderedTree}
-                <Rect fill="#262626" strokeWidth={0}
-                      x={0} y={0}
-                      width={this.canvasWidth} height={treeOffset[1] - 1} />
+                <Rect
+                  fill="#262626"
+                  strokeWidth={0}
+                  x={0}
+                  y={0}
+                  width={this.canvasWidth}
+                  height={treeOffset[1] - 1}
+                />
               </Layer>
             </Stage>
           </div>
@@ -224,9 +238,12 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
         <div className="column-sidebar">
           {this.props.masters.layouts.map((masterLayout, i) => {
             return (
-              <div key={`master.${i}`}
-                   draggable onDragStart={(e) => e.dataTransfer.setData("text/plain", masterLayout.id)}
-                   style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}>
+              <div
+                key={`master.${i}`}
+                draggable={true}
+                onDragStart={(e) => e.dataTransfer.setData("text/plain", masterLayout.id)}
+                style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}
+              >
                 {i + 1}. {masterLayout.name}
               </div>
             );

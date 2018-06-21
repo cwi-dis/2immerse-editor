@@ -95,13 +95,21 @@ class App extends React.Component<{}, AppState> {
     } else if (ajaxError) {
       return <ErrorMessage {...ajaxError} />;
     } else if (documentId) {
-      return <TriggerClient documentId={documentId}
-                            clearSession={this.clearSession.bind(this)} />;
+      return (
+        <TriggerClient
+          documentId={documentId}
+          clearSession={this.clearSession.bind(this)}
+        />
+      );
     }
 
-    return <DocumentChooser assignDocumentId={this.assignDocumentId.bind(this)}
-                            triggerMode={this.state.triggerMode}
-                            triggerModeUpdated={this.triggerModeUpdated.bind(this)} />;
+    return (
+      <DocumentChooser
+        assignDocumentId={this.assignDocumentId.bind(this)}
+        triggerMode={this.state.triggerMode}
+        triggerModeUpdated={this.triggerModeUpdated.bind(this)}
+      />
+    );
   }
 
   public render() {

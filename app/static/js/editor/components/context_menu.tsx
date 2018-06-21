@@ -38,11 +38,13 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
     };
 
     return (
-      <div onMouseOver={() => this.setState({selected: true})}
-           onMouseOut={() => this.setState({selected: false})}
-           onClick={callback}
-           className="entry"
-           style={style}>
+      <div
+        onMouseOver={() => this.setState({selected: true})}
+        onMouseOut={() => this.setState({selected: false})}
+        onClick={callback}
+        className="entry"
+        style={style}
+      >
         {name}
       </div>
     );
@@ -78,11 +80,13 @@ class ContextMenu extends React.Component<ContextMenuProps, {}> {
 
     if (visible) {
       return (
-        <div onClickCapture={() => this.props.onItemClicked!()}
-             style={style}>
-          <div style={{width: "100%", height: 4}}></div>
+        <div
+          onClickCapture={() => this.props.onItemClicked!()}
+          style={style}
+        >
+          <div style={{width: "100%", height: 4}} />
           {children}
-          <div style={{width: "100%", height: 4}}></div>
+          <div style={{width: "100%", height: 4}} />
         </div>
       );
     }

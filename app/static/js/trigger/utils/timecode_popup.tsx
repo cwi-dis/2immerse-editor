@@ -51,11 +51,13 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
       <div style={{position: "absolute", top, left}}>
         <div style={boxStyle}>
           <div>Timecode Fudge Factor</div>
-          <input className="input"
-                  type="number"
-                  value={timeOffset}
-                  min={0}
-                  onChange={this.updateOffset.bind(this)} />
+          <input
+            className="input"
+            type="number"
+            value={timeOffset}
+            min={0}
+            onChange={this.updateOffset.bind(this)}
+          />
 
           <div style={{marginTop: 10}}>Seek by</div>
           <div className="field has-addons">
@@ -69,7 +71,7 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
             </div>
           </div>
         </div>
-        <div style={bottomArrowStyle}></div>
+        <div style={bottomArrowStyle} />
       </div>
     );
   }

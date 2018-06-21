@@ -262,11 +262,13 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         <p style={{margin: "10px auto", fontWeight: "bold"}}>Description</p>
         <div className="field has-addons">
           <div className="control">
-            <input className="input"
-                   type="text"
-                   placeholder="Document description"
-                   defaultValue={settings.description}
-                   ref={(e) => this.descriptionRef = e} />
+            <input
+              className="input"
+              type="text"
+              placeholder="Document description"
+              defaultValue={settings.description}
+              ref={(e) => this.descriptionRef = e}
+            />
           </div>
           <div className="control">
             <a className="button is-info" onClick={this.changeDescription.bind(this)}>
@@ -278,11 +280,13 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         <p style={{margin: "10px auto", fontWeight: "bold"}}>Viewer time offset</p>
         <div className="field has-addons">
           <div className="control">
-            <input className="input"
-                   type="text"
-                   placeholder="Override offset"
-                   defaultValue={settings.viewerExtraOffset}
-                   ref={(e) => this.viewerExtraOffsetRef = e} />
+            <input
+              className="input"
+              type="text"
+              placeholder="Override offset"
+              defaultValue={settings.viewerExtraOffset}
+              ref={(e) => this.viewerExtraOffsetRef = e}
+            />
           </div>
           <div className="control">
             <a className="button is-info" onClick={this.changeViewerExtraOffset.bind(this)}>

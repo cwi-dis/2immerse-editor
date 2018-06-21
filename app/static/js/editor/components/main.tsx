@@ -22,10 +22,10 @@ window.onload = () => {
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <App>
-          <Route exact path="/" component={LayoutDesigner} />
-          <Route exact path="/masters" component={MasterManager} />
-          <Route exact path="/program" component={ProgramAuthor} />
-          <Route exact path="/timeline/:chapterid" component={TimelineEditor} />
+          <Route exact={true} path="/" component={LayoutDesigner} />
+          <Route exact={true} path="/masters" component={MasterManager} />
+          <Route exact={true} path="/program" component={ProgramAuthor} />
+          <Route exact={true} path="/timeline/:chapterid" component={TimelineEditor} />
         </App>
       </ConnectedRouter>
     </Provider>,

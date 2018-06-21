@@ -29,8 +29,10 @@ class SettingsModal extends React.Component<SettingsModalProps, {}> {
           <b>Document ID:</b>&emsp;<i>{this.props.documentId}</i>
           &emsp;&emsp;
           <i>
-            <a onClick={() => document.execCommand("copy")}
-               onCopy={this.copyApiUrl.bind(this)}>
+            <a
+              onClick={() => document.execCommand("copy")}
+              onCopy={this.copyApiUrl.bind(this)}
+            >
               (copy URL)
             </a>
           </i>
