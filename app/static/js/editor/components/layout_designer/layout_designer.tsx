@@ -98,7 +98,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       const reader = new FileReader();
 
       reader.onload = () => {
-        const layout = JSON.parse(reader.result);
+        const layout = JSON.parse(reader.result!.toString());
 
         validateLayout(layout).then(() => {
           if (layout.version === undefined || layout.version !== 4) {
@@ -137,8 +137,8 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
         <h3>Layout Designer</h3>
 
         <div className="block">
-          <a style={{marginRight: 10}} className="button is-info" onClick={screenActions.addDevice.bind(null, "communal")}>Add communal device</a>
-          <a style={{marginRight: 10}} className="button is-info" onClick={screenActions.addDevice.bind(null, "personal")}>Add personal device</a>
+          <a style={{marginRight: 10}} className="button is-info" onClick={() => screenActions.addDevice("communal")}>Add communal device</a>
+          <a style={{marginRight: 10}} className="button is-info" onClick={() => screenActions.addDevice("personal")}>Add personal device</a>
           <div className="field" style={{display: "inline-block"}}>
             <div className="file is-info">
               <label className="file-label">
