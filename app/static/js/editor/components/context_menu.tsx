@@ -3,7 +3,7 @@ import * as React from "react";
 export type ContextMenuDivider = React.SFC<{}>;
 export const ContextMenuDivider: ContextMenuDivider = (props) => {
   return (
-    <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}}></div>
+    <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}} />
   );
 };
 

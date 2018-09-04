@@ -54,6 +54,14 @@ class App extends React.Component<{}, AppState> {
     const queryData = parseQueryString(location.hash);
     console.log("parsed hash:", queryData);
 
+    if (queryData.has("triggerMode")) {
+      console.log("Setting trigger mode to:", queryData.get("triggerMode"));
+
+      this.setState({
+        triggerMode: queryData.get("triggerMode") as TriggerMode
+      });
+    }
+
     if (queryData.has("url")) {
       const submitUrl = `/api/v1/document?url=${queryData.get("url")}`;
       console.log("submitting to:", submitUrl);
