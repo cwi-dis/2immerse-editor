@@ -87,6 +87,8 @@ class App extends React.Component<{}, AppState> {
           }
         });
       });
+    } else if (queryData.has("documentId")) {
+        this.assignDocumentId(queryData.get("documentId")!);
     }
   }
 
