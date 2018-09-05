@@ -23,10 +23,16 @@ class App extends React.Component<{}, AppState> {
   constructor(props: never) {
     super(props);
 
+    let documentId = localStorage.getItem("documentId");
     const selectedTriggerMode = localStorage.getItem("triggerMode") as TriggerMode;
 
+    const queryData = parseQueryString(location.hash);
+    if (queryData.has("url") || queryData.has("documentId")) {
+      documentId = null;
+    }
+
     this.state = {
-      documentId: localStorage.getItem("documentId"),
+      documentId,
       triggerMode: selectedTriggerMode || "trigger",
       isLoading: false,
     };
