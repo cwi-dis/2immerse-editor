@@ -74,7 +74,6 @@ class App extends React.Component<{}, AppState> {
         const { documentId } = JSON.parse(data);
         console.log("got document id:", documentId);
 
-        location.hash = "";
         this.assignDocumentId(documentId);
       }).catch((err) => {
         console.error(err);
@@ -90,6 +89,8 @@ class App extends React.Component<{}, AppState> {
     } else if (queryData.has("documentId")) {
         this.assignDocumentId(queryData.get("documentId")!);
     }
+
+    location.hash = "";
   }
 
   private triggerModeUpdated(triggerMode: "trigger" | "enqueue") {
