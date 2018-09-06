@@ -1208,6 +1208,7 @@ class DocumentRemote:
                 self.document.setError("Cannot communicate with preview client")
             self.document.clearError()
         else:
+            print 'xxxjack debug-rc allContextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID))
             self.logger.error("remote/control: no contextID for preview client", extra=self.getLoggerExtra())
             self.document.setError('No preview client is running')
             abort(500, 'remote/control: no contextID for preview client')
@@ -1352,6 +1353,7 @@ class DocumentServe:
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
+        print 'xxxjack debug-rc getLiveInfo-1 self.allContextID=%s self.contextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID), repr(contextID))
         if not viewer and contextID is not None and self.contextID is None:
             self.logger.info('overriding contextID with %s' % contextID)
             self.contextID = contextID
@@ -1360,6 +1362,7 @@ class DocumentServe:
             rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
+        print 'xxxjack debug-rc getLiveInfo-2 self.allContextID=%s self.contextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID), repr(contextID))
         curClock, playing = self.document.remote()._getClockState()
         if curClock:
             # This is a temporary hack (xxxjack)
