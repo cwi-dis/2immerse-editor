@@ -1198,10 +1198,13 @@ class DocumentRemote:
             self.document.setError('Internal error: remote/control requires JSON object')
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
+        print 'xxxjack control contacting', self.document.serve().allContextIDs
         for contextID in self.document.serve().allContextIDs:
             wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
+            print 'xxxjack wsUrl=', wsUrl, 'command=', command
             try:
                 r = requests.post(wsUrl, json=command)
+                print 'xxxjack returned status', r.status_code, 'reply', r.text
                 r.raise_for_status()
             except requests.exceptions.RequestException:
                 self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
