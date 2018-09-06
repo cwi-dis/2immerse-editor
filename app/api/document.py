@@ -1202,7 +1202,7 @@ class DocumentRemote:
             wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
             try:
                 r = requests.post(wsUrl, json=command)
-                r.raise_for_status
+                r.raise_for_status()
             except requests.exceptions.RequestException:
                 self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
                 self.document.setError("Cannot communicate with preview client")
