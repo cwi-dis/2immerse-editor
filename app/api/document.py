@@ -1198,20 +1198,18 @@ class DocumentRemote:
             self.document.setError('Internal error: remote/control requires JSON object')
             abort(400, 'remote/control requires JSON object')
         self.logger.debug("remote/control: %s" % repr(command), extra=self.getLoggerExtra())
-        print 'xxxjack control contacting', self.document.serve().allContextIDs
+        didOne = False
         for contextID in self.document.serve().allContextIDs:
             wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
-            print 'xxxjack wsUrl=', wsUrl, 'command=', command
             try:
                 r = requests.post(wsUrl, json=command)
-                print 'xxxjack returned status', r.status_code, 'reply', r.text
                 r.raise_for_status()
+                didOne = True
             except requests.exceptions.RequestException:
                 self.logger.error("remote/control: POST to %s failed" % wsUrl, extra=self.getLoggerExtra())
                 self.document.setError("Cannot communicate with preview client")
             self.document.clearError()
-        else:
-            print 'xxxjack debug-rc allContextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID))
+        if not didOne:
             self.logger.error("remote/control: no contextID for preview client", extra=self.getLoggerExtra())
             self.document.setError('No preview client is running')
             abort(500, 'remote/control: no contextID for preview client')
@@ -1356,7 +1354,6 @@ class DocumentServe:
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
-        print 'xxxjack debug-rc getLiveInfo-1 self.allContextID=%s self.contextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID), repr(contextID))
         if not viewer and contextID is not None and self.contextID is None:
             self.logger.info('overriding contextID with %s' % contextID)
             self.contextID = contextID
@@ -1365,7 +1362,6 @@ class DocumentServe:
             rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
-        print 'xxxjack debug-rc getLiveInfo-2 self.allContextID=%s self.contextID=%s contextID=%s' % (repr(self.document.serve().allContextIDs), repr(self.document.serve().contextID), repr(contextID))
         curClock, playing = self.document.remote()._getClockState()
         if curClock:
             # This is a temporary hack (xxxjack)
@@ -1408,7 +1404,6 @@ class DocumentServe:
                 self.logger.debug("_setDocumentState: %s: changed" % eltId, extra=self.getLoggerExtra())
                 # If this was one of our events and it has become inactive we may want to remove the trigger
                 # that caused this
-                self.logger.debug("xxxjack productionIdTransient %s, state %s, productionId %s" % (elt.get(NS_TRIGGER("productionIdTransient"), False), elt.get(NS_TIMELINE_INTERNAL("state"), None), elt.get(NS_TRIGGER("productionId"), None)))
                 if elt.get(NS_TRIGGER("productionIdTransient"), False):
                     if elt.get(NS_TIMELINE_INTERNAL("state"), None) == "finished":
                         productionId = elt.get(NS_TRIGGER("productionId"), None)
