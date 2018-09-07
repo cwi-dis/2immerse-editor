@@ -1138,7 +1138,7 @@ class DocumentEvents:
             # Removing the tt:name attribute will make the event invisible to events().get()
             oldName = elt.attrib.pop(NS_TRIGGER("name"), None)
             if oldName:
-                elt.attrib.set(NS_TRIGGER("oldName"), oldName)
+                elt.attrib[NS_TRIGGER("oldName")] = oldName
 
 class DocumentRemote:
     def __init__(self, document):
