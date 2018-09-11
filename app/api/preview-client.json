@@ -8,7 +8,7 @@
 		"deviceIdNamespace": "ts-tv"
 	}, 
 	"description": "Live Preview", 
-	"serviceUrlPreset": "aws_test",
+	"serviceUrlPreset": "aws",
 	"serviceUrls" : {
 		"layoutService": "filled-in-dynamically",
 		"websocketService": "filled-in-dynamically",
