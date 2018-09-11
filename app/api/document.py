@@ -1598,7 +1598,7 @@ class DocumentAsync(threading.Thread):
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
 
-        self.socket = SocketIO(websocket_service)
+        self.socket = SocketIO(websocket_service, verify=False)
         self.channel = self.socket.define(SocketIONamespace, "/trigger")
         
         self.roomFrontend = str(self.document.documentId)
