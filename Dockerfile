@@ -19,8 +19,10 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 COPY --from=build /code .
+COPY ./client-certs/ /usr/local/share/ca-certificates
 
-RUN apk add --no-cache python2 py2-pip py-gevent && \
+RUN apk add --no-cache python2 py2-pip py-gevent ca-certificates && \
+    update-ca-certificates && \
     pip install -r requirements.txt
 
 EXPOSE 8000
