@@ -1202,7 +1202,7 @@ class DocumentRemote:
         for contextID in self.document.serve().allContextIDs:
             wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
             try:
-                r = requests.post(wsUrl, json=command)
+                r = requests.post(wsUrl, json=command, verify=False)
                 r.raise_for_status()
                 didOne = True
             except requests.exceptions.RequestException:
