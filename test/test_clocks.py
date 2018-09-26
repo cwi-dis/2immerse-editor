@@ -1,8 +1,9 @@
+from __future__ import absolute_import
 import unittest
 import time
 
 import pretest
-import clocks
+from app.api import clocks
 
 
 class TestClocks(unittest.TestCase):

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 import urllib
 import urlparse
@@ -6,7 +7,7 @@ import json
 import uuid
 
 import pretest
-import document
+from app.api import document
 
 
 class TestEvents(unittest.TestCase):

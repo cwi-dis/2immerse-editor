@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import unittest
 import urlparse
 import urllib
@@ -6,7 +7,7 @@ import json
 import uuid
 
 import pretest
-import document
+from app.api import document
 
 DOCUMENT = """
 <testDocument>
