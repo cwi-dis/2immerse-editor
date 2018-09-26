@@ -1,7 +1,9 @@
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 import unittest
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
 import os
 import json
 import uuid
@@ -24,12 +26,12 @@ DOCUMENT_COUNT = 9
 
 class TestDocument(unittest.TestCase):
     def _buildUrl(self, extra=''):
-        myUrl = urlparse.urljoin(
+        myUrl = urllib.parse.urljoin(
             'file:',
-            urllib.pathname2url(os.path.abspath(__file__))
+            urllib.request.pathname2url(os.path.abspath(__file__))
         )
 
-        docUrl = urlparse.urljoin(
+        docUrl = urllib.parse.urljoin(
             myUrl,
             "fixtures/test_document%s.xml" % (extra)
         )
@@ -56,8 +58,8 @@ class TestDocument(unittest.TestCase):
         newDocUrl = self._buildUrl('_tmp')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(docUrl).read().strip()
-        newData = urllib.urlopen(newDocUrl).read().strip()
+        oldData = urllib.request.urlopen(docUrl).read().strip()
+        newData = urllib.request.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 

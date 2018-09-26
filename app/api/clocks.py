@@ -1,10 +1,13 @@
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import time
-import Queue
+import queue
 import threading
 
 
-class never:
+class never(object):
     """This object is greater than any number"""
     pass
 
@@ -19,7 +22,7 @@ if DEBUG_LOCKING:
     clockLockLog = logging.getLogger("clocks.locks")
     clockLockLog.setLevel(logging.DEBUG)
 
-    class ClockLock:
+    class ClockLock(object):
         def __init__(self):
             self._lock = threading.RLock()
 
@@ -51,7 +54,7 @@ def synchronized(method):
     return wrapper
 
 
-class PausableClock:
+class PausableClock(object):
     """A clock (based on another clock) that can be pasued and resumed"""
     def __init__(self, underlyingClock):
         self.epoch = 0
@@ -138,7 +141,7 @@ class CallbackPausableClock(PausableClock):
 
     def __init__(self, underlyingClock):
         PausableClock.__init__(self, underlyingClock)
-        self.queue = Queue.PriorityQueue()
+        self.queue = queue.PriorityQueue()
         self.queueChanged = None
 
     def setQueueChangedCallback(self, callback):
@@ -149,7 +152,7 @@ class CallbackPausableClock(PausableClock):
         """Return delta-T until earliest callback, or never"""
         try:
             peek = self.queue.get(False)
-        except Queue.Empty:
+        except queue.Empty:
             return default
         self.queue.put(peek)
         t, callback, args, kwargs = peek
@@ -159,7 +162,7 @@ class CallbackPausableClock(PausableClock):
         """Sleep until next callback. Do not use with multithreading."""
         try:
             peek = self.queue.get(False)
-        except Queue.Empty:
+        except queue.Empty:
             assert 0, "No events are forthcoming"
         assert peek, "No events are forthcoming"
         self.queue.put(peek)
@@ -185,7 +188,7 @@ class CallbackPausableClock(PausableClock):
         while True:
             try:
                 peek = self.queue.get(False)
-            except Queue.Empty:
+            except queue.Empty:
                 return
             if not peek:
                 return
@@ -204,7 +207,7 @@ class CallbackPausableClock(PausableClock):
         rv = "%d events" % self.queue.qsize()
         try:
             peek = self.queue.get(False)
-        except Queue.Empty:
+        except queue.Empty:
             peek = None
         if peek:
             t, callback, args, kwargs = peek
@@ -218,7 +221,7 @@ class CallbackPausableClock(PausableClock):
         while True:
             try:
                 qContents.append(self.queue.get(False))
-            except Queue.Empty:
+            except queue.Empty:
                 break
         # Now adjust the clock itself
         PausableClock._adjust(self, adjustment)
@@ -228,7 +231,7 @@ class CallbackPausableClock(PausableClock):
             self.queue.put((t, callback, args, kwargs))
 
 
-class FastClock:
+class FastClock(object):
     def __init__(self):
         self._now = 0
 
@@ -245,7 +248,7 @@ class FastClock:
         return 1.0
 
 
-class SystemClock:
+class SystemClock(object):
     def __init__(self):
         pass
 

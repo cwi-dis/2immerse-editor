@@ -1,11 +1,13 @@
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 from app import app
 from .api import api
 from flask import Response, request, abort, redirect, jsonify
 import json
 import os
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
 from . import globalSettings
 from .globalSettings import GlobalSettings
 from app import myLogging
@@ -49,7 +51,7 @@ def get_docRoot(localPath=API_ROOT):
         docRoot = request.base_url
 
     if localPath:
-        docRoot = urlparse.urljoin(docRoot, localPath)
+        docRoot = urllib.parse.urljoin(docRoot, localPath)
 
     return docRoot
 
@@ -517,7 +519,7 @@ def get_viewer_preview(documentId):
     if 'mode' in request.args:
         clientArgs['mode'] = request.args['mode']
     if clientArgs:
-        clientDocUrl += '?' + urllib.urlencode(clientArgs)
+        clientDocUrl += '?' + urllib.parse.urlencode(clientArgs)
     clientApiUrl = "%s#?inputDocument=%s" % (GlobalSettings.clientApiUrl, clientDocUrl)
     return redirect(clientApiUrl)
 
@@ -535,7 +537,7 @@ def get_preview(documentId):
     if 'mode' in request.args:
         clientArgs['mode'] = request.args['mode']
     if clientArgs:
-        clientDocUrl += '?' + urllib.urlencode(clientArgs)
+        clientDocUrl += '?' + urllib.parse.urlencode(clientArgs)
     clientApiUrl = "%s#?inputDocument=%s" % (GlobalSettings.clientApiUrl, clientDocUrl)
     return redirect(clientApiUrl)
 
@@ -549,7 +551,7 @@ def expand_shorturl(id):
         abort(400, "ID not found")
     newUrl = short_urls[id]
     if 'mode' in request.args:
-        newUrl += '?' + urllib.urlencode(dict(mode=mode))
+        newUrl += '?' + urllib.parse.urlencode(dict(mode=mode))
     return redirect(short_urls[id])
 
 

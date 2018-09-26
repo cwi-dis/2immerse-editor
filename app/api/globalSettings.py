@@ -6,6 +6,7 @@ from __future__ import print_function
 #
 # When deployed to the 2immerse infrastructure with the Mantl stuff there will be
 # environment variables that override the URLs
+from builtins import object
 import os
 
 
@@ -48,11 +49,11 @@ class GlobalSettings(object):
 
 def _get():
     props = GlobalSettings.__dict__
-    return {k: v for k, v in props.iteritems() if k[:1] != "_"}
+    return {k: v for k, v in props.items() if k[:1] != "_"}
 
 
 def _put(values):
-    for k, v in values.iteritems():
+    for k, v in values.items():
         setattr(GlobalSettings, k, v)
 
 if __name__ == '__main__':

@@ -1,7 +1,9 @@
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 import unittest
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import os
 import json
 import uuid
@@ -12,11 +14,11 @@ from app.api import document
 
 class TestForward(unittest.TestCase):
     def _buildUrl(self, extra=''):
-        myUrl = urlparse.urljoin(
-            'file:', urllib.pathname2url(os.path.abspath(__file__))
+        myUrl = urllib.parse.urljoin(
+            'file:', urllib.request.pathname2url(os.path.abspath(__file__))
         )
 
-        docUrl = urlparse.urljoin(
+        docUrl = urllib.parse.urljoin(
             myUrl,
             "fixtures/test_events%s.xml" % (extra)
         )
@@ -42,8 +44,8 @@ class TestForward(unittest.TestCase):
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
-        newData = urllib.urlopen(newDocUrl).read()
-        copyData = urllib.urlopen(copyDocUrl).read()
+        newData = urllib.request.urlopen(newDocUrl).read()
+        copyData = urllib.request.urlopen(copyDocUrl).read()
 
         self.assertEqual(newData, copyData)
 
@@ -72,8 +74,8 @@ class TestForward(unittest.TestCase):
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
-        newData = urllib.urlopen(newDocUrl).read()
-        copyData = urllib.urlopen(copyDocUrl).read()
+        newData = urllib.request.urlopen(newDocUrl).read()
+        copyData = urllib.request.urlopen(copyDocUrl).read()
 
         self.assertEqual(newData, copyData)
 
@@ -93,8 +95,8 @@ class TestForward(unittest.TestCase):
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
-        newData = urllib.urlopen(newDocUrl).read()
-        copyData = urllib.urlopen(copyDocUrl).read()
+        newData = urllib.request.urlopen(newDocUrl).read()
+        copyData = urllib.request.urlopen(copyDocUrl).read()
 
         self.assertEqual(newData, copyData)
 
@@ -119,8 +121,8 @@ class TestForward(unittest.TestCase):
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
-        newData = urllib.urlopen(newDocUrl).read()
-        copyData = urllib.urlopen(copyDocUrl).read()
+        newData = urllib.request.urlopen(newDocUrl).read()
+        copyData = urllib.request.urlopen(copyDocUrl).read()
 
         self.assertEqual(newData, copyData)
 
@@ -143,8 +145,8 @@ class TestForward(unittest.TestCase):
         d.save(newDocUrl)
         dCopy.save(copyDocUrl)
 
-        newData = urllib.urlopen(newDocUrl).read()
-        copyData = urllib.urlopen(copyDocUrl).read()
+        newData = urllib.request.urlopen(newDocUrl).read()
+        copyData = urllib.request.urlopen(copyDocUrl).read()
 
         self.assertEqual(newData, copyData)
 

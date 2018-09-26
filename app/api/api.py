@@ -1,10 +1,11 @@
 from __future__ import absolute_import
+from builtins import object
 from flask import abort, jsonify, Response, request
 import uuid
 from . import document
 
 
-class API:
+class API(object):
     def __init__(self):
         self.documents = {}
 
@@ -36,7 +37,7 @@ class API:
             return jsonify(documentId=documentId)
 
         rv = []
-        for k, d in self.documents.items():
+        for k, d in list(self.documents.items()):
             descr = d.getDescription()
             rv.append(dict(id=k, description=descr))
         return jsonify(rv)

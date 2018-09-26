@@ -1,7 +1,9 @@
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 import unittest
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import os
 import json
 import uuid
@@ -12,11 +14,11 @@ from app.api import document
 
 class TestEvents(unittest.TestCase):
     def _buildUrl(self, extra=''):
-        myUrl = urlparse.urljoin(
-            'file:', urllib.pathname2url(os.path.abspath(__file__))
+        myUrl = urllib.parse.urljoin(
+            'file:', urllib.request.pathname2url(unicode(os.path.abspath(__file__)))
         )
 
-        docUrl = urlparse.urljoin(
+        docUrl = urllib.parse.urljoin(
             myUrl,
             "fixtures/test_events%s.xml" % (extra)
         )
@@ -61,8 +63,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftertrigger')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read().strip()
-        newData = urllib.urlopen(newDocUrl).read().strip()
+        oldData = urllib.request.urlopen(goodDocUrl).read().strip()
+        newData = urllib.request.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -78,8 +80,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftermodify')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read().strip()
-        newData = urllib.urlopen(newDocUrl).read().strip()
+        oldData = urllib.request.urlopen(goodDocUrl).read().strip()
+        newData = urllib.request.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -101,8 +103,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftertriggerparameter')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read().strip()
-        newData = urllib.urlopen(newDocUrl).read().strip()
+        oldData = urllib.request.urlopen(goodDocUrl).read().strip()
+        newData = urllib.request.urlopen(newDocUrl).read().strip()
 
         self.assertEqual(newData, oldData)
 
@@ -121,8 +123,8 @@ class TestEvents(unittest.TestCase):
         goodDocUrl = self._buildUrl('_aftermodifyparameter')
         d.save(newDocUrl)
 
-        oldData = urllib.urlopen(goodDocUrl).read().strip()
-        newData = urllib.urlopen(newDocUrl).read().strip()
+        oldData = urllib.request.urlopen(goodDocUrl).read().strip()
+        newData = urllib.request.urlopen(newDocUrl).read().strip()
         self.assertEqual(newData, oldData)
 
 

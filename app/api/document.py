@@ -1,9 +1,13 @@
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 from flask import Response, request, abort
 from socketIO_client import SocketIO, SocketIONamespace
-import urllib2
-import urllib
-import urlparse
+import urllib.request, urllib.error, urllib.parse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import json
 import copy
 import xml.etree.ElementTree as ET
@@ -25,7 +29,7 @@ OLD_EVENT_PARAMETERS = True
 NEW_EVENT_PARAMETERS = True
 
 
-class NameSpace:
+class NameSpace(object):
     def __init__(self, namespace, url):
         self.namespace = namespace
         self.url = url
@@ -61,7 +65,7 @@ NAMESPACES.update(NS_2IMMERSE.ns())
 NAMESPACES.update(NS_2IMMERSE_COMPONENT.ns())
 NAMESPACES.update(NS_TRIGGER.ns())
 NAMESPACES.update(NS_AUTH.ns())
-for k, v in NAMESPACES.items():
+for k, v in list(NAMESPACES.items()):
     ET.register_namespace(k, v)
 
 # regular expression to decompose xml:id fields that end in a -number
@@ -100,7 +104,7 @@ def edit(method):
     return wrapper
 
 
-class EditManager:
+class EditManager(object):
     """Helper class to collect sets of operations, sort of a simplified transaction mechanism"""
     def __init__(self, document, reason=None):
         self.document = document
@@ -136,7 +140,7 @@ class EditManager:
         return rv
 
 
-class Document:
+class Document(object):
     def __init__(self, documentId):
         self.documentId = documentId
         # The whole document, as an elementtree
@@ -451,7 +455,7 @@ class Document:
         self.url = url
         self.base = None
         self.baseAdded = False
-        fp = urllib2.urlopen(url)
+        fp = urllib.request.urlopen(url)
         try:
             self.tree = ET.parse(fp)
         except ET.ParseError:
@@ -471,9 +475,9 @@ class Document:
     @synchronized
     def save(self, url):
         self.logger.info('save: %s' % url, extra=self.getLoggerExtra())
-        p = urlparse.urlparse(url)
+        p = urllib.parse.urlparse(url)
         assert p.scheme == 'file'
-        filename = urllib.url2pathname(p.path)
+        filename = urllib.request.url2pathname(p.path)
         fp = open(filename, 'w')
         self._zapWhitespace()
         saveTree = self._prepareForSave()
@@ -503,7 +507,7 @@ class Document:
                 elt.set(NS_TIMELINE("dur"), realDur)
             # Remove all tt: attributes
             toRemove = []
-            for attr in elt.attrib.keys():
+            for attr in list(elt.attrib.keys()):
                 if attr == NS_TRIGGER("_realDur"):
                     toRemove.append(attr)
                 if attr in NS_TIMELINE_INTERNAL:
@@ -600,7 +604,7 @@ class Document:
         return self.idMap.get(id)
 
 
-class DocumentXml:
+class DocumentXml(object):
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
@@ -637,7 +641,7 @@ class DocumentXml:
             self.document._elementAdded(newElement, element)
         elif where == 'replace':
             element.clear()
-            for k, v in newElement.items():
+            for k, v in list(newElement.items()):
                 element.set(k, v)
             # xxxjack this may be unsafe, replacing children....
             for e in list(newElement):
@@ -692,7 +696,7 @@ class DocumentXml:
             abort(400, 'Unexpected mimetype %s' % mimetype)
         assert isinstance(attrs, dict)
         existingAttrs = element.attrib
-        for k, v in attrs.items():
+        for k, v in list(attrs.items()):
             if v is None:
                 if k in existingAttrs:
                     existingAttrs.pop(k)
@@ -734,7 +738,7 @@ class DocumentXml:
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
    
-class DocumentEvents:
+class DocumentEvents(object):
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
@@ -1141,7 +1145,7 @@ class DocumentEvents:
             if oldName:
                 elt.attrib[NS_TRIGGER("oldName")] = oldName
 
-class DocumentRemote:
+class DocumentRemote(object):
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
@@ -1217,7 +1221,7 @@ class DocumentRemote:
         return ""
 
 
-class DocumentAuthoring:
+class DocumentAuthoring(object):
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
@@ -1227,7 +1231,7 @@ class DocumentAuthoring:
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
-class DocumentServe:
+class DocumentServe(object):
     def __init__(self, document):
         self.document = document
         self.tree = document.tree
@@ -1289,7 +1293,7 @@ class DocumentServe:
         startPaused = self.document.settings().startPaused
 
         if base:
-            clientDocData = urllib.urlopen(base).read()
+            clientDocData = urllib.request.urlopen(base).read()
         else:
             clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
             clientDocData = open(clientDocPath).read()
@@ -1300,7 +1304,7 @@ class DocumentServe:
         clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
         if clientExtraElement is not None and clientExtraElement.text:
             clientExtra = json.loads(clientExtraElement.text)
-            for k, v in clientExtra.items():
+            for k, v in list(clientExtra.items()):
                 clientDoc[k] = v
         #
         # We do substitution manually, for now. May want to use a templating system at some point.
@@ -1395,7 +1399,7 @@ class DocumentServe:
         elementStates = documentState["elementStates"]
         self.logger.info("_setDocumentState: got %d element-state items, clockEpoch %s" % (len(elementStates), clockEpoch), extra=self.getLoggerExtra())
         self.document.companionTimelineIsActive = True
-        for eltId, eltState in elementStates.items():
+        for eltId, eltState in list(elementStates.items()):
             elt = self.document._getElementByID(eltId)
             if elt is None:
                 self.logger.warning('_setDocumentState: unknown element %s' % eltId, extra=self.getLoggerExtra())
@@ -1527,7 +1531,7 @@ class DocumentServe:
         return rv
 
 
-class DocumentSettings:
+class DocumentSettings(object):
     def __init__(self, document):
         self.document = document
         self.lock = self.document.lock
