@@ -499,6 +499,7 @@ class Document(object):
         self._zapWhitespace()
         saveTree = self._prepareForSave()
         fp.write(ET.tostring(saveTree, encoding=XML_ENCODING))
+        fp.close()
         self.clearError()
 
     @synchronized
