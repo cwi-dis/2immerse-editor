@@ -318,7 +318,9 @@ class Document(object):
                     id = match.group(1) + '-' + str(num+1)
                 else:
                     id = id + '-1'
-
+            # xxxjack the following encode/decode mumbo-jumbo is temporary
+            # to work around py2/py3/future issues
+            id = unicode(id)
             e.set(NS_XML('id'), id)
         # Specific to tt: events
         if triggerAttributes:
@@ -331,6 +333,9 @@ class Document(object):
                         name = match.group(1) + ' (' + str(num+1) + ')'
                     else:
                         name = name + ' (1)'
+                # xxxjack the following encode/decode mumbo-jumbo is temporary
+                # to work around py2/py3/future issues
+                name = unicode(name)
                 elt.set(NS_TRIGGER('name'), name)
             # Flag the new element as being newly copied (so it'll show up in the active list)
             elt.set(NS_TIMELINE_INTERNAL("state"), "new")

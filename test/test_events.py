@@ -15,12 +15,12 @@ from app.api import document
 class TestEvents(unittest.TestCase):
     def _buildUrl(self, extra=''):
         myUrl = urllib.parse.urljoin(
-            'file:', urllib.request.pathname2url(unicode(os.path.abspath(__file__)))
+            u'file:', urllib.request.pathname2url(os.path.abspath(__file__))
         )
 
         docUrl = urllib.parse.urljoin(
             myUrl,
-            "fixtures/test_events%s.xml" % (extra)
+            u"fixtures/test_events%s.xml" % (extra)
         )
 
         return docUrl

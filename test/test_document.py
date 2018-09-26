@@ -27,13 +27,13 @@ DOCUMENT_COUNT = 9
 class TestDocument(unittest.TestCase):
     def _buildUrl(self, extra=''):
         myUrl = urllib.parse.urljoin(
-            'file:',
+            u'file:',
             urllib.request.pathname2url(os.path.abspath(__file__))
         )
 
         docUrl = urllib.parse.urljoin(
             myUrl,
-            "fixtures/test_document%s.xml" % (extra)
+            u"fixtures/test_document%s.xml" % (extra)
         )
 
         return docUrl
