@@ -2,3 +2,5 @@ flask
 requests
 socketIO-client-2
 gevent
+coverage
+future
