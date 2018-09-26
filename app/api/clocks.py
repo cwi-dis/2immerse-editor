@@ -6,13 +6,27 @@ from builtins import object
 import time
 import queue
 import threading
+import functools
 
-
-class never(object):
+@functools.total_ordering
+class NeverSmaller(object):
     """This object is greater than any number"""
-    pass
+    def __le__(self, other):
+        return False
+        
+    def __eq__(self, other):
+        return type(other) == NeverSmaller
 
+    def __repr__(self):
+        return 'never'
+
+never = NeverSmaller()
 assert never > 1
+assert 1 < never
+assert never > 0
+assert 0 < never
+assert never > time.time()
+assert time.time() < never
 
 DEBUG_LOCKING = False
 # threading._VERBOSE=True
