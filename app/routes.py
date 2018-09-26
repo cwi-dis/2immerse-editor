@@ -5,6 +5,7 @@ import os
 
 from app import app
 from .util import hash_file, get_head_revision
+from .api import routes # Note that this import has side effects (it adds routes)
 
 appdir = os.path.dirname(os.path.realpath(__file__))
 EDITOR_HASH = hash_file(os.path.join(appdir, "static", "dist", "editor.js"))
