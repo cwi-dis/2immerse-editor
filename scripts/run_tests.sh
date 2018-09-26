@@ -4,8 +4,8 @@ echo "Running Python tests..."
 echo
 
 cd test/
-python -m coverage run --source ../app -m unittest discover
-python -m coverage report
+${PYTHON:-python} -m coverage run --source ../app -m unittest discover
+${PYTHON:-python} -m coverage report
 
 echo
 echo "================================================================================================"
