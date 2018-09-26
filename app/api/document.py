@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from flask import Response, request, abort
 from socketIO_client import SocketIO, SocketIONamespace
 import urllib2
@@ -11,8 +12,8 @@ import threading
 import os
 import time
 import requests
-from globalSettings import GlobalSettings
-import clocks
+from .globalSettings import GlobalSettings
+from . import clocks
 
 import logging
 logger = logging.getLogger(__name__)

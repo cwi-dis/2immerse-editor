@@ -1,12 +1,13 @@
+from __future__ import absolute_import
 from app import app
-from api import api
+from .api import api
 from flask import Response, request, abort, redirect, jsonify
 import json
 import os
 import urlparse
 import urllib
-import globalSettings
-from globalSettings import GlobalSettings
+from . import globalSettings
+from .globalSettings import GlobalSettings
 from app import myLogging
 
 myLogging.install(GlobalSettings.noKibana, GlobalSettings.logLevel)

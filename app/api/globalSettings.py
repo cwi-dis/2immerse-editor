@@ -1,3 +1,4 @@
+from __future__ import print_function
 #
 # Global settings for this instance of the backend service.
 #
@@ -55,6 +56,6 @@ def _put(values):
         setattr(GlobalSettings, k, v)
 
 if __name__ == '__main__':
-    print _get()
+    print(_get())
     _put({'noKibana': True})
-    print _get()
+    print(_get())

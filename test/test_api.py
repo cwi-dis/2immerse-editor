@@ -1,3 +1,4 @@
+from __future__ import print_function
 import unittest
 import subprocess
 import sys
@@ -34,13 +35,13 @@ class TestAPI(unittest.TestCase):
         cls.serverProcess = subprocess.Popen(cmd, cwd=homedir)
         cls.serverUrl = 'http://localhost:8000'
         cls.serverApi = cls.serverUrl + '/api/v1'
-        print 'xxxjack', cls.serverProcess
+        print('xxxjack', cls.serverProcess)
         time.sleep(2)
         
     @classmethod
     def tearDownClass(cls):
         if KEEP_SERVER:
-            print 'Press control-c to terminate server -'
+            print('Press control-c to terminate server -')
             try:
                 time.sleep(99999)
             except KeyboardInterrupt:

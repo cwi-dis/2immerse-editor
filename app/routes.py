@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 from flask import render_template, abort, jsonify
 from hashlib import sha256
 
 from app import app
-from util import hash_file, get_head_revision
-import api.routes
+from .util import hash_file, get_head_revision
+from . import api.routes
 
 
 EDITOR_HASH = hash_file("./app/static/dist/editor.js")

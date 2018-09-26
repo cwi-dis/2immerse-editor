@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 from hashlib import sha256
-from api.globalSettings import GlobalSettings
+from .api.globalSettings import GlobalSettings
 
 
 def hash_file(path):
