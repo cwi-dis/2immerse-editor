@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 #
 # Global settings for this instance of the backend service.
 #
@@ -49,11 +50,11 @@ class GlobalSettings(object):
 
 def _get():
     props = GlobalSettings.__dict__
-    return {k: v for k, v in props.items() if k[:1] != "_"}
+    return {k: v for k, v in list(props.items()) if k[:1] != "_"}
 
 
 def _put(values):
-    for k, v in values.items():
+    for k, v in list(values.items()):
         setattr(GlobalSettings, k, v)
 
 if __name__ == '__main__':

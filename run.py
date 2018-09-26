@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from gevent.pywsgi import WSGIServer
 from app import app
 

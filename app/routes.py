@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from flask import render_template, abort, jsonify
 from hashlib import sha256
 import os

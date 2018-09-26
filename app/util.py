@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from hashlib import sha256
 from .api.globalSettings import GlobalSettings
 
