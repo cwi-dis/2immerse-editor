@@ -59,25 +59,6 @@ class MyLoggerAdapter(logging.LoggerAdapter):
         return msg, kwargs
 
 
-def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
-    if noKibana:
-        currentFormatterClass = logging.Formatter
-    else:
-        currentFormatterClass = MyFormatter
-    if logLevel:
-        for ll in logLevel.split(','):
-            if ':' in ll:
-                loggerToModify = logging.getLogger(ll.split(':')[0])
-                newLevel = getattr(logging, ll.split(':')[1])
-            else:
-                loggerToModify = logging.getLogger()
-                newLevel = getattr(logging, ll)
-            loggerToModify.setLevel(newLevel)
-
-    rootLogger = logging.getLogger()
-    rootLogger.handlers[0].setFormatter(currentFormatterClass())
-
-
 # Send stdout and stderr to the logger as well.
 class StreamToLogger(object):
     def __init__(self, logger, log_level=logging.INFO):
@@ -92,5 +73,28 @@ class StreamToLogger(object):
     def flush(self):
         pass
 
-sys.stdout = StreamToLogger(logging.getLogger('stdout'), logging.INFO)
-sys.stderr = StreamToLogger(logging.getLogger('stderr'), logging.INFO)
+_keep_stdout = sys.stdout
+_keep_stderr = sys.stderr
+
+def install(noKibana=False, logLevel=DEFAULT_LOG_CONFIG):
+    if noKibana:
+        currentFormatterClass = logging.Formatter
+        sys.stdout = _keep_stdout
+        sys.stderr = _keep_stderr
+    else:
+        currentFormatterClass = MyFormatter
+        sys.stdout = StreamToLogger(logging.getLogger('stdout'), logging.INFO)
+        sys.stderr = StreamToLogger(logging.getLogger('stderr'), logging.INFO)
+    if logLevel:
+        for ll in logLevel.split(','):
+            if ':' in ll:
+                loggerToModify = logging.getLogger(ll.split(':')[0])
+                newLevel = getattr(logging, ll.split(':')[1])
+            else:
+                loggerToModify = logging.getLogger()
+                newLevel = getattr(logging, ll)
+            loggerToModify.setLevel(newLevel)
+
+    rootLogger = logging.getLogger()
+    rootLogger.handlers[0].setFormatter(currentFormatterClass())
+
