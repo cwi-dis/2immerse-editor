@@ -28,6 +28,8 @@ class TestAPI(unittest.TestCase):
     def setUpClass(cls):
         homedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         server = os.path.join(homedir, 'run.py')
+        os.environ['KIBANA_SERVICE_URL'] = ""
+        os.putenv('KIBANA_SERVICE_URL', "")
         cmd = [sys.executable]
         if COVERAGE:
             # untested
@@ -36,7 +38,6 @@ class TestAPI(unittest.TestCase):
         cls.serverProcess = subprocess.Popen(cmd, cwd=homedir)
         cls.serverUrl = 'http://localhost:8000'
         cls.serverApi = cls.serverUrl + '/api/v1'
-        print('xxxjack', cls.serverProcess)
         time.sleep(2)
         
     @classmethod
