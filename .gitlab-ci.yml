@@ -105,7 +105,7 @@ test_py3:
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
     - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd test && KIBANA_SERVICE_URL="" LOGLEVEL="WARN" python -m unittest discover'
     - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static && apk add --no-cache git yarn && yarn install && yarn run jest --bail --coverage'
-    - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'apk add --no-cache python3 py3-pip && pip3 install -r requirements.txt && cd test && KIBANA_SERVICE_URL="" LOGLEVEL="WARN" python3 -m unittest discover'
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'apk add --no-cache python3 py3-pip && pip3 install -r requirements.txt && cd test && KIBANA_SERVICE_URL="" LOGLEVEL="WARN" python3 -m unittest discover'
   tags:
     - 2immerse
     - docker
