@@ -279,7 +279,7 @@ def document_request_broadcast(documentId):
     except KeyError:
         abort(404)
 
-    document.async().requestBroadcastToFrontends()
+    document.asynch().requestBroadcastToFrontends()
 
     return ""
 

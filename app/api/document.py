@@ -384,7 +384,7 @@ class Document(object):
         return self.settingsHandler
 
     @synchronized
-    def async(self):
+    def asynch(self):
         """Returns the document settings handler (after creating it if needed)"""
         if not self.asyncHandler:
             self.asyncHandler = DocumentAsync(self)
@@ -1030,7 +1030,7 @@ class DocumentEvents(object):
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
-        self.document.async().requestBroadcastToFrontends()
+        self.document.asynch().requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1088,7 +1088,7 @@ class DocumentEvents(object):
 
         self.document.companionTimelineIsActive = False
         self.document.clearError()
-        self.document.async().requestBroadcastToFrontends()
+        self.document.asynch().requestBroadcastToFrontends()
         return newElement.get(NS_XML('id'))
 
     @edit
@@ -1104,7 +1104,7 @@ class DocumentEvents(object):
         if oldName:
             element.attrib[NS_TRIGGER("oldName")] = oldName
             
-        self.document.async().requestBroadcastToFrontends()
+        self.document.asynch().requestBroadcastToFrontends()
         return True
 
     @edit
@@ -1364,13 +1364,13 @@ class DocumentServe(object):
 
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
-        rv = {'toTimeline' : self.document.async().getOutgoingConnectionInfo()}
+        rv = {'toTimeline' : self.document.asynch().getOutgoingConnectionInfo()}
         if not viewer and contextID is not None and self.contextID is None:
             self.logger.info('overriding contextID with %s' % contextID)
             self.contextID = contextID
             self.document._loggerExtra['contextID'] = contextID
         if not viewer:
-            rv['fromTimeline'] = self.document.async().getIncomingConnectionInfo()
+            rv['fromTimeline'] = self.document.asynch().getIncomingConnectionInfo()
         if contextID and not contextID in self.allContextIDs:
             self.allContextIDs.append(contextID)
         curClock, playing = self.document.remote()._getClockState()
@@ -1394,7 +1394,7 @@ class DocumentServe(object):
             rv['clockEpoch'] = clockEpoch
         self.logger.info('getLiveInfo(%s)' % contextID, extra=self.getLoggerExtra())
         self.document.forwardHandler = self
-        self.document.async().requestBroadcastToFrontends()
+        self.document.asynch().requestBroadcastToFrontends()
         return rv
 
     @synchronized
@@ -1421,7 +1421,7 @@ class DocumentServe(object):
                         self.logger.debug('_setDocumentState: element finished: %s, productionId %s' % (eltId, productionId))
                         if productionId:
                             self.document.events()._productionIdFinished(productionId)
-        self.document.async().requestBroadcastToFrontends()
+        self.document.asynch().requestBroadcastToFrontends()
 
     def _elementStateChanged(self, elt, eltState):
         """Timeline service has sent new state for this element. Return True if anything has changed."""
@@ -1486,7 +1486,7 @@ class DocumentServe(object):
         #
         # Forward to websocket listeners first
         #
-        self.document.async().forwardDocumentModifications(dict(generation=gen, operations=operations))
+        self.document.asynch().forwardDocumentModifications(dict(generation=gen, operations=operations))
         #
         # Now forward to REST listeners (code to be removed soon)
         #
