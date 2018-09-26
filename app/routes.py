@@ -1,14 +1,15 @@
 from __future__ import absolute_import
 from flask import render_template, abort, jsonify
 from hashlib import sha256
+import os
 
 from app import app
 from .util import hash_file, get_head_revision
 
-
-EDITOR_HASH = hash_file("./app/static/dist/editor.js")
-TRIGGER_HASH = hash_file("./app/static/dist/trigger.js")
-LANDINGPAGE_HASH = hash_file("./app/static/dist/landing_page.js")
+appdir = os.path.dirname(os.path.realpath(__file__))
+EDITOR_HASH = hash_file(os.path.join(appdir, "static", "dist", "editor.js"))
+TRIGGER_HASH = hash_file(os.path.join(appdir, "static", "dist", "trigger.js"))
+LANDINGPAGE_HASH = hash_file(os.path.join(appdir, "static", "dist", "landing_page.js"))
 
 
 @app.route("/")
