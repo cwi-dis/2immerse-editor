@@ -14,6 +14,7 @@ tests/coverage_html/
 tests/.coverage
 build/
 tests/report/
+test/htmlcov
 dist/
 test_*_tmp.xml
 .vscode/
