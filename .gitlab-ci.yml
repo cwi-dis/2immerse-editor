@@ -42,6 +42,7 @@ test_edge:
     - docker pull $CI_REGISTRY_IMAGE:latest
     - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'cd test && python -m unittest discover'
     - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'cd app/static && apk add --no-cache git yarn && yarn install && yarn run jest --bail --coverage'
+    - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'apk --no-cache python3 py3-pip && pip3 install -r requirements.txt && cd test && python3 -m unittest discover'
   tags:
     - 2immerse
     - docker
