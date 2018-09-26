@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 import re
 import threading
 import os
+import sys
 import time
 import requests
 from .globalSettings import GlobalSettings
@@ -29,6 +30,10 @@ INTERPOLATION = re.compile(r'\{[^}]+\}')
 OLD_EVENT_PARAMETERS = True
 NEW_EVENT_PARAMETERS = True
 
+if sys.version_info[0] < 3:
+    XML_ENCODING=""
+else:
+    XML_ENCODING="unicode"
 
 class NameSpace(object):
     def __init__(self, namespace, url):
@@ -116,7 +121,7 @@ class EditManager(object):
     def add(self, element, parent):
         """Called just after an element subtree has been added to its parent.
         At time of call, the element is already present in the tree."""
-        content = ET.tostring(element)
+        content = ET.tostring(element, encoding=XML_ENCODING)
         parentPos = list(parent).index(element)
         if parentPos > 0:
             prevSibling = parent[parentPos-1]
@@ -208,7 +213,7 @@ class Document(object):
                 self.load(request.args['url'])
                 return ''
         else:
-            return Response(ET.tostring(self._prepareForSave()), mimetype="application/xml")
+            return Response(ET.tostring(self._prepareForSave(), encoding=XML_ENCODING), mimetype="application/xml")
 
     @synchronized
     def _documentLoaded(self):
@@ -493,7 +498,7 @@ class Document(object):
         fp = open(filename, 'w')
         self._zapWhitespace()
         saveTree = self._prepareForSave()
-        fp.write(ET.tostring(saveTree))
+        fp.write(ET.tostring(saveTree, encoding=XML_ENCODING))
         self.clearError()
 
     @synchronized
@@ -575,7 +580,7 @@ class Document(object):
             assert len(list(element)) == 0
             return json.dumps(element.attrib)
         elif mimetype == 'application/xml':
-            return ET.tostring(element)
+            return ET.tostring(element, encoding=XML_ENCODING)
 
     @synchronized
     def _getXPath(self, elt):
@@ -1273,7 +1278,7 @@ class DocumentServe(object):
         """Get timeline document contents (xml) for this authoring document.
         At the moment, this is actually the whole authoring document itself."""
         self.logger.info('serving timeline.xml document', extra=self.getLoggerExtra())
-        return ET.tostring(self.tree.getroot())
+        return ET.tostring(self.tree.getroot(), encoding=XML_ENCODING)
 
     @synchronized
     def get_layout(self, viewer=False):
