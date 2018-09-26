@@ -45,7 +45,10 @@ class GlobalSettings(object):
 
     # Logging parameters for the authoring service
     noKibana = (kibanaService == "")
-    logLevel = 'werkzeug:WARN,INFO'
+    logLevel = os.getenv(
+        "LOGLEVEL",
+        'werkzeug:WARN,INFO'
+        )
 
 
 def _get():
