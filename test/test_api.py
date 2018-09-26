@@ -65,11 +65,13 @@ class TestAPI(unittest.TestCase):
         r = requests.put(self.serverApi + '/configuration', json={'mode' : 'tv'})
         r = requests.get(self.serverApi + '/configuration')
         rv = r.json()
-        self.assertDictContainsSubset({'mode':'tv'}, rv)
+        self.assertIn('mode', rv)
+        self.assertEqual('tv', rv['mode'])
         r = requests.put(self.serverApi + '/configuration', json={'mode' : 'standalone'})
         r = requests.get(self.serverApi + '/configuration')
         rv = r.json()
-        self.assertDictContainsSubset({'mode':'standalone'}, rv)
+        self.assertIn('mode', rv)
+        self.assertEqual('standalone', rv['mode'])
         
     def test_createDocument(self):
         r = requests.post(self.serverApi + '/document', data=DOCUMENT)
