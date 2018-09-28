@@ -3,7 +3,7 @@ import { ActionCreatorsMapObject } from "redux";
 import { Coords, PayloadAction, AsyncAction, findById } from "../util";
 import { actionCreators as masterActionCreators } from "./masters";
 
-export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>
+export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>;
 function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"): ADD_DEVICE {
   return {
     type: "ADD_DEVICE",
@@ -15,7 +15,7 @@ function addDevice(type: "personal" | "communal", name?: string, orientation?: "
   };
 }
 
-export type REMOVE_DEVICE = PayloadAction<"REMOVE_DEVICE", {id: string}>
+export type REMOVE_DEVICE = PayloadAction<"REMOVE_DEVICE", {id: string}>;
 function removeDevice(id: string): REMOVE_DEVICE {
   return {
     type: "REMOVE_DEVICE",

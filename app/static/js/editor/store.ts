@@ -14,7 +14,7 @@ export interface ApplicationState {
   masters: MasterState;
   screens: ScreenState;
   timelines: TimelineState;
-};
+}
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -29,6 +29,6 @@ const store = createStore(
 
 export function navigate(route: LocationDescriptor, state?: any): RouterAction {
   return store.dispatch(push(route, state));
-};
+}
 
 export default store;
