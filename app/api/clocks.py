@@ -60,7 +60,6 @@ if DEBUG_LOCKING:
 else:
     ClockLock = threading.RLock
 
-
 def synchronized(method):
     """Annotate a mthod to use the object lock"""
     def wrapper(self, *args, **kwargs):
@@ -68,12 +67,11 @@ def synchronized(method):
             return method(self, *args, **kwargs)
     return wrapper
 
-
 class PausableClock(object):
     """A clock (based on another clock) that can be pasued and resumed"""
-    def __init__(self, underlyingClock):
+    def __init__(self, underlyingClock, startRunning = False):
         self.epoch = 0
-        self.running = False
+        self.running = startRunning
         self.underlyingClock = underlyingClock
         self.originalUnderlyingClock = underlyingClock
         self.replacementTime = None
@@ -88,6 +86,14 @@ class PausableClock(object):
         if not self.running:
             return self.epoch
         return self.underlyingClock.now() - self.epoch
+
+    @synchronized
+    def offsetFromUnderlyingClock(self):
+        """Return offset by which the current time of the clock is greater than the current time of the underlying clock"""
+        if self.running:
+            return -self.epoch
+        else:
+            return self.now() - self.underlyingClock.now()
 
     def dumps(self):
         return None
@@ -113,6 +119,7 @@ class PausableClock(object):
 
     @synchronized
     def replaceUnderlyingClock(self, newClock):
+        """Set the underlying clock aside and temporarily use newClock as our underlying clock"""
         assert newClock
         assert self.underlyingClock == self.originalUnderlyingClock
         wasRunning = self.running
@@ -124,14 +131,16 @@ class PausableClock(object):
 
     @synchronized
     def restoreUnderlyingClock(self, restoreTime):
+        """Restore the underlying clock from the previous call to replaceUnderlying Clock. Reset clock is restoreTime is true.
+        Always return the clock adjustment (even when not restoring the time)."""
         assert self.underlyingClock != self.originalUnderlyingClock
         adjustment = 0
         wasRunning = self.running
         self.stop()
+        # Compute how far we have moved time forward while running on the replacement
+        # clock, and then possibly adjust accordingly
+        adjustment = self.replacementTime - self._now()
         if restoreTime:
-            # Compute how far we have moved time forward while running on the replacement
-            # clock, and then adjust accordingly
-            adjustment = self.replacementTime - self._now()
             self._adjust(adjustment)
         self.underlyingClock = self.originalUnderlyingClock
 
@@ -150,12 +159,11 @@ class PausableClock(object):
     def _adjust(self, adjustment):
         self.epoch += adjustment
 
-
 class CallbackPausableClock(PausableClock):
     """A pausable clock that also stores callbacks with certain times"""
 
-    def __init__(self, underlyingClock):
-        PausableClock.__init__(self, underlyingClock)
+    def __init__(self, underlyingClock, startRunning = False):
+        PausableClock.__init__(self, underlyingClock, startRunning)
         self.queue = queue.PriorityQueue()
         self.queueChanged = None
 
@@ -174,7 +182,7 @@ class CallbackPausableClock(PausableClock):
         return t-self._now()
 
     def sleepUntilNextEvent(self):
-        """Sleep until next callback. Do not use with multithreading."""
+        """Sleep until next callback, return True if we actually slept. Do not use with multithreading."""
         try:
             peek = self.queue.get(False)
         except queue.Empty:
@@ -185,6 +193,8 @@ class CallbackPausableClock(PausableClock):
         delta = t-self.now()
         if delta > 0:
             self.underlyingClock.sleep(delta)
+            return True
+        return False
 
     def schedule(self, delay, callback, *args, **kwargs):
         """Schedule a callback"""
@@ -197,6 +207,17 @@ class CallbackPausableClock(PausableClock):
         if self.queueChanged:
             self.queueChanged()
 
+    @synchronized
+    def flushEvents(self):
+        count = 0
+        while True:
+            try:
+                peek = self.queue.get(False)
+                count += 1
+            except queue.Empty:
+                break
+        return count
+                
     @synchronized
     def handleEvents(self, handler):
         """Retrieve all callbacks that are runnable"""
@@ -245,7 +266,6 @@ class CallbackPausableClock(PausableClock):
             t += adjustment
             self.queue.put((t, callback, args, kwargs))
 
-
 class FastClock(object):
     def __init__(self):
         self._now = 0
@@ -261,7 +281,6 @@ class FastClock(object):
 
     def getRate(self):
         return 1.0
-
 
 class SystemClock(object):
     def __init__(self):
