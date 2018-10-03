@@ -2,6 +2,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 import sys
+import platform
 from flask import Flask
 
 app = Flask(__name__)
@@ -18,6 +19,6 @@ def print_version(out=sys.stderr):
         branch, revision = util.get_head_revision()
     except IOError:
         pass
-    print('2immerse authoring tool backend, branch', branch, 'revision', revision, file=out)
+    print('2immerse authoring tool backend, branch %s, revision %s, python %s' % (branch, revision, platform.python_version()), file=out)
 
 print_version()
