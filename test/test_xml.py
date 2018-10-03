@@ -58,6 +58,15 @@ class TestXML(unittest.TestCase):
         self.assertEqual(result.strip(), '<firstChild2 attr="value" />')
         self.assertEqual(d._count(), DOCUMENT_COUNT)
 
+    def test_get_xml_rootedxpath(self):
+        d = document.Document(uuid.uuid4())
+        d.loadXml(DOCUMENT.strip())
+        x = d.xml()
+
+        result = x.get('/testDocument/first/firstChild2', 'application/xml')
+        self.assertEqual(result.strip(), '<firstChild2 attr="value" />')
+        self.assertEqual(d._count(), DOCUMENT_COUNT)
+
     def test_get_json(self):
         d = document.Document(uuid.uuid4())
         d.loadXml(DOCUMENT.strip())
