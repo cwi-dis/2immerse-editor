@@ -31,8 +31,12 @@ OLD_EVENT_PARAMETERS = True
 NEW_EVENT_PARAMETERS = True
 
 if sys.version_info[0] < 3:
+    def str23compat(item):
+        return unicode(str(item))
     XML_ENCODING=""
 else:
+    def str23compat(item):
+        return str(item)
     XML_ENCODING="unicode"
 
 class NameSpace(object):
@@ -251,7 +255,7 @@ class Document(object):
             match = FIND_ID_INDEX.match(id)
             if match:
                 num = int(match.group(2))
-                id = match.group(1) + '-' + str(num+1)
+                id = match.group(1) + '-' + str23compat(num+1)
             else:
                 id = id + '-1'
         elt.set(NS_XML("id"), id)
@@ -321,15 +325,9 @@ class Document(object):
                 match = FIND_ID_INDEX.match(id)
                 if match:
                     num = int(match.group(2))
-                    id = match.group(1) + '-' + str(num+1)
+                    id = match.group(1) + '-' + str23compat(num+1)
                 else:
                     id = id + '-1'
-            # xxxjack the following encode/decode mumbo-jumbo is temporary
-            # to work around py2/py3/future issues
-            try:
-                id = unicode(id)
-            except NameError:
-                pass
             e.set(NS_XML('id'), id)
         # Specific to tt: events
         if triggerAttributes:
@@ -339,15 +337,9 @@ class Document(object):
                     match = FIND_NAME_INDEX.match(name)
                     if match:
                         num = int(match.group(2))
-                        name = match.group(1) + ' (' + str(num+1) + ')'
+                        name = match.group(1) + ' (' + str23compat(num+1) + ')'
                     else:
                         name = name + ' (1)'
-                # xxxjack the following encode/decode mumbo-jumbo is temporary
-                # to work around py2/py3/future issues
-                try:
-                    name = unicode(name)
-                except NameError:
-                    pass
                 elt.set(NS_TRIGGER('name'), name)
             # Flag the new element as being newly copied (so it'll show up in the active list)
             elt.set(NS_TIMELINE_INTERNAL("state"), "new")
@@ -983,7 +975,7 @@ class DocumentEvents(object):
                 self.logger.error("Unexpected AVT: %s" % value, extra=self.getLoggerExtra())
                 exprValue = "{" + expr + "}"
 
-        exprValue = str(exprValue)
+        exprValue = str23compat(exprValue)
         value = value[:match.start()] + exprValue + value[match.end():]
         return value
 
@@ -995,7 +987,7 @@ class DocumentEvents(object):
         if epoch is not None:
             curTime = self.document.clock.now() - float(epoch)
             self.logger.debug("getClock(%s) = %f" % (self.document._getXPath(element), curTime), extra=self.getLoggerExtra())
-            return str(curTime)
+            return str23compat(curTime)
         self.logger.debug("getClock: %s has no tls:epoch, returning 0" % self.document._getXPath(element), extra=self.getLoggerExtra())
         # self.document.setError("Clock for %s used, but it is not running."%self.document._getXPath(element))
         return "0"
@@ -1271,7 +1263,7 @@ class DocumentServe(object):
         gen = int(rootElt.get(NS_AUTH("generation"), 0))
         if not sameValue:
             gen += 1
-        rootElt.set(NS_AUTH("generation"), str(gen))
+        rootElt.set(NS_AUTH("generation"), str23compat(gen))
         return gen
 
     @synchronized
@@ -1473,7 +1465,7 @@ class DocumentServe(object):
         else:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("state"), None)
         if newEpoch:
-            elt.set(NS_TIMELINE_INTERNAL("epoch"), str(newEpoch))
+            elt.set(NS_TIMELINE_INTERNAL("epoch"), str23compat(newEpoch))
         elif NS_TIMELINE_INTERNAL("epoch") in elt.attrib:
             elt.attrib.pop(NS_TIMELINE_INTERNAL("epoch"))
         if newClockRunning:
@@ -1624,9 +1616,9 @@ class DocumentAsync(threading.Thread):
         self.socket = SocketIO(websocket_service, verify=False)
         self.channel = self.socket.define(SocketIONamespace, "/trigger")
         
-        self.roomFrontend = str(self.document.documentId)
-        self.roomUpdates = 'toBackend-' + str(self.document.documentId)
-        self.roomModifications = 'toTimelines-' + str(self.document.documentId)
+        self.roomFrontend = str23compat(self.document.documentId)
+        self.roomUpdates = 'toBackend-' + str23compat(self.document.documentId)
+        self.roomModifications = 'toTimelines-' + str23compat(self.document.documentId)
         
         self.channel.on('STATUS', self.incomingDocumentStatus)
         
