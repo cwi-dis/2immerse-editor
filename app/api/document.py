@@ -7,8 +7,6 @@ from builtins import object
 from flask import Response, request, abort
 from socketIO_client import SocketIO, SocketIONamespace
 import urllib.request, urllib.error, urllib.parse
-import urllib.request, urllib.parse, urllib.error
-import urllib.parse
 import json
 import copy
 import xml.etree.ElementTree as ET
@@ -878,7 +876,7 @@ class DocumentEvents(object):
         if NS_TRIGGER("previewUrl") in elt.attrib:
             previewUrl = elt.get(NS_TRIGGER("previewUrl"))
             if previewUrl and self.document.base:
-                previewUrl = urllib.basejoin(self.document.base, previewUrl)
+                previewUrl = urllib.parse.urljoin(self.document.base, previewUrl)
             if previewUrl:
                 rv["previewUrl"] = previewUrl
         if NS_TRIGGER("longdesc") in elt.attrib:
