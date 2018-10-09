@@ -1278,21 +1278,21 @@ class DocumentServe(object):
         au:rawLayout element. This will change when the authoring tool starts modifying the
         layout document data."""
         self.logger.info('serving layout.json document', extra=self.getLoggerExtra())
+        layoutRefElement = self.tree.getroot().find('.//au:layoutRef', NAMESPACES)
+        if layoutRefElement:
+            layoutUrl = layoutRefElement.get('url', None)
+            if layoutUrl:
+                layoutUrl = urllib.parse.urljoin(self.document.base, layoutUrl)
+                r = requests.get(layoutUrl)
+                r.raise_for_status()
+                return r.text
+        self.logger.warn('get_layout: no au:layoutRef element, reverting to au:rawLayout')
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement is None:
             self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
             self.document.setError('No au:rawLayout element in document')
             abort(404, 'No au:rawLayout element in document')
         return rawLayoutElement.text
-
-    @synchronized
-    def put_layout(self, layoutJSON):
-        """Temporary method, stores the raw layout document data in the authoring document."""
-        self.logger.info('storing layout.json document', extra=self.getLoggerExtra())
-        rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
-        if rawLayoutElement is None:
-            rawLayoutElement = ET.SubElement(self.tree.getroot(), 'au:rawLayout')
-        rawLayoutElement.text = layoutJSON
 
     def get_client(self, timeline, layout, base=None, mode=None, viewer=False):
         """Return the client.api document that describes this dmapp"""

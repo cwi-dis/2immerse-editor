@@ -367,21 +367,6 @@ def get_layout_document(documentId):
     assert serve
     return Response(serve.get_layout(), mimetype="application/json")
 
-
-@app.route(API_ROOT + "/document/<uuid:documentId>/serve/layout.json", methods=["PUT"])
-def put_layout_document(documentId):
-    try:
-        document = api.documents[documentId]
-    except KeyError:
-        abort(404)
-    serve = document.serve()
-    assert serve
-    layoutJSON = request.get_data()  # Gets raw data, without parsing
-    _ = json.loads(layoutJSON)  # Assure it is actually json
-    serve.put_layout(layoutJSON)
-    return ''
-
-
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json")
 def get_client_document(documentId):
     try:
@@ -394,7 +379,6 @@ def get_client_document(documentId):
     docRoot = '%s/document/%s/serve/' % (get_docRoot(), documentId)
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'), mode=mode)
     return Response(config, mimetype="application/json")
-
 
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json", methods=["PUT"])
 def put_client_document(documentId):
