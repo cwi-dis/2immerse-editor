@@ -25,15 +25,10 @@ COPY ./client-certs/ /usr/local/share/ca-certificates
 RUN apk add --no-cache ca-certificates
 RUN update-ca-certificates
 
-# Install python2
-RUN apk add --no-cache python2 py2-pip py-gevent 
-RUN pip2 install -r requirements.txt
-
 # install python3
 RUN apk add --no-cache python3 py3-pip py-gevent
 RUN pip3 install -r requirements.txt
 
 
 EXPOSE 8000
-# CMD ["python3", "run.py"]
-CMD ["python2", "run.py"]
+CMD ["python3", "run.py"]
