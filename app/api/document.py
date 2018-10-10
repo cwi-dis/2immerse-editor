@@ -1291,7 +1291,7 @@ class DocumentServe(object):
             return r.text
 
         self.logger.warn('get_layout: no au:layoutRef element, reverting to au:rawLayout', extra=self.getLoggerExtra())
-        self.document.seterror('get_layout: no au:layoutRef element, reverting to au:rawLayout')
+        self.document.setError('get_layout: no au:layoutRef element, reverting to au:rawLayout')
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement is None:
             self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
@@ -1324,8 +1324,8 @@ class DocumentServe(object):
                 clientDoc = r.json()
             else:
                 # Try to load from document (backward compatibility)
-                self.logger.warn('get_layout: no au:clientRef element, reverting to au:rawClient', extra=self.getLoggerExtra())
-                self.document.seterror('get_layout: no au:clientRef element, reverting to au:rawClient')
+                self.logger.warn('get_client: no au:clientRef element, reverting to au:rawClient', extra=self.getLoggerExtra())
+                self.document.setError('get_client: no au:clientRef element, reverting to au:rawClient')
                 clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
                 if clientExtraElement is not None and clientExtraElement.text:
                     clientDoc = json.loads(clientExtraElement.text)
