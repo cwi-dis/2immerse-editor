@@ -1281,12 +1281,17 @@ class DocumentServe(object):
         layoutRefElement = self.tree.getroot().find('.//au:layoutRef', NAMESPACES)
         if layoutRefElement:
             layoutUrl = layoutRefElement.get('url', None)
-            if layoutUrl:
-                layoutUrl = urllib.parse.urljoin(self.document.base, layoutUrl)
-                r = requests.get(layoutUrl)
-                r.raise_for_status()
-                return r.text
-        self.logger.warn('get_layout: no au:layoutRef element, reverting to au:rawLayout')
+            if not layoutUrl:
+                self.logger.error('get_layout: au:layoutRef element misses required url attribute', extra=self.getLoggerExtra())
+                self.document.setError('get_layout: au:layoutRef element misses required url attribute')
+                abort(404, 'no url in au:layoutRef element')
+            layoutUrl = urllib.parse.urljoin(self.document.base, layoutUrl)
+            r = requests.get(layoutUrl)
+            r.raise_for_status()
+            return r.text
+
+        self.logger.warn('get_layout: no au:layoutRef element, reverting to au:rawLayout', extra=self.getLoggerExtra())
+        self.document.seterror('get_layout: no au:layoutRef element, reverting to au:rawLayout')
         rawLayoutElement = self.tree.getroot().find('.//au:rawLayout', NAMESPACES)
         if rawLayoutElement is None:
             self.logger.error('get_layout: no au:rawLayout element in document', extra=self.getLoggerExtra())
@@ -1299,33 +1304,51 @@ class DocumentServe(object):
         self.logger.info('serving client.json document', extra=self.getLoggerExtra())
         self.lastClientServed = time.time()
         startPaused = self.document.settings().startPaused
-
+        #
+        # Get client.json base either from the base argument or from the au:clientRef element
+        #
         if base:
             clientDocData = urllib.request.urlopen(base).read()
+            clientDoc = json.loads(clientDocData)
         else:
-            clientDocPath = os.path.join(os.path.dirname(__file__), 'preview-client.json')
-            clientDocData = open(clientDocPath).read()
-        clientDoc = json.loads(clientDocData)
-        #
-        # Next we override from the document (if overrides are present)
-        #
-        clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
-        if clientExtraElement is not None and clientExtraElement.text:
-            clientExtra = json.loads(clientExtraElement.text)
-            for k, v in list(clientExtra.items()):
-                clientDoc[k] = v
+            clientRefElement = self.tree.getroot().find('.//au:clientRef', NAMESPACES)
+            if clientRefElement:
+                clientUrl = clientRefElement.get('url', None)
+                if not clientUrl:
+                    self.logger.error('get_client: au:clientRef element misses required url attribute', extra=self.getLoggerExtra())
+                    self.document.setError('get_client: au:clientRef element misses required url attribute')
+                    abort(404, 'no url in au:clientRef element')
+                clientUrl = urllib.parse.urljoin(self.document.base, clientUrl)
+                r = requests.get(clientUrl)
+                r.raise_for_status()
+                clientDoc = r.json()
+            else:
+                # Try to load from document (backward compatibility)
+                self.logger.warn('get_layout: no au:clientRef element, reverting to au:rawClient', extra=self.getLoggerExtra())
+                self.document.seterror('get_layout: no au:clientRef element, reverting to au:rawClient')
+                clientExtraElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
+                if clientExtraElement is not None and clientExtraElement.text:
+                    clientDoc = json.loads(clientExtraElement.text)
+        assert(clientDoc)
         #
         # We do substitution manually, for now. May want to use a templating system at some point.
         #
-        clientDoc['serviceInput'] = dict(
-                layout=layout,
-                timeline=timeline,
-                )
-        clientDoc['serviceUrls'] = dict(
-                layoutService=GlobalSettings.layoutService,
-                websocketService=GlobalSettings.websocketService,
-                timelineService=GlobalSettings.timelineService,
-                )
+        if not 'serviceInput' in clientDoc:
+            clientDoc['serviceInput'] = dict()
+        clientDoc['serviceInput']['layout'] = layout
+        clientDoc['serviceInput']['timeline'] = timeline
+        #
+        # See if we want to override services
+        #
+        if not 'serviceUrls' in clientDoc:
+            clientDoc['serviceUrls'] = dict()
+        if GlobalSettings.layoutService:
+            clientDoc['layoutService'] = GlobalSettings.layoutService
+        if GlobalSettings.websocketService:
+            clientDoc['websocketService'] = GlobalSettings.websocketService
+        if GlobalSettings.timelineService:
+            clientDoc['timelineService'] = GlobalSettings.timelineService
+
         #
         # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
         if self.document.settings().enableControls:
@@ -1333,6 +1356,8 @@ class DocumentServe(object):
                 rcValue = dict(playing=False)
             else:
                 rcValue = True
+            if not 'debugOptions' in clientDoc:
+                clientDoc['debugOptions'] = dict()
             clientDoc['debugOptions']['remoteControlTimelineMasterOverride'] = rcValue
         #
         # And we set the playback mode (tv or standalone) based on setting supplied
@@ -1544,7 +1569,7 @@ class DocumentSettings(object):
         self.document = document
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('settings')
-
+        self.timelineService = None
         self.startPaused = False
         self.playerMode = GlobalSettings.mode
         self.previewFromWebcam = False
@@ -1590,8 +1615,13 @@ class DocumentSettings(object):
         contextID = self.document.serve().contextID
         if contextID:
             kibanaCommand = "#/discover/All-2-Immerse-prefixed-logs-without-Websocket-Service?_g=(refreshInterval:(display:'10%%20seconds',pause:!f,section:1,value:10000),time:(from:now-15m,mode:quick,to:now))&_a=(columns:!(sourcetime,source,subSource,verb,logmessage,contextID,message),filters:!(),index:'logstash-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'rawmessage:%%22%%2F%%5E2-Immerse%%2F%%22%%20AND%%20NOT%%20source:%%22WebsocketService%%22%%20AND%%20contextID:%%22%s%%22')),sort:!(sourcetime,desc))"
-            rv["Kibana Log"] = GlobalSettings.kibanaService + (kibanaCommand % contextID)
-            rv["Timeline Dump"] = GlobalSettings.timelineService + '/context/' + contextID + '/dump'
+            if GlobalSettings.kibanaService:
+                rv["Kibana Log"] = GlobalSettings.kibanaService + (kibanaCommand % contextID)
+            timelineService = self.timelineService
+            if not timelineService:
+                timelineService = GlobalSettings.timelineService
+            if timelineService:
+                rv["Timeline Dump"] = timelineService + '/context/' + contextID + '/dump'
         return rv
 
 

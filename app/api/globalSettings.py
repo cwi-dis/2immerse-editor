@@ -21,11 +21,11 @@ class GlobalSettings(object):
     # URLs for 2immerse services
     layoutService = os.getenv(
         "LAYOUT_SERVICE_URL",
-        "https://layout-service.edge.platform.2immerse.eu/layout/v4"
+        None
     )
     websocketService = os.getenv(
         "WEBSOCKET_SERVICE_URL",
-        "https://websocket-service.edge.platform.2immerse.eu/"
+        None
     )
     websocketInternalService = os.getenv(
         "WEBSOCKET_INTERNAL_SERVICE_URL",
@@ -33,11 +33,11 @@ class GlobalSettings(object):
     )
     timelineService = os.getenv(
         "TIMELINE_SERVICE_URL",
-        "https://timeline-service.edge.platform.2immerse.eu/timeline/v1"
+        None
     )
     kibanaService = os.getenv(
         "KIBANA_SERVICE_URL",
-        "https://platform.2immerse.eu/kibana/app/kibana"
+        None
     )
 
     # Mode in which the preview player runs (tv or standalone)
