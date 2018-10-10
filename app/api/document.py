@@ -1279,7 +1279,7 @@ class DocumentServe(object):
         layout document data."""
         self.logger.info('serving layout.json document', extra=self.getLoggerExtra())
         layoutRefElement = self.tree.getroot().find('.//au:layoutRef', NAMESPACES)
-        if layoutRefElement:
+        if layoutRefElement != None:
             layoutUrl = layoutRefElement.get('url', None)
             if not layoutUrl:
                 self.logger.error('get_layout: au:layoutRef element misses required url attribute', extra=self.getLoggerExtra())
@@ -1312,7 +1312,7 @@ class DocumentServe(object):
             clientDoc = json.loads(clientDocData)
         else:
             clientRefElement = self.tree.getroot().find('.//au:clientRef', NAMESPACES)
-            if clientRefElement:
+            if clientRefElement != None:
                 clientUrl = clientRefElement.get('url', None)
                 if not clientUrl:
                     self.logger.error('get_client: au:clientRef element misses required url attribute', extra=self.getLoggerExtra())
