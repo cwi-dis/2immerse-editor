@@ -1343,11 +1343,11 @@ class DocumentServe(object):
         if not 'serviceUrls' in clientDoc:
             clientDoc['serviceUrls'] = dict()
         if GlobalSettings.layoutService:
-            clientDoc['layoutService'] = GlobalSettings.layoutService
+            clientDoc['serviceUrls']['layoutService'] = GlobalSettings.layoutService
         if GlobalSettings.websocketService:
-            clientDoc['websocketService'] = GlobalSettings.websocketService
+            clientDoc['serviceUrls']['websocketService'] = GlobalSettings.websocketService
         if GlobalSettings.timelineService:
-            clientDoc['timelineService'] = GlobalSettings.timelineService
+            clientDoc['serviceUrls']['timelineService'] = GlobalSettings.timelineService
 
         #
         # And we add the remoteControlTimelineMasterOverride to debugOptions so we can remotely control the player
