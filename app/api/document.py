@@ -1377,7 +1377,14 @@ class DocumentServe(object):
         # And allow client-api to differentiate between viewer and preview player
         #
         clientDoc["authoringLaunchMode"] = "viewer" if viewer else "preview"
-        
+        #
+        # And change all toplevel relative URLs to be relative to base
+        #
+        for k in clientDoc.keys():
+            if k.lower()[-3:] == 'url':
+                newUrl = urllib.parse.urljoin(self.document.base, clientDoc[k])
+                clientDoc[k] = newUrl
+                
         return json.dumps(clientDoc)
 
     @synchronized
