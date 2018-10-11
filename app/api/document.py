@@ -1580,10 +1580,17 @@ class DocumentSettings(object):
         self.previewFromWebcam = False
         self.enableControls = False
         self.viewerExtraOffset = ""
+        self._initSettings()
 
     def getLoggerExtra(self):
         return self.document.getLoggerExtra()
 
+    def _initSettings(self):
+        elt = self.tree.getroot().find('.//au:settings', NAMESPACES)
+        if elt != None:
+            kwargs = dict(elt.attrib)
+            self.set(**kwargs)
+            
     def get(self, frontend, backend):
         return dict(
             startPaused=self.startPaused,
