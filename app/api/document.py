@@ -1344,7 +1344,7 @@ class DocumentServe(object):
             clientDoc['serviceInput'] = dict()
         clientDoc['serviceInput']['layout'] = layout
         clientDoc['serviceInput']['timeline'] = timeline
-        clientDoc['varations'] = []
+        clientDoc['variations'] = []
         #
         # See if we want to override services
         #
