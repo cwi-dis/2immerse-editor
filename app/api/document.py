@@ -1394,16 +1394,6 @@ class DocumentServe(object):
             if isinstance(v, dict):
                 self._fixUrls(v)
             
-
-    @synchronized
-    def put_client(self, clientJSON):
-        """Temporary method, store per-dmapp client.json settings in the authoring document"""
-        self.logger.info('storing additions to client.json document', extra=self.getLoggerExtra())
-        rawClientElement = self.tree.getroot().find('.//au:rawClient', NAMESPACES)
-        if rawClientElement is None:
-            rawClientElement = ET.SubElement(self.tree.getroot(), 'au:rawClient')
-        rawClientElement.text = layoutJSON
-
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.asynch().getOutgoingConnectionInfo()}

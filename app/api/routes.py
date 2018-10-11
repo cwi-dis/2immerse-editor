@@ -380,19 +380,6 @@ def get_client_document(documentId):
     config = serve.get_client(timeline=docRoot+'timeline.xml', layout=docRoot+'layout.json', base=request.args.get('base'), mode=mode)
     return Response(config, mimetype="application/json")
 
-@app.route(API_ROOT + "/document/<uuid:documentId>/serve/client.json", methods=["PUT"])
-def put_client_document(documentId):
-    try:
-        document = api.documents[documentId]
-    except KeyError:
-        abort(404)
-    serve = document.serve()
-    assert serve
-    clientJSON = request.get_data()  # Gets raw data, without parsing
-    _ = json.loads(clientJSON)  # Assure it is actually json
-    serve.put_client(clientJSON)
-    return ''
-
 @app.route(API_ROOT + "/document/<uuid:documentId>/serve/getliveinfo", methods=["GET"])
 def get_liveinfo(documentId):
     try:
