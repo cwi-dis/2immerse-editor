@@ -1383,7 +1383,9 @@ class DocumentServe(object):
         # And allow client-api to differentiate between viewer and preview player
         #
         clientDoc["authoringLaunchMode"] = "viewer" if viewer else "preview"
-    
+                
+        return json.dumps(clientDoc)
+        
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.asynch().getOutgoingConnectionInfo()}
