@@ -1338,11 +1338,13 @@ class DocumentServe(object):
         assert(clientDoc)
         #
         # We do substitution manually, for now. May want to use a templating system at some point.
+        # Insert the correct tineline and layout documents (pointing back to us) and remove the variations.
         #
         if not 'serviceInput' in clientDoc:
             clientDoc['serviceInput'] = dict()
         clientDoc['serviceInput']['layout'] = layout
         clientDoc['serviceInput']['timeline'] = timeline
+        clientDoc['varations'] = []
         #
         # See if we want to override services
         #
