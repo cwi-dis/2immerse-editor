@@ -1586,7 +1586,7 @@ class DocumentSettings(object):
         return self.document.getLoggerExtra()
 
     def _initSettings(self):
-        elt = self.tree.getroot().find('.//au:settings', NAMESPACES)
+        elt = self.document.tree.getroot().find('.//au:settings', NAMESPACES)
         if elt != None:
             kwargs = dict(elt.attrib)
             self.set(**kwargs)
