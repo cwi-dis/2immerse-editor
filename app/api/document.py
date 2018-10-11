@@ -1383,8 +1383,24 @@ class DocumentServe(object):
         # And allow client-api to differentiate between viewer and preview player
         #
         clientDoc["authoringLaunchMode"] = "viewer" if viewer else "preview"
+
+        #
+        # And change all toplevel relative URLs to be relative to base
+        #
+        self._fixUrls(clientDoc)
                 
         return json.dumps(clientDoc)
+        
+    def _fixUrls(self, clientDict):
+        """Recursively do a basejoin on all fields ending in url"""
+        for k in clientDict.keys():
+            v = clientDict[k]
+            if k.lower()[-3:] == 'url':
+                newUrl = urllib.parse.urljoin(self.document.base, v)
+                clientDict[k] = newUrl
+            if isinstance(v, dict):
+                self._fixUrls(v)
+            
         
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
