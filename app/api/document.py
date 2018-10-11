@@ -1380,12 +1380,20 @@ class DocumentServe(object):
         #
         # And change all toplevel relative URLs to be relative to base
         #
-        for k in clientDoc.keys():
-            if k.lower()[-3:] == 'url':
-                newUrl = urllib.parse.urljoin(self.document.base, clientDoc[k])
-                clientDoc[k] = newUrl
+        self._fixUrls(clientDoc)
                 
         return json.dumps(clientDoc)
+        
+    def _fixUrls(self, clientDict):
+        """Recursively do a basejoin on all fields ending in url"""
+        for k in clientDict.keys():
+            v = clientDict[k]
+            if k.lower()[-3:] == 'url':
+                newUrl = urllib.parse.urljoin(self.document.base, v)
+                clientDict[k] = newUrl
+            if isinstance(v, dict):
+                self._fixUrls(v)
+            
 
     @synchronized
     def put_client(self, clientJSON):
