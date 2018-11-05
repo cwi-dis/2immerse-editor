@@ -2,7 +2,7 @@ version: '2.2'
 services:
   web:
     build: .
-    command: python run.py
+    command: python3 run.py
     volumes:
       - .:/code
     ports:
