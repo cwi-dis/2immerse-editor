@@ -54,47 +54,12 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   };
 }
 
-export type ASSIGN_MASTER = PayloadAction<"ASSIGN_MASTER", {accessPath: Array<number>, masterId: string}>;
-function assignMaster(accessPath: Array<number>, masterId: string): ASSIGN_MASTER {
-  return {
-    type: "ASSIGN_MASTER",
-    payload: {
-      accessPath,
-      masterId
-    }
-  };
-}
-
-export function assignMasterToTree(accessPath: Array<number>, masterId: string): AsyncAction<void> {
-  return (dispatch, getState) => {
-    const { chapters } = getState();
-
-    const assignMasterRecursively = (accessPath: Array<number>) => {
-      dispatch(assignMaster(accessPath, masterId));
-
-      const keyPath = generateChapterKeyPath(accessPath);
-      const chapter: Chapter = chapters.getIn(keyPath);
-
-      if (chapter.children) {
-        chapter.children.forEach((childChapter, i) => {
-          const childPath = accessPath.slice().concat(i);
-          assignMasterRecursively(childPath);
-        });
-      }
-    };
-
-    assignMasterRecursively(accessPath);
-  };
-}
-
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
-  assignMaster: (accessPath: Array<number>, masterId: string) => ASSIGN_MASTER;
-  assignMasterToTree: (accessPath: Array<number>, masterId: string) => AsyncAction<void>;
 }
 
 export const actionCreators: ChapterActions = {
@@ -103,6 +68,4 @@ export const actionCreators: ChapterActions = {
   addChapterChild,
   renameChapter,
   removeChapter,
-  assignMaster,
-  assignMasterToTree
 };

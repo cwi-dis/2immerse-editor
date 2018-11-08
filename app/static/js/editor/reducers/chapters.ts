@@ -8,11 +8,10 @@ type MasterId = string;
 export interface ChapterAttributes {
   id: string;
   name?: Nullable<string>;
-  masterLayouts?: List<MasterId>;
   children?: List<Chapter>;
 }
 
-export class Chapter extends Record<ChapterAttributes>({id: "", name: null, masterLayouts: List(), children: List()}) {
+export class Chapter extends Record<ChapterAttributes>({id: "", name: null, children: List()}) {
   constructor(params?: ChapterAttributes) {
     params ? super(params) : super();
   }
@@ -92,19 +91,6 @@ actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTE
 
     return head.concat(children).concat(tail);
   });
-});
-
-actionHandler.addHandler("ASSIGN_MASTER", (state, action: actions.ASSIGN_MASTER) => {
-  const { accessPath, masterId } = action.payload;
-  const keyPath = generateChapterKeyPath(accessPath).push("masterLayouts");
-
-  const masterLayouts: List<MasterId> = state.getIn(keyPath);
-
-  if (masterLayouts.contains(masterId)) {
-    return state;
-  }
-
-  return state.updateIn(keyPath, (masters) => masters.push(masterId));
 });
 
 export default actionHandler.getReducer();
