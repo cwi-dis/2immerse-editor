@@ -9,7 +9,6 @@ describe("Chapter class", () => {
 
     expect(chapter.id).toEqual("");
     expect(chapter.name).toEqual(null);
-    expect(chapter.masterLayouts).toEqual(List());
     expect(chapter.children).toEqual(List());
   });
 
@@ -18,7 +17,6 @@ describe("Chapter class", () => {
 
     expect(chapter.id).toEqual("chapter1");
     expect(chapter.name).toEqual("chapter name");
-    expect(chapter.masterLayouts).toEqual(List());
     expect(chapter.children).toEqual(List());
   });
 
@@ -26,13 +24,11 @@ describe("Chapter class", () => {
     const chapter = new Chapter({
       id: "chapter1",
       name: "another chapter name",
-      masterLayouts: List(["masterLayout"]),
       children: List([new Chapter({id: "chapter1.1"})])
     });
 
     expect(chapter.id).toEqual("chapter1");
     expect(chapter.name).toEqual("another chapter name");
-    expect(chapter.masterLayouts).toEqual(List(["masterLayout"]));
     expect(chapter.children).toEqual(List([new Chapter({id: "chapter1.1"})]));
   });
 });
@@ -202,70 +198,6 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(1);
     expect(transformedState.get(0).name).toEqual("new name");
-  });
-
-  it("should assign a master layout to a chapter on ASSIGN_MASTER", () => {
-    const state: ChapterState = List([
-      new Chapter({ id: "chapter1" })
-    ]);
-
-    const transformedState = reducer(
-      state,
-      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
-    );
-
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
-  });
-
-  it("should not assign the same master layout to a chapter more than once on ASSIGN_MASTER", () => {
-    const state: ChapterState = List([
-      new Chapter({ id: "chapter1" })
-    ]);
-
-    let transformedState = reducer(
-      state,
-      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
-    );
-
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
-
-    transformedState = reducer(
-      transformedState,
-      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
-    );
-
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
-  });
-
-  it("should assign multiple master layouts to a chapter on ASSIGN_MASTER", () => {
-    const state: ChapterState = List([
-      new Chapter({ id: "chapter1" })
-    ]);
-
-    let transformedState = reducer(
-      state,
-      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master1" }} as any
-    );
-
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
-
-    transformedState = reducer(
-      transformedState,
-      { type: "ASSIGN_MASTER", payload: { accessPath: [0], masterId: "master2" }} as any
-    );
-
-    expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).masterLayouts.count()).toEqual(2);
-    expect(transformedState.get(0).masterLayouts.get(0)).toEqual("master1");
-    expect(transformedState.get(0).masterLayouts.get(1)).toEqual("master2");
   });
 
   it("should add a new node as child of a leaf node on ADD_CHAPTER_CHILD", () => {
