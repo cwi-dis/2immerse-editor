@@ -1,7 +1,7 @@
 import * as React from "react";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
-import { Group, Layer, Stage } from "react-konva";
+import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
 import { RouterProps } from "../../util";
@@ -128,13 +128,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br /><br />
 
-          <Stage width={this.state.mainColumnWidth} height={40 * timelineTracks!.count() + 14} style={{margin: "0 0 0 -18px"}}>
+          <Stage width={this.state.mainColumnWidth} height={40 * timelineTracks!.count() + 15} style={{margin: "0 0 0 -18px"}}>
             <Layer>
               <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
               {timelineTracks!.map((timelineTrack, i) => {
                 return (
-                  <Group key={i} y={i * 40 + 14}>
+                  <Group key={i} y={i * 40 + 15}>
                     <TimelineTrack
                       elements={timelineTrack.timelineElements!}
                       locked={timelineTrack.locked}
@@ -148,6 +148,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   </Group>
                 );
               })}
+
+              <Line points={[0, 14.5, this.state.mainColumnWidth, 14.5]} stroke="#161616" strokeWidth={1} />
             </Layer>
           </Stage>
           <br />

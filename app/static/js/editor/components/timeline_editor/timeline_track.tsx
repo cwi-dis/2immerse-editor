@@ -135,7 +135,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
           y={0}
           width={width}
           height={height}
-          fill="#555555"
+          fill="#252525"
           ref={(e) => this.absoluteYPosition = e && (e as any).getAbsolutePosition().y}
         />
         {elements.map((element, i) => {
@@ -160,7 +160,7 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
         })}
         {trackLock()}
         {scrubber()}
-        <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#262626" strokeWidth={1} />
+        <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#161616" strokeWidth={1} />
       </Group>
     );
   }
