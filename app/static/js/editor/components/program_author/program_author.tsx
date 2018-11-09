@@ -28,7 +28,7 @@ interface ProgramAuthorProps {
 
 class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private readonly defaultBoxSize: Coords = [200, 120];
-  private readonly boxMargin: Coords = [40, 70];
+  private readonly boxMargin: Coords = [40, 55];
   private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;

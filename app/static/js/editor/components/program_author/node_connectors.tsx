@@ -24,7 +24,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
   const centerX = x + width / 2;
 
   if (hasChildren) {
-    const bottomY = y + height + 57;
+    const bottomY = y + height + 39;
     const endY = y + height + yMargin - 10;
 
     connectorLines.push(

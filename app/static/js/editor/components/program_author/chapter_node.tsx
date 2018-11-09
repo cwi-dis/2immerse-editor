@@ -100,7 +100,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
           <BoxHandle
             onClick={this.props.addChapterClick.bind(null, currentPath, "bottom")}
             x={x + boxWidth / 2 - 7}
-            y={y + boxHeight + 42}
+            y={y + boxHeight + 24}
             size={14}
           />
           <Text
@@ -120,7 +120,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
       );
     } else if (hasChildren) {
       const startX = x + boxWidth / 2;
-      const startY = y + boxHeight + 42;
+      const startY = y + boxHeight + 24;
 
       return (
         <Line
