@@ -140,9 +140,6 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     const [x, y] = position;
     const [boxWidth, boxHeight] = size;
 
-    const masterLayouts = chapter.get("masterLayouts")!;
-    const masterLabel = masterLayouts.isEmpty() ? "(no masters assigned)" : masterLayouts.join(", ");
-
     let rectRef: Nullable<any>;
     let textRef: Nullable<any>;
 
@@ -186,17 +183,6 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
           fontStyle="bold"
           fontSize={12}
           key={`label.${chapter.get("id")}`}
-        />
-        <Text
-          text={masterLabel}
-          align="center"
-          x={x}
-          y={y + boxHeight + 24}
-          width={boxWidth}
-          fill="#777777"
-          fontSize={12}
-          fontStyle="italic"
-          key={`masters.${chapter.get("id")}`}
         />
       </Group>
     );
