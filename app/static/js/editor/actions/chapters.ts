@@ -97,12 +97,30 @@ function addChapterAfterAndAddTracks(accessPath: Array<number>): AsyncAction<voi
   };
 }
 
+function addChapterChildAndAddTracks(accessPath: Array<number>): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addChapterChild(accessPath));
+
+    const { screens: { previewScreens } } = getState();
+    const regionIds = previewScreens.reduce((acc, screen) => {
+      return acc.concat(screen.get("regions").map((region) => region.id));
+    }, List<string>());
+
+    accessPath.push(0);
+
+    regionIds.forEach((regionId) => {
+      dispatch(addTimelineTrackToChapter(accessPath, regionId, false));
+    });
+  };
+}
+
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterAfterAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterBeforeAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
+  addChapterChildAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
   addTimelineTrackToChapter: (accessPath: Array<number>, regionId: string, locked: boolean) => ADD_TIMELINE_TRACK_TO_CHAPTER;
@@ -114,6 +132,7 @@ export const actionCreators: ChapterActions = {
   addChapterBefore,
   addChapterBeforeAndAddTracks,
   addChapterChild,
+  addChapterChildAndAddTracks,
   renameChapter,
   removeChapter,
   addTimelineTrackToChapter
