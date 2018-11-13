@@ -1,4 +1,5 @@
 import { ActionCreatorsMapObject } from "redux";
+import { List } from "immutable";
 import { AsyncAction, PayloadAction, generateChapterKeyPath } from "../util";
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
@@ -64,9 +65,25 @@ function addTimelineTrackToChapter(accessPath: Array<number>, regionId: string, 
   };
 }
 
+function addChapterBeforeAndAddTracks(accessPath: Array<number>): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addChapterBefore(accessPath));
+
+    const { screens: { previewScreens } } = getState();
+    const regionIds = previewScreens.reduce((acc, screen) => {
+      return acc.concat(screen.get("regions").map((region) => region.id));
+    }, List<string>());
+
+    regionIds.forEach((regionId) => {
+      dispatch(addTimelineTrackToChapter(accessPath, regionId, false));
+    });
+  };
+}
+
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
+  addChapterBeforeAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
@@ -75,6 +92,7 @@ export interface ChapterActions extends ActionCreatorsMapObject {
 
 export const actionCreators: ChapterActions = {
   addChapterBefore,
+  addChapterBeforeAndAddTracks,
   addChapterAfter,
   addChapterChild,
   renameChapter,
