@@ -75,11 +75,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 
   private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
     if (handlePosition === "left") {
-      this.props.chapterActions.addChapterBefore(accessPath);
+      this.props.chapterActions.addChapterBeforeAndAddTracks(accessPath);
     } else if (handlePosition === "right") {
-      this.props.chapterActions.addChapterAfter(accessPath);
+      this.props.chapterActions.addChapterAfterAndAddTracks(accessPath);
     } else {
-      this.props.chapterActions.addChapterChild(accessPath);
+      this.props.chapterActions.addChapterChildAndAddTracks(accessPath);
     }
   }
 
