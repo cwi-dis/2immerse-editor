@@ -2,7 +2,7 @@ import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, generateChapterKeyPath, Nullable } from "../util";
 import * as actions from "../actions/chapters";
-import { Timeline } from "./timelines";
+import { Timeline, TimelineTrack } from "./timelines";
 
 export interface ChapterAttributes {
   id: string;
@@ -90,6 +90,19 @@ actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTE
     const tail = chapters.slice(nodeIndex + 1);
 
     return head.concat(children).concat(tail);
+  });
+});
+
+actionHandler.addHandler("ADD_TIMELINE_TRACK_TO_CHAPTER", (state, action: actions.ADD_TIMELINE_TRACK_TO_CHAPTER) => {
+  const { accessPath, regionId, locked } = action.payload;
+  const keyPath = generateChapterKeyPath(accessPath).concat(["timeline", "timelineTracks"]);
+
+  return state.updateIn(keyPath, (tracks: List<TimelineTrack>) => {
+    return tracks.push(new TimelineTrack({
+      id: shortid.generate(),
+      regionId,
+      locked
+    }));
   });
 });
 
