@@ -80,8 +80,26 @@ function addChapterBeforeAndAddTracks(accessPath: Array<number>): AsyncAction<vo
   };
 }
 
+function addChapterAfterAndAddTracks(accessPath: Array<number>): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addChapterAfter(accessPath));
+
+    const { screens: { previewScreens } } = getState();
+    const regionIds = previewScreens.reduce((acc, screen) => {
+      return acc.concat(screen.get("regions").map((region) => region.id));
+    }, List<string>());
+
+    accessPath[accessPath.length - 1] += 1;
+
+    regionIds.forEach((regionId) => {
+      dispatch(addTimelineTrackToChapter(accessPath, regionId, false));
+    });
+  };
+}
+
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
+  addChapterAfterAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterBeforeAndAddTracks: (accessPath: Array<number>) => AsyncAction<void>;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
@@ -91,9 +109,10 @@ export interface ChapterActions extends ActionCreatorsMapObject {
 }
 
 export const actionCreators: ChapterActions = {
+  addChapterAfter,
+  addChapterAfterAndAddTracks,
   addChapterBefore,
   addChapterBeforeAndAddTracks,
-  addChapterAfter,
   addChapterChild,
   renameChapter,
   removeChapter,
