@@ -68,43 +68,11 @@ function placeRegionOnScreen(screenId: string, position: Coords, size: Coords): 
   };
 }
 
-function removeDeviceAndUpdateMasters(id: string): AsyncAction<void> {
-  return (dispatch, getState) => {
-    const { currentScreen } = getState().screens;
-
-    if (currentScreen === id) {
-      dispatch(updateSelectedScreen(undefined));
-    }
-
-    dispatch(removeDevice(id));
-    dispatch(masterActionCreators.removeScreenFromLayouts(id));
-  };
-}
-
-function undoLastSplitAndUpdateMasters(screenId: string): AsyncAction<void> {
-  return (dispatch, getState) => {
-    const result = findById(getState().screens.previewScreens, screenId);
-
-    if (result) {
-      const [, screen] = result;
-
-      if (screen.regions.count() > 1) {
-        const regionId = screen.regions.last()!.id;
-
-        dispatch(undoLastSplit(screenId));
-        dispatch(masterActionCreators.removeRegionFromLayouts(regionId));
-      }
-    }
-  };
-}
-
 export interface ScreenActions extends ActionCreatorsMapObject {
   addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait") => ADD_DEVICE;
   removeDevice: (id: string) => REMOVE_DEVICE;
-  removeDeviceAndUpdateMasters: (id: string) => AsyncAction<void>;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
-  undoLastSplitAndUpdateMasters: (screenId: string) => AsyncAction<void>;
   updateSelectedScreen: (screenId?: string) => UPDATE_SELECTED_SCREEN;
   placeRegionOnScreen: (screenId: string, position: Coords, size: Coords) => PLACE_REGION_ON_SCREEN;
 }
@@ -112,10 +80,8 @@ export interface ScreenActions extends ActionCreatorsMapObject {
 export const actionCreators: ScreenActions = {
   addDevice,
   removeDevice,
-  removeDeviceAndUpdateMasters,
   splitRegion,
   undoLastSplit,
-  undoLastSplitAndUpdateMasters,
   updateSelectedScreen,
   placeRegionOnScreen
 };
