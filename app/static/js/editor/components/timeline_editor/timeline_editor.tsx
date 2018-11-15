@@ -31,8 +31,6 @@ interface TimelineEditorState {
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
-  private trackSelect: HTMLSelectElement | null;
-  private lengthInput: HTMLInputElement | null;
   private mainColumn: HTMLDivElement | null;
 
   public constructor(props: TimelineEditorProps) {
@@ -128,28 +126,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             />
             &emsp;Snap enabled
           </label>
-
-          <br /><br />
-
-          <div className="field is-grouped">
-            <div className="control">
-              <div className="select">
-                <select ref={(e) => this.trackSelect = e}>
-                  {/* timelineTracks!.map((track, i) => <option key={i}>{track.id}</option>) */}
-                </select>
-              </div>
-            </div>
-
-            <div className="control">
-              <input className="input" type="number" min={1} max={100} defaultValue="10" ref={(e) => this.lengthInput = e} />
-            </div>
-
-            <div className="control">
-              <button className="button" onClick={() => this.props.timelineActions.addElementToTimelineTrack(timeline.id, this.trackSelect!.value, "component1", this.lengthInput!.valueAsNumber / 100)}>
-                Add element to track
-              </button>
-            </div>
-          </div>
 
           <br /><br />
 
