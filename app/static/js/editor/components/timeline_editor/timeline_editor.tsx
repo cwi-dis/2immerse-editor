@@ -62,7 +62,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (activeChapterIds.contains(timeline.chapterId)) {
-        return tracks.concat(timeline.timelineTracks!);
+        return tracks.concat(timeline.timelineTracks!.map((track) => {
+          return track.set("locked", chapterid !== timeline.chapterId);
+        }));
       }
 
       return tracks;
@@ -71,7 +73,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return allRegions.map((region) => {
       return {
         regionId: region.id,
-        track: activeTracks.filter((track) => track.regionId === region.id).first()
+        track: activeTracks.find((track) => track.regionId === region.id)
       };
     });
   }
@@ -179,7 +181,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   <Group key={i} y={i * 40 + 15}>
                     <TimelineTrack
                       elements={track.timelineElements!}
-                      locked={true}
+                      locked={track.locked}
                       elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
                       elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                       width={this.state.mainColumnWidth}
