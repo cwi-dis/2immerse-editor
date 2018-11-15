@@ -166,7 +166,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
             screenWidth={this.state.communalScreenWidth * 3 / 4}
             colRef={(el) => this.communalColumn = el}
             removeDevice={screenActions.removeDevice}
-            splitRegion={screenActions.splitRegionAndUpdateTimelines}
+            splitRegion={screenActions.splitRegion}
             undoLastSplit={screenActions.undoLastSplit}
           />
           <ScreenContainer
@@ -176,7 +176,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
             screenWidth={this.state.personalScreenWidth * 3 / 8}
             colRef={(el) => this.personalColumn = el}
             removeDevice={screenActions.removeDevice}
-            splitRegion={screenActions.splitRegionAndUpdateTimelines}
+            splitRegion={screenActions.splitRegion}
             undoLastSplit={screenActions.undoLastSplit}
           />
         </div>
