@@ -1,17 +1,24 @@
 import * as React from "react";
+import { List } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps } from "../../util";
-import { TimelineState } from "../../reducers/timelines";
+import { RouterProps, getChapterAccessPath, generateChapterKeyPath } from "../../util";
+
+import { ChapterState } from "../../reducers/chapters";
+import { ScreenState, ScreenRegion } from "../../reducers/screens";
+import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
+
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ScrubberHead from "./scrubber_head";
 import TimelineTrack from "./timeline_track";
 
 interface TimelineEditorProps extends RouterProps {
+  chapters: ChapterState;
+  screens: ScreenState;
   timelines: TimelineState;
   timelineActions: TimelineActions;
 }
@@ -37,6 +44,36 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       trackLocked: false,
       mainColumnWidth: 0
     };
+  }
+
+  private getTrackLayout(): List<{ regionId: string, track?: TimelineTrackModel }> {
+    const { match, chapters, screens: { previewScreens }, timelines } = this.props;
+    const { chapterid } = match.params;
+
+    const allRegions = previewScreens.reduce((regions, screen) => {
+      return regions.concat(screen.regions);
+    }, List<ScreenRegion>());
+
+    const accessPath = getChapterAccessPath(chapters, chapterid);
+    const activeChapterIds = accessPath.reduce((chapterIds, _, i) => {
+      const keyPath = generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
+      return chapterIds.push(chapters.getIn(keyPath).id);
+    }, List<string>());
+
+    const activeTracks = timelines.reduce((tracks, timeline) => {
+      if (activeChapterIds.contains(timeline.chapterId)) {
+        return tracks.concat(timeline.timelineTracks!);
+      }
+
+      return tracks;
+    }, List<TimelineTrackModel>());
+
+    return allRegions.map((region) => {
+      return {
+        regionId: region.id,
+        track: activeTracks.filter((track) => track.regionId === region.id).first()
+      };
+    });
   }
 
   public componentWillMount() {
@@ -180,7 +217,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
 function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> {
   return {
-    timelines: state.timelines
+    timelines: state.timelines,
+    chapters: state.chapters,
+    screens: state.screens
   };
 }
 
