@@ -1,5 +1,5 @@
 import { ActionCreatorsMapObject } from "redux";
-import { PayloadAction } from "../util";
+import { PayloadAction, AsyncAction, findById } from "../util";
 
 export type ADD_TIMELINE = PayloadAction<"ADD_TIMELINE", {chapterId: string}>;
 function addTimeline(chapterId: string): ADD_TIMELINE {
@@ -93,10 +93,23 @@ function toggleTrackLock(timelineId: string, trackId: string): TOGGLE_TRACK_LOCK
   };
 }
 
+function addTimelineTrackAndAddElement(timelineId: string, regionId: string, componentId: string, length?: number): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addTimelineTrack(timelineId, regionId, false));
+
+    const { timelines } = getState();
+    const [, timeline] = findById(timelines, timelineId);
+
+    const track = timeline.timelineTracks!.last()!;
+    dispatch(addElementToTimelineTrack(timeline.id, track.id, componentId, length));
+  };
+}
+
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
   addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean) => ADD_TIMELINE_TRACK;
+  addTimelineTrackAndAddElement: (timelineId: string, regionId: string, componentId: string, length?: number) => AsyncAction<void>;
   removeTimelineTrack: (timelineId: string, trackId: string) => REMOVE_TIMELINE_TRACK;
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, length?: number) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementPosition: (timelineId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
@@ -109,6 +122,7 @@ export const actionCreators: TimelineActions = {
   addTimeline,
   removeTimeline,
   addTimelineTrack,
+  addTimelineTrackAndAddElement,
   removeTimelineTrack,
   addElementToTimelineTrack,
   updateElementPosition,
