@@ -6,9 +6,9 @@ import { Group, Layer, Line, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getChapterAccessPath, generateChapterKeyPath, Nullable } from "../../util";
+import { RouterProps, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable } from "../../util";
 
-import { ChapterState } from "../../reducers/chapters";
+import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
 import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
 
@@ -50,21 +50,31 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private getTrackLayout(): List<{ regionId: string, track?: TimelineTrackModel }> {
     const { match, chapters, screens: { previewScreens }, timelines } = this.props;
     const { chapterid } = match.params;
+    const accessPath = getChapterAccessPath(chapters, chapterid);
 
     const allRegions = previewScreens.reduce((regions, screen) => {
       return regions.concat(screen.regions);
     }, List<ScreenRegion>());
 
-    const accessPath = getChapterAccessPath(chapters, chapterid);
-    const activeChapterIds = accessPath.reduce((chapterIds, _, i) => {
+    const ancestorChapterIds = accessPath.reduce((chapterIds, _, i) => {
       const keyPath = generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
       return chapterIds.push(chapters.getIn(keyPath).id);
     }, List<string>());
 
+    const descendantChapterIds = getDescendantChapters(
+      chapters.getIn(generateChapterKeyPath(accessPath.toArray())).children
+    ).map((chapter) => chapter.id);
+
     const activeTracks = timelines.reduce((tracks, timeline) => {
-      if (activeChapterIds.contains(timeline.chapterId)) {
+      if (ancestorChapterIds.contains(timeline.chapterId)) {
         return tracks.concat(timeline.timelineTracks!.map((track) => {
           return track.set("locked", chapterid !== timeline.chapterId);
+        }));
+      }
+
+      if (descendantChapterIds.contains(timeline.chapterId)) {
+        return tracks.concat(timeline.timelineTracks!.map((track) => {
+          return track.set("locked", true).set("timelineElements", List());
         }));
       }
 
