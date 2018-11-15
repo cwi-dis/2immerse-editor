@@ -3,9 +3,10 @@ import { List } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
+import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getChapterAccessPath, generateChapterKeyPath } from "../../util";
+import { RouterProps, getChapterAccessPath, generateChapterKeyPath, Nullable } from "../../util";
 
 import { ChapterState } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -31,7 +32,8 @@ interface TimelineEditorState {
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
-  private mainColumn: HTMLDivElement | null;
+  private mainColumn: Nullable<HTMLDivElement>;
+  private stageWrapper: Nullable<Stage>;
 
   public constructor(props: TimelineEditorProps) {
     super(props);
@@ -104,6 +106,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.props.timelineActions.removeElementFromTimelineTrack(timelineId, trackId, elementId);
   }
 
+  private getStage() {
+    if (!this.stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    return this.stageWrapper.getStage();
+  }
+
   public render() {
     const { match: { params } } = this.props;
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
@@ -129,7 +139,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br /><br />
 
-          <Stage width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
+          <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
             <Layer>
               <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
