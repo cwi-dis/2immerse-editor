@@ -67,6 +67,94 @@ describe("Utility function getTreeHeight()", () => {
   });
 });
 
+describe("Utility function getChapterAccessPath()", () => {
+  it("return an empty list on an empty tree", () => {
+    expect(util.getChapterAccessPath(List(), "chapter1")).toEqual(List());
+  });
+
+  it("returns an empty list on a tree without the given id", () => {
+    const tree = List(
+      [new Chapter({id: "chapter0"})]
+    );
+
+    expect(util.getChapterAccessPath(tree, "notintree")).toEqual(List());
+  });
+
+  it("returns the access path on a tree with only the root node", () => {
+    const tree = List(
+      [new Chapter({id: "chapter0"})]
+    );
+
+    expect(util.getChapterAccessPath(tree, "chapter0")).toEqual(List([0]));
+  });
+
+  it("returns the access path on a tree with a single level", () => {
+    const tree = List([
+      new Chapter({id: "chapter0"}),
+      new Chapter({id: "chapter1"}),
+      new Chapter({id: "chapter2"}),
+      new Chapter({id: "chapter3"}),
+    ]);
+
+    expect(util.getChapterAccessPath(tree, "chapter2")).toEqual(List([2]));
+  });
+
+  it("returns the access path on a tree with branches", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1", children: List([
+          new Chapter({id: "chapter1.1.1"})
+        ])}),
+        new Chapter({id: "chapter1.2", children: List([
+          new Chapter({id: "chapter1.2.1", children: List([
+            new Chapter({id: "chapter1.2.1.1"})
+          ])})
+        ])})
+      ])})
+    ]);
+
+    expect(util.getChapterAccessPath(tree, "chapter1.1")).toEqual(List([0, 0]));
+  });
+
+  it("returns and empty list when supplying a non-existing chapter ID", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1", children: List([
+          new Chapter({id: "chapter1.1.1"})
+        ])}),
+        new Chapter({id: "chapter1.2", children: List([
+          new Chapter({id: "chapter1.2.1", children: List([
+            new Chapter({id: "chapter1.2.1.1"}),
+            new Chapter({id: "chapter1.2.1.2"}),
+            new Chapter({id: "chapter1.2.1.3"}),
+          ])})
+        ])})
+      ])})
+    ]);
+
+    expect(util.getChapterAccessPath(tree, "doesnotexist")).toEqual(List([]));
+  });
+
+  it("returns the access path on a tree with branches", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1", children: List([
+          new Chapter({id: "chapter1.1.1"})
+        ])}),
+        new Chapter({id: "chapter1.2", children: List([
+          new Chapter({id: "chapter1.2.1", children: List([
+            new Chapter({id: "chapter1.2.1.1"}),
+            new Chapter({id: "chapter1.2.1.2"}),
+            new Chapter({id: "chapter1.2.1.3"}),
+          ])})
+        ])})
+      ])})
+    ]);
+
+    expect(util.getChapterAccessPath(tree, "chapter1.2.1.2")).toEqual(List([0, 1, 0, 1]));
+  });
+});
+
 describe("Utility function countLeafNodes()", () => {
   it("should return 1 on a single node", () => {
     const tree = new Chapter({id: "chapter0"});
