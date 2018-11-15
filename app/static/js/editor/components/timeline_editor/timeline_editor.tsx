@@ -80,10 +80,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   public componentWillMount() {
-    const { match: { params } } = this.props;
-    const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
-
-    if (timeline === undefined) {
+    if (this.getTimeline() === undefined) {
       console.log("Chapter has no timeline yet, redirecting to ProgramAuthor");
       navigate("/program");
     }
@@ -105,6 +102,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private elementRemoved(timelineId: string, trackId: string, elementId: string) {
     this.props.timelineActions.removeElementFromTimelineTrack(timelineId, trackId, elementId);
+  }
+
+  private getTimeline() {
+    const { match: { params } } = this.props;
+    return this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid);
   }
 
   private getStage() {
@@ -135,7 +137,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   public render() {
     const { match: { params } } = this.props;
-    const timeline = this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid)!;
+    const timeline = this.getTimeline();
 
     if (timeline === undefined) {
       return null;
