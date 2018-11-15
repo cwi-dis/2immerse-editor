@@ -130,9 +130,25 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
+    const timeline = this.getTimeline()!;
 
     const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
     console.log("Component dropped at", x, y);
+
+    const trackLayout = this.getTrackLayout();
+    const trackIndex = Math.floor(y / this.state.trackHeight);
+
+    const selectedTrack = trackLayout.get(trackIndex)!;
+    console.log("Placing component on track ", trackIndex, selectedTrack);
+
+    if (!selectedTrack.track) {
+      console.log("Creating track and adding element");
+      this.props.timelineActions.addTimelineTrackAndAddElement(timeline.id, selectedTrack.regionId, componentId, 0.1);
+    } else {
+      console.log("Adding element");
+      const { track } = selectedTrack;
+      this.props.timelineActions.addElementToTimelineTrack(timeline.id, track.id, componentId, 0.1);
+    }
   }
 
   public render() {
