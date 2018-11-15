@@ -112,7 +112,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return null;
     }
 
-    const { timelineTracks } = timeline;
+    const trackLayout = this.getTrackLayout();
 
     return (
       <div className="columnlayout">
@@ -129,25 +129,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br /><br />
 
-          <label>
-            <input
-              type="checkbox"
-              checked={this.state.trackLocked}
-              onChange={(e) => this.setState({trackLocked: e.target.checked})}
-            />
-            &emsp;Lock new track&emsp;
-          </label>
-          <button className="button" onClick={() => this.props.timelineActions.addTimelineTrack(timeline.id, "region1", this.state.trackLocked)}>
-            Add new track
-          </button>
-
-          <br /><br />
-
           <div className="field is-grouped">
             <div className="control">
               <div className="select">
                 <select ref={(e) => this.trackSelect = e}>
-                  {timelineTracks!.map((track, i) => <option key={i}>{track.id}</option>)}
+                  {/* timelineTracks!.map((track, i) => <option key={i}>{track.id}</option>) */}
                 </select>
               </div>
             </div>
@@ -165,18 +151,37 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br /><br />
 
-          <Stage width={this.state.mainColumnWidth} height={40 * timelineTracks!.count() + 15} style={{margin: "0 0 0 -18px"}}>
+          <Stage width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
             <Layer>
               <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
-              {timelineTracks!.map((timelineTrack, i) => {
+              {trackLayout.map((layoutEntry, i) => {
+                const { track } = layoutEntry;
+
+                if (!track) {
+                  return (
+                    <Group key={i} y={i * 40 + 15}>
+                      <TimelineTrack
+                        elements={List()}
+                        locked={false}
+                        elementPositionUpdated={() => {}}
+                        elementRemoved={() => {}}
+                        width={this.state.mainColumnWidth}
+                        height={40}
+                        snapDistance={(this.state.snapEnabled) ? 15 : 0}
+                        scrubberPosition={this.state.scrubberPosition}
+                      />
+                    </Group>
+                  );
+                }
+
                 return (
                   <Group key={i} y={i * 40 + 15}>
                     <TimelineTrack
-                      elements={timelineTrack.timelineElements!}
-                      locked={timelineTrack.locked}
-                      elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, timelineTrack.id)}
-                      elementRemoved={this.elementRemoved.bind(this, timeline.id, timelineTrack.id)}
+                      elements={track.timelineElements!}
+                      locked={true}
+                      elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
+                      elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                       width={this.state.mainColumnWidth}
                       height={40}
                       snapDistance={(this.state.snapEnabled) ? 15 : 0}
@@ -190,7 +195,19 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             </Layer>
           </Stage>
           <br />
-          {timelineTracks!.map((track, i) => {
+          {trackLayout!.map((layoutEntry, i) => {
+            const { regionId, track } = layoutEntry;
+
+            if (!track) {
+              return (
+                <p key={i}>
+                  <b>Track {i + 1}</b>
+                  <br />
+                  No track associated with region {regionId}
+                </p>
+              );
+            }
+
             return (
               <p key={i}>
                 <b>Track {i + 1}</b>
