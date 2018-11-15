@@ -16,6 +16,7 @@ import { actionCreators as timelineActionCreators, TimelineActions } from "../..
 
 import ScrubberHead from "./scrubber_head";
 import TimelineTrack from "./timeline_track";
+import DMAppcContainer from "../master_manager/dmappc_container";
 
 interface TimelineEditorProps extends RouterProps {
   chapters: ChapterState;
@@ -93,7 +94,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     if (this.mainColumn) {
       this.setState({
-        mainColumnWidth: this.mainColumn.clientWidth
+        mainColumnWidth: this.mainColumn.clientWidth - 5
       });
     }
   }
@@ -112,6 +113,24 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
 
     return this.stageWrapper.getStage();
+  }
+
+  private getCanvasDropPosition(pageX: number, pageY: number) {
+    const stage: KonvaStage = this.getStage();
+    const {offsetLeft, offsetTop} = stage.container();
+
+    return [
+      pageX - offsetLeft,
+      pageY - offsetTop
+    ];
+  }
+
+  private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    const componentId = e.dataTransfer.getData("text/plain");
+
+    const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
+    console.log("Component dropped at", x, y);
   }
 
   public render() {
@@ -139,21 +158,38 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
           <br /><br />
 
-          <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
-            <Layer>
-              <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+          <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
+              <Layer>
+                <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
-              {trackLayout.map((layoutEntry, i) => {
-                const { track } = layoutEntry;
+                {trackLayout.map((layoutEntry, i) => {
+                  const { track } = layoutEntry;
 
-                if (!track) {
+                  if (!track) {
+                    return (
+                      <Group key={i} y={i * 40 + 15}>
+                        <TimelineTrack
+                          elements={List()}
+                          locked={false}
+                          elementPositionUpdated={() => {}}
+                          elementRemoved={() => {}}
+                          width={this.state.mainColumnWidth}
+                          height={40}
+                          snapDistance={(this.state.snapEnabled) ? 15 : 0}
+                          scrubberPosition={this.state.scrubberPosition}
+                        />
+                      </Group>
+                    );
+                  }
+
                   return (
                     <Group key={i} y={i * 40 + 15}>
                       <TimelineTrack
-                        elements={List()}
-                        locked={false}
-                        elementPositionUpdated={() => {}}
-                        elementRemoved={() => {}}
+                        elements={track.timelineElements!}
+                        locked={track.locked}
+                        elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
+                        elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                         width={this.state.mainColumnWidth}
                         height={40}
                         snapDistance={(this.state.snapEnabled) ? 15 : 0}
@@ -161,27 +197,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                       />
                     </Group>
                   );
-                }
+                })}
 
-                return (
-                  <Group key={i} y={i * 40 + 15}>
-                    <TimelineTrack
-                      elements={track.timelineElements!}
-                      locked={track.locked}
-                      elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
-                      elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
-                      width={this.state.mainColumnWidth}
-                      height={40}
-                      snapDistance={(this.state.snapEnabled) ? 15 : 0}
-                      scrubberPosition={this.state.scrubberPosition}
-                    />
-                  </Group>
-                );
-              })}
-
-              <Line points={[0, 14.5, this.state.mainColumnWidth, 14.5]} stroke="#161616" strokeWidth={1} />
-            </Layer>
-          </Stage>
+                <Line points={[0, 14.5, this.state.mainColumnWidth, 14.5]} stroke="#161616" strokeWidth={1} />
+              </Layer>
+            </Stage>
+          </div>
           <br />
           {trackLayout!.map((layoutEntry, i) => {
             const { regionId, track } = layoutEntry;
@@ -213,7 +234,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           })}
         </div>
         <div className="column-sidebar">
-          sidebar
+          <DMAppcContainer />
         </div>
       </div>
     );
