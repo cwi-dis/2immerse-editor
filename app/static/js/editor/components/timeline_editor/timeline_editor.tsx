@@ -28,7 +28,7 @@ interface TimelineEditorProps extends RouterProps {
 interface TimelineEditorState {
   scrubberPosition: number;
   snapEnabled: boolean;
-  trackLocked: boolean;
+  trackHeight: number;
   mainColumnWidth: number;
 }
 
@@ -42,7 +42,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.state = {
       scrubberPosition: 0,
       snapEnabled: true,
-      trackLocked: false,
+      trackHeight: 40,
       mainColumnWidth: 0
     };
   }
@@ -142,6 +142,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
 
     const trackLayout = this.getTrackLayout();
+    const { trackHeight } = this.state;
 
     return (
       <div className="columnlayout">
@@ -159,7 +160,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <br /><br />
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={40 * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
+            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={trackHeight * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
               <Layer>
                 <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
@@ -168,7 +169,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
                   if (!track) {
                     return (
-                      <Group key={i} y={i * 40 + 15}>
+                      <Group key={i} y={i * trackHeight + 15}>
                         <TimelineTrack
                           elements={List()}
                           locked={false}
@@ -184,7 +185,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   }
 
                   return (
-                    <Group key={i} y={i * 40 + 15}>
+                    <Group key={i} y={i * trackHeight + 15}>
                       <TimelineTrack
                         elements={track.timelineElements!}
                         locked={track.locked}
