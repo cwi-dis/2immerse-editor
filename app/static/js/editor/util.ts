@@ -119,6 +119,22 @@ export function generateChapterKeyPath(accessPath: Array<number>): List<number |
   }, [])).push(accessPath[accessPath.length - 1]);
 }
 
+export function getChapterAccessPath(chapters: List<Chapter>, chapterId: string): List<number> {
+  return chapters.reduce((accessPath, chapter, i) => {
+    if (chapter.id === chapterId) {
+      return accessPath.push(i);
+    }
+
+    const childPath = getChapterAccessPath(chapter.children!, chapterId);
+
+    if (childPath.isEmpty()) {
+      return accessPath;
+    }
+
+    return accessPath.push(i).concat(childPath);
+  }, List<number>());
+}
+
 export function getRandomInt(min: number = 0, max: number = 10) {
   if (min > max) {
     throw new Error("min must not be larger than max");
