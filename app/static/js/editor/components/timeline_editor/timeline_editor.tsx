@@ -44,7 +44,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.state = {
       scrubberPosition: 0,
       snapEnabled: true,
-      trackHeight: 80,
+      trackHeight: 50,
       mainColumnWidth: 0
     };
   }
@@ -149,6 +149,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     const trackLayout = this.getTrackLayout();
     const trackIndex = Math.floor((y - this.scrubberHeight) / this.state.trackHeight);
+
+    if (trackIndex < 0 || trackIndex >= trackLayout.count()) {
+      console.log("Track index", trackIndex, "invalid");
+      return;
+    }
 
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
