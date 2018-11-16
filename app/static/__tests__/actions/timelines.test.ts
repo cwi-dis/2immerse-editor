@@ -106,9 +106,9 @@ describe("Timeline actions", () => {
     expect(actionCreators.removeTimelineTrack("timeline1", "track1")).toEqual(expected);
   });
 
-  it("should create a REMOVE_ELEMENT_FROM_TIMELINE_TRACK action", () => {
-    const expected: actionTypes.REMOVE_ELEMENT_FROM_TIMELINE_TRACK = {
-      type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK",
+  it("should create a REMOVE_ELEMENT action", () => {
+    const expected: actionTypes.REMOVE_ELEMENT = {
+      type: "REMOVE_ELEMENT",
       payload: {
         timelineId: "timeline1",
         trackId: "track1",
@@ -116,7 +116,7 @@ describe("Timeline actions", () => {
       }
     };
 
-    expect(actionCreators.removeElementFromTimelineTrack("timeline1", "track1", "element1")).toEqual(expected);
+    expect(actionCreators.removeElement("timeline1", "track1", "element1")).toEqual(expected);
   });
 
   it("should create a UPDATE_ELEMENT_LENGTH action", () => {

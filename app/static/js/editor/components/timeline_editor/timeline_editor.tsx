@@ -111,7 +111,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   private elementRemoved(timelineId: string, trackId: string, elementId: string) {
-    this.props.timelineActions.removeElementFromTimelineTrack(timelineId, trackId, elementId);
+    this.props.timelineActions.removeElement(timelineId, trackId, elementId);
   }
 
   private getTimeline() {

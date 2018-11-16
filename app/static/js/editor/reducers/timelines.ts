@@ -168,7 +168,7 @@ actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDA
   }
 });
 
-actionHandler.addHandler("REMOVE_ELEMENT_FROM_TIMELINE_TRACK", (state, action: actions.REMOVE_ELEMENT_FROM_TIMELINE_TRACK) => {
+actionHandler.addHandler("REMOVE_ELEMENT", (state, action: actions.REMOVE_ELEMENT) => {
   const { timelineId, trackId, elementId } = action.payload;
 
   try {

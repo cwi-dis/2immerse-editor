@@ -63,10 +63,10 @@ function updateElementPosition(timelineId: string, trackId: string, elementId: s
   };
 }
 
-export type REMOVE_ELEMENT_FROM_TIMELINE_TRACK = PayloadAction<"REMOVE_ELEMENT_FROM_TIMELINE_TRACK", {timelineId: string, trackId: string, elementId: string}>;
-function removeElementFromTimelineTrack(timelineId: string, trackId: string, elementId: string): REMOVE_ELEMENT_FROM_TIMELINE_TRACK {
+export type REMOVE_ELEMENT = PayloadAction<"REMOVE_ELEMENT", {timelineId: string, trackId: string, elementId: string}>;
+function removeElement(timelineId: string, trackId: string, elementId: string): REMOVE_ELEMENT {
   return {
-    type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK",
+    type: "REMOVE_ELEMENT",
     payload: {
       timelineId, trackId, elementId
     }
@@ -113,7 +113,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   removeTimelineTrack: (timelineId: string, trackId: string) => REMOVE_TIMELINE_TRACK;
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, length?: number) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementPosition: (timelineId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
-  removeElementFromTimelineTrack: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT_FROM_TIMELINE_TRACK;
+  removeElement: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT;
   updateElementLength: (timelineId: string, trackId: string, elementId: string, length: number) => UPDATE_ELEMENT_LENGTH;
   toggleTrackLock: (timelineId: string, trackId: string) => TOGGLE_TRACK_LOCK;
 }
@@ -126,7 +126,7 @@ export const actionCreators: TimelineActions = {
   removeTimelineTrack,
   addElementToTimelineTrack,
   updateElementPosition,
-  removeElementFromTimelineTrack,
+  removeElement,
   updateElementLength,
   toggleTrackLock
 };
