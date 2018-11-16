@@ -1,7 +1,12 @@
 /// <reference types="jest" />
 
+import * as configureMockStore from "redux-mock-store/dist/index-cjs";
+import thunk from "redux-thunk";
+import { List } from "immutable";
+
 import * as actionTypes from "../../js/editor/actions/timelines";
 import { actionCreators } from "../../js/editor/actions/timelines";
+import { Timeline, TimelineTrack } from "../../js/editor/reducers/timelines";
 
 describe("Timeline actions", () => {
   it("should create an ADD_TIMELINE action", () => {
@@ -143,5 +148,36 @@ describe("Timeline actions", () => {
     };
 
     expect(actionCreators.toggleTrackLock("timeline1", "track1")).toEqual(expected);
+  });
+});
+
+describe("Async timeline actions", () => {
+  const mockStore = configureMockStore([thunk]);
+
+  it("should create a new timeline track and add an element to it on addTimelineTrackAndAddElement", () => {
+    const expectedActions = [
+      { type: "ADD_TIMELINE_TRACK", payload: {
+        timelineId: "timeline1",
+        regionId: "region1",
+        locked: false
+      }},
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        componentId: "component1",
+        length: 10
+      }}
+    ];
+
+    const store = mockStore({
+      timelines: List([
+        new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+          new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List()})
+        ])})
+      ])
+    });
+
+    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10));
+    expect(store.getActions()).toEqual(expectedActions);
   });
 });
