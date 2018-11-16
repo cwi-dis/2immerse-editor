@@ -36,6 +36,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private mainColumn: Nullable<HTMLDivElement>;
   private stageWrapper: Nullable<Stage>;
 
+  private readonly scrubberHeight = 15;
+
   public constructor(props: TimelineEditorProps) {
     super(props);
 
@@ -146,7 +148,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     console.log("Component dropped at", x, y);
 
     const trackLayout = this.getTrackLayout();
-    const trackIndex = Math.floor((y - 15) / this.state.trackHeight);
+    const trackIndex = Math.floor((y - this.scrubberHeight) / this.state.trackHeight);
 
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
@@ -188,7 +190,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <br /><br />
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={trackHeight * trackLayout!.count() + 15} style={{margin: "0 0 0 -18px"}}>
+            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={trackHeight * trackLayout!.count() + this.scrubberHeight} style={{margin: "0 0 0 -18px"}}>
               <Layer>
                 <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
@@ -197,7 +199,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
                   if (!track) {
                     return (
-                      <Group key={i} y={i * trackHeight + 15}>
+                      <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                         <TimelineTrack
                           elements={List()}
                           locked={false}
@@ -213,7 +215,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   }
 
                   return (
-                    <Group key={i} y={i * trackHeight + 15}>
+                    <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                       <TimelineTrack
                         elements={track.timelineElements!}
                         locked={track.locked}
