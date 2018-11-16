@@ -499,7 +499,7 @@ describe("Timelines reducer", () => {
     expect(elements.count()).toBe(0);
   });
 
-  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+  it("should return the state untransformed on REMOVE_ELEMENT if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -510,13 +510,13 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline2", trackId: "track1", elementId: "element1" }} as any
+      { type: "REMOVE_ELEMENT", payload: { timelineId: "timeline2", trackId: "track1", elementId: "element1" }} as any
     );
 
     expect(transformedState).toEqual(initialState);
   });
 
-  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+  it("should return the state untransformed on REMOVE_ELEMENT if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -527,13 +527,13 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track2", elementId: "element1" }} as any
+      { type: "REMOVE_ELEMENT", payload: { timelineId: "timeline1", trackId: "track2", elementId: "element1" }} as any
     );
 
     expect(transformedState).toEqual(initialState);
   });
 
-  it("should return the state untransformed on REMOVE_ELEMENT_FROM_TIMELINE_TRACK if the timeline does not exist", () => {
+  it("should return the state untransformed on REMOVE_ELEMENT if the timeline does not exist", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -544,7 +544,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "REMOVE_ELEMENT_FROM_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element2" }} as any
+      { type: "REMOVE_ELEMENT", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element2" }} as any
     );
 
     expect(transformedState).toEqual(initialState);
