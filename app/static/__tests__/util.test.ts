@@ -155,6 +155,53 @@ describe("Utility function getChapterAccessPath()", () => {
   });
 });
 
+describe("Utility function getDescendantChapters()", () => {
+  it("should return an empty list on a leaf node", () => {
+    const tree = List([
+      new Chapter({id: "chapter1" })
+    ]);
+
+    expect(util.getDescendantChapters(tree.getIn([0, "children"]))).toEqual(List());
+  });
+
+  it("should return all children if those children are leaf nodes", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"}),
+        new Chapter({id: "chapter1.2"}),
+        new Chapter({id: "chapter1.3"}),
+      ])})
+    ]);
+
+    expect(
+      util.getDescendantChapters(tree.getIn([0, "children"])).map((chapter) => chapter.id)
+    ).toEqual(
+      List(["chapter1.1", "chapter1.2", "chapter1.3"])
+    );
+  });
+
+  it("should return the entire subtree as a flattened list", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1", children: List([
+          new Chapter({id: "chapter1.1.1"}),
+          new Chapter({id: "chapter1.1.2"})
+        ])}),
+        new Chapter({id: "chapter1.2"}),
+        new Chapter({id: "chapter1.3", children: List([
+          new Chapter({id: "chapter1.3.1"})
+        ])}),
+      ])})
+    ]);
+
+    expect(
+      util.getDescendantChapters(tree.getIn([0, "children"])).map((chapter) => chapter.id)
+    ).toEqual(
+      List(["chapter1.1", "chapter1.1.1", "chapter1.1.2", "chapter1.2", "chapter1.3", "chapter1.3.1"])
+    );
+  });
+});
+
 describe("Utility function countLeafNodes()", () => {
   it("should return 1 on a single node", () => {
     const tree = new Chapter({id: "chapter0"});
