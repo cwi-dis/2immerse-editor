@@ -135,10 +135,14 @@ export function getChapterAccessPath(chapters: List<Chapter>, chapterId: string)
   }, List<number>());
 }
 
-export function getDescendantChapters(chapters: List<Chapter>, ids = List<Chapter>()): List<Chapter> {
-  return chapters.reduce((ids, chapter) => {
-    return ids.push(chapter).concat(getDescendantChapters(chapter.children!));
-  }, ids);
+export function getDescendantChapters(chapters: List<Chapter>): List<Chapter> {
+  const fn = (chapters: List<Chapter>, ids: List<Chapter>) => {
+    return chapters.reduce((ids, chapter) => {
+      return ids.push(chapter).concat(getDescendantChapters(chapter.children!));
+    }, ids);
+  };
+
+  return fn(chapters, List());
 }
 
 export function getRandomInt(min: number = 0, max: number = 10) {
