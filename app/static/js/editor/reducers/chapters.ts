@@ -7,11 +7,10 @@ import { Timeline, TimelineTrack } from "./timelines";
 export interface ChapterAttributes {
   id: string;
   name?: Nullable<string>;
-  timeline?: Timeline;
   children?: List<Chapter>;
 }
 
-export class Chapter extends Record<ChapterAttributes>({id: "", name: null, timeline: new Timeline(), children: List()}) {
+export class Chapter extends Record<ChapterAttributes>({id: "", name: null, children: List()}) {
   constructor(params?: ChapterAttributes) {
     params ? super(params) : super();
   }
