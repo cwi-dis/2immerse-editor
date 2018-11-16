@@ -4,7 +4,8 @@
   "license": "BSD-2-Clause",
   "version": "0.1.0",
   "scripts": {
-    "test": "jest"
+    "test": "jest --verbose --bail --coverage",
+    "covserver": "cd coverage/lcov-report; http-server; cd ../.."
   },
   "jest": {
     "transform": {
