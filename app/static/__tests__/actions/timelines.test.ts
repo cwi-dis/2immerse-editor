@@ -6,7 +6,7 @@ import { List } from "immutable";
 
 import * as actionTypes from "../../js/editor/actions/timelines";
 import { actionCreators } from "../../js/editor/actions/timelines";
-import { Timeline, TimelineTrack } from "../../js/editor/reducers/timelines";
+import { Timeline, TimelineTrack, TimelineElement } from "../../js/editor/reducers/timelines";
 
 describe("Timeline actions", () => {
   it("should create an ADD_TIMELINE action", () => {
@@ -178,6 +178,55 @@ describe("Async timeline actions", () => {
     });
 
     store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10));
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it("should just remove an element on removeElementAndUpdateTrack if there are multiple elements", () => {
+    const expectedActions = [
+      { type: "REMOVE_ELEMENT", payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        elementId: "element1"
+      }},
+    ];
+
+    const store = mockStore({
+      timelines: List([
+        new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+          new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element1", componentId: "", x: 0, width: 10})
+          ])})
+        ])})
+      ])
+    });
+
+    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1"));
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
+  it("should remove the element and the track on removeElementAndUpdateTrack if the track is empty", () => {
+    const expectedActions = [
+      { type: "REMOVE_ELEMENT", payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        elementId: "element1"
+      }},
+      { type: "REMOVE_TIMELINE_TRACK", payload: {
+        timelineId: "timeline1",
+        trackId: "track1"
+      }},
+    ];
+
+    const store = mockStore({
+      timelines: List([
+        new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+          new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          ])})
+        ])})
+      ])
+    });
+
+    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1"));
     expect(store.getActions()).toEqual(expectedActions);
   });
 });
