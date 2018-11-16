@@ -59,4 +59,17 @@ describe("Chapter actions", () => {
 
     expect(actionCreators.renameChapter([0, 1, 0], "new chapter name")).toEqual(expected);
   });
+
+  it("should create an ADD_TIMELINE_TRACK_TO_CHAPTER action", () => {
+    const expected: actionTypes.ADD_TIMELINE_TRACK_TO_CHAPTER = {
+      type: "ADD_TIMELINE_TRACK_TO_CHAPTER",
+      payload: {
+        accessPath: [0, 1, 0],
+        regionId: "region1",
+        locked: false
+      }
+    };
+
+    expect(actionCreators.addTimelineTrackToChapter([0, 1, 0], "region1", false)).toEqual(expected);
+  });
 });
