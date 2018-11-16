@@ -42,7 +42,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.state = {
       scrubberPosition: 0,
       snapEnabled: true,
-      trackHeight: 40,
+      trackHeight: 80,
       mainColumnWidth: 0
     };
   }
@@ -204,7 +204,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                           elementPositionUpdated={() => {}}
                           elementRemoved={() => {}}
                           width={this.state.mainColumnWidth}
-                          height={40}
+                          height={this.state.trackHeight}
                           snapDistance={(this.state.snapEnabled) ? 15 : 0}
                           scrubberPosition={this.state.scrubberPosition}
                         />
@@ -220,7 +220,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                         elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
                         elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                         width={this.state.mainColumnWidth}
-                        height={40}
+                        height={this.state.trackHeight}
                         snapDistance={(this.state.snapEnabled) ? 15 : 0}
                         scrubberPosition={this.state.scrubberPosition}
                       />
