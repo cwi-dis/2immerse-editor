@@ -146,7 +146,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     console.log("Component dropped at", x, y);
 
     const trackLayout = this.getTrackLayout();
-    const trackIndex = Math.floor(y / this.state.trackHeight);
+    const trackIndex = Math.floor((y - 15) / this.state.trackHeight);
 
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
