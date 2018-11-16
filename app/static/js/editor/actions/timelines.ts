@@ -105,6 +105,20 @@ function addTimelineTrackAndAddElement(timelineId: string, regionId: string, com
   };
 }
 
+function removeElementAndUpdateTrack(timelineId: string, trackId: string, elementId: string): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(removeElement(timelineId, trackId, elementId));
+
+    const { timelines } = getState();
+    const [, timeline] = findById(timelines, timelineId);
+    const [, track] = findById(timeline.timelineTracks!, trackId);
+
+    if (track.timelineElements!.isEmpty()) {
+      dispatch(removeTimelineTrack(timelineId, trackId));
+    }
+  };
+}
+
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
@@ -114,6 +128,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, length?: number) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementPosition: (timelineId: string, trackId: string, elementId: string, newPosition: number) => UPDATE_ELEMENT_POSITION;
   removeElement: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT;
+  removeElementAndUpdateTrack: (timelineId: string, trackId: string, elementId: string) => AsyncAction<void>;
   updateElementLength: (timelineId: string, trackId: string, elementId: string, length: number) => UPDATE_ELEMENT_LENGTH;
   toggleTrackLock: (timelineId: string, trackId: string) => TOGGLE_TRACK_LOCK;
 }
@@ -127,6 +142,7 @@ export const actionCreators: TimelineActions = {
   addElementToTimelineTrack,
   updateElementPosition,
   removeElement,
+  removeElementAndUpdateTrack,
   updateElementLength,
   toggleTrackLock
 };
