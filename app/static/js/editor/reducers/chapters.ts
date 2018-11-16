@@ -93,17 +93,4 @@ actionHandler.addHandler("REMOVE_CHAPTER", (state, action: actions.REMOVE_CHAPTE
   });
 });
 
-actionHandler.addHandler("ADD_TIMELINE_TRACK_TO_CHAPTER", (state, action: actions.ADD_TIMELINE_TRACK_TO_CHAPTER) => {
-  const { accessPath, regionId, locked } = action.payload;
-  const keyPath = generateChapterKeyPath(accessPath).concat(["timeline", "timelineTracks"]);
-
-  return state.updateIn(keyPath, (tracks: List<TimelineTrack>) => {
-    return tracks.push(new TimelineTrack({
-      id: shortid.generate(),
-      regionId,
-      locked
-    }));
-  });
-});
-
 export default actionHandler.getReducer();

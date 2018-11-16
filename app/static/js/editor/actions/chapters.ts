@@ -53,25 +53,12 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   };
 }
 
-export type ADD_TIMELINE_TRACK_TO_CHAPTER = PayloadAction<"ADD_TIMELINE_TRACK_TO_CHAPTER", {accessPath: Array<number>, regionId: string, locked: boolean}>;
-function addTimelineTrackToChapter(accessPath: Array<number>, regionId: string, locked: boolean): ADD_TIMELINE_TRACK_TO_CHAPTER {
-  return {
-    type: "ADD_TIMELINE_TRACK_TO_CHAPTER",
-    payload: {
-      accessPath,
-      regionId,
-      locked
-    }
-  };
-}
-
 export interface ChapterActions extends ActionCreatorsMapObject {
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
   renameChapter: (accessPath: Array<number>, name: string) => RENAME_CHAPTER;
   removeChapter: (accessPath: Array<number>) => REMOVE_CHAPTER;
-  addTimelineTrackToChapter: (accessPath: Array<number>, regionId: string, locked: boolean) => ADD_TIMELINE_TRACK_TO_CHAPTER;
 }
 
 export const actionCreators: ChapterActions = {
@@ -79,6 +66,5 @@ export const actionCreators: ChapterActions = {
   addChapterBefore,
   addChapterChild,
   renameChapter,
-  removeChapter,
-  addTimelineTrackToChapter
+  removeChapter
 };
