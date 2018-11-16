@@ -180,6 +180,22 @@ describe("Utility function getDescendantChapters()", () => {
     );
   });
 
+  it("should also accept a single chapter as parameter", () => {
+    const tree = List([
+      new Chapter({id: "chapter1", children: List([
+        new Chapter({id: "chapter1.1"}),
+        new Chapter({id: "chapter1.2"}),
+        new Chapter({id: "chapter1.3"}),
+      ])})
+    ]);
+
+    expect(
+      util.getDescendantChapters(tree.get(0)).map((chapter) => chapter.id)
+    ).toEqual(
+      List(["chapter1.1", "chapter1.2", "chapter1.3"])
+    );
+  });
+
   it("should return the entire subtree as a flattened list", () => {
     const tree = List([
       new Chapter({id: "chapter1", children: List([
