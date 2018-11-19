@@ -1,0 +1,56 @@
+<tl:document
+  xmlns:tl="http://jackjansen.nl/timelines"
+  xmlns:tim="http://jackjansen.nl/2immerse"
+  xmlns:tic="http://jackjansen.nl/2immerse/component"
+  xmlns:tt="http://jackjansen.nl/2immerse/livetrigger"
+  xmlns:au="http://jackjansen.nl/2immerse/authoring"
+  xmlns:tlcheck="http://jackjansen.nl/timelines/check"
+  tim:base="https://origin.platform.2immerse.eu/dmapps/motogp/editableTimeline.xml"
+  >
+
+<tl:par au:type="chapter" xml:id="rootchapterid" au:name="Toplevel Chapter">
+  <tl:seq au:type="track" xml:id="trackid" au:region="regionid">
+
+    <tl:seq xml:id="elementid" au:type="element" au:elementType="withStartDuration" au:asset="assetid">
+        <tl:sleep tl:dur="0"/>
+        <tl:seq>
+            <tl:sleep tl:dur="999999"/>
+            <tl:ref 
+              au:fromAsset="assetid"
+              xml:id="assetid-1"
+              tim:class="image"
+              au:updateGroup="gp-logo"
+              tim:constraintId="gp-logo"
+              tim:url="https://origin.platform.2immerse.eu/dmapp-components/image/image.html"
+              tic:mediaUrl="https://origin.platform.2immerse.eu/media/motogp/assets/logo.png"
+              title="gp-logo"/>
+        </tl:seq>
+    </tl:seq>
+
+    <tl:ref/>
+  </tl:seq>
+  <tl:seq au:type="track"/>
+  <tl:seq au:type="subchapters">
+    <tl:par au:type="chapter" xml:id="subchapterid"/>
+  </tl:seq>
+  <au:layoutRef url="layout.json"/>
+  <au:clientRef url="client.json"/>
+  <au:layoutPreview>
+    <au:device type="communal" orientation="landscape" name="tv">
+        <au:region au:region="regionid" au:x="0.6" au:y="0.1" au:w="0.3" au:h="0.3"/>
+    </au:device>
+    <au:region xml:id="regionid" au:name="Region Name" au:color="#204060">
+  </au:layoutPreview>
+  <au:assets>
+    <au:asset xml:id="assetid" au:name="DMAppc 0" au:description="this is a description" au:previewUrl="previews/logo.png">
+        <tl:ref tim:class="image"
+          au:updateGroup="gp-logo"
+          tim:constraintId="gp-logo"
+          tim:url="https://origin.platform.2immerse.eu/dmapp-components/image/image.html"
+          tic:mediaUrl="assets/logo.png"
+          title="gp-logo"/>
+    </au:asset>
+</au:assets>
+
+</tl:par>
+</tl:document>

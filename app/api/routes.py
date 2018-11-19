@@ -341,7 +341,26 @@ def document_remote_control(documentId):
     rv = remote.get()
     return remote.control(command)
 
-
+#
+# Per-document, editing aspect.
+#
+@app.route(API_ROUTE + "/document/<uuid:documentId/editing/<string:verb>")
+def document_editing_verb(documentId, verb):
+    try:
+        document = api.documents[documentId]
+    except KeyError:
+        abort(404)
+    editing = document.editing()
+    assert editing
+    try:
+        func = getattr(editing, verb)
+    except AttributeError:
+        abort(404)
+    kwargs = request.args.to_dict()
+    rv = func(**kwargs)
+    if isinstance(rv, list) or isinstance(rv, dict):
+        return Response(json.dumps(rv), mimetype="application/json")
+    return rv
 #
 # Per-document, serve aspect, for consumption of views on the document
 #

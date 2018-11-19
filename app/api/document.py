@@ -171,6 +171,7 @@ class Document(object):
         self.remoteHandler = None
         self.settingsHandler = None
         self.asyncHandler = None
+        self.editingHandler = None
         self.lock = threading.RLock()
         self.editManager = None
         self.companionTimelineIsActive = False  # Mainly for warning triggertool operator if it is not
@@ -390,6 +391,12 @@ class Document(object):
         if not self.asyncHandler:
             self.asyncHandler = DocumentAsync(self)
         return self.asyncHandler
+        
+    def editing(self):
+        """Returns a document editing handler (after creating it if needed)"""
+        if not self.editingHandler:
+            self.editingHandler = DocumentEditing(self)
+        return self.editingHandler
 
     @synchronized
     def _startListening(self, reason=None):
@@ -1728,3 +1735,96 @@ class DocumentAsync(threading.Thread):
     def incomingDocumentStatus(self, documentState):
         self.logger.debug('DocumentAsync.incomingDocumentStatus(%s)' % repr(documentState))
         self.document.serve()._setDocumentState(documentState)
+
+class DocumentEditing:
+    def __init__(self, document):
+        self.document = document
+        self.lock = self.document.lock
+        self.logger = self.document.logger.getChild('editing')
+        self.logger.debug('DocumentEditing: created')
+        threading.Thread.__init__(self)
+        self.socket = None
+        self.channel = None
+
+    def getChapters(self):
+        """Return complete chapter tree"""
+        assert 0, "Not yet implemented"
+        # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str}], chapters=[...]}
+        rv = {}
+        return rv
+ 
+     def getChapter(self, chapterId):
+        """Return per-chapter datastructure"""
+        assert 0, "Not yet implemented"
+        # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
+        rv = {}
+        return rv
+        
+    def getAssets(self):
+        """Return complete list of assets"""
+        assert 0, "Not yet implmented"
+        # xxxjack need to define datastructure. Maybe [{id=str, name=str, description=str, previewUrl=str}]
+        rv = []
+        return rv
+        
+    def getLayout(self):
+        """Return complete layout"""
+        assert 0, "Not yet implemented"
+        # xxxjack need to define datastructure. Maybe 
+        # {devices=[{type=str, orientation=str, name=str, regions=[{region=str, x=float, y=float, w=float, h=float}]}], regions=[{id=str, name=str, color=str}]}
+        rv = []
+        return rv
+        
+    def addChapterBefore(self, chapterID):
+        """Create new empty chapter before existing chapter. Return ID of new chapter."""
+        assert 0, "Not yet implemented"
+        return newID
+        
+    def addChapterAfter(self, chapterID):
+        """Create new cempty hapter after existing chapter. Return ID of new chapter."""
+        assert 0, "Not yet implemented"
+        return newID
+        
+    def addSubChapter(self, chapterID):
+        """Create new chapter (containing old content) as child of existing chapter. Return ID of new chapter."""
+        assert 0, "Not yet implemented"
+        return newID
+                
+    def renameChapter(self, chapterID, name):
+        """Rename a chapter."""
+        assert 0, "Not yet implemented"
+        return
+                
+    def deleteChapter(self, chapterID):
+        """Delete a chapter."""
+        assert 0, "Not yet implemented"
+        return
+        
+    def addTrack(self, chapterID, regionID):
+        """Add a track for region regionName to chapter chapterID. Returns trackID."""
+        assert 0, "Not yet implemented"
+        return newID
+        
+    def deleteTrack(self, trackID):
+        """Delete a track."""
+        # xxxjack is this needed?
+        assert 0, "Not yet implemented"
+        return newID
+        
+    def addElement(self, trackID, assetID):
+        """Add asset assetID to track trackID as a new element. Return elementID"""
+        assert 0, "Not yet implemented"
+        return newID
+        
+    def setElementBegin(self, elementID, delay):
+        """Modify begin delay on an element"""
+        assert 0, "Not yet implemented"
+        
+    def setElementDuration(self, elementID, duration):
+        """Modify begin delay on an element"""
+        assert 0, "Not yet implemented"
+        
+    def deleteElement(self, elementID):
+        """Delete element"""
+        assert 0, "Not yet implemented"
+        
