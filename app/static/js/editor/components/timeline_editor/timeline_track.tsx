@@ -34,7 +34,7 @@ interface TimelineProps {
 interface TimelineState {
 }
 
-class Timeline extends React.Component<TimelineProps, TimelineState> {
+class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
   private updatedXPosition: number;
   private initialYPosition?: number;
   private absoluteYPosition: number | null;
@@ -166,4 +166,25 @@ class Timeline extends React.Component<TimelineProps, TimelineState> {
   }
 }
 
-export default Timeline;
+interface EmptyTrackProps {
+  width: number;
+  height: number;
+  scrubberPosition: number;
+}
+
+export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
+  return (
+    <TimelineTrack
+      elements={List()}
+      locked={false}
+      elementPositionUpdated={() => { }}
+      elementRemoved={() => { }}
+      width={props.width}
+      height={props.height}
+      snapDistance={0}
+      scrubberPosition={props.scrubberPosition}
+    />
+  );
+};
+
+export default TimelineTrack;

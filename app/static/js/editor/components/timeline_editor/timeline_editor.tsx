@@ -15,7 +15,7 @@ import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reduce
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ScrubberHead from "./scrubber_head";
-import TimelineTrack from "./timeline_track";
+import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
 
 interface TimelineEditorProps extends RouterProps {
@@ -195,7 +195,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <br /><br />
 
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-            <Stage ref={(e: any) => this.stageWrapper = e} width={this.state.mainColumnWidth} height={trackHeight * trackLayout!.count() + this.scrubberHeight} style={{margin: "0 0 0 -18px"}}>
+            <Stage
+              ref={(e: any) => this.stageWrapper = e}
+              width={this.state.mainColumnWidth}
+              height={trackHeight * trackLayout!.count() + this.scrubberHeight}
+              style={{margin: "0 0 0 -18px"}}
+            >
               <Layer>
                 <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
@@ -205,14 +210,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   if (!track) {
                     return (
                       <Group key={i} y={i * trackHeight + this.scrubberHeight}>
-                        <TimelineTrack
-                          elements={List()}
-                          locked={false}
-                          elementPositionUpdated={() => {}}
-                          elementRemoved={() => {}}
+                        <EmptyTrack
                           width={this.state.mainColumnWidth}
-                          height={this.state.trackHeight}
-                          snapDistance={(this.state.snapEnabled) ? 15 : 0}
+                          height={trackHeight}
                           scrubberPosition={this.state.scrubberPosition}
                         />
                       </Group>
