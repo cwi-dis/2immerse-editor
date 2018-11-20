@@ -1778,53 +1778,65 @@ class DocumentEditing:
     def addChapterBefore(self, chapterID):
         """Create new empty chapter before existing chapter. Return ID of new chapter."""
         assert 0, "Not yet implemented"
+        chapterElt = self.document._getElementByID(chapterID)
         return newID
         
     def addChapterAfter(self, chapterID):
         """Create new cempty hapter after existing chapter. Return ID of new chapter."""
         assert 0, "Not yet implemented"
+        chapterElt = self.document._getElementByID(chapterID)
         return newID
         
     def addSubChapter(self, chapterID):
         """Create new chapter (containing old content) as child of existing chapter. Return ID of new chapter."""
+        chapterElt = self.document._getElementByID(chapterID)
         assert 0, "Not yet implemented"
         return newID
                 
     def renameChapter(self, chapterID, name):
         """Rename a chapter."""
+        chapterElt = self.document._getElementByID(chapterID)
         assert 0, "Not yet implemented"
         return
                 
     def deleteChapter(self, chapterID):
         """Delete a chapter."""
+        chapterElt = self.document._getElementByID(chapterID)
         assert 0, "Not yet implemented"
         return
         
     def addTrack(self, chapterID, regionID):
         """Add a track for region regionName to chapter chapterID. Returns trackID."""
+        chapterElt = self.document._getElementByID(chapterID)
+        regionElt = self.document._getElementByID(regionID)
         assert 0, "Not yet implemented"
         return newID
         
     def deleteTrack(self, trackID):
         """Delete a track."""
         # xxxjack is this needed?
+        trackElt = self.document._getElementByID(trackID)
         assert 0, "Not yet implemented"
-        return newID
         
     def addElement(self, trackID, assetID):
         """Add asset assetID to track trackID as a new element. Return elementID"""
+        trackElt = self.document._getElementByID(trackID)
+        assetElt = self.document._getElementByID(assetID)
         assert 0, "Not yet implemented"
         return newID
         
     def setElementBegin(self, elementID, delay):
         """Modify begin delay on an element"""
+        elt = self.document._getElementByID(elementID)
         assert 0, "Not yet implemented"
         
     def setElementDuration(self, elementID, duration):
         """Modify begin delay on an element"""
+        elt = self.document._getElementByID(elementID)
         assert 0, "Not yet implemented"
         
     def deleteElement(self, elementID):
         """Delete element"""
+        elt = self.document._getElementByID(elementID)
         assert 0, "Not yet implemented"
         
