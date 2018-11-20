@@ -57,7 +57,7 @@ test_edge:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest
-    - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'python3 -m unittest discover test'
+    - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'python3 -m unittest discover'
     - docker run --rm $CI_REGISTRY_IMAGE:latest /bin/sh -c 'cd app/static && apk add --no-cache git yarn && yarn install && yarn run jest --bail --coverage'
   tags:
     - 2immerse
@@ -71,7 +71,7 @@ test_tag:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'python3 -m unittest discover test'
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'python3 -m unittest discover'
     - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static && apk add --no-cache git yarn && yarn install && yarn run jest --bail --coverage'
   tags:
     - 2immerse
@@ -85,7 +85,7 @@ test_branch:
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'python3 -m unittest discover test'
+    - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'python3 -m unittest discover'
     - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME /bin/sh -c 'cd app/static && apk add --no-cache git yarn && yarn install && yarn run jest --bail --coverage'
   tags:
     - 2immerse
