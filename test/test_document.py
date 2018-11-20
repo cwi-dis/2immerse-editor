@@ -9,7 +9,7 @@ import os
 import json
 import uuid
 
-import pretest
+from . import pretest
 from app.api import document
 
 DOCUMENT = """

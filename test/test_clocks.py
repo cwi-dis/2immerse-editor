@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import unittest
 import time
 
-import pretest
+from . import pretest
 from app.api import clocks
 
 
