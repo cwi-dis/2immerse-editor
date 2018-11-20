@@ -37,9 +37,9 @@
   <au:clientRef url="client.json"/>
   <au:layoutPreview>
     <au:device type="communal" orientation="landscape" name="tv">
-        <au:region au:region="regionid" au:x="0.6" au:y="0.1" au:w="0.3" au:h="0.3"/>
+        <au:area au:region="regionid" au:x="0.6" au:y="0.1" au:w="0.3" au:h="0.3"/>
     </au:device>
-    <au:region xml:id="regionid" au:name="Region Name" au:color="#204060">
+    <au:region xml:id="regionid" au:name="Region Name" au:color="#204060"/>
   </au:layoutPreview>
   <au:assets>
     <au:asset xml:id="assetid" au:name="DMAppc 0" au:description="this is a description" au:previewUrl="previews/logo.png">

@@ -1753,7 +1753,7 @@ class DocumentEditing:
         rv = {}
         return rv
  
-     def getChapter(self, chapterId):
+    def getChapter(self, chapterId):
         """Return per-chapter datastructure"""
         assert 0, "Not yet implemented"
         # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
