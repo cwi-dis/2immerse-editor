@@ -13,7 +13,7 @@
 
     <tl:seq xml:id="elementid" au:type="element" au:elementType="withStartDuration" au:asset="assetid">
         <tl:sleep tl:dur="0"/>
-        <tl:seq>
+        <tl:par>
             <tl:sleep tl:dur="999999"/>
             <tl:ref 
               au:fromAsset="assetid"
@@ -24,12 +24,11 @@
               tim:url="https://origin.platform.2immerse.eu/dmapp-components/image/image.html"
               tic:mediaUrl="https://origin.platform.2immerse.eu/media/motogp/assets/logo.png"
               title="gp-logo"/>
-        </tl:seq>
+        </tl:par>
     </tl:seq>
 
     <tl:ref/>
   </tl:seq>
-  <tl:seq au:type="track"/>
   <tl:seq au:type="subchapters">
     <tl:par au:type="chapter" xml:id="subchapterid"/>
   </tl:seq>

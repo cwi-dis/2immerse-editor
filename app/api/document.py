@@ -1739,6 +1739,7 @@ class DocumentAsync(threading.Thread):
 class DocumentEditing:
     def __init__(self, document):
         self.document = document
+        self.tree = self.document.tree
         self.lock = self.document.lock
         self.logger = self.document.logger.getChild('editing')
         self.logger.debug('DocumentEditing: created')
@@ -1748,16 +1749,59 @@ class DocumentEditing:
 
     def getChapters(self):
         """Return complete chapter tree"""
-        assert 0, "Not yet implemented"
         # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str}], chapters=[...]}
-        rv = {}
+        exprChapter = ".//tl:par[@au:type='chapter']"
+        rootChapterElt = self.tree.getroot().find(exprChapter, NAMESPACES)
+        rv = self._getChapterInfo(rootChapterElt, includeElements=False)
         return rv
  
     def getChapter(self, chapterId):
         """Return per-chapter datastructure"""
-        assert 0, "Not yet implemented"
         # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
-        rv = {}
+        chapterElt = self.document._getElementByID(chapterId)
+        rv = self._getChapterInfo(chapterElt, includeElements=True)
+        return rv
+    
+    def _getChapterInfo(self, elt, includeElements):
+        trackElements = elt.findall("./tl:seq[@au:type='track']", NAMESPACES)
+        chapterElements = elt.findall("./tl:seq[@au:type='subchapters']/*[@au:type='chapter']", NAMESPACES)
+        trackList = []
+        for trackElt in trackElements:
+            trackId = trackElt.get(NS_XML("id"))
+            regionId = trackElt.get(NS_AUTH("region"))
+            trackInfo = dict(id=trackId, region=regionId)
+            if includeElements:
+                elementElementList = trackElt.findall("./tl:seq[@au:type='element']", NAMESPACES)
+                elementList = []
+                for eltElt in elementElementList:
+                    asset = eltElt.get(NS_AUTH("asset"))
+                    begin = None
+                    beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
+                    if beginSleepElt:
+                        beginStr = beginSleepElt.get(NS_TIMELINE("dur"))
+                        if beginStr:
+                            begin = float(beginStr)
+                    dur = None
+                    durSleepElt = eltElt.find('./tl:par/tl:sleep', NAMESPACES)
+                    if durSleepElt:
+                        durStr = durSleepElt.get(NS_TIMELINE("dur"))
+                        if durStr:
+                            dur = float(durStr)
+                    eltInfo = dict(asset=asset)
+                    if begin:
+                        eltInfo['begin'] = begin
+                    if dur != None:
+                        eltInfo['dur'] = dur
+                    elementList.append(eltInfo)
+                trackInfo['elements'] = elementList
+            trackList.append(trackInfo)
+        chapterList = []
+        for chapterElt in chapterElements:
+            chapterInfo = self._getChapterInfo(chapterElt, includeElements)
+            chapterList.append(chapterInfo)
+        chapterId = elt.get(NS_XML("id"))
+        chapterName = elt.get(NS_AUTH("name"))
+        rv = dict(id=chapterId, name=chapterName, tracks=trackList, chapters=chapterList)
         return rv
         
     def getAssets(self):

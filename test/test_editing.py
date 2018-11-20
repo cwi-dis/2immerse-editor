@@ -56,7 +56,8 @@ class TestEditing(unittest.TestCase):
         d = self._createDocument()
         
         e = d.editing()
-        chapter = e.getChapters()
+        chapter = e.getChapter('rootchapterid')
+        print('xxxjack', chapter)
         self.assertEqual(chapter['id'], 'rootchapterid')
         self.assertEqual(len(chapter['tracks']), 1)
         self.assertEqual(chapter['tracks'][0]['id'], 'trackid')
