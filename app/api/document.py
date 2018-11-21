@@ -1803,7 +1803,7 @@ class DocumentEditing:
         if includeChapters:
             chapterList = []
             for chapterElt in chapterElements:
-                chapterInfo = self._getChapterInfo(chapterElt, includeElements)
+                chapterInfo = self._getChapterInfo(chapterElt, includeElements=includeElements, includeChapters=includeChapters)
                 chapterList.append(chapterInfo)
             rv['chapters'] = chapterList
         return rv
