@@ -1748,21 +1748,23 @@ class DocumentEditing:
         self.channel = None
 
     def getChapters(self):
-        """Return complete chapter tree"""
-        # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str}], chapters=[...]}
+        """Return complete chapter tree.
+        Returns: {id=str, name=str, tracks=[{id=str, region=str}], chapters=[...]}
+        """
         exprChapter = ".//tl:par[@au:type='chapter']"
         rootChapterElt = self.tree.getroot().find(exprChapter, NAMESPACES)
-        rv = self._getChapterInfo(rootChapterElt, includeElements=False)
+        rv = self._getChapterInfo(rootChapterElt, includeChapters=True)
         return rv
  
     def getChapter(self, chapterId):
-        """Return per-chapter datastructure"""
-        # xxxjack need to define datastructure. Maybe {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
+        """Return per-chapter datastructure.
+        Returns: {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
+        """
         chapterElt = self.document._getElementByID(chapterId)
         rv = self._getChapterInfo(chapterElt, includeElements=True)
         return rv
     
-    def _getChapterInfo(self, elt, includeElements):
+    def _getChapterInfo(self, elt, includeElements=False, includeChapters=False):
         trackElements = elt.findall("./tl:seq[@au:type='track']", NAMESPACES)
         chapterElements = elt.findall("./tl:seq[@au:type='subchapters']/*[@au:type='chapter']", NAMESPACES)
         trackList = []
@@ -1795,28 +1797,68 @@ class DocumentEditing:
                     elementList.append(eltInfo)
                 trackInfo['elements'] = elementList
             trackList.append(trackInfo)
-        chapterList = []
-        for chapterElt in chapterElements:
-            chapterInfo = self._getChapterInfo(chapterElt, includeElements)
-            chapterList.append(chapterInfo)
         chapterId = elt.get(NS_XML("id"))
         chapterName = elt.get(NS_AUTH("name"))
-        rv = dict(id=chapterId, name=chapterName, tracks=trackList, chapters=chapterList)
+        rv = dict(id=chapterId, name=chapterName, tracks=trackList)
+        if includeChapters:
+            chapterList = []
+            for chapterElt in chapterElements:
+                chapterInfo = self._getChapterInfo(chapterElt, includeElements)
+                chapterList.append(chapterInfo)
+            rv['chapters'] = chapterList
         return rv
         
     def getAssets(self):
-        """Return complete list of assets"""
-        assert 0, "Not yet implmented"
-        # xxxjack need to define datastructure. Maybe [{id=str, name=str, description=str, previewUrl=str}]
+        """Return complete list of assets.
+        Returns [{id=str, name=str, description=str, previewUrl=str}]
+        """
+        assetElements = self.tree.getroot().findall(".//au:assets/au:asset", NAMESPACES)
         rv = []
+        for elt in assetElements:
+            id = elt.get(NS_XML("id"))
+            name = elt.get(NS_AUTH("name"))
+            descr = elt.get(NS_AUTH("description"))
+            url = elt.get(NS_AUTH("previewUrl"))
+            rv.append(dict(id=id, name=name, description=descr, prviewUrl=url))
         return rv
         
     def getLayout(self):
-        """Return complete layout"""
-        assert 0, "Not yet implemented"
-        # xxxjack need to define datastructure. Maybe 
-        # {devices=[{type=str, orientation=str, name=str, regions=[{region=str, x=float, y=float, w=float, h=float}]}], regions=[{id=str, name=str, color=str}]}
-        rv = []
+        """Return complete layout.
+        Returns {devices=[{type=str, orientation=str, name=str, areas=[{region=str, x=float, y=float, w=float, h=float}]}], regions=[{id=str, name=str, color=str}]}
+        """
+        layoutElt = self.tree.getroot().find(".//au:layoutPreview", NAMESPACES)
+        deviceElements = layoutElt.findall('./au:device', NAMESPACES)
+        devices = []
+        for elt in deviceElements:
+            type = elt.get(NS_AUTH("type"))
+            orientation = elt.get(NS_AUTH("orientation"))
+            name = elt.get(NS_AUTH("name"))
+            areaElements = elt.find("./au:area", NAMESPACES)
+            areas = []
+            for aElt in areaElements:
+                region = aElt.get(NS_AUTH("region"))
+                x = aElt.get(NS_AUTH("x"), None)
+                y = aElt.get(NS_AUTH("y"), None)
+                w = aElt.get(NS_AUTH("w"), None)
+                h = aElt.get(NS_AUTH("h"), None)
+                areaDescr = dict(region=region)
+                if x: areaDescr['x'] = x
+                if y: areaDescr['y'] = y
+                if w: areaDescr['w'] = w
+                if h: areaDescr['h'] = h
+                areas.append(areaDescr)
+            deviceDescr = dict(type=type, orientation=orientation, name=name, areas=areas)
+            devices.append(deviceDescr)
+            
+        regionElements = layoutElt.findall('./au:region', NAMESPACES)
+        regions = []
+        for elt in regionElements:
+            id = elt.get(NS_XML("id"))
+            name = elt.get(NS_AUTH("name"))
+            color = elt.get(NS_AUTH("color"))
+            regionDescr = dict(id=id, name=name, color=color)
+            regions.append(regionDescr)
+        rv = dict(devices=devices, regions=regions)
         return rv
         
     def addChapterBefore(self, chapterID):
@@ -1858,7 +1900,6 @@ class DocumentEditing:
         
     def deleteTrack(self, trackID):
         """Delete a track."""
-        # xxxjack is this needed?
         trackElt = self.document._getElementByID(trackID)
         assert 0, "Not yet implemented"
         
