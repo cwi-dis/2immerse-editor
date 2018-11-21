@@ -16,7 +16,6 @@
         <tl:par>
             <tl:sleep tl:dur="999999"/>
             <tl:ref 
-              au:fromAsset="assetid"
               xml:id="assetid-1"
               tim:class="image"
               au:updateGroup="gp-logo"

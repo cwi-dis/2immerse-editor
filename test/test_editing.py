@@ -161,9 +161,6 @@ class TestEditing(unittest.TestCase):
         e.setElementBegin(elementId, 42)
         e.setElementDuration(elementId, 43)
         thisChapter = e.getChapter(subChapterId)
-        import xml.etree.ElementTree as ET
-        ET.dump(d.tree)
-        print('xxxjack', thisChapter)
         self.assertEqual(len(thisChapter['tracks']), 1)
         self.assertDictEqual(thisChapter['tracks'][0]['elements'][0], {'asset':'assetid', 'begin':42.0, 'duration':43.0})
         self.assertEqual(thisChapter['tracks'][0]['region'], 'regionid')

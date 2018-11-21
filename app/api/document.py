@@ -1873,7 +1873,6 @@ class DocumentEditing:
         pos = list(parentElt).index(chapterElt)
         newElt = self._createChapter()
         parentElt.insert(pos, newElt)
-        print('xxxjack newElt', newElt, newElt.attrib)
         self.document._elementAdded(newElt, parentElt)
         self.document._ensureId(newElt)
         newID = newElt.get(NS_XML("id"))     
@@ -2000,7 +1999,11 @@ class DocumentEditing:
         sleepBeginElt = ET.Element(NS_TIMELINE("sleep"), {NS_TIMELINE("dur") : "0"})
         sleepDurElt = ET.Element(NS_TIMELINE("sleep"), {NS_TIMELINE("dur") : "999999"})
         parElt = ET.Element(NS_TIMELINE("par"), {})
-        assetCopyElt = ET.Element("foobar")
+        if len(list(assetElement)) != 1:
+            abort(500, "Asset %s has %d elements" % (assetID, len(list(assetElement))))
+        assetCopyElt = copy.deepcopy(assetElement[0])
+        self.document._afterCopy(assetCopyElt)
+
         parElt.append(sleepDurElt)
         parElt.append(assetCopyElt)
         elementElt.append(sleepBeginElt)
