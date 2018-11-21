@@ -11,7 +11,7 @@
 <tl:par au:type="chapter" xml:id="rootchapterid" au:name="Toplevel Chapter">
   <tl:seq au:type="track" xml:id="trackid" au:region="regionid">
 
-    <tl:seq xml:id="elementid" au:type="element" au:elementType="withStartDuration" au:asset="assetid">
+    <tl:seq xml:id="elementid" au:type="element" au:elementType="withStartAndDuration" au:asset="assetid">
         <tl:sleep tl:dur="0"/>
         <tl:par>
             <tl:sleep tl:dur="999999"/>

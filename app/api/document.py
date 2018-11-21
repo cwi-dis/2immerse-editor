@@ -1779,21 +1779,23 @@ class DocumentEditing:
                     asset = eltElt.get(NS_AUTH("asset"))
                     begin = None
                     beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
-                    if beginSleepElt:
+                    if beginSleepElt == None: abort(500, "Element does not have tl:sleep for begin")
+                    if beginSleepElt != None:
                         beginStr = beginSleepElt.get(NS_TIMELINE("dur"))
-                        if beginStr:
-                            begin = float(beginStr)
+                        assert(beginStr)
+                        begin = float(beginStr)
                     dur = None
                     durSleepElt = eltElt.find('./tl:par/tl:sleep', NAMESPACES)
-                    if durSleepElt:
+                    if durSleepElt == None: abort(500, "Element does not have tl:sleep for duration")
+                    if durSleepElt != None:
                         durStr = durSleepElt.get(NS_TIMELINE("dur"))
-                        if durStr:
-                            dur = float(durStr)
+                        assert(durStr)
+                        dur = float(durStr)
                     eltInfo = dict(asset=asset)
                     if begin:
                         eltInfo['begin'] = begin
                     if dur != None:
-                        eltInfo['dur'] = dur
+                        eltInfo['duration'] = dur
                     elementList.append(eltInfo)
                 trackInfo['elements'] = elementList
             trackList.append(trackInfo)
@@ -1978,21 +1980,39 @@ class DocumentEditing:
     def addElement(self, trackID, assetID):
         """Add asset assetID to track trackID as a new element. Return elementID"""
         trackElt = self.document._getElementByID(trackID)
+        if trackElt == None: abort(404, "No track with xml:id=%s", trackID)
         assetElt = self.document._getElementByID(assetID)
-        assert 0
-        newElt = xxxx
-        trackElt.append(newElement)
+        if trackElt == None: abort(404, "No asset with xml:id=%s", assetID)
+        newElt = self._createElement(assetID, assetElt)
+        trackElt.append(newElt)
         self.document._elementAdded(newElt, trackElt)
+        self.document._ensureId(newElt)
         newID = newElt.get(NS_XML("id"))
         return newID
+        
+    def _createElement(self, assetID, assetElement):
+        data = {
+            NS_AUTH("type") : "element",
+            NS_AUTH("subtype") : "withStartAndDuration",
+            NS_AUTH("asset") : assetID
+            }
+        elementElt = ET.Element(NS_TIMELINE("seq"), data)
+        sleepBeginElt = ET.Element(NS_TIMELINE("sleep"), {NS_TIMELINE("dur") : "0"})
+        sleepDurElt = ET.Element(NS_TIMELINE("sleep"), {NS_TIMELINE("dur") : "999999"})
+        parElt = ET.Element(NS_TIMELINE("par"), {})
+        assetCopyElt = ET.Element("foobar")
+        parElt.append(sleepDurElt)
+        parElt.append(assetCopyElt)
+        elementElt.append(sleepBeginElt)
+        elementElt.append(parElt)
+        return elementElt
         
     @edit
     def setElementBegin(self, elementID, delay):
         """Modify begin delay on an element"""
         elt = self.document._getElementByID(elementID)
-        beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
-        elt = self.document._getElementByID(elementID)
-        beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
+        if elt == None: abort(404, "No element with xml:id=%s" % elementID)
+        beginSleepElt = elt.find('./tl:sleep', NAMESPACES)
         if beginSleepElt == None: abort(404, "No tl:sleep element in %s" % elementID)
         delay = str(delay)
         beginSleepElt.set(NS_TIMELINE("dur"), delay)
@@ -2002,7 +2022,8 @@ class DocumentEditing:
     def setElementDuration(self, elementID, duration):
         """Modify duration on an element"""
         elt = self.document._getElementByID(elementID)
-        durSleepElt = eltElt.find('./tl:par/tl:sleep', NAMESPACES)
+        if elt == None: abort(404, "No element with xml:id=%s" % elementID)
+        durSleepElt = elt.find('./tl:par/tl:sleep', NAMESPACES)
         if durSleepElt == None: abort(404, "No tl:par/tl:sleep element in %s" % elementID)
         duration = str(duration)
         durSleepElt.set(NS_TIMELINE("dur"), duration)
