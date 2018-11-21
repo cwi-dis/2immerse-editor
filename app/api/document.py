@@ -1958,7 +1958,8 @@ class DocumentEditing:
         
     def _createTrack(self, regionID):
         data = {
-            NS_AUTH("region") : regionID
+            NS_AUTH("region") : regionID,
+            NS_AUTH("type") : "track"
             }
         newElt = ET.Element(NS_TIMELINE("seq"), data)
         return newElt
