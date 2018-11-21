@@ -1861,67 +1861,159 @@ class DocumentEditing:
         rv = dict(devices=devices, regions=regions)
         return rv
         
+    @edit
     def addChapterBefore(self, chapterID):
         """Create new empty chapter before existing chapter. Return ID of new chapter."""
-        assert 0, "Not yet implemented"
         chapterElt = self.document._getElementByID(chapterID)
+        if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
+        parentElt = self.document._getParent(chapterElt)
+        if parentElt == None: abort(500, "No parent element for %s" % chapterID)
+        pos = list(parentElt).index(chapterElt)
+        newElt = self._createChapter()
+        parentElt.insert(pos, newElt)
+        print('xxxjack newElt', newElt, newElt.attrib)
+        self.document._elementAdded(newElt, parentElt)
+        self.document._ensureId(newElt)
+        newID = newElt.get(NS_XML("id"))     
         return newID
         
+    @edit
     def addChapterAfter(self, chapterID):
         """Create new cempty hapter after existing chapter. Return ID of new chapter."""
-        assert 0, "Not yet implemented"
         chapterElt = self.document._getElementByID(chapterID)
+        if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
+        parentElt = self.document._getParent(chapterElt)
+        if parentElt == None: abort(500, "No parent element for %s" % chapterID)
+        pos = list(parentElt).index(chapterElt)
+        newElt = self._createChapter()
+        if pos+1 >= len(list(parentElt)):
+            parentElt.append(newElt)
+        else:
+            parentElt.insert(pos+1, newElt)
+        self.document._elementAdded(newElt, parentElt)
+        self.document._ensureId(newElt)
+        newID = newElt.get(NS_XML("id"))     
         return newID
         
+    @edit
     def addSubChapter(self, chapterID):
         """Create new chapter (containing old content) as child of existing chapter. Return ID of new chapter."""
         chapterElt = self.document._getElementByID(chapterID)
-        assert 0, "Not yet implemented"
+        if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
+        subChapterListElt = self._createSubChapterList(chapterElt)
+        if subChapterListElt == None: abort(500, "No subchapter element created for %s" % chapterID)
+        newElt = self._createChapter()
+        # xxxjack should move content from chapterElt into newElt
+        subChapterListElt.append(newElt)
+        self.document._elementAdded(newElt, subChapterListElt)
+        self.document._ensureId(newElt)
+        newID = newElt.get(NS_XML("id"))     
         return newID
-                
+
+    def _createChapter(self):
+        newElt = ET.Element(NS_TIMELINE("par"), {NS_AUTH("type") : "chapter"})
+        return newElt
+        
+    def _createSubChapterList(self, chapterElt):
+        # See if it exists
+        tag = NS_TIMELINE("seq")
+        data = {
+            NS_AUTH("type") : "subchapters"
+            }
+        newElt = ET.Element(NS_TIMELINE("seq"), data)
+        chapterElt.append(newElt)
+        self.document._elementAdded(newElt, chapterElt)
+        self.document._ensureId(newElt)
+        return newElt
+    
+    @edit
     def renameChapter(self, chapterID, name):
         """Rename a chapter."""
         chapterElt = self.document._getElementByID(chapterID)
-        assert 0, "Not yet implemented"
-        return
+        if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
+        chapterElt.set(NS_AUTH("name"), name)
+        self.document._elementChanged(chapterElt)
                 
+    @edit
     def deleteChapter(self, chapterID):
         """Delete a chapter."""
         chapterElt = self.document._getElementByID(chapterID)
-        assert 0, "Not yet implemented"
-        return
+        if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
+        parentElt = self.document._getParent(chapterElt)
+        if parentElt == None: abort(500, "No parent element for %s" % chapterID)
+        parentElt.remove(chapterElt)
+        self.document._elementDeleted(chapterElt)
         
+    @edit
     def addTrack(self, chapterID, regionID):
         """Add a track for region regionName to chapter chapterID. Returns trackID."""
         chapterElt = self.document._getElementByID(chapterID)
         regionElt = self.document._getElementByID(regionID)
-        assert 0, "Not yet implemented"
+        trackElt = self._createTrack(regionID)
+        chapterElt.append(trackElt)
+        self.document._elementAdded(trackElt, chapterElt)
+        self.document._ensureId(trackElt)
+        newID = trackElt.get(NS_XML("id"))
         return newID
         
+    def _createTrack(self, regionID):
+        data = {
+            NS_AUTH("region") : regionID
+            }
+        newElt = ET.Element(NS_TIMELINE("seq"), data)
+        return newElt
+        
+    @edit
     def deleteTrack(self, trackID):
         """Delete a track."""
         trackElt = self.document._getElementByID(trackID)
-        assert 0, "Not yet implemented"
+        if trackElt == None: return
+        parentElt = self.document._getParent(trackElt)
+        if parentElt == None: abort(500, "No parent element for %s" % trackID)
+        parentElt.remove(trackElt)
+        self.document._elementDeleted(trackElt)
         
+    @edit
     def addElement(self, trackID, assetID):
         """Add asset assetID to track trackID as a new element. Return elementID"""
         trackElt = self.document._getElementByID(trackID)
         assetElt = self.document._getElementByID(assetID)
-        assert 0, "Not yet implemented"
+        assert 0
+        newElt = xxxx
+        trackElt.append(newElement)
+        self.document._elementAdded(newElt, trackElt)
+        newID = newElt.get(NS_XML("id"))
         return newID
         
+    @edit
     def setElementBegin(self, elementID, delay):
         """Modify begin delay on an element"""
         elt = self.document._getElementByID(elementID)
-        assert 0, "Not yet implemented"
-        
-    def setElementDuration(self, elementID, duration):
-        """Modify begin delay on an element"""
+        beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
         elt = self.document._getElementByID(elementID)
-        assert 0, "Not yet implemented"
+        beginSleepElt = eltElt.find('./tl:sleep', NAMESPACES)
+        if beginSleepElt == None: abort(404, "No tl:sleep element in %s" % elementID)
+        delay = str(delay)
+        beginSleepElt.set(NS_TIMELINE("dur"), delay)
+        self.document._elementChanged(beginSleepElt)
         
+    @edit
+    def setElementDuration(self, elementID, duration):
+        """Modify duration on an element"""
+        elt = self.document._getElementByID(elementID)
+        durSleepElt = eltElt.find('./tl:par/tl:sleep', NAMESPACES)
+        if durSleepElt == None: abort(404, "No tl:par/tl:sleep element in %s" % elementID)
+        duration = str(duration)
+        durSleepElt.set(NS_TIMELINE("dur"), duration)
+        self.document._elementChanged(durSleepElt)
+        
+    @edit
     def deleteElement(self, elementID):
         """Delete element"""
         elt = self.document._getElementByID(elementID)
-        assert 0, "Not yet implemented"
+        if elt == None: return
+        parentElt = self.document._getParent(elt)
+        if parentElt == None: abort(500, "No parent element for %s" % elementID)
+        parentElt.remove(elt)
+        self.document._elementDeleted(elt)
         

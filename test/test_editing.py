@@ -43,15 +43,6 @@ class TestEditing(unittest.TestCase):
         self.assertEqual(len(chapter['chapters']), 1)
         self.assertEqual(chapter['chapters'][0]['id'], 'subchapterid')
 
-    def test_getChapters(self):
-        d = self._createDocument()
-        
-        e = d.editing()
-        chapter = e.getChapters()
-        self.assertEqual(chapter['id'], 'rootchapterid')
-        self.assertEqual(len(chapter['chapters']), 1)
-        self.assertEqual(chapter['chapters'][0]['id'], 'subchapterid')
-
     def test_getChapter(self):
         d = self._createDocument()
         
@@ -86,8 +77,8 @@ class TestEditing(unittest.TestCase):
         subChapterId = rootChapter['chapters'][0]['id']
         newId = e.addChapterBefore(subChapterId)
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters']), 2)
-        self.assertEqual(chapter['chapters'][0]['id'], newId)
+        self.assertEqual(len(rootChapter['chapters']), 2)
+        self.assertEqual(rootChapter['chapters'][0]['id'], newId)
 
     def test_addChapterAfter(self):
         d = self._createDocument()
@@ -97,8 +88,8 @@ class TestEditing(unittest.TestCase):
         subChapterId = rootChapter['chapters'][0]['id']
         newId = e.addChapterAfter(subChapterId)
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters']), 2)
-        self.assertEqual(chapter['chapters'][1]['id'], newId)
+        self.assertEqual(len(rootChapter['chapters']), 2)
+        self.assertEqual(rootChapter['chapters'][1]['id'], newId)
 
     def test_addSubChapter(self):
         d = self._createDocument()
@@ -108,8 +99,8 @@ class TestEditing(unittest.TestCase):
         subChapterId = rootChapter['chapters'][0]['id']
         newId = e.addSubChapter(subChapterId)
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters'][0]['chapters']), 1)
-        self.assertEqual(chapter['chapters'][0]['chapters'][0]['id'], newId)
+        self.assertEqual(len(rootChapter['chapters'][0]['chapters']), 1)
+        self.assertEqual(rootChapter['chapters'][0]['chapters'][0]['id'], newId)
 
     def test_renameChapter(self):
         d = self._createDocument()
@@ -120,8 +111,8 @@ class TestEditing(unittest.TestCase):
         newId = e.addSubChapter(subChapterId)
         e.renameChapter(newId, 'Try Renaming')
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters'][0]['chapters']), 1)
-        self.assertEqual(chapter['chapters'][0]['chapters'][0]['name'], 'Try Renaming')
+        self.assertEqual(len(rootChapter['chapters'][0]['chapters']), 1)
+        self.assertEqual(rootChapter['chapters'][0]['chapters'][0]['name'], 'Try Renaming')
 
     def test_deleteChapter(self):
         d = self._createDocument()
@@ -132,7 +123,7 @@ class TestEditing(unittest.TestCase):
         newId = e.addSubChapter(subChapterId)
         e.deleteChapter(subChapterId)
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters']), 0)
+        self.assertEqual(len(rootChapter['chapters']), 0)
 
     def test_addTrack(self):
         d = self._createDocument()
@@ -142,9 +133,9 @@ class TestEditing(unittest.TestCase):
         subChapterId = rootChapter['chapters'][0]['id']
         trackId = e.addTrack(subChapterId, 'regionid')
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters'][0]['tracks']), 1)
-        self.assertEqual(chapter['chapters'][0]['tracks'][0]['id'], trackId)
-        self.assertEqual(chapter['chapters'][0]['tracks'][0]['region'], 'regionid')
+        self.assertEqual(len(rootChapter['chapters'][0]['tracks']), 1)
+        self.assertEqual(rootChapter['chapters'][0]['tracks'][0]['id'], trackId)
+        self.assertEqual(rootChapter['chapters'][0]['tracks'][0]['region'], 'regionid')
 
     def test_deleteTrack(self):
         d = self._createDocument()
@@ -154,10 +145,10 @@ class TestEditing(unittest.TestCase):
         subChapterId = rootChapter['chapters'][0]['id']
         trackId = e.addTrack(subChapterId, 'regionid')
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters'][0]['tracks']), 1)
+        self.assertEqual(len(rootChapter['chapters'][0]['tracks']), 1)
         e.deleteTrack(trackId)
         rootChapter = e.getChapters()
-        self.assertEqual(len(chapter['chapters'][0]['tracks']), 0)
+        self.assertEqual(len(rootChapter['chapters'][0]['tracks']), 0)
 
     def test_addElement(self):
         d = self._createDocument()
