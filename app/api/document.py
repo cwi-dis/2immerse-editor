@@ -391,7 +391,7 @@ class Document(object):
         if not self.asyncHandler:
             self.asyncHandler = DocumentAsync(self)
         return self.asyncHandler
-        
+
     def editing(self):
         """Returns a document editing handler (after creating it if needed)"""
         if not self.editingHandler:
@@ -752,7 +752,7 @@ class DocumentXml(object):
         sourceElement = self.cut(sourcepath)
         # newElement._setroot(None)
         return self.paste(path, where, None, sourceElement)
-   
+
 class DocumentEvents(object):
     def __init__(self, document):
         self.document = document
@@ -1112,7 +1112,7 @@ class DocumentEvents(object):
         oldName = element.attrib.pop(NS_TRIGGER("name"), None)
         if oldName:
             element.attrib[NS_TRIGGER("oldName")] = oldName
-            
+
         self.document.asynch().requestBroadcastToFrontends()
         return True
 
@@ -1397,9 +1397,9 @@ class DocumentServe(object):
         # And change all toplevel relative URLs to be relative to base
         #
         self._fixUrls(clientDoc)
-                
+
         return json.dumps(clientDoc)
-        
+
     def _fixUrls(self, clientDict):
         """Recursively do a basejoin on all fields ending in url"""
         for k in clientDict.keys():
@@ -1409,8 +1409,8 @@ class DocumentServe(object):
                 clientDict[k] = newUrl
             if isinstance(v, dict):
                 self._fixUrls(v)
-            
-        
+
+
     @synchronized
     def getLiveInfo(self, contextID=None, viewer=False):
         rv = {'toTimeline' : self.document.asynch().getOutgoingConnectionInfo()}
@@ -1607,7 +1607,7 @@ class DocumentSettings(object):
         if elt != None:
             kwargs = dict(elt.attrib)
             self.set(**kwargs)
-            
+
     def get(self, frontend, backend):
         return dict(
             startPaused=self.startPaused,
@@ -1672,35 +1672,35 @@ class DocumentAsync(threading.Thread):
 
         self.socket = SocketIO(websocket_service, verify=False)
         self.channel = self.socket.define(SocketIONamespace, "/trigger")
-        
+
         self.roomFrontend = str23compat(self.document.documentId)
         self.roomUpdates = 'toBackend-' + str23compat(self.document.documentId)
         self.roomModifications = 'toTimelines-' + str23compat(self.document.documentId)
-        
+
         self.channel.on('STATUS', self.incomingDocumentStatus)
-        
+
         self.channel.emit('JOIN', self.roomUpdates)
 
         self.running = True
         self.start()
-    
+
     def getIncomingConnectionInfo(self):
         websocket_service = GlobalSettings.websocketInternalService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
         return dict(server=websocket_service, channel='/trigger', room=self.roomUpdates)
-    
+
     def getOutgoingConnectionInfo(self):
         websocket_service = GlobalSettings.websocketInternalService
         # Remove trailing slash (not sure why it's there in the first place?)
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
         return dict(server=websocket_service, channel='/trigger', room=self.roomModifications)
-    
+
     def stop(self):
         self.running = False
-        
+
     def run(self):
         self.logger.debug('DocumentAsync listener started')
         while self.running:
@@ -1721,7 +1721,7 @@ class DocumentAsync(threading.Thread):
         events = self.document.events().get(caller='broadcast')
         if not self.channel:
             self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...) skipped (test mode)')
-            return            
+            return
         self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...)')
         self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
 
@@ -1731,7 +1731,7 @@ class DocumentAsync(threading.Thread):
             return
         self.logger.debug('DocumentAsync.forwardDocumentModifications(...)' )
         self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
-        
+
     def incomingDocumentStatus(self, documentState):
         self.logger.debug('DocumentAsync.incomingDocumentStatus(%s)' % repr(documentState))
         self.document.serve()._setDocumentState(documentState)
@@ -1755,7 +1755,7 @@ class DocumentEditing:
         rootChapterElt = self.tree.getroot().find(exprChapter, NAMESPACES)
         rv = self._getChapterInfo(rootChapterElt, includeChapters=True)
         return rv
- 
+
     def getChapter(self, chapterId):
         """Return per-chapter datastructure.
         Returns: {id=str, name=str, tracks=[{id=str, region=str, elements=[{asset=str, begin=float, dur=float}]}]}
@@ -1763,7 +1763,7 @@ class DocumentEditing:
         chapterElt = self.document._getElementByID(chapterId)
         rv = self._getChapterInfo(chapterElt, includeElements=True)
         return rv
-    
+
     def _getChapterInfo(self, elt, includeElements=False, includeChapters=False):
         trackElements = elt.findall("./tl:seq[@au:type='track']", NAMESPACES)
         chapterElements = elt.findall("./tl:seq[@au:type='subchapters']/*[@au:type='chapter']", NAMESPACES)
@@ -1809,7 +1809,7 @@ class DocumentEditing:
                 chapterList.append(chapterInfo)
             rv['chapters'] = chapterList
         return rv
-        
+
     def getAssets(self):
         """Return complete list of assets.
         Returns [{id=str, name=str, description=str, previewUrl=str}]
@@ -1823,7 +1823,7 @@ class DocumentEditing:
             url = elt.get(NS_AUTH("previewUrl"))
             rv.append(dict(id=id, name=name, description=descr, prviewUrl=url))
         return rv
-        
+
     def getLayout(self):
         """Return complete layout.
         Returns {devices=[{type=str, orientation=str, name=str, areas=[{region=str, x=float, y=float, w=float, h=float}]}], regions=[{id=str, name=str, color=str}]}
@@ -1851,7 +1851,7 @@ class DocumentEditing:
                 areas.append(areaDescr)
             deviceDescr = dict(type=type, orientation=orientation, name=name, areas=areas)
             devices.append(deviceDescr)
-            
+
         regionElements = layoutElt.findall('./au:region', NAMESPACES)
         regions = []
         for elt in regionElements:
@@ -1862,7 +1862,7 @@ class DocumentEditing:
             regions.append(regionDescr)
         rv = dict(devices=devices, regions=regions)
         return rv
-        
+
     @edit
     def addChapterBefore(self, chapterID):
         """Create new empty chapter before existing chapter. Return ID of new chapter."""
@@ -1875,9 +1875,9 @@ class DocumentEditing:
         parentElt.insert(pos, newElt)
         self.document._elementAdded(newElt, parentElt)
         self.document._ensureId(newElt)
-        newID = newElt.get(NS_XML("id"))     
+        newID = newElt.get(NS_XML("id"))
         return newID
-        
+
     @edit
     def addChapterAfter(self, chapterID):
         """Create new cempty hapter after existing chapter. Return ID of new chapter."""
@@ -1893,9 +1893,9 @@ class DocumentEditing:
             parentElt.insert(pos+1, newElt)
         self.document._elementAdded(newElt, parentElt)
         self.document._ensureId(newElt)
-        newID = newElt.get(NS_XML("id"))     
+        newID = newElt.get(NS_XML("id"))
         return newID
-        
+
     @edit
     def addSubChapter(self, chapterID):
         """Create new chapter (containing old content) as child of existing chapter. Return ID of new chapter."""
@@ -1908,13 +1908,13 @@ class DocumentEditing:
         subChapterListElt.append(newElt)
         self.document._elementAdded(newElt, subChapterListElt)
         self.document._ensureId(newElt)
-        newID = newElt.get(NS_XML("id"))     
+        newID = newElt.get(NS_XML("id"))
         return newID
 
     def _createChapter(self):
         newElt = ET.Element(NS_TIMELINE("par"), {NS_AUTH("type") : "chapter"})
         return newElt
-        
+
     def _createSubChapterList(self, chapterElt):
         # See if it exists
         tag = NS_TIMELINE("seq")
@@ -1926,7 +1926,7 @@ class DocumentEditing:
         self.document._elementAdded(newElt, chapterElt)
         self.document._ensureId(newElt)
         return newElt
-    
+
     @edit
     def renameChapter(self, chapterID, name):
         """Rename a chapter."""
@@ -1934,7 +1934,7 @@ class DocumentEditing:
         if chapterElt == None: abort(404, "No element with xml:id=%s" % chapterID)
         chapterElt.set(NS_AUTH("name"), name)
         self.document._elementChanged(chapterElt)
-                
+
     @edit
     def deleteChapter(self, chapterID):
         """Delete a chapter."""
@@ -1944,7 +1944,7 @@ class DocumentEditing:
         if parentElt == None: abort(500, "No parent element for %s" % chapterID)
         parentElt.remove(chapterElt)
         self.document._elementDeleted(chapterElt)
-        
+
     @edit
     def addTrack(self, chapterID, regionID):
         """Add a track for region regionName to chapter chapterID. Returns trackID."""
@@ -1956,7 +1956,7 @@ class DocumentEditing:
         self.document._ensureId(trackElt)
         newID = trackElt.get(NS_XML("id"))
         return newID
-        
+
     def _createTrack(self, regionID):
         data = {
             NS_AUTH("region") : regionID,
@@ -1964,7 +1964,7 @@ class DocumentEditing:
             }
         newElt = ET.Element(NS_TIMELINE("seq"), data)
         return newElt
-        
+
     @edit
     def deleteTrack(self, trackID):
         """Delete a track."""
@@ -1974,7 +1974,7 @@ class DocumentEditing:
         if parentElt == None: abort(500, "No parent element for %s" % trackID)
         parentElt.remove(trackElt)
         self.document._elementDeleted(trackElt)
-        
+
     @edit
     def addElement(self, trackID, assetID):
         """Add asset assetID to track trackID as a new element. Return elementID"""
@@ -1988,7 +1988,7 @@ class DocumentEditing:
         self.document._ensureId(newElt)
         newID = newElt.get(NS_XML("id"))
         return newID
-        
+
     def _createElement(self, assetID, assetElement):
         data = {
             NS_AUTH("type") : "element",
@@ -2009,7 +2009,7 @@ class DocumentEditing:
         elementElt.append(sleepBeginElt)
         elementElt.append(parElt)
         return elementElt
-        
+
     @edit
     def setElementBegin(self, elementID, delay):
         """Modify begin delay on an element"""
@@ -2020,7 +2020,7 @@ class DocumentEditing:
         delay = str(delay)
         beginSleepElt.set(NS_TIMELINE("dur"), delay)
         self.document._elementChanged(beginSleepElt)
-        
+
     @edit
     def setElementDuration(self, elementID, duration):
         """Modify duration on an element"""
@@ -2031,7 +2031,7 @@ class DocumentEditing:
         duration = str(duration)
         durSleepElt.set(NS_TIMELINE("dur"), duration)
         self.document._elementChanged(durSleepElt)
-        
+
     @edit
     def deleteElement(self, elementID):
         """Delete element"""
@@ -2041,4 +2041,4 @@ class DocumentEditing:
         if parentElt == None: abort(500, "No parent element for %s" % elementID)
         parentElt.remove(elt)
         self.document._elementDeleted(elt)
-        
+
