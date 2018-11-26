@@ -5,6 +5,7 @@ import * as XHRmock from "xhr-mock";
 
 import * as util from "../js/editor/util";
 import { Chapter } from "../js/editor/reducers/chapters";
+import { Stage } from "react-konva";
 
 describe("Utility function findById()", () => {
   it("finds an element in a list given by ID", () => {
@@ -852,6 +853,38 @@ describe("Utility function capitalize()", () => {
 
   it("should simply return an empty string", () => {
     expect(util.capitalize("")).toEqual("");
+  });
+});
+
+describe("Utility function getCanvasDropPosition()", () => {
+  const mockStageWithOffset = (offsetLeft: number, offsetTop: number) => {
+    return {
+      getStage: () => {
+        return {
+          container: () => {
+            return {
+              offsetLeft, offsetTop
+            };
+          }
+        };
+      }
+    } as Stage;
+  };
+
+  it("should throw an error if the first parameter is null", () => {
+    expect(() => {
+      util.getCanvasDropPosition(null, 10, 20);
+    }).toThrow();
+  });
+
+  it("should return the coordinates unchanged if the offset is 0", () => {
+    const mockStageWrapper = mockStageWithOffset(0, 0);
+    expect(util.getCanvasDropPosition(mockStageWrapper, 23, 76)).toEqual([23, 76]);
+  });
+
+  it("should subtract the offset from the passed coordinates", () => {
+    const mockStageWrapper = mockStageWithOffset(10, 20);
+    expect(util.getCanvasDropPosition(mockStageWrapper, 10, 20)).toEqual([0, 0]);
   });
 });
 
