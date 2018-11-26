@@ -4,6 +4,7 @@ import { validate } from "jsonschema";
 
 import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
+import { Stage } from "react-konva";
 
 export type Coords = [number, number];
 export type Nullable<T> = T | null;
@@ -238,6 +239,20 @@ export function validateLayout(layout: any): Promise<void> {
       }
     });
   });
+}
+
+export function getCanvasDropPosition(stageWrapper: Nullable<Stage>, pageX: number, pageY: number) {
+    if (!stageWrapper) {
+      throw new Error("Stage ref is null");
+    }
+
+    const stage = stageWrapper.getStage();
+    const {offsetLeft, offsetTop} = stage.container();
+
+    return [
+      pageX - offsetLeft,
+      pageY - offsetTop
+    ];
 }
 
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
