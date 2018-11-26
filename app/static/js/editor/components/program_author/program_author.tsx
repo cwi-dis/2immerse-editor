@@ -5,7 +5,7 @@ import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Coords, countLeafNodes, generateChapterKeyPath, getTreeHeight, Nullable } from "../../util";
+import { Coords, countLeafNodes, generateChapterKeyPath, getCanvasDropPosition, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState, navigate } from "../../store";
@@ -34,14 +34,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
   private stageWrapper: Nullable<Stage>;
   private treeLayout: Array<{chapterId: string, accessPath: Array<number>, position: Coords, size: Coords}>;
-
-  private getStage() {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    return this.stageWrapper.getStage();
-  }
 
   private handleBoxClick(accessPath: Array<number>): void {
     const keyPath = generateChapterKeyPath(accessPath);
@@ -161,16 +153,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     return [xOffset + this.boxMargin[0], 10];
   }
 
-  private getCanvasDropPosition(pageX: number, pageY: number) {
-    const stage: KonvaStage = this.getStage();
-    const {offsetLeft, offsetTop} = stage.container();
-
-    return [
-      pageX - offsetLeft,
-      pageY - offsetTop
-    ];
-  }
-
   private computeTreeLayout(renderedTree: Array<any>) {
     this.treeLayout = renderedTree.filter((node) => {
       return node.type === ChapterNode;
@@ -186,7 +168,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 
   private onDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    const [dropX, dropY] = this.getCanvasDropPosition(e.pageX, e.pageY);
+    const [dropX, dropY] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
     const masterId = e.dataTransfer.getData("text/plain");
 
     console.log("drop event coords:", dropX, dropY);

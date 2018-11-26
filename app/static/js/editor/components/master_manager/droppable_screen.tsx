@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Nullable } from "../../util";
+import { Nullable, getCanvasDropPosition } from "../../util";
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import { ComponentPlacement } from "../../reducers/masters";
@@ -42,16 +42,6 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     }
   }
 
-  private getCanvasDropPosition(pageX: number, pageY: number) {
-    const stage: KonvaStage = this.getStage();
-    const {offsetLeft, offsetTop} = stage.container();
-
-    return [
-      pageX - offsetLeft,
-      pageY - offsetTop
-    ];
-  }
-
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
 
@@ -66,7 +56,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
 
     const stage: KonvaStage = this.getStage();
 
-    const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
+    const [x, y] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
     const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
 
     if (dropRegion) {

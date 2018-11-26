@@ -6,7 +6,7 @@ import { Group, Layer, Line, Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable } from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -121,30 +121,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid);
   }
 
-  private getStage() {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    return this.stageWrapper.getStage();
-  }
-
-  private getCanvasDropPosition(pageX: number, pageY: number) {
-    const stage: KonvaStage = this.getStage();
-    const {offsetLeft, offsetTop} = stage.container();
-
-    return [
-      pageX - offsetLeft,
-      pageY - offsetTop
-    ];
-  }
-
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
 
-    const [x, y] = this.getCanvasDropPosition(e.pageX, e.pageY);
+    const [x, y] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
     console.log("Component dropped at", x, y);
 
     const trackLayout = this.getTrackLayout();
