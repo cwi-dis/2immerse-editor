@@ -3,7 +3,6 @@ import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
-import { Stage as KonvaStage } from "konva";
 
 import { Coords, countLeafNodes, generateChapterKeyPath, getCanvasDropPosition, getTreeHeight, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";

@@ -3,7 +3,7 @@ import { EventParams } from "./trigger_client";
 
 type ParamInputFieldProps = EventParams & {
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void;
-}
+};
 
 const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputFieldProps) => {
   switch (props.type) {

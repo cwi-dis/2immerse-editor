@@ -3,12 +3,11 @@ import { List } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
-import { Stage as KonvaStage } from "konva";
 
 import { ApplicationState, navigate } from "../../store";
 import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable } from "../../util";
 
-import { ChapterState, Chapter } from "../../reducers/chapters";
+import { ChapterState } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
 import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
 

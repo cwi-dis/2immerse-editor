@@ -1,9 +1,5 @@
 import { ActionCreatorsMapObject } from "redux";
-import { List } from "immutable";
-
-import { Coords, PayloadAction, AsyncAction, findById } from "../util";
-import { Chapter } from "../reducers/chapters";
-import { actionCreators as chapterActionCreators } from "./chapters";
+import { Coords, PayloadAction } from "../util";
 
 export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>;
 function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"): ADD_DEVICE {

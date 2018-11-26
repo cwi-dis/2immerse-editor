@@ -2,7 +2,6 @@ import { List, Record } from "immutable";
 import * as shortid from "shortid";
 import { ActionHandler, generateChapterKeyPath, Nullable } from "../util";
 import * as actions from "../actions/chapters";
-import { Timeline, TimelineTrack } from "./timelines";
 
 export interface ChapterAttributes {
   id: string;

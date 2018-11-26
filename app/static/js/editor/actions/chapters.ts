@@ -1,6 +1,5 @@
 import { ActionCreatorsMapObject } from "redux";
-import { List } from "immutable";
-import { AsyncAction, PayloadAction, generateChapterKeyPath } from "../util";
+import { PayloadAction } from "../util";
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
 function addChapterBefore(accessPath: Array<number>): ADD_CHAPTER_BEFORE {
