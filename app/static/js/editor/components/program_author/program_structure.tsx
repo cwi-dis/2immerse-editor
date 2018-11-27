@@ -6,29 +6,37 @@ import { Nullable } from "../../util";
 interface ProgramStructureProps {
   chapters: List<Chapter>;
   levelIndent: number;
+  chapterClicked: (accessPath: Array<number>) => void;
 }
 
 const rightTriangle = String.fromCodePoint(9656);
 const downTriangle = String.fromCodePoint(9662);
 
 const ProgramStructure: React.SFC<ProgramStructureProps> = (props) => {
-  const { chapters, levelIndent } = props;
+  const { chapters, levelIndent, chapterClicked } = props;
 
-  const renderTreeLevel = (chapters: List<Chapter>, level = 0): Nullable<JSX.Element> => {
+  const renderTreeLevel = (chapters: List<Chapter>, accessPath: Array<number> = []): Nullable<JSX.Element> => {
     if (chapters.isEmpty()) {
       return null;
     }
 
     return (
-      <div style={{marginLeft: (level === 0) ? 8 : levelIndent}}>
+      <div style={{marginLeft: (accessPath.length === 0) ? 8 : levelIndent}}>
         {chapters.map((chapter, i) => {
           const name = (chapter.name) ? chapter.name : <span style={{color: "#555555"}}>(to be named)</span>;
           const bullet = (chapter.children!.isEmpty()) ? rightTriangle : downTriangle;
 
+          const currentPath = accessPath.concat([i]);
+
           return (
             <div key={i}>
-              <div style={{padding: "3px 0"}}>{bullet} {name}</div>
-              {renderTreeLevel(chapter.children!, level + 1)}
+              <div
+                style={{padding: "3px 0", cursor: "pointer"}}
+                onClick={chapterClicked.bind(this, currentPath)}
+              >
+                {bullet} {name}
+              </div>
+              {renderTreeLevel(chapter.children!, currentPath)}
             </div>
           );
         })}
