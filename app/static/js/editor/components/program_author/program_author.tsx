@@ -33,7 +33,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private stageWrapper: Nullable<Stage>;
   private treeLayout: Array<{chapterId: string, accessPath: Array<number>, position: Coords, size: Coords}>;
 
-  private handleBoxClick(accessPath: Array<number>): void {
+  private handleChapterClick(accessPath: Array<number>): void {
     const keyPath = generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
 
@@ -89,7 +89,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
           position={[x, y]}
           size={[boxWidth, this.boxSize[1]]}
           currentPath={currentPath}
-          boxClick={this.handleBoxClick.bind(this)}
+          boxClick={this.handleChapterClick.bind(this)}
           nameLabelClick={this.handleLabelClick.bind(this)}
           addChapterClick={this.handleAddChapterClick.bind(this)}
           removeChapterClick={this.handleRemoveClick.bind(this)}
@@ -216,7 +216,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
           </div>
         </div>
         <div className="column-sidebar">
-          <ProgramStructure chapters={chapters} levelIndent={15} />
+          <ProgramStructure
+            chapters={chapters}
+            levelIndent={15}
+            chapterClicked={this.handleChapterClick.bind(this)}
+          />
         </div>
       </div>
     );
