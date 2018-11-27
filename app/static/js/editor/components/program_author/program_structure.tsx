@@ -22,13 +22,15 @@ const ProgramStructure: React.SFC<ProgramStructureProps> = (props) => {
     }
 
     return (
-      <div style={{marginLeft: (accessPath.length === 0) ? 8 : levelIndent}}>
+      <div style={{paddingLeft: (accessPath.length === 0) ? 8 : levelIndent}}>
         {chapters.map((chapter, i) => {
-          const name = (chapter.name) ? chapter.name : <span style={{color: "#555555"}}>(to be named)</span>;
           const bullet = (chapter.children!.isEmpty()) ? rightTriangle : downTriangle;
 
           const currentPath = accessPath.concat([i]);
           const bgColor = (selectedChapter && arraysEqual(currentPath, selectedChapter)) ? "#389CEB" : "transparent";
+          const txtColor = (selectedChapter && arraysEqual(currentPath, selectedChapter))
+            ? "#FFFFFF"
+            : (chapter.name) ? "inherit" : "#555555";
 
           return (
             <div key={i}>
@@ -36,7 +38,9 @@ const ProgramStructure: React.SFC<ProgramStructureProps> = (props) => {
                 style={{padding: "3px 0", cursor: "pointer", backgroundColor: bgColor}}
                 onClick={chapterClicked.bind(this, currentPath)}
               >
-                {bullet} {name}
+                <span style={{color: txtColor}}>
+                  {bullet} {(chapter.name) ? chapter.name : "(to be named)"}
+                </span>
               </div>
               {renderTreeLevel(chapter.children!, currentPath)}
             </div>
