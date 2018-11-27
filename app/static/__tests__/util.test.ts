@@ -888,6 +888,31 @@ describe("Utility function getCanvasDropPosition()", () => {
   });
 });
 
+describe("Utility function arrayEquals()", () => {
+  it("should return true if both arrays are empty", () => {
+    expect(util.arraysEqual([], [])).toBeTruthy();
+  });
+
+  it("should return true if both arrays contain the same elements", () => {
+    expect(util.arraysEqual([1], [1])).toBeTruthy();
+    expect(util.arraysEqual([1, 2, 3], [1, 2, 3])).toBeTruthy();
+    expect(util.arraysEqual(["a", "b"], ["a", "b"])).toBeTruthy();
+  });
+
+  it("should return false if the arrays have different length", () => {
+    expect(util.arraysEqual([1, 2], [1, 2, 3])).toBeFalsy();
+    expect(util.arraysEqual([1, 2, 3], [1, 2])).toBeFalsy();
+  });
+
+  it("should return false if the arrays contain different elements", () => {
+    expect(util.arraysEqual([1, 4, 3], [1, 2, 3])).toBeFalsy();
+  });
+
+  it("should return false if the arrays contain the same elements in a different order", () => {
+    expect(util.arraysEqual([1, 3, 2], [1, 2, 3])).toBeFalsy();
+  });
+});
+
 describe("Utility function pluck()", () => {
   it("should return a new object with only the specified keys from the original object", () => {
     const original = {
