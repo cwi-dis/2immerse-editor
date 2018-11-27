@@ -9,13 +9,13 @@ import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState, navigate } from "../../store";
 import { ChapterState } from "../../reducers/chapters";
-import { MasterState } from "../../reducers/masters";
 import { TimelineState } from "../../reducers/timelines";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../../actions/chapters";
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
+import ProgramStructure from "./program_structure";
 
 interface ProgramAuthorProps {
   chapters: ChapterState;
@@ -216,6 +216,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
           </div>
         </div>
         <div className="column-sidebar">
+          <ProgramStructure chapters={chapters} levelIndent={15} />
         </div>
       </div>
     );
