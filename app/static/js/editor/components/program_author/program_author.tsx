@@ -19,7 +19,6 @@ import NodeConnectors from "./node_connectors";
 
 interface ProgramAuthorProps {
   chapters: ChapterState;
-  masters: MasterState;
   timelines: TimelineState;
   chapterActions: ChapterActions;
   timelineActions: TimelineActions;
@@ -217,18 +216,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
           </div>
         </div>
         <div className="column-sidebar">
-          {this.props.masters.layouts.map((masterLayout, i) => {
-            return (
-              <div
-                key={`master.${i}`}
-                draggable={true}
-                onDragStart={(e) => e.dataTransfer.setData("text/plain", masterLayout.id)}
-                style={{backgroundColor: "#353535", width: "100%", padding: 10, marginBottom: 3, cursor: "pointer"}}
-              >
-                {i + 1}. {masterLayout.name}
-              </div>
-            );
-          })}
         </div>
       </div>
     );
@@ -238,7 +225,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   return {
     chapters: state.chapters,
-    masters: state.masters,
     timelines: state.timelines
   };
 }
