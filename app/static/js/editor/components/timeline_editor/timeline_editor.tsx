@@ -5,7 +5,7 @@ import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey } from "../../util";
 
 import { ChapterState } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -117,7 +117,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private getTimeline() {
     const { match: { params } } = this.props;
-    return this.props.timelines.find((timeline) => timeline.chapterId === params.chapterid);
+    const timelineFound = findByKey(this.props.timelines, params.chapterid, "chapterId");
+
+    if (!timelineFound) {
+      return undefined;
+    }
+
+    return timelineFound[1];
   }
 
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
