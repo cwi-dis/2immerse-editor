@@ -276,6 +276,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             <ProgramStructure
               chapters={chapters}
               levelIndent={15}
+              selectedChapter={getChapterAccessPath(chapters, params.chapterid).toJS()}
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
