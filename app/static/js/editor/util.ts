@@ -106,15 +106,18 @@ export function pluck<T>(obj: T, keys: Array<keyof T>): Partial<T> {
   return result;
 }
 
-export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, id: U): [number, T] {
-  return collection.findEntry((value: T) => value.id === id)!;
+export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, search: U): [number, T] {
+  return findByKey(collection as any, search, "id" as never)! as [number, T];
+}
+
+export function findByKey<T extends {[V in keyof T]: U}, U, V extends keyof T>(collection: Collection.Indexed<T>, search: U, key: V): [number, T] | undefined {
+  return collection.findEntry((value: T) => value[key] === search);
 }
 
 export function generateChapterKeyPath(accessPath: Array<number>): List<number | string> {
   if (accessPath.length === 0) {
     return List();
   }
-
   return List(accessPath.slice(0, accessPath.length - 1).reduce((path: Array<string | number>, i) => {
     return path.concat([i, "children"]);
   }, [])).push(accessPath[accessPath.length - 1]);
@@ -127,7 +130,6 @@ export function getChapterAccessPath(chapters: List<Chapter>, chapterId: string)
     }
 
     const childPath = getChapterAccessPath(chapter.children!, chapterId);
-
     if (childPath.isEmpty()) {
       return accessPath;
     }
