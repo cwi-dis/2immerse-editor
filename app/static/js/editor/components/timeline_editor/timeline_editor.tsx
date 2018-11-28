@@ -7,7 +7,7 @@ import { Group, Layer, Line, Stage } from "react-konva";
 import { ApplicationState, navigate } from "../../store";
 import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey } from "../../util";
 
-import { ChapterState } from "../../reducers/chapters";
+import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
 import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
 
@@ -156,6 +156,20 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
+  private onChapterClicked(accessPath: Array<number>) {
+    const keyPath = generateChapterKeyPath(accessPath);
+    const chapter: Chapter = this.props.chapters.getIn(keyPath);
+
+    const timeline = findByKey(this.props.timelines, chapter.id as any, "chapterId");
+
+    if (timeline === undefined) {
+      console.log("Adding new timeline for chapter");
+      this.props.timelineActions.addTimeline(chapter.id);
+    }
+
+    navigate(`/timeline/${chapter.id}`);
+  }
+
   public render() {
     const { match: { params }, chapters } = this.props;
     const timeline = this.getTimeline();
@@ -259,7 +273,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         </div>
         <div className="column-sidebar">
           <div style={{height: "50%", overflowY: "scroll"}}>
-            <ProgramStructure chapters={chapters} levelIndent={15} chapterClicked={() => {}} />
+            <ProgramStructure
+              chapters={chapters}
+              levelIndent={15}
+              chapterClicked={this.onChapterClicked.bind(this)}
+            />
           </div>
           <DMAppcContainer />
         </div>
