@@ -14,6 +14,7 @@ import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reduce
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ScrubberHead from "./scrubber_head";
+import ProgramStructure from "../program_author/program_structure";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
 
@@ -156,7 +157,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   public render() {
-    const { match: { params } } = this.props;
+    const { match: { params }, chapters } = this.props;
     const timeline = this.getTimeline();
 
     if (timeline === undefined) {
@@ -257,6 +258,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           })}
         </div>
         <div className="column-sidebar">
+          <div style={{height: "50%", overflowY: "scroll"}}>
+            <ProgramStructure chapters={chapters} levelIndent={15} chapterClicked={() => {}} />
+          </div>
           <DMAppcContainer />
         </div>
       </div>
