@@ -228,35 +228,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
               </Layer>
             </Stage>
           </div>
-          <br />
-          {trackLayout!.map((layoutEntry, i) => {
-            const { regionId, track } = layoutEntry;
-
-            if (!track) {
-              return (
-                <p key={i}>
-                  <b>Track {i + 1}</b>
-                  <br />
-                  No track associated with region {regionId}
-                </p>
-              );
-            }
-
-            return (
-              <p key={i}>
-                <b>Track {i + 1}</b>
-                <br />
-                {track.timelineElements!.map((element, i) => {
-                  return (
-                    <span key={i}>
-                      {element.id} => {element.x} {element.x + element.width}<br />
-                    </span>
-                  );
-                })}
-                <br />
-              </p>
-            );
-          })}
         </div>
         <div className="column-sidebar">
           <div style={{height: "50%", overflowY: "scroll"}}>
