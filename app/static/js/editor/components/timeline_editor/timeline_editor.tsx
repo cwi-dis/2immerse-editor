@@ -29,14 +29,13 @@ interface TimelineEditorState {
   scrubberPosition: number;
   snapEnabled: boolean;
   trackHeight: number;
-  mainColumnWidth: number;
 }
 
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
-  private mainColumn: Nullable<HTMLDivElement>;
   private stageWrapper: Nullable<Stage>;
 
   private readonly scrubberHeight = 15;
+  private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   public constructor(props: TimelineEditorProps) {
     super(props);
@@ -45,7 +44,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       scrubberPosition: 0,
       snapEnabled: true,
       trackHeight: 50,
-      mainColumnWidth: 0
     };
   }
 
@@ -95,16 +93,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     if (this.getTimeline() === undefined) {
       console.log("Chapter has no timeline yet, redirecting to ProgramAuthor");
       navigate("/program");
-    }
-  }
-
-  public componentDidMount() {
-    console.log("main column width:", this.mainColumn && this.mainColumn.clientWidth);
-
-    if (this.mainColumn) {
-      this.setState({
-        mainColumnWidth: this.mainColumn.clientWidth - 5
-      });
     }
   }
 
@@ -183,7 +171,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     return (
       <div className="columnlayout">
-        <div className="column-content" style={{flexGrow: 1}} ref={(e) => this.mainColumn = e}>
+        <div className="column-content" style={{flexGrow: 1}}>
           <h3>Timeline Editor for Chapter {params.chapterid}</h3>
           <label>
             <input
@@ -199,12 +187,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
             <Stage
               ref={(e: any) => this.stageWrapper = e}
-              width={this.state.mainColumnWidth}
+              width={this.canvasWidth}
               height={trackHeight * trackLayout!.count() + this.scrubberHeight}
-              style={{margin: "0 0 0 -18px"}}
             >
               <Layer>
-                <ScrubberHead width={this.state.mainColumnWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+                <ScrubberHead width={this.canvasWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
                 {trackLayout.map((layoutEntry, i) => {
                   const { track } = layoutEntry;
@@ -213,7 +200,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                     return (
                       <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                         <EmptyTrack
-                          width={this.state.mainColumnWidth}
+                          width={this.canvasWidth}
                           height={trackHeight}
                           scrubberPosition={this.state.scrubberPosition}
                         />
@@ -228,7 +215,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                         locked={track.locked}
                         elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
                         elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
-                        width={this.state.mainColumnWidth}
+                        width={this.canvasWidth}
                         height={this.state.trackHeight}
                         snapDistance={(this.state.snapEnabled) ? 15 : 0}
                         scrubberPosition={this.state.scrubberPosition}
@@ -237,7 +224,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   );
                 })}
 
-                <Line points={[0, 14.5, this.state.mainColumnWidth, 14.5]} stroke="#161616" strokeWidth={1} />
+                <Line points={[0, 14.5, this.canvasWidth]} stroke="#161616" strokeWidth={1} />
               </Layer>
             </Stage>
           </div>
