@@ -19,25 +19,24 @@ interface TimelineState {
 }
 
 class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
-  private initialPosition?: [number, number];
+  private initialYPosition?: number;
 
   public constructor(props: TimelineProps) {
     super(props);
   }
 
   private onDragMove(id: string, e: any) {
-    if (this.initialPosition === undefined) {
+    if (this.initialYPosition === undefined) {
       return;
     }
 
-    const [ , initialY ] = this.initialPosition;
     const { clientY } = e.evt;
-    const offsetY = Math.abs(initialY - clientY);
+    const offsetY = Math.abs(this.initialYPosition - clientY);
 
     if (offsetY > 100) {
       console.log("removing element with id", id);
 
-      this.initialPosition = undefined;
+      this.initialYPosition = undefined;
       this.props.elementRemoved(id);
       this.forceUpdate();
     }
@@ -47,13 +46,8 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
     const { width, height, elements, scrubberPosition } = this.props;
     const trackDuration = elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
 
-    const dragBoundFunc = (): Vector2d => {
-      if (this.initialPosition) {
-        const [x, y] = this.initialPosition;
-        return { x, y };
-      }
-
-      return { x: 0, y: 0 };
+    const dragBoundFunc = function (): Vector2d {
+      return this.getAbsolutePosition();
     };
 
     const scrubber = () => {
@@ -105,8 +99,8 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
               strokeWidth={1}
               draggable={true}
               onDragMove={this.onDragMove.bind(this, element.id)}
-              onDragStart={(e) => this.initialPosition = [e.evt.clientX, e.evt.clientY]}
-              dragBoundFunc={dragBoundFunc.bind(this, element.id)}
+              onDragStart={(e) => this.initialYPosition = e.evt.clientY}
+              dragBoundFunc={dragBoundFunc}
             />
           );
         })}
