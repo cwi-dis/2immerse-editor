@@ -114,7 +114,7 @@ actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE
 });
 
 actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
-  const { timelineId, trackId, componentId, length } = action.payload;
+  const { timelineId, trackId, componentId, duration, offset, insertPosition } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   if (length <= 0) {
@@ -125,27 +125,22 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
     const [tracknum] = findById(tracks, trackId);
 
     return tracks.updateIn([tracknum, "timelineElements"], (elements: List<TimelineElement>) => {
-      let x = 0;
-      const lastElement = elements.maxBy((element) => element.x);
+      const position = (insertPosition < 0) ? elements.count() : insertPosition;
 
-      if (lastElement) {
-        x = lastElement.x + lastElement.width;
-      }
-
-      return elements.push(new TimelineElement({
+      return elements.insert(position, new TimelineElement({
         id: shortid.generate(),
         componentId,
-        x,
-        width: length
+        duration,
+        offset
       }));
     });
   });
 });
 
-actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDATE_ELEMENT_POSITION) => {
-  const { timelineId, trackId, elementId, newPosition } = action.payload;
+actionHandler.addHandler("UPDATE_ELEMENT_OFFSET", (state, action: actions.UPDATE_ELEMENT_OFFSET) => {
+  const { timelineId, trackId, elementId, offset } = action.payload;
 
-  if (newPosition < 0) {
+  if (offset < 0) {
     return state;
   }
 
@@ -159,7 +154,7 @@ actionHandler.addHandler("UPDATE_ELEMENT_POSITION", (state, action: actions.UPDA
         const [elementnum] = findById(elements, elementId);
 
         return elements.update(elementnum, (element) => {
-          return element.set("x", newPosition);
+          return element.set("offset", offset);
         });
       });
     });
@@ -205,7 +200,7 @@ actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE
         const [elementnum] = findById(elements, elementId);
 
         return elements.update(elementnum, (element) => {
-          return element.set("width", length);
+          return element.set("duration", length);
         });
       });
     });
