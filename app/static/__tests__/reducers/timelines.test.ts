@@ -395,7 +395,7 @@ describe("Timelines reducer", () => {
     expect(initialState).toBe(transformedState);
   });
 
-  it("should update and element's position on UPDATE_ELEMENT_OFFSET", () => {
+  it("should update an element's offset on UPDATE_ELEMENT_OFFSET", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -411,6 +411,40 @@ describe("Timelines reducer", () => {
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
     expect(elements.first().offset).toBe(55);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_OFFSET when passing a negative number", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_OFFSET", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", offset: -30 }} as any
+    );
+
+    expect(transformedState).toEqual(initialState);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_OFFSET if the timeline does not exist", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_OFFSET", payload: { timelineId: "timeline2", trackId: "track1", elementId: "element1", offset: 10 }} as any
+    );
+
+    expect(transformedState).toBe(initialState);
   });
 
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the new position is less than 0", () => {
