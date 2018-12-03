@@ -46,46 +46,66 @@ describe("Timeline actions", () => {
     expect(actionCreators.addTimelineTrack("timeline1", "region1", true)).toEqual(expected);
   });
 
-  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with default length 10", () => {
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with default offset 0 and insertPosition -1", () => {
     const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
       type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
       payload: {
         timelineId: "timeline1",
         trackId: "track1",
         componentId: "component1",
-        length: 10
+        duration: 10,
+        offset: 0,
+        insertPosition: -1
       }
     };
 
-    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1")).toEqual(expected);
+    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 10)).toEqual(expected);
   });
 
-  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with the given length", () => {
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with the given offset", () => {
     const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
       type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
       payload: {
         timelineId: "timeline1",
         trackId: "track1",
         componentId: "component1",
-        length: 123
+        duration: 123,
+        offset: 23,
+        insertPosition: -1
       }
     };
 
-    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 123)).toEqual(expected);
+    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 123, 23)).toEqual(expected);
   });
 
-  it("should create an UPDATE_ELEMENT_POSITION action", () => {
-    const expected: actionTypes.UPDATE_ELEMENT_POSITION = {
-      type: "UPDATE_ELEMENT_POSITION",
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with the given offset and insertPosition", () => {
+    const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
+      type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        componentId: "component1",
+        duration: 123,
+        offset: 23,
+        insertPosition: 3
+      }
+    };
+
+    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 123, 23, 3)).toEqual(expected);
+  });
+
+  it("should create an UPDATE_ELEMENT_OFFSET action", () => {
+    const expected: actionTypes.UPDATE_ELEMENT_OFFSET = {
+      type: "UPDATE_ELEMENT_OFFSET",
       payload: {
         timelineId: "timeline1",
         trackId: "track1",
         elementId: "element1",
-        newPosition: 345
+        offset: 345,
       }
     };
 
-    expect(actionCreators.updateElementPosition("timeline1", "track1", "element1", 345)).toEqual(expected);
+    expect(actionCreators.updateElementOffset("timeline1", "track1", "element1", 345)).toEqual(expected);
   });
 
   it("should create a REMOVE_TIMELINE action", () => {
@@ -165,7 +185,9 @@ describe("Async timeline actions", () => {
         timelineId: "timeline1",
         trackId: "track1",
         componentId: "component1",
-        length: 10
+        duration: 10,
+        offset: 0,
+        insertPosition: -1
       }}
     ];
 
@@ -194,7 +216,7 @@ describe("Async timeline actions", () => {
       timelines: List([
         new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
           new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
-            new TimelineElement({ id: "element1", componentId: "", x: 0, width: 10})
+            new TimelineElement({ id: "element1", componentId: "", duration: 10, offset: 0})
           ])})
         ])})
       ])
