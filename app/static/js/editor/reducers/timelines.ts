@@ -7,12 +7,12 @@ import * as actions from "../actions/timelines";
 export interface TimelineElementAttributes {
   id: string;
   componentId: string;
-  x: number;
-  width: number;
+  offset: number;
+  duration: number;
   color?: string;
 }
 
-export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", x: 0, width: 10, color: undefined}) {
+export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", offset: 0, duration: 0, color: undefined}) {
   constructor(params?: TimelineElementAttributes) {
     params ? super(params) : super();
   }
