@@ -9,8 +9,8 @@ describe("TimelineElement class", () => {
 
     expect(element.id).toEqual("");
     expect(element.componentId).toEqual("");
-    expect(element.x).toEqual(0);
-    expect(element.width).toEqual(10);
+    expect(element.offset).toEqual(0);
+    expect(element.duration).toEqual(0);
     expect(element.color).toBeUndefined();
   });
 
@@ -18,15 +18,15 @@ describe("TimelineElement class", () => {
     const element = new TimelineElement({
       id: "element1",
       componentId: "component1",
-      width: 12,
-      x: 34,
+      offset: 12,
+      duration: 34,
       color: "#FF0000"
     });
 
     expect(element.id).toEqual("element1");
     expect(element.componentId).toEqual("component1");
-    expect(element.x).toEqual(34);
-    expect(element.width).toEqual(12);
+    expect(element.offset).toEqual(12);
+    expect(element.duration).toEqual(34);
     expect(element.color).toEqual("#FF0000");
   });
 });
