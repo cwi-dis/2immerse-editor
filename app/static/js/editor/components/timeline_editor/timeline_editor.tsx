@@ -96,10 +96,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
-  private elementPositionUpdated(timelineId: string, trackId: string, componentId: string, x: number) {
-    this.props.timelineActions.updateElementPosition(timelineId, trackId, componentId, x);
-  }
-
   private elementRemoved(timelineId: string, trackId: string, elementId: string) {
     this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
   }
@@ -172,7 +168,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
-          <h3>Timeline Editor for Chapter {params.chapterid}</h3>
           <label>
             <input
               type="checkbox"
@@ -213,11 +208,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                       <TimelineTrack
                         elements={track.timelineElements!}
                         locked={track.locked}
-                        elementPositionUpdated={this.elementPositionUpdated.bind(this, timeline.id, track.id)}
                         elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                         width={this.canvasWidth}
                         height={this.state.trackHeight}
-                        snapDistance={(this.state.snapEnabled) ? 15 : 0}
                         scrubberPosition={this.state.scrubberPosition}
                       />
                     </Group>
