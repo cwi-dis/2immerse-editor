@@ -45,6 +45,7 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
 
   public render() {
     const { width, height, elements, scrubberPosition } = this.props;
+    const trackDuration = elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
 
     const dragBoundFunc = (): Vector2d => {
       if (this.initialPosition) {
@@ -75,6 +76,8 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
       }
     };
 
+    let startX = 0;
+
     return (
       <Group>
         <Rect
@@ -85,12 +88,17 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
           fill="#252525"
         />
         {elements.map((element, i) => {
+          const elementStart = startX + (width * (element.offset / trackDuration));
+          const elementWidth = width * (element.duration / trackDuration);
+
+          startX = elementStart + elementWidth;
+
           return (
             <Rect
               key={element.id}
-              x={width * element.x}
+              x={elementStart}
               y={0}
-              width={width * element.width}
+              width={elementWidth}
               height={height}
               fill={(element.color) ? element.color : "#E06C56"}
               stroke="#000000"

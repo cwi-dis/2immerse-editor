@@ -132,11 +132,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
-      this.props.timelineActions.addTimelineTrackAndAddElement(timeline.id, selectedTrack.regionId, componentId, 0.1);
+      this.props.timelineActions.addTimelineTrackAndAddElement(timeline.id, selectedTrack.regionId, componentId, 10);
     } else {
       console.log("Adding element");
       const { track } = selectedTrack;
-      this.props.timelineActions.addElementToTimelineTrack(timeline.id, track.id, componentId, 0.1);
+      this.props.timelineActions.addElementToTimelineTrack(timeline.id, track.id, componentId, 10);
     }
   }
 

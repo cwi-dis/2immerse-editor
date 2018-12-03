@@ -117,7 +117,7 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
   const { timelineId, trackId, componentId, duration, offset, insertPosition } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
-  if (length <= 0) {
+  if (duration <= 0) {
     return state;
   }
 
