@@ -361,6 +361,102 @@ describe("Timelines reducer", () => {
     expect(elements.get(1).offset).toEqual(0);
   });
 
+  it("should insert a new element at the given position on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30}),
+          new TimelineElement({id: "element2", componentId: "component2", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 1 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(3);
+
+    expect(elements.get(1).componentId).toEqual("component3");
+    expect(elements.get(1).duration).toEqual(200);
+    expect(elements.get(1).offset).toEqual(0);
+  });
+
+  it("should insert a new element at the end of the list if insertPosition is larger than the number of elements on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30}),
+          new TimelineElement({id: "element2", componentId: "component2", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 1000 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(3);
+
+    expect(elements.get(2).componentId).toEqual("component3");
+    expect(elements.get(2).duration).toEqual(200);
+    expect(elements.get(2).offset).toEqual(0);
+  });
+
+  it("should insert a new element at the end of the list if insertPosition is less than -1 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30}),
+          new TimelineElement({id: "element2", componentId: "component2", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: -54 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(3);
+
+    expect(elements.get(2).componentId).toEqual("component3");
+    expect(elements.get(2).duration).toEqual(200);
+    expect(elements.get(2).offset).toEqual(0);
+  });
+
+  it("should insert a new element at the beginning of the list if insertPosition is 0 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30}),
+          new TimelineElement({id: "element2", componentId: "component2", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 0 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(3);
+
+    expect(elements.get(0).componentId).toEqual("component3");
+    expect(elements.get(0).duration).toEqual(200);
+    expect(elements.get(0).offset).toEqual(0);
+  });
+
   it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length is 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
