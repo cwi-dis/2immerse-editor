@@ -303,7 +303,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1" }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10 }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
@@ -311,8 +311,8 @@ describe("Timelines reducer", () => {
     expect(elements.count()).toEqual(1);
 
     expect(elements.get(0).componentId).toEqual("component1");
-    expect(elements.get(0).x).toEqual(0);
-    expect(elements.get(0).width).toEqual(10);
+    expect(elements.get(0).offset).toEqual(0);
+    expect(elements.get(0).duration).toEqual(10);
   });
 
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -326,7 +326,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2" }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", insertPosition: -1 }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
@@ -334,8 +334,8 @@ describe("Timelines reducer", () => {
     expect(elements.count()).toEqual(2);
 
     expect(elements.get(1).componentId).toEqual("component2");
-    expect(elements.get(1).x).toEqual(40);
-    expect(elements.get(1).width).toEqual(10);
+    expect(elements.get(1).duration).toEqual(0);
+    expect(elements.get(1).offset).toEqual(0);
   });
 
   it("should insert a new element with the given length to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -349,7 +349,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", length: 200 }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: 200, insertPosition: -1 }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
@@ -357,8 +357,8 @@ describe("Timelines reducer", () => {
     expect(elements.count()).toEqual(2);
 
     expect(elements.get(1).componentId).toEqual("component2");
-    expect(elements.get(1).x).toEqual(40);
-    expect(elements.get(1).width).toEqual(200);
+    expect(elements.get(1).duration).toEqual(200);
+    expect(elements.get(1).offset).toEqual(0);
   });
 
   it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length is 0", () => {
@@ -372,7 +372,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", length: 0 }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: 0, insertPosition: -1 }} as any
     );
 
     expect(initialState).toBe(transformedState);
@@ -389,13 +389,13 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", length: -30 }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: -30, insertPosition: -1 }} as any
     );
 
     expect(initialState).toBe(transformedState);
   });
 
-  it("should update and element's position on UPDATE_ELEMENT_POSITION", () => {
+  it("should update and element's position on UPDATE_ELEMENT_OFFSET", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -406,11 +406,11 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "UPDATE_ELEMENT_POSITION", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", newPosition: 55 }} as any
+      { type: "UPDATE_ELEMENT_OFFSET", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", offset: 55 }} as any
     );
 
     const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-    expect(elements.first().x).toBe(55);
+    expect(elements.first().offset).toBe(55);
   });
 
   it("should return the state untransformed on UPDATE_ELEMENT_POSITION if the new position is less than 0", () => {
@@ -565,7 +565,7 @@ describe("Timelines reducer", () => {
     );
 
     const element = transformedState.get(0).timelineTracks.get(0).timelineElements.get(0);
-    expect(element.width).toBe(23);
+    expect(element.duration).toBe(23);
   });
 
   it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing 0", () => {
