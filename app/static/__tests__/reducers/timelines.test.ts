@@ -44,8 +44,8 @@ describe("TimelineTrack class", () => {
     const timelineElement = new TimelineElement({
       id: "element1",
       componentId: "component1",
-      width: 12,
-      x: 34
+      offset: 12,
+      duration: 34
     });
 
     const track: TimelineTrack = new TimelineTrack({
@@ -319,7 +319,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", duration: 10, offset: 30})
         ])})
       ])})
     ]);
@@ -342,7 +342,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -365,7 +365,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", duration: 10, offset: 30})
         ])})
       ])})
     ]);
@@ -382,7 +382,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -399,7 +399,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -417,7 +417,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -434,7 +434,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -451,7 +451,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -468,7 +468,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -485,7 +485,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -503,7 +503,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -520,7 +520,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -537,7 +537,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -554,7 +554,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -572,7 +572,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -589,7 +589,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -606,7 +606,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -623,7 +623,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -640,7 +640,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -657,7 +657,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -681,7 +681,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
@@ -698,7 +698,7 @@ describe("Timelines reducer", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
-          new TimelineElement({id: "element1", componentId: "component1", x: 10, width: 30})
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
         ])})
       ])})
     ]);
