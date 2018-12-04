@@ -282,6 +282,14 @@ export function getTimelineLength(timeline: Timeline | undefined): number {
   return 0;
 }
 
+export function getChapterDuration(chapter: Chapter, timelines: List<Timeline>): number {
+  const timeline = timelines.find((t) => t.chapterId === chapter.id);
+
+  return getTimelineLength(timeline) + chapter.children!.reduce((sum, c) => {
+    return sum + getChapterDuration(c, timelines);
+  }, 0);
+}
+
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
