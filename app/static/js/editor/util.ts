@@ -274,9 +274,9 @@ export function arraysEqual<T>(a: Array<T>, b: Array<T>): boolean {
 
 export function getTimelineLength(timeline: Timeline | undefined): number {
   if (timeline) {
-    return timeline.timelineTracks!.reduce((sum, { timelineElements }) => {
-      return sum + timelineElements!.reduce((sum, e) => sum + e.offset + e.duration, 0);
-    }, 0);
+    return timeline.timelineTracks!.map(({ timelineElements }) => {
+      return timelineElements!.reduce((sum, e) => sum + e.offset + e.duration, 0);
+    }).max() || 0;
   }
 
   return 0;

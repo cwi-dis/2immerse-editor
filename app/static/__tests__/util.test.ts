@@ -972,7 +972,7 @@ describe("Utility function getTimelineLength()", () => {
     expect(util.getTimelineLength(timeline)).toEqual(0);
   });
 
-  it("should return the sum of durations of all elements in all tracks", () => {
+  it("should return the sum of durations of the longest track", () => {
     const timeline = new Timeline({
       id: "timeline1",
       chapterId: "chapter1",
@@ -990,10 +990,10 @@ describe("Utility function getTimelineLength()", () => {
       ])
     });
 
-    expect(util.getTimelineLength(timeline)).toEqual(150);
+    expect(util.getTimelineLength(timeline)).toEqual(102);
   });
 
-  it("should return the sum of offsets of all elements in all tracks", () => {
+  it("should return the sum of offsets of all elements of the longest track", () => {
     const timeline = new Timeline({
       id: "timeline1",
       chapterId: "chapter1",
@@ -1011,10 +1011,10 @@ describe("Utility function getTimelineLength()", () => {
       ])
     });
 
-    expect(util.getTimelineLength(timeline)).toEqual(150);
+    expect(util.getTimelineLength(timeline)).toEqual(102);
   });
 
-  it("should return the sum of offsets and durations of all elements in all tracks", () => {
+  it("should return the sum of offsets and durations of all elements of the longest track", () => {
     const timeline = new Timeline({
       id: "timeline1",
       chapterId: "chapter1",
@@ -1032,7 +1032,7 @@ describe("Utility function getTimelineLength()", () => {
       ])
     });
 
-    expect(util.getTimelineLength(timeline)).toEqual(300);
+    expect(util.getTimelineLength(timeline)).toEqual(204);
   });
 });
 
