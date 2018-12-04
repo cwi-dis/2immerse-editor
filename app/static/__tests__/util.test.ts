@@ -1067,7 +1067,7 @@ describe("Utility function getChapterDuration()", () => {
     expect(util.getChapterDuration(chapter, List([timeline]))).toEqual(204);
   });
 
-  it("should return the length of all children's timelines when passing in a chapter with children but without own timeline", () => {
+  it("should return the length of the longest child timeline when passing in a chapter with children but without own timeline", () => {
     const chapter = new Chapter({
       id: "chapter1",
       children: List([
@@ -1109,10 +1109,10 @@ describe("Utility function getChapterDuration()", () => {
       }),
     ]);
 
-    expect(util.getChapterDuration(chapter, timelines)).toEqual(170);
+    expect(util.getChapterDuration(chapter, timelines)).toEqual(160);
   });
 
-  it("should return the length its timeline and of all children's timelines when passing in a chapter with children and own timeline", () => {
+  it("should return the length of its timeline when passing in a chapter with children and own timeline with longest duration", () => {
     const chapter = new Chapter({
       id: "chapter1",
       children: List([
@@ -1138,7 +1138,7 @@ describe("Utility function getChapterDuration()", () => {
         chapterId: "chapter1",
         timelineTracks: List([
           new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
-            new TimelineElement({ id: "element4", componentId: "component1", offset: 0, duration: 5 }),
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 0, duration: 500 }),
           ])})
         ])
       }),
@@ -1163,7 +1163,72 @@ describe("Utility function getChapterDuration()", () => {
       }),
     ]);
 
-    expect(util.getChapterDuration(chapter, timelines)).toEqual(175);
+    expect(util.getChapterDuration(chapter, timelines)).toEqual(500);
+  });
+
+  it("should return the length of a child's timeline when passing in a chapter with children with longest duration", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      children: List([
+        new Chapter({ id: "chapter2" }),
+        new Chapter({ id: "chapter3", children: List([
+          new Chapter({id: "chapter3.1" }),
+          new Chapter({id: "chapter3.2" })
+        ])}),
+      ])
+    });
+
+    const timelines = List([
+      new Timeline({
+        id: "timeline1",
+        chapterId: "chapter3",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 34 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline4",
+        chapterId: "chapter1",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 0, duration: 80 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline3",
+        chapterId: "chapter3.1",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 100 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline3",
+        chapterId: "chapter3.2",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 23 }),
+            new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 27 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline2",
+        chapterId: "chapter2",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element7", componentId: "component1", offset: 0, duration: 34 }),
+            new TimelineElement({ id: "element5", componentId: "component1", offset: 0, duration: 12 }),
+          ])})
+        ])
+      }),
+    ]);
+
+    expect(util.getChapterDuration(chapter, timelines)).toEqual(196);
   });
 });
 
