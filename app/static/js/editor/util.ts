@@ -292,6 +292,26 @@ export function getChapterDuration(chapter: Chapter, timelines: List<Timeline>):
   ]).max() || 0;
 }
 
+export function getBranchDuration(chapters: List<Chapter>, timelines: List<Timeline>, accessPath: Array<number>): number {
+  if (accessPath.length === 0) {
+    return 0;
+  }
+
+  const ancestorDurations = List(accessPath.slice(0, accessPath.length - 1).map((_, i) => {
+    const keyPath = generateChapterKeyPath(accessPath.slice(0, i + 1));
+    const chapter = chapters.getIn(keyPath) as Chapter;
+    const timeline = timelines.find((t) => t.chapterId === chapter.id);
+
+    return getTimelineLength(timeline);
+  }));
+
+  const keyPath = generateChapterKeyPath(accessPath);
+  const chapter = chapters.getIn(keyPath) as Chapter;
+  const chapterDuration = getChapterDuration(chapter, timelines);
+
+  return ancestorDurations.push(chapterDuration).max()!;
+}
+
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
 
 export class ActionHandler<T> {
