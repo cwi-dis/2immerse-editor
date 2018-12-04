@@ -1036,6 +1036,137 @@ describe("Utility function getTimelineLength()", () => {
   });
 });
 
+describe("Utility function getChapterDuration()", () => {
+  it("should return zero when passing in a chapter without timeline or children", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      children: List([])
+    });
+
+    expect(util.getChapterDuration(chapter, List([]))).toEqual(0);
+  });
+
+  it("should return the length of the associated timeline when passing in a chapter without children", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      children: List([])
+    });
+
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 34 }),
+          new TimelineElement({ id: "element5", componentId: "component1", offset: 12, duration: 12 }),
+          new TimelineElement({ id: "element6", componentId: "component1", offset: 56, duration: 56 })
+        ])})
+      ])
+    });
+
+    expect(util.getChapterDuration(chapter, List([timeline]))).toEqual(204);
+  });
+
+  it("should return the length of all children's timelines when passing in a chapter with children but without own timeline", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      children: List([
+        new Chapter({ id: "chapter2" }),
+        new Chapter({ id: "chapter3", children: List([
+          new Chapter({id: "chapter3.1" })
+        ])}),
+      ])
+    });
+
+    const timelines = List([
+      new Timeline({
+        id: "timeline1",
+        chapterId: "chapter3",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 34 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline3",
+        chapterId: "chapter3.1",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 10 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline2",
+        chapterId: "chapter2",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element7", componentId: "component1", offset: 34, duration: 34 }),
+            new TimelineElement({ id: "element5", componentId: "component1", offset: 12, duration: 12 }),
+          ])})
+        ])
+      }),
+    ]);
+
+    expect(util.getChapterDuration(chapter, timelines)).toEqual(170);
+  });
+
+  it("should return the length its timeline and of all children's timelines when passing in a chapter with children and own timeline", () => {
+    const chapter = new Chapter({
+      id: "chapter1",
+      children: List([
+        new Chapter({ id: "chapter2" }),
+        new Chapter({ id: "chapter3", children: List([
+          new Chapter({id: "chapter3.1" })
+        ])}),
+      ])
+    });
+
+    const timelines = List([
+      new Timeline({
+        id: "timeline1",
+        chapterId: "chapter3",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 34 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline4",
+        chapterId: "chapter1",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element4", componentId: "component1", offset: 0, duration: 5 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline3",
+        chapterId: "chapter3.1",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 10 }),
+          ])})
+        ])
+      }),
+      new Timeline({
+        id: "timeline2",
+        chapterId: "chapter2",
+        timelineTracks: List([
+          new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+            new TimelineElement({ id: "element7", componentId: "component1", offset: 34, duration: 34 }),
+            new TimelineElement({ id: "element5", componentId: "component1", offset: 12, duration: 12 }),
+          ])})
+        ])
+      }),
+    ]);
+
+    expect(util.getChapterDuration(chapter, timelines)).toEqual(175);
+  });
+});
+
 describe("Utility function pluck()", () => {
   it("should return a new object with only the specified keys from the original object", () => {
     const original = {
