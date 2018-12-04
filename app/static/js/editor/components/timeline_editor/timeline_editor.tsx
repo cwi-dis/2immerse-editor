@@ -215,6 +215,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                         elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                         width={this.canvasWidth}
                         height={this.state.trackHeight}
+                        trackDuration={chapterDuration}
                         scrubberPosition={this.state.scrubberPosition}
                       />
                     </Group>

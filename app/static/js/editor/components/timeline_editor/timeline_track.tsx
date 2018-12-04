@@ -9,6 +9,7 @@ interface TimelineProps {
   width: number;
   height: number;
   elements: List<TimelineElement>;
+  trackDuration?: number;
   scrubberPosition?: number;
   locked?: boolean;
 
@@ -44,7 +45,9 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
 
   public render() {
     const { width, height, elements, scrubberPosition } = this.props;
-    const trackDuration = elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
+    const trackDuration = (this.props.trackDuration)
+      ? this.props.trackDuration
+      : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
 
     const dragBoundFunc = function (): Vector2d {
       return this.getAbsolutePosition();
