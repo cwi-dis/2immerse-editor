@@ -111,6 +111,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return timelineFound[1];
   }
 
+  private getChapterDuration() {
+    const { match: { params }, chapters, timelines } = this.props;
+    const accessPath = getChapterAccessPath(chapters, params.chapterid).toArray();
+
+    return getBranchDuration(chapters, timelines, accessPath);
+  }
+
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
@@ -155,15 +162,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   public render() {
-    const { match: { params }, chapters, timelines } = this.props;
+    const { match: { params }, chapters } = this.props;
     const timeline = this.getTimeline();
 
     if (timeline === undefined) {
       return null;
     }
 
-    const accessPath = getChapterAccessPath(chapters, params.chapterid).toArray();
-    const chapterDuration = getBranchDuration(chapters, timelines, accessPath);
+    const chapterDuration = this.getChapterDuration();
     console.log("Chapter duration:", chapterDuration);
 
     const trackLayout = this.getTrackLayout();
@@ -232,7 +238,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             <ProgramStructure
               chapters={chapters}
               levelIndent={15}
-              selectedChapter={accessPath}
+              selectedChapter={getChapterAccessPath(chapters, params.chapterid).toArray()}
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
