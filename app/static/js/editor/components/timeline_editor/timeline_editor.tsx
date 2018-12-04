@@ -5,7 +5,7 @@ import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey, getBranchDuration } from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -155,12 +155,16 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   public render() {
-    const { match: { params }, chapters } = this.props;
+    const { match: { params }, chapters, timelines } = this.props;
     const timeline = this.getTimeline();
 
     if (timeline === undefined) {
       return null;
     }
+
+    const accessPath = getChapterAccessPath(chapters, params.chapterid).toArray();
+    const chapterDuration = getBranchDuration(chapters, timelines, accessPath);
+    console.log("Chapter duration:", chapterDuration);
 
     const trackLayout = this.getTrackLayout();
     const { trackHeight } = this.state;
@@ -227,7 +231,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             <ProgramStructure
               chapters={chapters}
               levelIndent={15}
-              selectedChapter={getChapterAccessPath(chapters, params.chapterid).toJS()}
+              selectedChapter={accessPath}
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
