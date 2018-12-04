@@ -137,13 +137,23 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
 
+
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
       this.props.timelineActions.addTimelineTrackAndAddElement(timeline.id, selectedTrack.regionId, componentId, 10);
     } else {
-      console.log("Adding element");
       const { track } = selectedTrack;
-      this.props.timelineActions.addElementToTimelineTrack(timeline.id, track.id, componentId, 10);
+
+      const dropTime = (x / this.canvasWidth) * this.getChapterDuration();
+      let curTime = 0;
+
+      const [dropIndex, ] = track.timelineElements!.findEntry((e) => {
+        curTime += e.offset + e.duration;
+        return curTime > dropTime;
+      }) || [-1];
+
+      console.log("Adding element at time", dropTime, "index", dropIndex);
+      this.props.timelineActions.addElementToTimelineTrack(timeline.id, track.id, componentId, 10, 0, dropIndex);
     }
   }
 
