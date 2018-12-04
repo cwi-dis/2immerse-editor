@@ -27,7 +27,6 @@ interface TimelineEditorProps extends RouterProps {
 
 interface TimelineEditorState {
   scrubberPosition: number;
-  snapEnabled: boolean;
   trackHeight: number;
 }
 
@@ -42,7 +41,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     this.state = {
       scrubberPosition: 0,
-      snapEnabled: true,
       trackHeight: 50,
     };
   }
