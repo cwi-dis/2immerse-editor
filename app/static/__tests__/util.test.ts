@@ -5,6 +5,7 @@ import * as XHRmock from "xhr-mock";
 
 import * as util from "../js/editor/util";
 import { Chapter } from "../js/editor/reducers/chapters";
+import { Timeline, TimelineTrack, TimelineElement } from "../js/editor/reducers/timelines";
 import { Stage } from "react-konva";
 
 describe("Utility function findById()", () => {
@@ -910,6 +911,128 @@ describe("Utility function arrayEquals()", () => {
 
   it("should return false if the arrays contain the same elements in a different order", () => {
     expect(util.arraysEqual([1, 3, 2], [1, 2, 3])).toBeFalsy();
+  });
+});
+
+describe("Utility function getTimelineLength()", () => {
+  it("should return zero when passing in undefined", () => {
+    expect(util.getTimelineLength(undefined)).toEqual(0);
+  });
+
+  it("should return zero when passing in a timeline without tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1"
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(0);
+  });
+
+  it("should return zero when passing in a timeline with empty tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(0);
+  });
+
+  it("should return zero when passing in a timeline with an empty list of tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(0);
+  });
+
+  it("should return zero when passing in a timeline with empty tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false })
+      ])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(0);
+  });
+
+  it("should return zero when passing in a timeline with tracks having empty element lists", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([]) })
+      ])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(0);
+  });
+
+  it("should return the sum of durations of all elements in all tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element1", componentId: "component1", offset: 0, duration: 10 }),
+          new TimelineElement({ id: "element2", componentId: "component1", offset: 0, duration: 15 }),
+          new TimelineElement({ id: "element3", componentId: "component1", offset: 0, duration: 23 })
+        ])}),
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element4", componentId: "component1", offset: 0, duration: 34 }),
+          new TimelineElement({ id: "element5", componentId: "component1", offset: 0, duration: 12 }),
+          new TimelineElement({ id: "element6", componentId: "component1", offset: 0, duration: 56 })
+        ])})
+      ])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(150);
+  });
+
+  it("should return the sum of offsets of all elements in all tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element1", componentId: "component1", offset: 10, duration: 0 }),
+          new TimelineElement({ id: "element2", componentId: "component1", offset: 15, duration: 0 }),
+          new TimelineElement({ id: "element3", componentId: "component1", offset: 23, duration: 0 })
+        ])}),
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 0 }),
+          new TimelineElement({ id: "element5", componentId: "component1", offset: 12, duration: 0 }),
+          new TimelineElement({ id: "element6", componentId: "component1", offset: 56, duration: 0 })
+        ])})
+      ])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(150);
+  });
+
+  it("should return the sum of offsets and durations of all elements in all tracks", () => {
+    const timeline = new Timeline({
+      id: "timeline1",
+      chapterId: "chapter1",
+      timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element1", componentId: "component1", offset: 10, duration: 10 }),
+          new TimelineElement({ id: "element2", componentId: "component1", offset: 15, duration: 15 }),
+          new TimelineElement({ id: "element3", componentId: "component1", offset: 23, duration: 23 })
+        ])}),
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "element4", componentId: "component1", offset: 34, duration: 34 }),
+          new TimelineElement({ id: "element5", componentId: "component1", offset: 12, duration: 12 }),
+          new TimelineElement({ id: "element6", componentId: "component1", offset: 56, duration: 56 })
+        ])})
+      ])
+    });
+
+    expect(util.getTimelineLength(timeline)).toEqual(300);
   });
 });
 
