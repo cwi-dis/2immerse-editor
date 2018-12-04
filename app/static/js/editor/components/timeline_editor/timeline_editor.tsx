@@ -135,12 +135,16 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
 
-
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
       this.props.timelineActions.addTimelineTrackAndAddElement(timeline.id, selectedTrack.regionId, componentId, 10);
     } else {
       const { track } = selectedTrack;
+
+      if (track.locked) {
+        console.log("Cannot place element on locked track");
+        return;
+      }
 
       const dropTime = (x / this.canvasWidth) * this.getChapterDuration();
       let curTime = 0;
@@ -186,17 +190,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
-          <label>
-            <input
-              type="checkbox"
-              checked={this.state.snapEnabled}
-              onChange={(e) => this.setState({snapEnabled: e.target.checked})}
-            />
-            &emsp;Snap enabled
-          </label>
-
-          <br /><br />
-
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
             <Stage
               ref={(e: any) => this.stageWrapper = e}
