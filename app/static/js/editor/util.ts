@@ -4,6 +4,7 @@ import { validate } from "jsonschema";
 
 import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
+import { Timeline } from "./reducers/timelines";
 import { Stage } from "react-konva";
 
 export type Coords = [number, number];
@@ -269,6 +270,16 @@ export function arraysEqual<T>(a: Array<T>, b: Array<T>): boolean {
   }
 
   return true;
+}
+
+export function getTimelineLength(timeline: Timeline | undefined): number {
+  if (timeline) {
+    return timeline.timelineTracks!.reduce((sum, { timelineElements }) => {
+      return sum + timelineElements!.reduce((sum, e) => sum + e.offset + e.duration, 0);
+    }, 0);
+  }
+
+  return 0;
 }
 
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
