@@ -1,10 +1,10 @@
-import { Collection, List, Map } from "immutable";
+import { Collection, List, Map, Set } from "immutable";
 import { ThunkAction } from "redux-thunk";
 import { validate } from "jsonschema";
 
 import { ApplicationState } from "./store";
 import { Chapter } from "./reducers/chapters";
-import { Timeline } from "./reducers/timelines";
+import { Timeline, TimelineTrack, TimelineElement } from "./reducers/timelines";
 import { Stage } from "react-konva";
 
 export type Coords = [number, number];
@@ -270,6 +270,84 @@ export function arraysEqual<T>(a: Array<T>, b: Array<T>): boolean {
   }
 
   return true;
+}
+
+export function mergeTimelines(chapter: Chapter, timelines: List<Timeline>): Timeline {
+  const chapterTimeline = timelines.find((t) => t.chapterId === chapter.id) || new Timeline();
+
+  if (!chapter.children || chapter.children.isEmpty()) {
+    return chapterTimeline;
+  }
+
+  let mergedTimeline = chapterTimeline;
+
+  const chapterIds = getDescendantChapters(chapter).map((c) => c.id);
+  const affectedTimelines = timelines.filter((t) => chapterIds.contains(t.chapterId));
+
+  const regionIds = affectedTimelines.reduce((regions, t) => {
+    return regions.union(t.timelineTracks!.map((track) => track.regionId));
+  }, Set<string>());
+
+  regionIds.forEach((regionId) => {
+    mergedTimeline = mergedTimeline.update("timelineTracks", (tracks) => {
+      return tracks!.push(new TimelineTrack({
+        id: "",
+        locked: true,
+        regionId,
+        timelineElements: List([])
+      }));
+    });
+  });
+
+  chapter.children.forEach((chapter) => {
+    const childTimeline = mergeTimelines(chapter, timelines);
+    const duration = getTimelineLength(childTimeline);
+
+    mergedTimeline = mergedTimeline.update("timelineTracks", (tracks) => {
+      return tracks!.map((track) => {
+        const childTrack = childTimeline.timelineTracks!.find((t) => t.regionId === track.regionId);
+
+        if (childTrack) {
+          return track.update("timelineElements", (elements) => elements!.concat(childTrack.timelineElements!));
+        }
+
+        return track.update("timelineElements", (elements) => elements!.push(new TimelineElement({
+          id: "",
+          componentId: "",
+          offset: duration,
+          duration: 0
+        })));
+      });
+    });
+  });
+
+  mergedTimeline = mergedTimeline.update("timelineTracks", (tracks) => {
+    return tracks!.map((track) => {
+      const chapterTrack = chapterTimeline.timelineTracks!.find((t) => t.regionId === track.regionId);
+
+      if (chapterTrack) {
+        return chapterTrack;
+      }
+
+      return track;
+    });
+  });
+
+  const mergedLength = getTimelineLength(mergedTimeline);
+
+  return mergedTimeline.update("timelineTracks", (tracks) => {
+    return tracks!.map((track) => {
+      const trackLen = track.timelineElements!.reduce((sum, e) => sum + e.duration + e.offset, 0);
+
+      if (trackLen < mergedLength) {
+        return track.update("timelineElements", (elements) => elements!.push(new TimelineElement({
+          id: "", componentId: "", duration: 0, offset: mergedLength - trackLen
+        })));
+      }
+
+      return track;
+    });
+  });
 }
 
 export function getTimelineLength(timeline: Timeline | undefined): number {
