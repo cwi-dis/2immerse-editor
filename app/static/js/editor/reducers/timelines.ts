@@ -1,7 +1,8 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
-import { ActionHandler, findById } from "../util";
+import { findById } from "../util";
+import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/timelines";
 
 export interface TimelineElementAttributes {

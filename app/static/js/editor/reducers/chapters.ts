@@ -1,6 +1,7 @@
 import { List, Record } from "immutable";
 import * as shortid from "shortid";
-import { ActionHandler, generateChapterKeyPath, Nullable } from "../util";
+import { generateChapterKeyPath, Nullable } from "../util";
+import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/chapters";
 
 export interface ChapterAttributes {

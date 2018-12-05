@@ -2,7 +2,8 @@ import { List, Record } from "immutable";
 import * as shortid from "shortid";
 
 import * as actions from "../actions/screens";
-import { ActionHandler, Coords, findById, getRandomInt, colorPalette } from "../util";
+import { Coords, findById, getRandomInt, colorPalette } from "../util";
+import { ActionHandler } from "../action_handler";
 
 export interface ScreenRegion {
   id: string;
