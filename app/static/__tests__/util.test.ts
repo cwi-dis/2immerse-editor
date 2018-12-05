@@ -1418,6 +1418,179 @@ describe("Utility function getBranchDuration()", () => {
   });
 });
 
+describe("Utility function mergeTimelines()", () => {
+  it("should return an empty timeline for a chapter without children and timeline", () => {
+    const chapter = new Chapter({ id: "chapter1" });
+    const timelines = List([]);
+
+    expect(util.mergeTimelines(chapter, timelines)).toEqual(new Timeline());
+  });
+
+  it("should just return the chapter's timeline for a chapter without children", () => {
+    const chapter = new Chapter({ id: "chapter1" });
+    const timelines = List([new Timeline({ id: "timeline1", chapterId: "chapter1" })]);
+
+    expect(util.mergeTimelines(chapter, timelines).id).toEqual("timeline1");
+  });
+
+  it("should merge the chapter's timeline with the child's timeline if the chapter has a single child", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 10})
+        ])})
+      ])}),
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e3", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.id).toEqual("timeline1");
+    expect(merged.timelineTracks.count()).toEqual(2);
+
+    const [track1, track2] = merged.timelineTracks.toArray();
+
+    expect(track1.regionId).toEqual("region1");
+    expect(track1.timelineElements.count()).toEqual(2);
+
+    const [e1, empty1] = track1.timelineElements.toArray();
+    expect(e1.duration).toEqual(10);
+    expect(empty1.duration).toEqual(0);
+    expect(empty1.offset).toEqual(40);
+
+    expect(track2.regionId).toEqual("region2");
+    expect(track2.timelineElements.count()).toEqual(2);
+
+    const [e2, e3] = track2.timelineElements.toArray();
+    expect(e2.duration).toEqual(30);
+    expect(e3.duration).toEqual(20);
+  });
+
+  it("should just return the child's timeline if the chapter has no timeline", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.id).toEqual("");
+    expect(merged.timelineTracks.count()).toEqual(1);
+
+    const track1 = merged.timelineTracks.get(0);
+
+    expect(track1.regionId).toEqual("region2");
+    expect(track1.timelineElements.count()).toEqual(2);
+  });
+
+  it("should sequentially combine child timelines into a singular track for the same region", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" }),
+      new Chapter({ id: "chapter1.2" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+      new Timeline({ id: "timeline3", chapterId: "chapter1.2", timelineTracks: List([
+        new TimelineTrack({ id: "track3", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e3", componentId: "c1", offset: 0, duration: 30}),
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.id).toEqual("");
+    expect(merged.timelineTracks.count()).toEqual(1);
+
+    const track1 = merged.timelineTracks.get(0);
+
+    expect(track1.regionId).toEqual("region2");
+    expect(track1.timelineElements.count()).toEqual(3);
+
+    const [e1, e2, e3] = track1.timelineElements.toArray();
+
+    expect(e1.id).toEqual("e1");
+    expect(e2.id).toEqual("e2");
+    expect(e3.id).toEqual("e3");
+
+    expect(e1.duration).toEqual(30);
+    expect(e2.duration).toEqual(20);
+    expect(e3.duration).toEqual(30);
+  });
+
+  it("should sequentially combine child timelines into one track for each region with the appropriate padding", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" }),
+      new Chapter({ id: "chapter1.2" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+      new Timeline({ id: "timeline3", chapterId: "chapter1.2", timelineTracks: List([
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e3", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e4", componentId: "c1", offset: 0, duration: 5}),
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.id).toEqual("");
+    expect(merged.timelineTracks.count()).toEqual(2);
+
+    const [track1, track2] = merged.timelineTracks.toArray();
+
+    expect(track1.regionId).toEqual("region1");
+    expect(track2.regionId).toEqual("region2");
+
+    expect(track1.timelineElements.count()).toEqual(3);
+    expect(track2.timelineElements.count()).toEqual(3);
+
+    const [e1, e2, empty1] = track1.timelineElements.toArray();
+
+    expect(e1.duration).toEqual(30);
+    expect(e2.duration).toEqual(20);
+    expect(empty1.duration).toEqual(0);
+    expect(empty1.offset).toEqual(35);
+
+    const [empty2, e3, e4] = track2.timelineElements.toArray();
+
+    expect(empty2.duration).toEqual(0);
+    expect(empty2.offset).toEqual(50);
+    expect(e3.duration).toEqual(30);
+    expect(e4.duration).toEqual(5);
+  });
+});
+
 describe("Utility function pluck()", () => {
   it("should return a new object with only the specified keys from the original object", () => {
     const original = {
