@@ -5,7 +5,7 @@ import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey, getBranchDuration } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey, getBranchDuration, mergeTimelines } from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -59,9 +59,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return chapterIds.push(chapters.getIn(keyPath).id);
     }, List<string>());
 
-    const descendantChapterIds = getDescendantChapters(
-      chapters.getIn(generateChapterKeyPath(accessPath.toArray())).children
-    ).map((chapter) => chapter.id);
+    const keyPath = generateChapterKeyPath(accessPath.toArray());
+    const chapter = chapters.getIn(keyPath);
+    const mergedDescendantTracks = mergeTimelines(chapter, timelines).timelineTracks!;
 
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (ancestorChapterIds.contains(timeline.chapterId)) {
@@ -70,14 +70,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         }));
       }
 
-      if (descendantChapterIds.contains(timeline.chapterId)) {
-        return tracks.concat(timeline.timelineTracks!.map((track) => {
-          return track.set("locked", true).set("timelineElements", List());
-        }));
-      }
-
       return tracks;
-    }, List<TimelineTrackModel>());
+    }, List<TimelineTrackModel>()).concat(mergedDescendantTracks);
 
     return allRegions.map((region) => {
       return {
