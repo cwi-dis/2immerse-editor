@@ -423,6 +423,73 @@ describe("Utility function getAncestorOffsets()", () => {
   });
 });
 
+describe("Utility function trimTimelineTrack()", () => {
+  it("should just return the track if the track is empty", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false });
+
+    expect(util.trimTimelineTrack(track, 10, 20)).toBe(track);
+  });
+
+  it("should remove elements from the front if start falls onto an element boundary", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const { timelineElements } = util.trimTimelineTrack(track, 10, 30);
+
+    expect(timelineElements.count()).toBe(2);
+    expect(timelineElements.get(0).duration).toBe(12);
+    expect(timelineElements.get(1).duration).toBe(8);
+  });
+
+  it("should remove elements from the front and update first element's offset if the boundary falls onto an offset", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
+    ])});
+
+    const { timelineElements } = util.trimTimelineTrack(track, 12, 30);
+
+    expect(timelineElements.count()).toBe(2);
+    expect(timelineElements.get(0).offset).toBe(3);
+    expect(timelineElements.get(0).duration).toBe(12);
+    expect(timelineElements.get(1).duration).toBe(3);
+  });
+
+  it("should remove elements from the front and update first element's offset if the boundary falls onto an offset", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
+    ])});
+
+    const { timelineElements } = util.trimTimelineTrack(track, 15, 30);
+
+    expect(timelineElements.count()).toBe(2);
+    expect(timelineElements.get(0).offset).toBe(0);
+    expect(timelineElements.get(0).duration).toBe(12);
+    expect(timelineElements.get(1).duration).toBe(3);
+  });
+
+  it("should remove elements from the front and update first element's duration if the boundary falls onto a duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
+    ])});
+
+    const { timelineElements } = util.trimTimelineTrack(track, 17, 30);
+
+    expect(timelineElements.count()).toBe(2);
+    expect(timelineElements.get(0).offset).toBe(0);
+    expect(timelineElements.get(0).duration).toBe(10);
+    expect(timelineElements.get(1).duration).toBe(3);
+  });
+});
+
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
     expect(util.parseQueryString("")).toEqual(Map());
