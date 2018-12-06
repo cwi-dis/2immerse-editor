@@ -330,6 +330,99 @@ describe("Utility function getLeafNodes()", () => {
   });
 });
 
+describe("Utility function getAncestorOffsets()", () => {
+  const chapters = List([
+    new Chapter({
+      id: "chapter1", children: List([
+        new Chapter({ id: "chapter1.1" }),
+        new Chapter({
+          id: "chapter1.2", children: List([
+            new Chapter({ id: "chapter1.2.1" }),
+            new Chapter({ id: "chapter1.2.2" }),
+            new Chapter({ id: "chapter1.2.3" }),
+          ])
+        }),
+      ])
+    })
+  ]);
+
+  const timelines = List([
+    new Timeline({ id: "", chapterId: "chapter1", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 100 }) ])})
+    ])}),
+    new Timeline({ id: "", chapterId: "chapter1.1", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 20 }) ])})
+    ])}),
+    new Timeline({ id: "", chapterId: "chapter1.2", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 50 }) ])})
+    ])}),
+    new Timeline({ id: "", chapterId: "chapter1.2.1", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }) ])})
+    ])}),
+    new Timeline({ id: "", chapterId: "chapter1.2.2", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }) ])})
+    ])}),
+    new Timeline({ id: "", chapterId: "chapter1.2.3", timelineTracks: List([
+      new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([ new TimelineElement({ id: "", componentId: "", offset: 0, duration: 10 }) ])})
+    ])}),
+  ]);
+
+  it("should return zero when working with a root node", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0]);
+
+    expect(offsets.count()).toEqual(1);
+    expect(offsets.get(0)).toEqual([[], 0]);
+  });
+
+  it("should return the duration of all previous nodes when accessing the second element on the first level", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0, 1]);
+
+    expect(offsets.count()).toEqual(2);
+
+    expect(offsets.get(0)).toEqual([[0], 20]);
+    expect(offsets.get(1)).toEqual([[], 0]);
+  });
+
+  it("should return zero when accessing the first element on the first level", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0, 0]);
+
+    expect(offsets.count()).toEqual(2);
+
+    expect(offsets.get(0)).toEqual([[0], 0]);
+    expect(offsets.get(1)).toEqual([[], 0]);
+  });
+
+  it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0, 1, 1]);
+
+    expect(offsets.count()).toEqual(3);
+
+    expect(offsets.get(0)).toEqual([[0, 1], 10]);
+    expect(offsets.get(1)).toEqual([[0], 30]);
+    expect(offsets.get(2)).toEqual([[], 0]);
+  });
+
+  it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0, 1, 0]);
+
+    expect(offsets.count()).toEqual(3);
+
+    expect(offsets.get(0)).toEqual([[0, 1], 0]);
+    expect(offsets.get(1)).toEqual([[0], 20]);
+    expect(offsets.get(2)).toEqual([[], 0]);
+  });
+
+  it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
+    const offsets = util.getAncestorOffsets(chapters, timelines, [0, 1, 2]);
+
+    expect(offsets.count()).toEqual(3);
+
+    expect(offsets.get(0)).toEqual([[0, 1], 20]);
+    expect(offsets.get(1)).toEqual([[0], 40]);
+    expect(offsets.get(2)).toEqual([[], 0]);
+  });
+});
+
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
     expect(util.parseQueryString("")).toEqual(Map());
