@@ -269,6 +269,67 @@ describe("Utility function countLeafNodes()", () => {
   });
 });
 
+describe("Utility function getLeafNodes()", () => {
+  it("should return the node on a single node", () => {
+    const tree = new Chapter({id: "chapter0"});
+    expect(util.getLeafNodes(tree)).toEqual(List([tree]));
+  });
+
+  it("should return one node on a tree with a single branch", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1", children: List([
+          new Chapter({id: "chapter1.1.1.1"})
+        ])})
+      ])})
+    ])});
+
+    expect(util.getLeafNodes(tree)).toEqual(
+      List([new Chapter({id: "chapter1.1.1.1"})])
+    );
+  });
+
+  it("should return the leaf nodes with branches of the same length", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1"}),
+        new Chapter({id: "chapter1.1.2"})
+      ])})
+    ])});
+
+    const leaves = util.getLeafNodes(tree);
+
+    expect(leaves.count()).toEqual(2);
+    expect(leaves.map((c) => c.id).toArray()).toEqual(
+      ["chapter1.1.1", "chapter1.1.2"]
+    );
+  });
+
+  it("should return the leaf nodes with branches of different length", () => {
+    const tree = new Chapter({id: "chapter1", children: List([
+      new Chapter({id: "chapter1.1", children: List([
+        new Chapter({id: "chapter1.1.1", children: List([
+          new Chapter({id: "chapter1.1.1.1", children: List([
+            new Chapter({id: "chapter1.1.1.1.1", children: List([
+              new Chapter({id: "chapter1.1.1.1.1.1"}),
+              new Chapter({id: "chapter1.1.1.1.1.2"}),
+            ])})
+          ])}),
+          new Chapter({id: "chapter1.1.1.2"})
+        ])}),
+        new Chapter({id: "chapter1.1.2"})
+      ])})
+    ])});
+
+    const leaves = util.getLeafNodes(tree);
+
+    expect(leaves.count()).toEqual(4);
+    expect(leaves.map((c) => c.id).toArray()).toEqual(
+      ["chapter1.1.1.1.1.1", "chapter1.1.1.1.1.2", "chapter1.1.1.2", "chapter1.1.2"]
+    );
+  });
+});
+
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
     expect(util.parseQueryString("")).toEqual(Map());
