@@ -371,7 +371,7 @@ describe("Utility function getAncestorOffsets()", () => {
     const offsets = util.getAncestorOffsets(chapters, timelines, [0]);
 
     expect(offsets.count()).toEqual(1);
-    expect(offsets.get(0)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[], "", 0]);
   });
 
   it("should return the duration of all previous nodes when accessing the second element on the first level", () => {
@@ -379,8 +379,8 @@ describe("Utility function getAncestorOffsets()", () => {
 
     expect(offsets.count()).toEqual(2);
 
-    expect(offsets.get(0)).toEqual([[0], 20]);
-    expect(offsets.get(1)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[0], "chapter1", 20]);
+    expect(offsets.get(1)).toEqual([[], "", 0]);
   });
 
   it("should return zero when accessing the first element on the first level", () => {
@@ -388,8 +388,8 @@ describe("Utility function getAncestorOffsets()", () => {
 
     expect(offsets.count()).toEqual(2);
 
-    expect(offsets.get(0)).toEqual([[0], 0]);
-    expect(offsets.get(1)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[0], "chapter1",  0]);
+    expect(offsets.get(1)).toEqual([[], "", 0]);
   });
 
   it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
@@ -397,9 +397,9 @@ describe("Utility function getAncestorOffsets()", () => {
 
     expect(offsets.count()).toEqual(3);
 
-    expect(offsets.get(0)).toEqual([[0, 1], 10]);
-    expect(offsets.get(1)).toEqual([[0], 30]);
-    expect(offsets.get(2)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[0, 1], "chapter1.2", 10]);
+    expect(offsets.get(1)).toEqual([[0], "chapter1", 30]);
+    expect(offsets.get(2)).toEqual([[], "", 0]);
   });
 
   it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
@@ -407,9 +407,9 @@ describe("Utility function getAncestorOffsets()", () => {
 
     expect(offsets.count()).toEqual(3);
 
-    expect(offsets.get(0)).toEqual([[0, 1], 0]);
-    expect(offsets.get(1)).toEqual([[0], 20]);
-    expect(offsets.get(2)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[0, 1], "chapter1.2", 0]);
+    expect(offsets.get(1)).toEqual([[0], "chapter1", 20]);
+    expect(offsets.get(2)).toEqual([[], "", 0]);
   });
 
   it("should return the durations of all predecessor nodes plus a partial duration from the direct parent when accessing a node on the bottom level", () => {
@@ -417,9 +417,9 @@ describe("Utility function getAncestorOffsets()", () => {
 
     expect(offsets.count()).toEqual(3);
 
-    expect(offsets.get(0)).toEqual([[0, 1], 20]);
-    expect(offsets.get(1)).toEqual([[0], 40]);
-    expect(offsets.get(2)).toEqual([[], 0]);
+    expect(offsets.get(0)).toEqual([[0, 1], "chapter1.2", 20]);
+    expect(offsets.get(1)).toEqual([[0], "chapter1", 40]);
+    expect(offsets.get(2)).toEqual([[], "", 0]);
   });
 });
 
