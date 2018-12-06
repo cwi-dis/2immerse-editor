@@ -422,3 +422,38 @@ export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Time
     getAncestorOffsets(chapters, timelines, parentAccessPath, parentOffset)
   );
 }
+
+export function trimTimelineTrack(track: TimelineTrack, start: number, end: number): TimelineTrack {
+  if (!track.timelineElements || track.timelineElements.isEmpty()) {
+    return track;
+  }
+
+  let timeElapsed = 0;
+  let elements = track.timelineElements.skipWhile((e) => {
+    timeElapsed += e.offset + e.duration;
+    return timeElapsed <= start;
+  });
+
+  if (elements.isEmpty()) {
+    return track.set("timelineElements", List());
+  }
+
+  const first = elements.first()!;
+  timeElapsed -= first.duration + first.offset;
+
+  if (start - timeElapsed > 0) {
+    let remaining = start - timeElapsed;
+
+    elements = elements.update(0, (e) => {
+      e = e.update("offset", (offset) => offset - remaining);
+
+      if (e.offset < 0) {
+        e = e.update("duration", (duration) => duration + e.offset).set("offset", 0);
+      }
+
+      return e;
+    });
+  }
+
+  return track.set("timelineElements", elements);
+}
