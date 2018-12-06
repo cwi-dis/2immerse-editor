@@ -92,7 +92,7 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
 
           return (
             <Rect
-              key={element.id}
+              key={element.id || i}
               x={elementStart}
               y={0}
               width={elementWidth}

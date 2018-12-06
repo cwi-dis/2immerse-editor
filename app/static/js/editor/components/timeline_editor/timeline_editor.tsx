@@ -5,7 +5,7 @@ import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, getDescendantChapters, Nullable, findByKey, getBranchDuration, mergeTimelines } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, Nullable, findByKey, getBranchDuration, mergeTimelines, getAncestorOffsets } from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -62,6 +62,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const keyPath = generateChapterKeyPath(accessPath.toArray());
     const chapter = chapters.getIn(keyPath);
     const mergedDescendantTracks = mergeTimelines(chapter, timelines).timelineTracks!;
+
+    const ancestorOffsets = getAncestorOffsets(chapters, timelines, accessPath.toArray());
+    console.log("offsets:", ancestorOffsets.toArray());
 
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (ancestorChapterIds.contains(timeline.chapterId)) {
