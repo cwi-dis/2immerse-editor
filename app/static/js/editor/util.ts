@@ -181,6 +181,18 @@ export function countLeafNodes(chapter: Chapter): number {
   }, 0);
 }
 
+export function getLeafNodes(chapter: Chapter): List<Chapter> {
+  const children = chapter.get("children") as List<Chapter>;
+
+  if (children.isEmpty()) {
+    return List([chapter]);
+  }
+
+  return children.reduce((leafNodes, childChapter: Chapter) => {
+    return leafNodes.concat(getLeafNodes(childChapter));
+  }, List([]));
+}
+
 export function getTreeHeight(chapters: List<Chapter>): number {
   if (chapters.count() === 0) {
     return 0;
