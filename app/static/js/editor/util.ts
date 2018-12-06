@@ -423,7 +423,7 @@ export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Time
   );
 }
 
-export function trimTimelineTrack(track: TimelineTrack, start: number, end: number): TimelineTrack {
+export function trimFront(track: TimelineTrack, start: number): TimelineTrack {
   if (!track.timelineElements || track.timelineElements.isEmpty()) {
     return track;
   }

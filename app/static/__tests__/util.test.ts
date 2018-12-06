@@ -423,11 +423,11 @@ describe("Utility function getAncestorOffsets()", () => {
   });
 });
 
-describe("Utility function trimTimelineTrack()", () => {
+describe("Utility function trimFront()", () => {
   it("should just return the track if the track is empty", () => {
     const track = new TimelineTrack({ id: "", regionId: "", locked: false });
 
-    expect(util.trimTimelineTrack(track, 10, 20)).toBe(track);
+    expect(util.trimFront(track, 10)).toBe(track);
   });
 
   it("should remove elements from the front if start falls onto an element boundary", () => {
@@ -437,7 +437,7 @@ describe("Utility function trimTimelineTrack()", () => {
       new TimelineElement({ id: "", componentId: "", offset: 0, duration: 8 }),
     ])});
 
-    const { timelineElements } = util.trimTimelineTrack(track, 10, 30);
+    const { timelineElements } = util.trimFront(track, 10);
 
     expect(timelineElements.count()).toBe(2);
     expect(timelineElements.get(0).duration).toBe(12);
@@ -451,7 +451,7 @@ describe("Utility function trimTimelineTrack()", () => {
       new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
     ])});
 
-    const { timelineElements } = util.trimTimelineTrack(track, 12, 30);
+    const { timelineElements } = util.trimFront(track, 12);
 
     expect(timelineElements.count()).toBe(2);
     expect(timelineElements.get(0).offset).toBe(3);
@@ -466,7 +466,7 @@ describe("Utility function trimTimelineTrack()", () => {
       new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
     ])});
 
-    const { timelineElements } = util.trimTimelineTrack(track, 15, 30);
+    const { timelineElements } = util.trimFront(track, 15);
 
     expect(timelineElements.count()).toBe(2);
     expect(timelineElements.get(0).offset).toBe(0);
@@ -481,7 +481,7 @@ describe("Utility function trimTimelineTrack()", () => {
       new TimelineElement({ id: "", componentId: "", offset: 0, duration: 3 }),
     ])});
 
-    const { timelineElements } = util.trimTimelineTrack(track, 17, 30);
+    const { timelineElements } = util.trimFront(track, 17);
 
     expect(timelineElements.count()).toBe(2);
     expect(timelineElements.get(0).offset).toBe(0);
