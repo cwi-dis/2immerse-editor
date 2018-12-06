@@ -553,6 +553,86 @@ describe("Utility function trimBack()", () => {
   });
 });
 
+describe("Utility function trimTimelineTrack()", () => {
+  it("should return the track unchanged if end is less than start", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    expect(util.trimTimelineTrack(track, 50, 30)).toBe(track);
+  });
+
+  it("should return an empty track if start is equal to end", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    expect(
+      util.trimTimelineTrack(track, 10, 10).timelineElements!.count()
+    ).toBe(0);
+  });
+
+  it("should return an empty track if start is larger than the timeline's duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    expect(
+      util.trimTimelineTrack(track, 40, 50).timelineElements!.count()
+    ).toBe(0);
+  });
+
+  it("should return all elements after start if end is larger than the timeline's duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const trimmed = util.trimTimelineTrack(track, 10, 50).timelineElements!;
+
+    expect(trimmed.count()).toBe(2);
+    expect(trimmed.get(0).id).toBe("e2");
+    expect(trimmed.get(1).id).toBe("e3");
+  });
+
+  it("should return all elements between start and end if they fall within the timeline's duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const trimmed = util.trimTimelineTrack(track, 10, 27).timelineElements!;
+
+    expect(trimmed.count()).toBe(1);
+    expect(trimmed.get(0).id).toBe("e2");
+    expect(trimmed.get(0).offset).toBe(5);
+    expect(trimmed.get(0).duration).toBe(12);
+  });
+
+  it("should return all elements between start and end with adjusted duration and offset if they fall within the timeline's duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const trimmed = util.trimTimelineTrack(track, 11, 26).timelineElements!;
+
+    expect(trimmed.count()).toBe(1);
+    expect(trimmed.get(0).id).toBe("e2");
+    expect(trimmed.get(0).offset).toBe(4);
+    expect(trimmed.get(0).duration).toBe(11);
+  });
+});
+
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
     expect(util.parseQueryString("")).toEqual(Map());
