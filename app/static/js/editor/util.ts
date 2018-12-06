@@ -401,3 +401,24 @@ export function getBranchDuration(chapters: List<Chapter>, timelines: List<Timel
 
   return ancestorDurations.push(chapterDuration).max()!;
 }
+
+export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Timeline>, accessPath: Array<number>, partialOffset = 0): List<[Array<number>, number]> {
+  if (accessPath.length === 1) {
+    return List().push([[], 0]);
+  }
+
+  let offsets = List<[Array<number>, number]>([]);
+
+  const parentAccessPath = accessPath.slice(0, -1);
+  const parentChapter = chapters.getIn(generateChapterKeyPath(parentAccessPath)) as Chapter;
+
+  const parentOffset = parentChapter.children!.slice(0, accessPath[accessPath.length - 1]).reduce((sum, c) => {
+    return sum + getChapterDuration(c, timelines);
+  }, 0) + partialOffset;
+
+  return offsets.push(
+    [parentAccessPath, parentOffset]
+  ).concat(
+    getAncestorOffsets(chapters, timelines, parentAccessPath, parentOffset)
+  );
+}
