@@ -489,3 +489,13 @@ export function trimFront(track: TimelineTrack, start: number): TimelineTrack {
 
   return track.set("timelineElements", elements);
 }
+
+export function trimTimelineTrack(track: TimelineTrack, start: number, end: number): TimelineTrack {
+  const duration = end - start;
+
+  if (duration < 0) {
+    return track;
+  }
+
+  return trimBack(trimFront(track, start), duration);
+}
