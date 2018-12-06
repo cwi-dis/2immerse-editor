@@ -490,6 +490,69 @@ describe("Utility function trimFront()", () => {
   });
 });
 
+describe("Utility function trimBack()", () => {
+  it("should just return the track if the track is empty", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false });
+    expect(util.trimBack(track, 10)).toBe(track);
+  });
+
+  it("should remove elements at the back if end falls onto an element boundary", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const { timelineElements } = util.trimBack(track, 10);
+
+    expect(timelineElements.count()).toBe(1);
+    expect(timelineElements.get(0).id).toBe("e1");
+    expect(timelineElements.get(0).duration).toBe(10);
+  });
+
+  it("should remove elements at the back and update the last element's duration if end falls onto a duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 12 }),
+      new TimelineElement({ id: "", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const { timelineElements } = util.trimBack(track, 7);
+
+    expect(timelineElements.count()).toBe(1);
+    expect(timelineElements.get(0).id).toBe("e1");
+    expect(timelineElements.get(0).duration).toBe(7);
+  });
+
+  it("should remove elements at the back and update the last element's duration if end falls onto a duration", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 0, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const { timelineElements } = util.trimBack(track, 25);
+
+    expect(timelineElements.count()).toBe(3);
+    expect(timelineElements.get(0).duration).toBe(10);
+    expect(timelineElements.get(1).duration).toBe(12);
+    expect(timelineElements.get(2).duration).toBe(3);
+  });
+
+  it("should remove elements at the back and if the remainder falls within an elements offset", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 12 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 8 }),
+    ])});
+
+    const { timelineElements } = util.trimBack(track, 12);
+
+    expect(timelineElements.count()).toBe(1);
+    expect(timelineElements.get(0).duration).toBe(10);
+  });
+});
+
 describe("Utility function parseQueryString()", () => {
   it("should return an empty map on empty string", () => {
     expect(util.parseQueryString("")).toEqual(Map());
