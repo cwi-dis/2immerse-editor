@@ -42,7 +42,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     super(props);
 
     this.state = {
-      scrubberPosition: 0,
+      scrubberPosition: 10,
       trackHeight: 50,
     };
   }
@@ -196,25 +196,33 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     console.log("Chapter duration:", chapterDuration);
 
     const trackLayout = this.getTrackLayout();
-    const { trackHeight } = this.state;
+    const { trackHeight, scrubberPosition } = this.state;
 
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1, padding: 0, display: "flex", justifyContent: "space-between", flexDirection: "column"}}>
           <div style={{width: "100%"}} />
 
-          <div style={{marginBottom: trackHeight / 2}}>
+          <div style={{marginBottom: trackHeight / 2, display: (trackLayout.isEmpty()) ? "none" : "block"}}>
             <div style={{width: "100%", height: 38, borderTop: "2px solid #161616"}}>
-              <TimeConverter seconds={chapterDuration} />
+              <p style={{fontSize: 20, padding: "5px 20px", fontWeight: "bold", textAlign: "right"}}>
+                <TimeConverter seconds={Math.floor((scrubberPosition / this.canvasWidth) * chapterDuration)} />
+                &nbsp;/&nbsp;
+                <TimeConverter seconds={chapterDuration} />
+              </p>
             </div>
-            <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+            <div style={{marginLeft: 20}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
               <Stage
                 ref={(e: any) => this.stageWrapper = e}
                 width={this.canvasWidth}
                 height={trackHeight * trackLayout.count() + this.scrubberHeight}
               >
                 <Layer>
-                  <ScrubberHead width={this.canvasWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+                  <ScrubberHead
+                    width={this.canvasWidth}
+                    headPosition={scrubberPosition}
+                    headPositionUpdated={(x) => this.setState({ scrubberPosition: x })}
+                  />
 
                   {trackLayout.map((layoutEntry, i) => {
                     const { track } = layoutEntry;
@@ -240,7 +248,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                           width={this.canvasWidth}
                           height={this.state.trackHeight}
                           trackDuration={chapterDuration}
-                          scrubberPosition={this.state.scrubberPosition}
+                          scrubberPosition={scrubberPosition}
                         />
                       </Group>
                     );

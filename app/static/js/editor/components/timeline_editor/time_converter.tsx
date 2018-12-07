@@ -17,9 +17,9 @@ const TimeConverter: React.SFC<TimeConverterProps> = (props) => {
   seconds -= minutes * 60;
 
   return (
-    <p style={style}>
+    <span style={style}>
       {padZero(hours)}:{padZero(minutes)}:{padZero(seconds)}
-    </p>
+    </span>
   );
 };
 
