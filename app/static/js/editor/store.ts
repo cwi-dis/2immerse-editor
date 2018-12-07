@@ -5,12 +5,14 @@ import thunk from "redux-thunk";
 
 import rootReducer from "./reducers/index";
 import { ChapterState } from "./reducers/chapters";
+import { DocumentState } from "./reducers/document";
 import { MasterState } from "./reducers/masters";
 import { ScreenState } from "./reducers/screens";
 import { TimelineState } from "./reducers/timelines";
 
 export interface ApplicationState {
   chapters: ChapterState;
+  document: DocumentState;
   masters: MasterState;
   screens: ScreenState;
   timelines: TimelineState;
