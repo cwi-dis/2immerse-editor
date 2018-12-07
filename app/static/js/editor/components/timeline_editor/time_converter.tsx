@@ -3,10 +3,11 @@ import { padStart } from "../../util";
 
 interface TimeConverterProps {
   seconds: number;
+  style?: React.CSSProperties;
 }
 
 const TimeConverter: React.SFC<TimeConverterProps> = (props) => {
-  let { seconds } = props;
+  let { seconds, style } = props;
   const padZero = (n: number) => padStart(n, 2, "0");
 
   const hours = Math.floor(seconds / 3600);
@@ -16,7 +17,9 @@ const TimeConverter: React.SFC<TimeConverterProps> = (props) => {
   seconds -= minutes * 60;
 
   return (
-    <p>{padZero(hours)}:{padZero(minutes)}:{padZero(seconds)}</p>
+    <p style={style}>
+      {padZero(hours)}:{padZero(minutes)}:{padZero(seconds)}
+    </p>
   );
 };
 
