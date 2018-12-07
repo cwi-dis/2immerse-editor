@@ -5,7 +5,8 @@ import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, Nullable, findByKey, getBranchDuration, mergeTimelines, getAncestorOffsets, trimTimelineTrack } from "../../util";
+import { RouterProps, Nullable } from "../../util";
+import * as util from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -48,29 +49,27 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private getTrackLayout(): List<{ regionId: string, track?: TimelineTrackModel }> {
     const { match, chapters, screens: { previewScreens }, timelines } = this.props;
     const { chapterid } = match.params;
-    const accessPath = getChapterAccessPath(chapters, chapterid);
+    const accessPath = util.getChapterAccessPath(chapters, chapterid);
 
     const allRegions = previewScreens.reduce((regions, screen) => {
       return regions.concat(screen.regions);
     }, List<ScreenRegion>());
 
     const ancestorChapterIds = accessPath.reduce((chapterIds, _, i) => {
-      const keyPath = generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
+      const keyPath = util.generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
       return chapterIds.push(chapters.getIn(keyPath).id);
     }, List<string>());
 
-    const keyPath = generateChapterKeyPath(accessPath.toArray());
+    const keyPath = util.generateChapterKeyPath(accessPath.toArray());
     const chapter = chapters.getIn(keyPath);
-    const mergedDescendantTracks = mergeTimelines(chapter, timelines).timelineTracks!;
+    const mergedDescendantTracks = util.mergeTimelines(chapter, timelines).timelineTracks!;
 
-    const ancestorOffsets = getAncestorOffsets(
+    const chapterDuration = util.getChapterDuration(chapter, timelines);
+    const ancestorOffsets = util.getAncestorOffsets(
       chapters, timelines, accessPath.toArray()
     ).reduce((map, [, chapterId, offset]) => {
       return map.set(chapterId, offset);
     }, Map<string, number>());
-
-    console.log("offsets:", ancestorOffsets.toJS());
-    const chapterDuration = this.getChapterDuration();
 
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (ancestorChapterIds.contains(timeline.chapterId)) {
@@ -79,7 +78,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           const offset = ancestorOffsets.get(timeline.chapterId);
 
           if (offset) {
-            track = trimTimelineTrack(track, offset, offset + chapterDuration);
+            track = util.trimTimelineTrack(track, offset, offset + chapterDuration);
           }
 
           return track;
@@ -110,7 +109,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private getTimeline() {
     const { match: { params } } = this.props;
-    const timelineFound = findByKey(this.props.timelines, params.chapterid, "chapterId");
+    const timelineFound = util.findByKey(this.props.timelines, params.chapterid, "chapterId");
 
     if (!timelineFound) {
       return undefined;
@@ -121,9 +120,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private getChapterDuration() {
     const { match: { params }, chapters, timelines } = this.props;
-    const accessPath = getChapterAccessPath(chapters, params.chapterid).toArray();
+    const accessPath = util.getChapterAccessPath(chapters, params.chapterid).toArray();
 
-    return getBranchDuration(chapters, timelines, accessPath);
+    return util.getBranchDuration(chapters, timelines, accessPath);
   }
 
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
@@ -131,7 +130,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
 
-    const [x, y] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
+    const [x, y] = util.getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
     console.log("Component dropped at", x, y);
 
     const trackLayout = this.getTrackLayout();
@@ -170,10 +169,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   private onChapterClicked(accessPath: Array<number>) {
-    const keyPath = generateChapterKeyPath(accessPath);
+    const keyPath = util.generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
 
-    const timeline = findByKey(this.props.timelines, chapter.id as any, "chapterId");
+    const timeline = util.findByKey(this.props.timelines, chapter.id as any, "chapterId");
 
     if (timeline === undefined) {
       console.log("Adding new timeline for chapter");
@@ -249,7 +248,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             <ProgramStructure
               chapters={chapters}
               levelIndent={15}
-              selectedChapter={getChapterAccessPath(chapters, params.chapterid).toArray()}
+              selectedChapter={util.getChapterAccessPath(chapters, params.chapterid).toArray()}
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
