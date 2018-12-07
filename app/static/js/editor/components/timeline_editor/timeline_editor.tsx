@@ -1,11 +1,11 @@
 import * as React from "react";
-import { List } from "immutable";
+import { List, Map } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
-import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, Nullable, findByKey, getBranchDuration, mergeTimelines, getAncestorOffsets } from "../../util";
+import { RouterProps, getCanvasDropPosition, getChapterAccessPath, generateChapterKeyPath, Nullable, findByKey, getBranchDuration, mergeTimelines, getAncestorOffsets, trimTimelineTrack } from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState, ScreenRegion } from "../../reducers/screens";
@@ -63,13 +63,26 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const chapter = chapters.getIn(keyPath);
     const mergedDescendantTracks = mergeTimelines(chapter, timelines).timelineTracks!;
 
-    const ancestorOffsets = getAncestorOffsets(chapters, timelines, accessPath.toArray());
-    console.log("offsets:", ancestorOffsets.toArray());
+    const ancestorOffsets = getAncestorOffsets(
+      chapters, timelines, accessPath.toArray()
+    ).reduce((map, [, chapterId, offset]) => {
+      return map.set(chapterId, offset);
+    }, Map<string, number>());
+
+    console.log("offsets:", ancestorOffsets.toJS());
+    const chapterDuration = this.getChapterDuration();
 
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (ancestorChapterIds.contains(timeline.chapterId)) {
         return tracks.concat(timeline.timelineTracks!.map((track) => {
-          return track.set("locked", chapterid !== timeline.chapterId);
+          track = track.set("locked", chapterid !== timeline.chapterId);
+          const offset = ancestorOffsets.get(timeline.chapterId);
+
+          if (offset) {
+            track = trimTimelineTrack(track, offset, offset + chapterDuration);
+          }
+
+          return track;
         }));
       }
 
