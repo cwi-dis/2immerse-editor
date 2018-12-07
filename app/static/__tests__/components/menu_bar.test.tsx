@@ -12,20 +12,20 @@ describe("Component <MenuBar />", () => {
     expect(menuBar.find(NavLink).length).toEqual(3);
   });
 
-  it("should contain a route with label 'Design Layout' at the application root", () => {
+  it("should contain a route with label 'Home' at the application root", () => {
     const menuBar = shallow(<MenuBar />);
     const linkProps = menuBar.find(NavLink).at(0).props();
 
     expect(linkProps.to).toEqual("/");
-    expect(linkProps.children.toString()).toEqual("Design Layout");
+    expect(linkProps.children.toString()).toEqual("Home");
   });
 
-  it("should contain a route with label 'Manage Masters'", () => {
+  it("should contain a route with label 'Design Layout'", () => {
     const menuBar = shallow(<MenuBar />);
     const linkProps = menuBar.find(NavLink).at(1).props();
 
-    expect(linkProps.to).toEqual("/masters");
-    expect(linkProps.children.toString()).toEqual("Manage Masters");
+    expect(linkProps.to).toEqual("/layout");
+    expect(linkProps.children.toString()).toEqual("Design Layout");
   });
 
   it("should contain a route with label 'Author Program'", () => {
