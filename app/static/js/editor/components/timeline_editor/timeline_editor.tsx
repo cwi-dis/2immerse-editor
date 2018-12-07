@@ -200,52 +200,59 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     return (
       <div className="columnlayout">
-        <div className="column-content" style={{flexGrow: 1}}>
-          <TimeConverter seconds={chapterDuration} />
-          <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-            <Stage
-              ref={(e: any) => this.stageWrapper = e}
-              width={this.canvasWidth}
-              height={trackHeight * trackLayout!.count() + this.scrubberHeight}
-            >
-              <Layer>
-                <ScrubberHead width={this.canvasWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
+        <div className="column-content" style={{flexGrow: 1, padding: 0, display: "flex", justifyContent: "space-between", flexDirection: "column"}}>
+          <div style={{width: "100%"}} />
 
-                {trackLayout.map((layoutEntry, i) => {
-                  const { track } = layoutEntry;
+          <div style={{marginBottom: trackHeight / 2}}>
+            <div style={{width: "100%", height: 38, borderTop: "2px solid #161616"}}>
+              <TimeConverter seconds={chapterDuration} />
+            </div>
+            <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+              <Stage
+                ref={(e: any) => this.stageWrapper = e}
+                width={this.canvasWidth}
+                height={trackHeight * trackLayout.count() + this.scrubberHeight}
+              >
+                <Layer>
+                  <ScrubberHead width={this.canvasWidth} headPositionUpdated={(x) => this.setState({ scrubberPosition: x })} />
 
-                  if (!track) {
+                  {trackLayout.map((layoutEntry, i) => {
+                    const { track } = layoutEntry;
+
+                    if (!track) {
+                      return (
+                        <Group key={i} y={i * trackHeight + this.scrubberHeight}>
+                          <EmptyTrack
+                            width={this.canvasWidth}
+                            height={trackHeight}
+                            scrubberPosition={this.state.scrubberPosition}
+                          />
+                        </Group>
+                      );
+                    }
+
                     return (
                       <Group key={i} y={i * trackHeight + this.scrubberHeight}>
-                        <EmptyTrack
+                        <TimelineTrack
+                          elements={track.timelineElements!}
+                          locked={track.locked}
+                          elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
                           width={this.canvasWidth}
-                          height={trackHeight}
+                          height={this.state.trackHeight}
+                          trackDuration={chapterDuration}
                           scrubberPosition={this.state.scrubberPosition}
                         />
                       </Group>
                     );
-                  }
+                  })}
 
-                  return (
-                    <Group key={i} y={i * trackHeight + this.scrubberHeight}>
-                      <TimelineTrack
-                        elements={track.timelineElements!}
-                        locked={track.locked}
-                        elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
-                        width={this.canvasWidth}
-                        height={this.state.trackHeight}
-                        trackDuration={chapterDuration}
-                        scrubberPosition={this.state.scrubberPosition}
-                      />
-                    </Group>
-                  );
-                })}
-
-                <Line points={[0, 14.5, this.canvasWidth]} stroke="#161616" strokeWidth={1} />
-              </Layer>
-            </Stage>
+                  <Line points={[0, 14.5, this.canvasWidth]} stroke="#161616" strokeWidth={1} />
+                </Layer>
+              </Stage>
+            </div>
           </div>
         </div>
+
         <div className="column-sidebar">
           <div style={{height: "50%", overflowY: "scroll"}}>
             <ProgramStructure
