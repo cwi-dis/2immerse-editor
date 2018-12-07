@@ -64,7 +64,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const chapter = chapters.getIn(keyPath);
     const mergedDescendantTracks = util.mergeTimelines(chapter, timelines).timelineTracks!;
 
-    const chapterDuration = util.getChapterDuration(chapter, timelines);
+    const chapterDuration = this.getChapterDuration();
     const ancestorOffsets = util.getAncestorOffsets(
       chapters, timelines, accessPath.toArray()
     ).reduce((map, [, chapterId, offset]) => {
@@ -121,8 +121,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private getChapterDuration() {
     const { match: { params }, chapters, timelines } = this.props;
     const accessPath = util.getChapterAccessPath(chapters, params.chapterid).toArray();
+    const chapter = chapters.getIn(util.generateChapterKeyPath(accessPath));
 
-    return util.getBranchDuration(chapters, timelines, accessPath);
+    return util.getChapterDuration(chapter, timelines);
   }
 
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
