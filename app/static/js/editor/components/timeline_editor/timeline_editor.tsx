@@ -15,6 +15,7 @@ import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reduce
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
 
 import ScrubberHead from "./scrubber_head";
+import TimeConverter from "./time_converter";
 import ProgramStructure from "../program_author/program_structure";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
@@ -200,6 +201,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1}}>
+          <TimeConverter seconds={chapterDuration} />
           <div onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
             <Stage
               ref={(e: any) => this.stageWrapper = e}
