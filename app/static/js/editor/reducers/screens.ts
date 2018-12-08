@@ -197,7 +197,7 @@ actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDAT
 });
 
 actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE_REGION_ON_SCREEN) => {
-  const { screenId, position, size } = action.payload;
+  const { screenId, position, size, color } = action.payload;
   const [screenIndex] = findById(state.previewScreens, screenId);
 
   return state.updateIn(["previewScreens", screenIndex, "regions"], (regions: List<ScreenRegion>) => {
@@ -206,7 +206,7 @@ actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE
       position,
       size,
       splitFrom: [null],
-      color: colorPalette[regions.count() % colorPalette.length]
+      color: color || colorPalette[regions.count() % colorPalette.length]
     });
   });
 });
