@@ -1844,10 +1844,10 @@ class DocumentEditing:
                 w = aElt.get(NS_AUTH("w"), None)
                 h = aElt.get(NS_AUTH("h"), None)
                 areaDescr = dict(region=region)
-                if x: areaDescr['x'] = x
-                if y: areaDescr['y'] = y
-                if w: areaDescr['w'] = w
-                if h: areaDescr['h'] = h
+                if x: areaDescr['x'] = float(x)
+                if y: areaDescr['y'] = float(y)
+                if w: areaDescr['w'] = float(w)
+                if h: areaDescr['h'] = float(h)
                 areas.append(areaDescr)
             deviceDescr = dict(type=type, orientation=orientation, name=name, areas=areas)
             devices.append(deviceDescr)
