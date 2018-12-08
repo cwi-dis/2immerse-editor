@@ -10,6 +10,7 @@ import { DocumentState } from "../reducers/document";
 import { actionCreators as documentActionCreators, DocumentActions } from "../actions/document";
 import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
 import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
+import { actionCreators as chapterActionCreators, ChapterActions } from "../actions/chapters";
 
 interface Layout {
   devices: Array<any>;
@@ -18,9 +19,11 @@ interface Layout {
 
 interface StartPageProps {
   document: DocumentState;
+
   documentActions: DocumentActions;
   screenActions: ScreenActions;
   assetActions: AssetActions;
+  chapterActions: ChapterActions;
 }
 
 interface StartPageState {
@@ -157,6 +160,7 @@ function mapDispatchToProps(dispatch: Dispatch<DocumentActions>): Partial<StartP
     assetActions: bindActionCreators<AssetActions>(assetActionCreators, dispatch),
     documentActions: bindActionCreators<DocumentActions>(documentActionCreators, dispatch),
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch),
+    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch),
   };
 }
 
