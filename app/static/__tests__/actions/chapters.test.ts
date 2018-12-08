@@ -2,8 +2,26 @@
 
 import * as actionTypes from "../../js/editor/actions/chapters";
 import { actionCreators } from "../../js/editor/actions/chapters";
+import { List } from "immutable";
+import { Chapter } from "../../js/editor/reducers/chapters";
 
 describe("Chapter actions", () => {
+  it("should create a LOAD_CHAPTER_TREE action", () => {
+    const tree = List([new Chapter({
+      id: "chapter1",
+      name: "Root Chapter"
+    })]);
+
+    const expected: actionTypes.LOAD_CHAPTER_TREE = {
+      type: "LOAD_CHAPTER_TREE",
+      payload: {
+        tree
+      }
+    };
+
+    expect(actionCreators.loadChapterTree(tree)).toEqual(expected);
+  });
+
   it("should create an ADD_CHAPTER_BEFORE action", () => {
     const expected: actionTypes.ADD_CHAPTER_BEFORE = {
       type: "ADD_CHAPTER_BEFORE",
