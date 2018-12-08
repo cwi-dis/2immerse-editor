@@ -4,6 +4,7 @@ import { createHashHistory, LocationDescriptor } from "history";
 import thunk from "redux-thunk";
 
 import rootReducer from "./reducers/index";
+import { AssetState } from "./reducers/assets";
 import { ChapterState } from "./reducers/chapters";
 import { DocumentState } from "./reducers/document";
 import { MasterState } from "./reducers/masters";
@@ -11,6 +12,7 @@ import { ScreenState } from "./reducers/screens";
 import { TimelineState } from "./reducers/timelines";
 
 export interface ApplicationState {
+  assets: AssetState;
   chapters: ChapterState;
   document: DocumentState;
   masters: MasterState;
