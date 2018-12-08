@@ -9,11 +9,13 @@ import { ApplicationState, navigate } from "../store";
 import { DocumentState } from "../reducers/document";
 import { actionCreators as documentActionCreators, DocumentActions } from "../actions/document";
 import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
+import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
 
 interface StartPageProps {
   document: DocumentState;
   documentActions: DocumentActions;
   screenActions: ScreenActions;
+  assetActions: AssetActions;
 }
 
 interface StartPageState {
@@ -147,6 +149,7 @@ function mapStateToProps(state: ApplicationState): Partial<StartPageProps> {
 
 function mapDispatchToProps(dispatch: Dispatch<DocumentActions>): Partial<StartPageProps> {
   return {
+    assetActions: bindActionCreators<AssetActions>(assetActionCreators, dispatch),
     documentActions: bindActionCreators<DocumentActions>(documentActionCreators, dispatch),
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch),
   };

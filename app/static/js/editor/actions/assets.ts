@@ -11,10 +11,10 @@ function addAsset(id: string, name: string, description: string, previewUrl: str
   };
 }
 
-export interface DocumentActions extends ActionCreatorsMapObject {
+export interface AssetActions extends ActionCreatorsMapObject {
   addAsset: (id: string, name: string, description: string, previewUrl: string, duration?: number) => ADD_ASSET;
 }
 
-export const actionCreators: DocumentActions = {
+export const actionCreators: AssetActions = {
   addAsset
 };

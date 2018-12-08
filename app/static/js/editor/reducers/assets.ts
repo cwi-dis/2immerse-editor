@@ -3,7 +3,7 @@ import { List } from "immutable";
 import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/assets";
 
-interface Asset {
+export interface Asset {
   id: string;
   name: string;
   description: string;
