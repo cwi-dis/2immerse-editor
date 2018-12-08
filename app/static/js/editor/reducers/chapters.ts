@@ -24,6 +24,10 @@ export const initialState: List<Chapter> = List([
 
 const actionHandler = new ActionHandler<ChapterState>(initialState);
 
+actionHandler.addHandler("LOAD_CHAPTER_TREE", (state, action: actions.LOAD_CHAPTER_TREE) => {
+  return action.payload.tree;
+});
+
 actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPTER_BEFORE) => {
   const { accessPath } = action.payload;
 
