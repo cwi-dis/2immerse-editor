@@ -360,6 +360,10 @@ def document_editing_verb(documentId, verb):
     rv = func(**kwargs)
     if isinstance(rv, list) or isinstance(rv, dict):
         return Response(json.dumps(rv), mimetype="application/json")
+
+    if rv is None:
+        return ""
+
     return rv
 #
 # Per-document, serve aspect, for consumption of views on the document
