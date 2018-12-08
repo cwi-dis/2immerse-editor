@@ -1955,6 +1955,26 @@ describe("Utility function mergeTimelines()", () => {
   });
 });
 
+describe("Utility function getChapterByPath()", () => {
+  it("should return the chapter at the given path", () => {
+    const chapters = List([new Chapter({
+      id: "chapter1",
+      children: List([
+        new Chapter({ id: "chapter2" }),
+        new Chapter({ id: "chapter3", children: List([
+          new Chapter({id: "chapter3.1" }),
+          new Chapter({id: "chapter3.2" })
+        ])}),
+      ])
+    })]);
+
+    expect(util.getChapterByPath(chapters, [0]).id).toEqual("chapter1");
+    expect(util.getChapterByPath(chapters, [0, 0]).id).toEqual("chapter2");
+    expect(util.getChapterByPath(chapters, [0, 1, 0]).id).toEqual("chapter3.1");
+    expect(util.getChapterByPath(chapters, [0, 1, 1]).id).toEqual("chapter3.2");
+  });
+});
+
 describe("Utility function pluck()", () => {
   it("should return a new object with only the specified keys from the original object", () => {
     const original = {
