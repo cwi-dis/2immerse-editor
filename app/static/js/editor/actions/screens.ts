@@ -56,12 +56,12 @@ function updateSelectedScreen(screenId?: string): UPDATE_SELECTED_SCREEN {
   };
 }
 
-export type PLACE_REGION_ON_SCREEN = PayloadAction<"PLACE_REGION_ON_SCREEN", {screenId: string, position: Coords, size: Coords}>;
-function placeRegionOnScreen(screenId: string, position: Coords, size: Coords): PLACE_REGION_ON_SCREEN {
+export type PLACE_REGION_ON_SCREEN = PayloadAction<"PLACE_REGION_ON_SCREEN", {screenId: string, position: Coords, size: Coords, color?: string}>;
+function placeRegionOnScreen(screenId: string, position: Coords, size: Coords, color?: string): PLACE_REGION_ON_SCREEN {
   return {
     type: "PLACE_REGION_ON_SCREEN",
     payload: {
-      screenId, position, size
+      screenId, position, size, color
     }
   };
 }
