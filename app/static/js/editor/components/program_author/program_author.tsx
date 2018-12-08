@@ -84,12 +84,25 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 
   private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
+    const { documentId } = this.props.document;
+    const chapter = getChapterByPath(this.props.chapters, accessPath);
+
+    const getUrl = (action: string) => {
+      return `/api/v1/document/${documentId}/editing/${action}?chapterID=${chapter.id}`;
+    };
+
     if (handlePosition === "left") {
-      this.props.chapterActions.addChapterBefore(accessPath);
+      makeRequest("POST", getUrl("addChapterBefore")).then((chapterId) => {
+        this.props.chapterActions.addChapterBefore(accessPath, chapterId);
+      });
     } else if (handlePosition === "right") {
-      this.props.chapterActions.addChapterAfter(accessPath);
+      makeRequest("POST", getUrl("addChapterAfter")).then((chapterId) => {
+        this.props.chapterActions.addChapterAfter(accessPath, chapterId);
+      });
     } else {
-      this.props.chapterActions.addChapterChild(accessPath);
+      makeRequest("POST", getUrl("addSubChapter")).then((chapterId) => {
+        this.props.chapterActions.addChapterChild(accessPath, chapterId);
+      });
     }
   }
 
