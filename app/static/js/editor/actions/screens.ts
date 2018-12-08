@@ -1,5 +1,5 @@
 import { ActionCreatorsMapObject } from "redux";
-import { Coords, PayloadAction } from "../util";
+import { Coords, PayloadAction, AsyncAction } from "../util";
 
 export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>;
 function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"): ADD_DEVICE {
@@ -66,8 +66,32 @@ function placeRegionOnScreen(screenId: string, position: Coords, size: Coords, c
   };
 }
 
+interface Region {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color: string;
+  name: string;
+}
+
+function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>): AsyncAction<void> {
+  return (dispatch, getState) => {
+    dispatch(addDevice(type, name, orientation));
+
+    const { screens } = getState();
+    const screen = screens.previewScreens.get(-1)!;
+
+    regions.forEach((region) => {
+      const { x, y, w, h, color } = region;
+      dispatch(placeRegionOnScreen(screen.id, [x, y], [w, h], color));
+    });
+  };
+}
+
 export interface ScreenActions extends ActionCreatorsMapObject {
   addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait") => ADD_DEVICE;
+  addDeviceAndPlaceRegions: (type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>) => AsyncAction<void>;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
@@ -77,6 +101,7 @@ export interface ScreenActions extends ActionCreatorsMapObject {
 
 export const actionCreators: ScreenActions = {
   addDevice,
+  addDeviceAndPlaceRegions,
   removeDevice,
   splitRegion,
   undoLastSplit,
