@@ -28,6 +28,25 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     };
   }
 
+  public componentDidUpdate() {
+    const { documentId } = this.props.document;
+
+    if (documentId !== "") {
+      console.log("constructing document", documentId);
+      const baseUrl = `/api/v1/document/${documentId}/editing/`;
+
+      makeRequest("GET", baseUrl + "getAssets").then((data) => {
+        const assets = JSON.parse(data);
+        console.log("assets", assets);
+
+        return makeRequest("GET", baseUrl + "getLayout");
+      }).then((data) => {
+        const layout = JSON.parse(data);
+        console.log("layout", layout);
+      });
+    }
+  }
+
   private submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
