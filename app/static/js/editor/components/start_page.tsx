@@ -7,6 +7,8 @@ import * as classNames from "classnames";
 import { Nullable, makeRequest } from "../util";
 import { ApplicationState, navigate } from "../store";
 import { DocumentState } from "../reducers/document";
+import { ChapterState, Chapter } from "../reducers/chapters";
+
 import { actionCreators as documentActionCreators, DocumentActions } from "../actions/document";
 import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
 import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
@@ -15,6 +17,13 @@ import { actionCreators as chapterActionCreators, ChapterActions } from "../acti
 interface Layout {
   devices: Array<any>;
   regions: Array<{ id: string, name: string, color: string }>;
+}
+
+interface ChapterTree {
+  id: string;
+  name: string;
+  tracks: Array<any>;
+  chapters: Array<ChapterTree>;
 }
 
 interface StartPageProps {
@@ -34,6 +43,22 @@ function getRegionForArea(id: string, layout: Layout) {
   return List(layout.regions).find((region: { id: string, name: string, color: string }) => {
     return region.id === id;
   })!;
+}
+
+function parseChapterTree(tree: ChapterTree): ChapterState {
+  const parseChapter = (tree: ChapterTree): Chapter => {
+    return new Chapter({
+      id: tree.id,
+      name: tree.name,
+      children: List(tree.chapters.map((child) => {
+        return parseChapter(child);
+      }))
+    });
+  };
+
+  return List([
+    parseChapter(tree)
+  ]);
 }
 
 class StartPage extends React.Component<StartPageProps, StartPageState> {
@@ -83,6 +108,15 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
             regions
           );
         });
+
+        return makeRequest("GET", baseUrl + "getChapters");
+      }).then((data) => {
+        const chapterTree: ChapterTree = JSON.parse(data);
+        console.log("chapters", chapterTree);
+
+        this.props.chapterActions.loadChapterTree(
+          parseChapterTree(chapterTree)
+        );
       }).then(() => {
         navigate("/layout");
       });
