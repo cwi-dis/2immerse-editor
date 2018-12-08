@@ -27,6 +27,12 @@ interface StartPageState {
   isLoading: boolean;
 }
 
+function getRegionForArea(id: string, layout: Layout) {
+  return List(layout.regions).find((region: { id: string, name: string, color: string }) => {
+    return region.id === id;
+  })!;
+}
+
 class StartPage extends React.Component<StartPageProps, StartPageState> {
   private urlInput: Nullable<HTMLInputElement>;
 
@@ -59,17 +65,11 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         const layout: Layout = JSON.parse(data);
         console.log("layout", layout);
 
-        const getRegionForArea = (id: string) => {
-          return List(layout.regions).find((region: { id: string, name: string, color: string }) => {
-            return region.id === id;
-          })!;
-        };
-
         layout.devices.forEach((device: any) => {
           const regions = device.areas.map((area: any) => {
             return {
               ...area,
-              color: getRegionForArea(area.region).color
+              color: getRegionForArea(area.region, layout).color
             };
           });
 
