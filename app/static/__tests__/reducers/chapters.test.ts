@@ -86,7 +86,6 @@ describe("Chapters reducer", () => {
     expect(transformedState.get(0).children.get(1).id).toEqual("chapter1.2");
   });
 
-
   it("should add a chapter before the existing one on ADD_CHAPTER_BEFORE", () => {
     const state: ChapterState = List([
       new Chapter({ id: "chapter1" })
@@ -99,6 +98,22 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(2);
     expect(transformedState.get(0)).toBeInstanceOf(Chapter);
+    expect(transformedState.get(1)).toBe(state.get(0));
+  });
+
+  it("should add a chapter before the existing one on ADD_CHAPTER_BEFORE with the given id", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_CHAPTER_BEFORE", payload: { accessPath: [0], id: "chapter2" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(2);
+    expect(transformedState.get(0)).toBeInstanceOf(Chapter);
+    expect(transformedState.get(0).id).toEqual("chapter2");
     expect(transformedState.get(1)).toBe(state.get(0));
   });
 
@@ -159,6 +174,22 @@ describe("Chapters reducer", () => {
     expect(transformedState.get(0)).toBe(state.get(0));
     expect(transformedState.get(1)).toBeInstanceOf(Chapter);
     expect(transformedState.get(2)).toBe(state.get(1));
+  });
+
+  it("should add a chapter after the existing one on ADD_CHAPTER_AFTER with the given id", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_CHAPTER_AFTER", payload: { accessPath: [0], id: "chapter2" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(2);
+    expect(transformedState.get(1)).toBeInstanceOf(Chapter);
+    expect(transformedState.get(1).id).toEqual("chapter2");
+    expect(transformedState.get(0)).toBe(state.get(0));
   });
 
   it("should add a chapter after the existing one on ADD_CHAPTER_AFTER", () => {
@@ -253,6 +284,21 @@ describe("Chapters reducer", () => {
     expect(chapterChildren.count()).toEqual(1);
     expect(chapterChildren.get(0)).toBeInstanceOf(Chapter);
     expect(chapterChildren.get(0).children).toEqual(List());
+  });
+
+  it("should add a new node as child on ADD_CHAPTER_CHILD with the given id", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter1" })
+    ]);
+
+    const transformedState = reducer(
+      state,
+      { type: "ADD_CHAPTER_CHILD", payload: { accessPath: [0], id: "chapter2" }} as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).children.count()).toEqual(1);
+    expect(transformedState.get(0).children.get(0).id).toEqual("chapter2");
   });
 
   it("should insert a new node between two existing nodes on ADD_CHAPTER_CHILD", () => {
