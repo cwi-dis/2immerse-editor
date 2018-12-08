@@ -114,11 +114,19 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         return makeRequest("GET", baseUrl + "getChapters");
       }).then((data) => {
         const chapterTree: ChapterTree = JSON.parse(data);
-        console.log("chapters", chapterTree);
+        console.log("chapter tree", chapterTree);
+        const chapters = parseChapterTree(chapterTree);
 
-        this.props.chapterActions.loadChapterTree(
-          parseChapterTree(chapterTree)
-        );
+        this.props.chapterActions.loadChapterTree(chapters);
+
+        const createTimelines = (chapters: List<Chapter>) => {
+          chapters.forEach((chapter) => {
+            this.props.timelineActions.addTimeline(chapter.id);
+            createTimelines(chapter.children!);
+          });
+        };
+
+        createTimelines(chapters);
       }).then(() => {
         navigate("/layout");
       });
