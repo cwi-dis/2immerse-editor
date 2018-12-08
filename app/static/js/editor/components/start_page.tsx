@@ -1,4 +1,5 @@
 import * as React from "react";
+import { List } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import * as classNames from "classnames";
@@ -7,10 +8,12 @@ import { Nullable, makeRequest } from "../util";
 import { ApplicationState, navigate } from "../store";
 import { DocumentState } from "../reducers/document";
 import { actionCreators as documentActionCreators, DocumentActions } from "../actions/document";
+import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
 
 interface StartPageProps {
   document: DocumentState;
   documentActions: DocumentActions;
+  screenActions: ScreenActions;
 }
 
 interface StartPageState {
@@ -41,8 +44,35 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
 
         return makeRequest("GET", baseUrl + "getLayout");
       }).then((data) => {
-        const layout = JSON.parse(data);
+        interface Layout {
+          devices: Array<any>;
+          regions: Array<{ id: string, name: string, color: string }>;
+        }
+
+        const layout: Layout = JSON.parse(data);
         console.log("layout", layout);
+
+        const getRegionForArea = (id: string) => {
+          return List(layout.regions).find((region: { id: string, name: string, color: string }) => {
+            return region.id === id;
+          })!;
+        };
+
+        layout.devices.forEach((device: any) => {
+          const regions = device.areas.map((area: any) => {
+            return {
+              ...area,
+              color: getRegionForArea(area.region).color
+            };
+          });
+
+          this.props.screenActions.addDeviceAndPlaceRegions(
+            device.type,
+            device.name,
+            device.orientation,
+            regions
+          );
+        });
       });
     }
   }
@@ -116,6 +146,7 @@ function mapStateToProps(state: ApplicationState): Partial<StartPageProps> {
 function mapDispatchToProps(dispatch: Dispatch<DocumentActions>): Partial<StartPageProps> {
   return {
     documentActions: bindActionCreators<DocumentActions>(documentActionCreators, dispatch),
+    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch),
   };
 }
 
