@@ -48,7 +48,7 @@ export class ScreenState extends Record<ScreenStateAttributes>({currentScreen: u
   }
 }
 
-function createNewScreen(type: "communal" | "personal", name?: string, orientation?: "landscape" | "portrait"): Screen {
+function createNewScreen(type: "communal" | "personal", name?: string, orientation?: "landscape" | "portrait", createRootRegion = true): Screen {
   const rootRegion: ScreenRegion = {
     id: shortid.generate(),
     position: [0, 0],
@@ -62,7 +62,7 @@ function createNewScreen(type: "communal" | "personal", name?: string, orientati
     name: (name) ? name : type + " " + getRandomInt(),
     type: type,
     orientation: (orientation) ? orientation : ((type === "communal") ? "landscape" : "portrait"),
-    regions: List([rootRegion])
+    regions: (createRootRegion) ? List([rootRegion]) : List()
   });
 }
 
@@ -107,8 +107,8 @@ function splitRegion(region: ScreenRegion, splitAt: number, orientation: "horizo
 const actionHandler = new ActionHandler<ScreenState>(new ScreenState({previewScreens: List<Screen>()}));
 
 actionHandler.addHandler("ADD_DEVICE", (state, action: actions.ADD_DEVICE) => {
-  const { type, name, orientation } = action.payload;
-  const screen = createNewScreen(type, name, orientation);
+  const { type, name, orientation, createRootRegion } = action.payload;
+  const screen = createNewScreen(type, name, orientation, createRootRegion);
 
   return state.update("previewScreens", (screens) => {
     return screens.push(screen);

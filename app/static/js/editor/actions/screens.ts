@@ -1,14 +1,15 @@
 import { ActionCreatorsMapObject } from "redux";
 import { Coords, PayloadAction, AsyncAction } from "../util";
 
-export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"}>;
-function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait"): ADD_DEVICE {
+export type ADD_DEVICE = PayloadAction<"ADD_DEVICE", {type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait", createRootRegion: boolean}>;
+function addDevice(type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait", createRootRegion = true): ADD_DEVICE {
   return {
     type: "ADD_DEVICE",
     payload: {
       type,
       name,
-      orientation
+      orientation,
+      createRootRegion
     }
   };
 }
@@ -77,7 +78,7 @@ interface Region {
 
 function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>): AsyncAction<void> {
   return (dispatch, getState) => {
-    dispatch(addDevice(type, name, orientation));
+    dispatch(addDevice(type, name, orientation, false));
 
     const { screens } = getState();
     const screen = screens.previewScreens.get(-1)!;
@@ -90,7 +91,7 @@ function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, o
 }
 
 export interface ScreenActions extends ActionCreatorsMapObject {
-  addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait") => ADD_DEVICE;
+  addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait", createRootRegion?: boolean) => ADD_DEVICE;
   addDeviceAndPlaceRegions: (type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>) => AsyncAction<void>;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
