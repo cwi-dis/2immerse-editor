@@ -33,6 +33,18 @@ describe("Chapter actions", () => {
     expect(actionCreators.addChapterBefore([0, 1, 0])).toEqual(expected);
   });
 
+  it("should create an ADD_CHAPTER_BEFORE action with predefined ID", () => {
+    const expected: actionTypes.ADD_CHAPTER_BEFORE = {
+      type: "ADD_CHAPTER_BEFORE",
+      payload: {
+        accessPath: [0, 1, 0],
+        id: "chapter1"
+      }
+    };
+
+    expect(actionCreators.addChapterBefore([0, 1, 0], "chapter1")).toEqual(expected);
+  });
+
   it("should create an ADD_CHAPTER_AFTER action", () => {
     const expected: actionTypes.ADD_CHAPTER_AFTER = {
       type: "ADD_CHAPTER_AFTER",
@@ -44,6 +56,18 @@ describe("Chapter actions", () => {
     expect(actionCreators.addChapterAfter([0, 1, 0])).toEqual(expected);
   });
 
+  it("should create an ADD_CHAPTER_AFTER action with predefined ID", () => {
+    const expected: actionTypes.ADD_CHAPTER_AFTER = {
+      type: "ADD_CHAPTER_AFTER",
+      payload: {
+        accessPath: [0, 1, 0],
+        id: "chapter1"
+      }
+    };
+
+    expect(actionCreators.addChapterAfter([0, 1, 0], "chapter1")).toEqual(expected);
+  });
+
   it("should create an ADD_CHAPTER_CHILD action", () => {
     const expected: actionTypes.ADD_CHAPTER_CHILD = {
       type: "ADD_CHAPTER_CHILD",
@@ -53,6 +77,18 @@ describe("Chapter actions", () => {
     };
 
     expect(actionCreators.addChapterChild([0, 1, 0])).toEqual(expected);
+  });
+
+  it("should create an ADD_CHAPTER_CHILD action with predefined ID", () => {
+    const expected: actionTypes.ADD_CHAPTER_CHILD = {
+      type: "ADD_CHAPTER_CHILD",
+      payload: {
+        accessPath: [0, 1, 0],
+        id: "chapter1"
+      }
+    };
+
+    expect(actionCreators.addChapterChild([0, 1, 0], "chapter1")).toEqual(expected);
   });
 
   it("should create an REMOVE_CHAPTER action", () => {
