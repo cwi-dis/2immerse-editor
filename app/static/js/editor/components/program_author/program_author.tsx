@@ -16,9 +16,11 @@ import { actionCreators as timelineActionCreators, TimelineActions } from "../..
 import ChapterNode from "./chapter_node";
 import NodeConnectors from "./node_connectors";
 import ProgramStructure from "./program_structure";
+import { DocumentState } from "../../reducers/document";
 
 interface ProgramAuthorProps {
   chapters: ChapterState;
+  document: DocumentState;
   timelines: TimelineState;
   chapterActions: ChapterActions;
   timelineActions: TimelineActions;
@@ -230,7 +232,8 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   return {
     chapters: state.chapters,
-    timelines: state.timelines
+    timelines: state.timelines,
+    document: state.document
   };
 }
 
