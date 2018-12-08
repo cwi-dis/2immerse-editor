@@ -73,6 +73,8 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
             regions
           );
         });
+      }).then(() => {
+        navigate("/layout");
       });
     }
   }
