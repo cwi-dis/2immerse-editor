@@ -4,7 +4,7 @@ import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 
-import { Coords, countLeafNodes, generateChapterKeyPath, getCanvasDropPosition, getTreeHeight, Nullable } from "../../util";
+import { Coords, countLeafNodes, generateChapterKeyPath, getCanvasDropPosition, getTreeHeight, Nullable, getChapterByPath, makeRequest } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState, navigate } from "../../store";
@@ -61,7 +61,14 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     const chapterName = prompt("Chapter name:", currentName || "");
 
     if (chapterName !== null && chapterName !== "") {
-      this.props.chapterActions.renameChapter(accessPath, chapterName);
+        const chapter = getChapterByPath(this.props.chapters, accessPath);
+        const { documentId } = this.props.document;
+
+        const url = `/api/v1/document/${documentId}/editing/renameChapter?chapterID=${chapter.id}&name=${encodeURIComponent(chapterName)}`;
+
+        makeRequest("POST", url).then(() => {
+          this.props.chapterActions.renameChapter(accessPath, chapterName);
+        });
     }
   }
 
