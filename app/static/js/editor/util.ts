@@ -422,6 +422,11 @@ export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Time
     getAncestorOffsets(chapters, timelines, parentAccessPath, parentOffset)
   );
 }
+
+export function getChapterByPath(chapters: List<Chapter>, accessPath: Array<number>): Chapter {
+  return chapters.getIn(generateChapterKeyPath(accessPath));
+}
+
 export function trimBack(track: TimelineTrack, end: number): TimelineTrack {
   if (!track.timelineElements || track.timelineElements.isEmpty()) {
     return track;
