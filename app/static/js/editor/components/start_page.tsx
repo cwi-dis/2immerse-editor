@@ -11,6 +11,11 @@ import { actionCreators as documentActionCreators, DocumentActions } from "../ac
 import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
 import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
 
+interface Layout {
+  devices: Array<any>;
+  regions: Array<{ id: string, name: string, color: string }>;
+}
+
 interface StartPageProps {
   document: DocumentState;
   documentActions: DocumentActions;
@@ -41,16 +46,16 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       const baseUrl = `/api/v1/document/${documentId}/editing/`;
 
       makeRequest("GET", baseUrl + "getAssets").then((data) => {
-        const assets = JSON.parse(data);
+        const assets: Array<any> = JSON.parse(data);
         console.log("assets", assets);
+
+        assets.forEach((asset) => {
+          const { id, name, description, previewUrl, duration } = asset;
+          this.props.assetActions.addAsset(id, name, description, previewUrl, duration);
+        });
 
         return makeRequest("GET", baseUrl + "getLayout");
       }).then((data) => {
-        interface Layout {
-          devices: Array<any>;
-          regions: Array<{ id: string, name: string, color: string }>;
-        }
-
         const layout: Layout = JSON.parse(data);
         console.log("layout", layout);
 
