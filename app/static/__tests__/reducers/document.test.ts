@@ -2,7 +2,6 @@
 
 import reducer, { DocumentState, initialState } from "../../js/editor/reducers/document";
 
-
 describe("Document reducer", () => {
   it("should return the initial state on an unknown action", () => {
     expect(
