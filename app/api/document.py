@@ -1835,7 +1835,7 @@ class DocumentEditing:
             type = elt.get(NS_AUTH("type"))
             orientation = elt.get(NS_AUTH("orientation"))
             name = elt.get(NS_AUTH("name"))
-            areaElements = elt.find("./au:area", NAMESPACES)
+            areaElements = elt.findall("./au:area", NAMESPACES)
             areas = []
             for aElt in areaElements:
                 region = aElt.get(NS_AUTH("region"))
