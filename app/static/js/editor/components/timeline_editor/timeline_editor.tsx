@@ -19,8 +19,10 @@ import TimeConverter from "./time_converter";
 import ProgramStructure from "../program_author/program_structure";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
+import { AssetState } from "../../reducers/assets";
 
 interface TimelineEditorProps extends RouterProps {
+  assets: AssetState;
   chapters: ChapterState;
   screens: ScreenState;
   timelines: TimelineState;
@@ -279,6 +281,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
 function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> {
   return {
+    assets: state.assets,
     timelines: state.timelines,
     chapters: state.chapters,
     screens: state.screens
