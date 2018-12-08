@@ -1,5 +1,16 @@
 import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
+import { ChapterState } from "../reducers/chapters";
+
+export type LOAD_CHAPTER_TREE = PayloadAction<"LOAD_CHAPTER_TREE", { tree: ChapterState }>;
+function loadChapterTree(tree: ChapterState): LOAD_CHAPTER_TREE {
+  return {
+    type: "LOAD_CHAPTER_TREE",
+    payload: {
+      tree
+    }
+  };
+}
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>}>;
 function addChapterBefore(accessPath: Array<number>): ADD_CHAPTER_BEFORE {
@@ -53,6 +64,7 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
 }
 
 export interface ChapterActions extends ActionCreatorsMapObject {
+  loadChapterTree: (tree: ChapterState) => LOAD_CHAPTER_TREE;
   addChapterAfter: (accessPath: Array<number>) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>) => ADD_CHAPTER_CHILD;
@@ -61,6 +73,7 @@ export interface ChapterActions extends ActionCreatorsMapObject {
 }
 
 export const actionCreators: ChapterActions = {
+  loadChapterTree,
   addChapterAfter,
   addChapterBefore,
   addChapterChild,
