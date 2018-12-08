@@ -1,8 +1,13 @@
 import * as React from "react";
+import { AssetState } from "../../reducers/assets";
 
-class DMAppcContainer extends React.Component<{}, {}> {
-  public setDragData(componentId: string, e: React.DragEvent<HTMLDivElement>) {
-    e.dataTransfer.setData("text/plain", componentId);
+interface DMAppcContainerProps {
+  assets: AssetState;
+}
+
+class DMAppcContainer extends React.Component<DMAppcContainerProps, {}> {
+  public setDragData(assetId: string, e: React.DragEvent<HTMLDivElement>) {
+    e.dataTransfer.setData("text/plain", assetId);
   }
 
   public render() {

@@ -187,7 +187,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   public render() {
-    const { match: { params }, chapters } = this.props;
+    const { match: { params }, chapters, assets } = this.props;
     const timeline = this.getTimeline();
 
     if (timeline === undefined) {
@@ -272,7 +272,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
-          <DMAppcContainer />
+          <DMAppcContainer assets={assets} />
         </div>
       </div>
     );

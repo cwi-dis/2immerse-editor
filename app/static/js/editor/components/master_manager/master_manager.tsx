@@ -129,7 +129,7 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
             })}
           </div>
 
-          <DMAppcContainer />
+          <DMAppcContainer assets={List()} />
         </div>
       </div>
     );
