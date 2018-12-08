@@ -344,7 +344,7 @@ def document_remote_control(documentId):
 #
 # Per-document, editing aspect.
 #
-@app.route(API_ROOT + "/document/<uuid:documentId>/editing/<string:verb>")
+@app.route(API_ROOT + "/document/<uuid:documentId>/editing/<string:verb>", methods=["GET", "POST"])
 def document_editing_verb(documentId, verb):
     try:
         document = api.documents[documentId]
