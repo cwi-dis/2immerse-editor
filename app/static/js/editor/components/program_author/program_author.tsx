@@ -54,6 +54,12 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
       return;
     }
 
+    const chapter = getChapterByPath(this.props.chapters, accessPath);
+    if (!chapter.children!.isEmpty()) {
+      alert("Cannot remove a chapter which has descendants");
+      return;
+    }
+
     this.props.chapterActions.removeChapter(accessPath);
   }
 
