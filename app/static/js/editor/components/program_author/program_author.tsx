@@ -60,7 +60,12 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
       return;
     }
 
-    this.props.chapterActions.removeChapter(accessPath);
+    const { documentId } = this.props.document;
+    const url = `/api/v1/document/${documentId}/editing/deleteChapter?chapterID=${chapter.id}`;
+
+    makeRequest("POST", url).then(() => {
+      this.props.chapterActions.removeChapter(accessPath);
+    });
   }
 
   private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
