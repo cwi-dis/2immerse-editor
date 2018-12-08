@@ -50,6 +50,43 @@ describe("Chapters reducer", () => {
     ).toEqual(state);
   });
 
+  it("should load an entire tree on LOAD_CHAPTER_TREE", () => {
+    const state = reducer(
+      undefined,
+      { type: "LOAD_CHAPTER_TREE", payload: { tree: List([new Chapter({ id: "chapter1", name: "Chapter 1"})]) }} as any
+    );
+
+    expect(state.count()).toEqual(1);
+    expect(state.get(0).id).toEqual("chapter1");
+    expect(state.get(0).name).toEqual("Chapter 1");
+  });
+
+  it("should load an entire tree on LOAD_CHAPTER_TREE and replace the current one", () => {
+    const state: ChapterState = List([
+      new Chapter({ id: "chapter2" }),
+      new Chapter({ id: "chapter3" })
+    ]);
+
+    const transformedState = reducer(
+      undefined,
+      { type: "LOAD_CHAPTER_TREE", payload: {
+        tree: List([new Chapter({ id: "chapter1", name: "Chapter 1", children: List([
+          new Chapter({ id: "chapter1.1", name: "Chapter 1.1"}),
+          new Chapter({ id: "chapter1.2", name: "Chapter 1.2"})
+        ])})])
+      }} as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+    expect(transformedState.get(0).id).toEqual("chapter1");
+    expect(transformedState.get(0).name).toEqual("Chapter 1");
+
+    expect(transformedState.get(0).children.count()).toEqual(2);
+    expect(transformedState.get(0).children.get(0).id).toEqual("chapter1.1");
+    expect(transformedState.get(0).children.get(1).id).toEqual("chapter1.2");
+  });
+
+
   it("should add a chapter before the existing one on ADD_CHAPTER_BEFORE", () => {
     const state: ChapterState = List([
       new Chapter({ id: "chapter1" })
