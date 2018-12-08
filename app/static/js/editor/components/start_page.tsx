@@ -13,6 +13,7 @@ import { actionCreators as documentActionCreators, DocumentActions } from "../ac
 import { actionCreators as screenActionCreators, ScreenActions } from "../actions/screens";
 import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../actions/chapters";
+import { actionCreators as timelineActionCreators, TimelineActions } from "../actions/timelines";
 
 interface Layout {
   devices: Array<any>;
@@ -33,6 +34,7 @@ interface StartPageProps {
   screenActions: ScreenActions;
   assetActions: AssetActions;
   chapterActions: ChapterActions;
+  timelineActions: TimelineActions;
 }
 
 interface StartPageState {
@@ -195,6 +197,7 @@ function mapDispatchToProps(dispatch: Dispatch<DocumentActions>): Partial<StartP
     documentActions: bindActionCreators<DocumentActions>(documentActionCreators, dispatch),
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch),
     chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch),
+    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch),
   };
 }
 
