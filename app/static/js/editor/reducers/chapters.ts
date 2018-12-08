@@ -29,7 +29,7 @@ actionHandler.addHandler("LOAD_CHAPTER_TREE", (state, action: actions.LOAD_CHAPT
 });
 
 actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPTER_BEFORE) => {
-  const { accessPath } = action.payload;
+  const { accessPath, id } = action.payload;
 
   const insertIndex = accessPath[accessPath.length - 1];
   let list: List<Chapter> = state;
@@ -38,14 +38,14 @@ actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPT
     list = list.get(i)!.get("children")!;
   });
 
-  const updatedChildren = list.insert(insertIndex, new Chapter({id: shortid.generate()}));
+  const updatedChildren = list.insert(insertIndex, new Chapter({id: id || shortid.generate()}));
   const keyPath = generateChapterKeyPath(accessPath).pop();
 
   return state.updateIn(keyPath, () => updatedChildren);
 });
 
 actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: actions.ADD_CHAPTER_AFTER) => {
-  const { accessPath } = action.payload;
+  const { accessPath, id } = action.payload;
 
   const insertIndex = accessPath[accessPath.length - 1];
   let list: List<Chapter> = state;
@@ -54,7 +54,7 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: actions.ADD_CHAPTE
     list = list.get(i)!.get("children")!;
   });
 
-  const newChapter = new Chapter({id: shortid.generate()});
+  const newChapter = new Chapter({id: id || shortid.generate()});
   const updatedChildren = (insertIndex >= list.count()) ? list.push(newChapter) : list.insert(insertIndex + 1, newChapter);
   const keyPath = generateChapterKeyPath(accessPath).pop();
 
@@ -62,11 +62,11 @@ actionHandler.addHandler("ADD_CHAPTER_AFTER", (state, action: actions.ADD_CHAPTE
 });
 
 actionHandler.addHandler("ADD_CHAPTER_CHILD", (state, action: actions.ADD_CHAPTER_CHILD) => {
-  const { accessPath } = action.payload;
+  const { accessPath, id } = action.payload;
   const keyPath = generateChapterKeyPath(accessPath).push("children");
 
   const newChapter = new Chapter({
-    id: shortid.generate(),
+    id: id || shortid.generate(),
     children: state.getIn(keyPath)
   });
 
