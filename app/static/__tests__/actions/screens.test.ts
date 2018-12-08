@@ -13,7 +13,8 @@ describe("Screen actions", () => {
     const expected: actionTypes.ADD_DEVICE = {
       type: "ADD_DEVICE",
       payload: {
-        type: "communal"
+        type: "communal",
+        createRootRegion: true
       }
     };
 
@@ -24,7 +25,8 @@ describe("Screen actions", () => {
     const expected: actionTypes.ADD_DEVICE = {
       type: "ADD_DEVICE",
       payload: {
-        type: "personal"
+        type: "personal",
+        createRootRegion: true
       }
     };
 
@@ -37,7 +39,8 @@ describe("Screen actions", () => {
       payload: {
         type: "personal",
         name: "my screen",
-        orientation: "landscape"
+        orientation: "landscape",
+        createRootRegion: true
       }
     };
 
@@ -128,7 +131,8 @@ describe("Async timeline actions", () => {
         payload: {
           type: "personal",
           name: "my screen",
-          orientation: "landscape"
+          orientation: "landscape",
+          createRootRegion: false
         }},
       { type: "PLACE_REGION_ON_SCREEN", payload: {
         screenId: "screen1",
