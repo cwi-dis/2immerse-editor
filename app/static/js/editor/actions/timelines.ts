@@ -44,12 +44,12 @@ function removeTimelineTrack(timelineId: string, trackId: string): REMOVE_TIMELI
   };
 }
 
-export type ADD_ELEMENT_TO_TIMELINE_TRACK = PayloadAction<"ADD_ELEMENT_TO_TIMELINE_TRACK", {timelineId: string, trackId: string, componentId: string, duration: number, offset: number, insertPosition: number, previewUrl?: string}>;
-function addElementToTimelineTrack(timelineId: string, trackId: string, componentId: string, duration: number, offset = 0, insertPosition = -1, previewUrl?: string): ADD_ELEMENT_TO_TIMELINE_TRACK {
+export type ADD_ELEMENT_TO_TIMELINE_TRACK = PayloadAction<"ADD_ELEMENT_TO_TIMELINE_TRACK", {timelineId: string, trackId: string, componentId: string, duration: number, offset: number, insertPosition: number, previewUrl?: string, elementId?: string}>;
+function addElementToTimelineTrack(timelineId: string, trackId: string, componentId: string, duration: number, offset = 0, insertPosition = -1, previewUrl?: string, elementId?: string): ADD_ELEMENT_TO_TIMELINE_TRACK {
   return {
     type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
     payload: {
-      timelineId, trackId, componentId, duration, offset, insertPosition, previewUrl
+      timelineId, trackId, componentId, duration, offset, insertPosition, previewUrl, elementId
     }
   };
 }
@@ -126,7 +126,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean, trackId?: string) => ADD_TIMELINE_TRACK;
   addTimelineTrackAndAddElement: (timelineId: string, regionId: string, componentId: string, duration?: number, offset?: number, previewUrl?: string) => AsyncAction<void>;
   removeTimelineTrack: (timelineId: string, trackId: string) => REMOVE_TIMELINE_TRACK;
-  addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, duration: number, offset?: number, insertPosition?: number, previewUrl?: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
+  addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, duration: number, offset?: number, insertPosition?: number, previewUrl?: string, elementId?: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementOffset: (timelineId: string, trackId: string, elementId: string, offset: number) => UPDATE_ELEMENT_OFFSET;
   removeElement: (timelineId: string, trackId: string, elementId: string) => REMOVE_ELEMENT;
   removeElementAndUpdateTrack: (timelineId: string, trackId: string, elementId: string) => AsyncAction<void>;
