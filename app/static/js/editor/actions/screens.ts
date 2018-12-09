@@ -57,12 +57,12 @@ function updateSelectedScreen(screenId?: string): UPDATE_SELECTED_SCREEN {
   };
 }
 
-export type PLACE_REGION_ON_SCREEN = PayloadAction<"PLACE_REGION_ON_SCREEN", {screenId: string, position: Coords, size: Coords, color?: string}>;
-function placeRegionOnScreen(screenId: string, position: Coords, size: Coords, color?: string): PLACE_REGION_ON_SCREEN {
+export type PLACE_REGION_ON_SCREEN = PayloadAction<"PLACE_REGION_ON_SCREEN", {screenId: string, position: Coords, size: Coords, regionId?: string, color?: string}>;
+function placeRegionOnScreen(screenId: string, position: Coords, size: Coords, regionId?: string, color?: string): PLACE_REGION_ON_SCREEN {
   return {
     type: "PLACE_REGION_ON_SCREEN",
     payload: {
-      screenId, position, size, color
+      screenId, position, size, regionId, color
     }
   };
 }
@@ -74,18 +74,19 @@ interface Region {
   h: number;
   color: string;
   name: string;
+  region: string;
 }
 
-function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>): AsyncAction<void> {
+function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", areas: Array<Region>): AsyncAction<void> {
   return (dispatch, getState) => {
     dispatch(addDevice(type, name, orientation, false));
 
     const { screens } = getState();
     const screen = screens.previewScreens.get(-1)!;
 
-    regions.forEach((region) => {
-      const { x, y, w, h, color } = region;
-      dispatch(placeRegionOnScreen(screen.id, [x, y], [w, h], color));
+    areas.forEach((area) => {
+      const { x, y, w, h, region, color } = area;
+      dispatch(placeRegionOnScreen(screen.id, [x, y], [w, h], region, color));
     });
   };
 }
@@ -97,7 +98,7 @@ export interface ScreenActions extends ActionCreatorsMapObject {
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
   updateSelectedScreen: (screenId?: string) => UPDATE_SELECTED_SCREEN;
-  placeRegionOnScreen: (screenId: string, position: Coords, size: Coords) => PLACE_REGION_ON_SCREEN;
+  placeRegionOnScreen: (screenId: string, position: Coords, size: Coords, regionId?: string, color?: string) => PLACE_REGION_ON_SCREEN;
 }
 
 export const actionCreators: ScreenActions = {
