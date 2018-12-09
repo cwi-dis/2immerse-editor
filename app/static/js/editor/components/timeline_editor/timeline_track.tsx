@@ -14,6 +14,7 @@ interface TimelineTrackProps {
   trackDuration?: number;
   scrubberPosition?: number;
   locked?: boolean;
+  offsets?: [number, number];
 
   elementRemoved: (id: string) => void;
 }
@@ -43,7 +44,8 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   }
 
   public render() {
-    const { width, height, elements, scrubberPosition, name } = this.props;
+    const { width, height, elements, scrubberPosition, name, offsets } = this.props;
+    const [startOffset, endOffset] = this.props.offsets || [0, 0];
     const trackDuration = (this.props.trackDuration)
       ? this.props.trackDuration
       : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
@@ -79,20 +81,21 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
         <Rect
           x={0}
           y={0}
-          width={150}
+          width={startOffset}
           height={height}
           fill="#262626"
         />
         <Text x={5} y={(height / 2) - 8} text={name} fontSize={16} fill="#B1B1B1" />
         <Rect
-          x={150}
+          x={startOffset}
           y={0}
           width={width}
           height={height}
           fill="#202020"
         />
+        <Text x={width - 22} y={(height / 2) - ((height - 20) / 2)} text={"+"} fontSize={height - 20} fill="#B1B1B1" />
         {elements.map((element, i) => {
-          const trackWidth = width - 150;
+          const trackWidth = width - startOffset - endOffset;
           const elementStart = startX + (trackWidth * (element.offset / trackDuration));
           const elementWidth = trackWidth * (element.duration / trackDuration);
 
@@ -137,6 +140,7 @@ interface EmptyTrackProps {
   width: number;
   height: number;
   scrubberPosition: number;
+  offsets?: [number, number];
 }
 
 export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
@@ -148,6 +152,7 @@ export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
       elementRemoved={() => { }}
       width={props.width}
       height={props.height}
+      offsets={props.offsets}
       scrubberPosition={props.scrubberPosition}
     />
   );
