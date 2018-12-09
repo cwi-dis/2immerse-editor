@@ -116,7 +116,7 @@ actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE
 });
 
 actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
-  const { timelineId, trackId, componentId, duration, offset, insertPosition, previewUrl } = action.payload;
+  const { timelineId, trackId, componentId, duration, offset, insertPosition, previewUrl, elementId } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   if (duration <= 0) {
@@ -130,11 +130,11 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
       const position = (insertPosition < 0) ? elements.count() : insertPosition;
 
       return elements.insert(position, new TimelineElement({
-        id: shortid.generate(),
+        id: elementId || shortid.generate(),
         componentId,
         duration,
         offset,
-        previewUrl
+        previewUrl,
       }));
     });
   });
