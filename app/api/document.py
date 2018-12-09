@@ -1753,7 +1753,7 @@ class DocumentEditing:
         """
         exprChapter = ".//tl:par[@au:type='chapter']"
         rootChapterElt = self.tree.getroot().find(exprChapter, NAMESPACES)
-        rv = self._getChapterInfo(rootChapterElt, includeChapters=True)
+        rv = self._getChapterInfo(rootChapterElt, includeChapters=True, includeElements=True)
         return rv
 
     def getChapter(self, chapterId):
