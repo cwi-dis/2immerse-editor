@@ -12,11 +12,11 @@ export const initialState: DocumentState = {
 const actionHandler = new ActionHandler<DocumentState>(initialState);
 
 actionHandler.addHandler("ASSIGN_DOCUMENT_ID", (state, action: actions.ASSIGN_DOCUMENT_ID) => {
-  const { documentId } = action.payload;
+  const { documentId, baseUrl } = action.payload;
 
   return {
     ...state,
-    documentId
+    documentId, baseUrl
   };
 });
 
