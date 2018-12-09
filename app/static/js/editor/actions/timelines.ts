@@ -94,15 +94,15 @@ function toggleTrackLock(timelineId: string, trackId: string): TOGGLE_TRACK_LOCK
   };
 }
 
-function addTimelineTrackAndAddElement(timelineId: string, regionId: string, componentId: string, duration: number, offset: number, previewUrl?: string): AsyncAction<void> {
+function addTimelineTrackAndAddElement(timelineId: string, regionId: string, componentId: string, duration: number, offset: number, previewUrl?: string, trackId?: string, elementId?: string): AsyncAction<void> {
   return (dispatch, getState) => {
-    dispatch(addTimelineTrack(timelineId, regionId, false));
+    dispatch(addTimelineTrack(timelineId, regionId, false, trackId));
 
     const { timelines } = getState();
     const [, timeline] = findById(timelines, timelineId);
 
     const track = timeline.timelineTracks!.last()!;
-    dispatch(addElementToTimelineTrack(timeline.id, track.id, componentId, duration, offset, -1, previewUrl));
+    dispatch(addElementToTimelineTrack(timeline.id, track.id, componentId, duration, offset, -1, previewUrl, elementId));
   };
 }
 
@@ -124,7 +124,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
   addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean, trackId?: string) => ADD_TIMELINE_TRACK;
-  addTimelineTrackAndAddElement: (timelineId: string, regionId: string, componentId: string, duration?: number, offset?: number, previewUrl?: string) => AsyncAction<void>;
+  addTimelineTrackAndAddElement: (timelineId: string, regionId: string, componentId: string, duration?: number, offset?: number, previewUrl?: string, trackId?: string, elementId?: string) => AsyncAction<void>;
   removeTimelineTrack: (timelineId: string, trackId: string) => REMOVE_TIMELINE_TRACK;
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, duration: number, offset?: number, insertPosition?: number, previewUrl?: string, elementId?: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
   updateElementOffset: (timelineId: string, trackId: string, elementId: string, offset: number) => UPDATE_ELEMENT_OFFSET;
