@@ -1976,14 +1976,19 @@ class DocumentEditing:
         self.document._elementDeleted(trackElt)
 
     @edit
-    def addElement(self, trackID, assetID):
+    def addElement(self, trackID, assetID, insertPosition=None):
         """Add asset assetID to track trackID as a new element. Return elementID"""
         trackElt = self.document._getElementByID(trackID)
         if trackElt == None: abort(404, "No track with xml:id=%s", trackID)
         assetElt = self.document._getElementByID(assetID)
         if trackElt == None: abort(404, "No asset with xml:id=%s", assetID)
         newElt = self._createElement(assetID, assetElt)
-        trackElt.append(newElt)
+
+        if insertPosition is None:
+            trackElt.append(newElt)
+        else:
+            trackElt.insert(int(insertPosition), newElt)
+
         self.document._elementAdded(newElt, trackElt)
         self.document._ensureId(newElt)
         newID = newElt.get(NS_XML("id"))
