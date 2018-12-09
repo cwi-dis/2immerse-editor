@@ -120,6 +120,35 @@ describe("Screen actions", () => {
 
     expect(actionCreators.placeRegionOnScreen("screen1", [1, 0.6], [0.5, 0.4])).toEqual(expected);
   });
+
+  it("should create a PLACE_REGION_ON_SCREEN action with the given arguments and an optional region id", () => {
+    const expected: actionTypes.PLACE_REGION_ON_SCREEN = {
+      type: "PLACE_REGION_ON_SCREEN",
+      payload: {
+        screenId: "screen1",
+        position: [1, 0.6],
+        size: [0.5, 0.4],
+        regionId: "logo"
+      }
+    };
+
+    expect(actionCreators.placeRegionOnScreen("screen1", [1, 0.6], [0.5, 0.4], "logo")).toEqual(expected);
+  });
+
+  it("should create a PLACE_REGION_ON_SCREEN action with the given arguments and an optional region id and color", () => {
+    const expected: actionTypes.PLACE_REGION_ON_SCREEN = {
+      type: "PLACE_REGION_ON_SCREEN",
+      payload: {
+        screenId: "screen1",
+        position: [1, 0.6],
+        size: [0.5, 0.4],
+        regionId: "logo",
+        color: "#FFFFFF"
+      }
+    };
+
+    expect(actionCreators.placeRegionOnScreen("screen1", [1, 0.6], [0.5, 0.4], "logo", "#FFFFFF")).toEqual(expected);
+  });
 });
 
 describe("Async timeline actions", () => {
@@ -138,6 +167,7 @@ describe("Async timeline actions", () => {
         screenId: "screen1",
         position: [0.1, 0.6],
         size: [0.5, 0.4],
+        regionId: "main",
         color: "#FFFFFF"
       }}
     ];
@@ -150,11 +180,11 @@ describe("Async timeline actions", () => {
       }
     });
 
-    const regions = [
-      { x: 0.1, y: 0.6, w: 0.5, h: 0.4, color: "#FFFFFF", name: "region1" }
+    const areas = [
+      { x: 0.1, y: 0.6, w: 0.5, h: 0.4, color: "#FFFFFF", name: "region1", region: "main" }
     ];
 
-    store.dispatch(actionCreators.addDeviceAndPlaceRegions("personal", "my screen", "landscape", regions));
+    store.dispatch(actionCreators.addDeviceAndPlaceRegions("personal", "my screen", "landscape", areas));
     expect(store.getActions()).toEqual(expectedActions);
   });
 });
