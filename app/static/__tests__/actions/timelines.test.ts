@@ -76,6 +76,24 @@ describe("Timeline actions", () => {
     expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 10)).toEqual(expected);
   });
 
+  it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with default offset 0 and insertPosition -1 and the given element id", () => {
+    const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
+      type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        componentId: "component1",
+        duration: 10,
+        offset: 0,
+        insertPosition: -1,
+        previewUrl: "http://some.url",
+        elementId: "newelement"
+      }
+    };
+
+    expect(actionCreators.addElementToTimelineTrack("timeline1", "track1", "component1", 10, 0, -1, "http://some.url", "newelement")).toEqual(expected);
+  });
+
   it("should create an ADD_ELEMENT_TO_TIMELINE_TRACK action with the given offset", () => {
     const expected: actionTypes.ADD_ELEMENT_TO_TIMELINE_TRACK = {
       type: "ADD_ELEMENT_TO_TIMELINE_TRACK",
