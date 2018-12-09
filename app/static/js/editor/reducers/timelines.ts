@@ -10,10 +10,11 @@ export interface TimelineElementAttributes {
   componentId: string;
   offset: number;
   duration: number;
+  previewUrl?: string;
   color?: string;
 }
 
-export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", offset: 0, duration: 0, color: undefined}) {
+export class TimelineElement extends Record<TimelineElementAttributes>({id: "", componentId: "", offset: 0, duration: 0, previewUrl: undefined, color: undefined}) {
   constructor(params?: TimelineElementAttributes) {
     params ? super(params) : super();
   }
@@ -115,7 +116,7 @@ actionHandler.addHandler("REMOVE_TIMELINE_TRACK", (state, action: actions.REMOVE
 });
 
 actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: actions.ADD_ELEMENT_TO_TIMELINE_TRACK) => {
-  const { timelineId, trackId, componentId, duration, offset, insertPosition } = action.payload;
+  const { timelineId, trackId, componentId, duration, offset, insertPosition, previewUrl } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   if (duration <= 0) {
@@ -132,7 +133,8 @@ actionHandler.addHandler("ADD_ELEMENT_TO_TIMELINE_TRACK", (state, action: action
         id: shortid.generate(),
         componentId,
         duration,
-        offset
+        offset,
+        previewUrl
       }));
     });
   });
