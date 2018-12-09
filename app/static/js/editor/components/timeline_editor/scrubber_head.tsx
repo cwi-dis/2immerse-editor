@@ -6,7 +6,7 @@ import { Vector2d } from "konva";
 interface ScrubberHeadProps {
   width: number;
   headPosition?: number;
-  offset?: number;
+  offsets?: [number, number];
   headPositionUpdated: (position: number) => void;
 }
 
@@ -33,7 +33,8 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
   }
 
   public render() {
-    const { width, offset } = this.props;
+    const { width, offsets } = this.props;
+    const [startOffset, endOffset] = offsets || [0, 0];
     const { headPosition } = this.state;
 
     const height = 14;
@@ -43,7 +44,7 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
 
     const dragBoundFunc = (pos: Vector2d): Vector2d => {
       return {
-        x: (pos.x > width) ? width : (pos.x < (offset || 0)) ? (offset || 0) : pos.x,
+        x: (pos.x > width - endOffset) ? width - endOffset : (pos.x < startOffset) ? startOffset : pos.x,
         y: height - r
       };
     };
