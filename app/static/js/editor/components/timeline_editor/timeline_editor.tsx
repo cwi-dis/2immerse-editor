@@ -191,8 +191,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       }) || [-1];
 
       console.log("Adding element at time", dropTime, "index", dropIndex, "to track", track.id);
+      const addElementUrl = (dropIndex < 0)
+        ? url + `/addElement?trackID=${track.id}&assetID=${asset.id}`
+        : url + `/addElement?trackID=${track.id}&assetID=${asset.id}&insertPosition=${dropIndex}`;
 
-      util.makeRequest("POST", url + `/addElement?trackID=${track.id}&assetID=${asset.id}`).then((elementId) => {
+      util.makeRequest("POST", addElementUrl).then((elementId) => {
         console.log("new element", elementId);
 
         this.props.timelineActions.addElementToTimelineTrack(
@@ -205,6 +208,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           previewUrl,
           elementId
         );
+
+        util.makeRequest("GET", url + "/getChapters").then((data) => {
+          console.log("CHAPTERS");
+          console.log(JSON.parse(data));
+        });
       });
     }
   }
