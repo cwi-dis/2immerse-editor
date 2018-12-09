@@ -12,6 +12,7 @@ describe("TimelineElement class", () => {
     expect(element.offset).toEqual(0);
     expect(element.duration).toEqual(0);
     expect(element.color).toBeUndefined();
+    expect(element.previewUrl).toBeUndefined();
   });
 
   it("should instantiate a new object with all given attributes", () => {
@@ -20,7 +21,8 @@ describe("TimelineElement class", () => {
       componentId: "component1",
       offset: 12,
       duration: 34,
-      color: "#FF0000"
+      color: "#FF0000",
+      previewUrl: "http://some.url"
     });
 
     expect(element.id).toEqual("element1");
@@ -28,6 +30,7 @@ describe("TimelineElement class", () => {
     expect(element.offset).toEqual(12);
     expect(element.duration).toEqual(34);
     expect(element.color).toEqual("#FF0000");
+    expect(element.previewUrl).toEqual("http://some.url");
   });
 });
 
@@ -313,6 +316,29 @@ describe("Timelines reducer", () => {
     expect(elements.get(0).componentId).toEqual("component1");
     expect(elements.get(0).offset).toEqual(0);
     expect(elements.get(0).duration).toEqual(10);
+    expect(elements.get(0).previewUrl).toBeUndefined();
+  });
+
+  it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK with the given preview URL", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10, previewUrl: "http://some.url" }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(1);
+
+    expect(elements.get(0).componentId).toEqual("component1");
+    expect(elements.get(0).offset).toEqual(0);
+    expect(elements.get(0).duration).toEqual(10);
+    expect(elements.get(0).previewUrl).toEqual("http://some.url");
   });
 
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
