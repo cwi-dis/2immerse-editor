@@ -46,7 +46,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     super(props);
 
     this.state = {
-      scrubberPosition: 10,
+      scrubberPosition: 150,
       trackHeight: 50,
     };
   }
@@ -286,6 +286,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   <ScrubberHead
                     width={this.canvasWidth}
                     headPosition={scrubberPosition}
+                    offset={150}
                     headPositionUpdated={(x) => this.setState({ scrubberPosition: x })}
                   />
 
@@ -299,7 +300,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                             name={name}
                             width={this.canvasWidth}
                             height={trackHeight}
-                            scrubberPosition={this.state.scrubberPosition}
+                            scrubberPosition={scrubberPosition}
                           />
                         </Group>
                       );
