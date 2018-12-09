@@ -1,10 +1,12 @@
 import * as React from "react";
 import { Image as KonvaImage } from "react-konva";
 
-import { Nullable } from "../../util";
+import { Nullable, Coords } from "../../util";
 
 interface PreviewImageProps {
   url: string;
+  position: Coords;
+  height: number;
 }
 
 interface PreviewImageState {
@@ -30,13 +32,24 @@ class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState>
   }
 
   public render() {
+    const { position: [x, y], height } = this.props;
     const { image } = this.state;
 
     if (image !== null) {
+      const width = (image.width / image.height) * height;
+
       return (
-        <KonvaImage image={image} />
+        <KonvaImage
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          image={image}
+        />
       );
     }
+
+    return null;
   }
 }
 
