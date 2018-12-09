@@ -33,6 +33,20 @@ describe("Timeline actions", () => {
     expect(actionCreators.addTimelineTrack("timeline1", "region1")).toEqual(expected);
   });
 
+  it("should create an ADD_TIMELINE_TRACK action with the given track ID", () => {
+    const expected: actionTypes.ADD_TIMELINE_TRACK = {
+      type: "ADD_TIMELINE_TRACK",
+      payload: {
+        timelineId: "timeline1",
+        regionId: "region1",
+        locked: false,
+        trackId: "newtrack"
+      }
+    };
+
+    expect(actionCreators.addTimelineTrack("timeline1", "region1", false, "newtrack")).toEqual(expected);
+  });
+
   it("should create an ADD_TIMELINE_TRACK action with property 'locked' set to true", () => {
     const expected: actionTypes.ADD_TIMELINE_TRACK = {
       type: "ADD_TIMELINE_TRACK",
