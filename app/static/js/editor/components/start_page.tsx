@@ -39,6 +39,7 @@ interface StartPageProps {
 
 interface StartPageState {
   isLoading: boolean;
+  selectedMethod: "url" | "upload";
 }
 
 function getRegionForArea(id: string, layout: Layout) {
@@ -65,12 +66,14 @@ function parseChapterTree(tree: ChapterTree): ChapterState {
 
 class StartPage extends React.Component<StartPageProps, StartPageState> {
   private urlInput: Nullable<HTMLInputElement>;
+  private fileInput: Nullable<HTMLInputElement>;
 
   constructor(props: never) {
     super(props);
 
     this.state = {
-      isLoading: false
+      isLoading: false,
+      selectedMethod: "url"
     };
   }
 
@@ -139,19 +142,25 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
   private submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
-    if (!this.urlInput || this.urlInput.value === "") {
-      console.log("URL input invalid");
-      return;
+    let formData: FormData | undefined;
+    let submitUrl = "/api/v1/document";
+    let docBaseUrl = "";
+
+    if (this.fileInput && this.fileInput.files) {
+      const document = this.fileInput.files.item(0)!;
+
+      formData = new FormData();
+      formData.append("document", document, document.name);
+    } else if (this.urlInput && this.urlInput.value) {
+      submitUrl = "/api/v1/document?url=" + this.urlInput.value;
+      docBaseUrl = this.urlInput.value.split("/").slice(0, -1).join("/") + "/";
     }
 
     this.setState({
       isLoading: true
     });
 
-    const submitUrl = "/api/v1/document?url=" + this.urlInput.value;
-    const docBaseUrl = this.urlInput.value.split("/").slice(0, -1).join("/") + "/";
-
-    makeRequest("POST", submitUrl).then((data) => {
+    makeRequest("POST", submitUrl, formData).then((data) => {
       const { documentId } = JSON.parse(data);
       console.log("document id:", documentId);
 
@@ -161,6 +170,8 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
   }
 
   public render() {
+    const { selectedMethod } = this.state;
+
     const boxStyle: React.CSSProperties = {
       width: "30vw",
       margin: "15% auto 0 auto",
@@ -176,11 +187,32 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
           <div style={boxStyle}>
             <form className="column" onSubmit={this.submitForm.bind(this)}>
               <div className="field">
-                <label className="label">Document URL</label>
+                <label className="label">Start session from</label>
                 <div className="control">
-                  <input key="url" className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
+                  <div className="select is-fullwidth is-info">
+                    <select className="is-info" value={selectedMethod} onChange={(ev: any) => this.setState({ selectedMethod: ev.target.value })}>
+                      <option value="upload">File upload&emsp;&emsp;</option>
+                      <option value="url">URL</option>
+                    </select>
+                  </div>
                 </div>
               </div>
+
+              {(selectedMethod === "url") ?
+                <div className="field">
+                  <label className="label">Document URL</label>
+                  <div className="control">
+                    <input key="url" className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
+                  </div>
+                </div>
+              :
+                <div className="field">
+                  <label className="label">File</label>
+                  <div className="control">
+                    <input key="upload" className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+                  </div>
+                </div>
+             }
 
               <div className="field" style={{marginTop: 25}}>
                 <div className="control">
