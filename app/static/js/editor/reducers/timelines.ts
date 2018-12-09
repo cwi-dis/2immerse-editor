@@ -81,12 +81,12 @@ actionHandler.addHandler("REMOVE_TIMELINE", (state, action: actions.REMOVE_TIMEL
 });
 
 actionHandler.addHandler("ADD_TIMELINE_TRACK", (state, action: actions.ADD_TIMELINE_TRACK) => {
-  const { timelineId, regionId, locked } = action.payload;
+  const { timelineId, regionId, locked, trackId } = action.payload;
   const [timelinenum] = findById(state, timelineId);
 
   return state.updateIn([timelinenum, "timelineTracks"], (tracks: List<TimelineTrack>) => {
     return tracks.push(new TimelineTrack({
-      id: shortid.generate(),
+      id: trackId || shortid.generate(),
       regionId,
       locked
     }));
