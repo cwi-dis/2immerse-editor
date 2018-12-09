@@ -97,9 +97,12 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
 
         layout.devices.forEach((device: any) => {
           const regions = device.areas.map((area: any) => {
+            const { color, name } = getRegionForArea(area.region, layout);
+
             return {
               ...area,
-              color: getRegionForArea(area.region, layout).color
+              color,
+              name
             };
           });
 
