@@ -9,14 +9,16 @@ import { RouterProps, Nullable } from "../../util";
 import * as util from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
-import { ScreenState, ScreenRegion } from "../../reducers/screens";
+import { ScreenState } from "../../reducers/screens";
 import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
 
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
+import { actionCreators as screenActionCreators, ScreenActions } from "../../actions/screens";
 
 import ScrubberHead from "./scrubber_head";
 import TimeConverter from "./time_converter";
 import ProgramStructure from "../program_author/program_structure";
+import DroppableScreen from "../master_manager/droppable_screen";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
 import { AssetState } from "../../reducers/assets";
@@ -28,7 +30,9 @@ interface TimelineEditorProps extends RouterProps {
   chapters: ChapterState;
   screens: ScreenState;
   timelines: TimelineState;
+
   timelineActions: TimelineActions;
+  screenActions: ScreenActions;
 }
 
 interface TimelineEditorState {
@@ -250,6 +254,39 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     navigate(`/timeline/${chapter.id}`);
   }
 
+  private renderScreen() {
+    const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
+
+    if (!currentScreenId) {
+      this.props.screenActions.updateSelectedScreen(previewScreens.first()!.id);
+      return null;
+    }
+
+    const [, currentScreen] = util.findById(previewScreens, currentScreenId);
+    const width = (currentScreen.orientation === "landscape") ? 800 : 300;
+
+    const updateSelectedScreen = (e: React.FormEvent<HTMLSelectElement>) => {
+      const screenId = e.currentTarget.value;
+      this.props.screenActions.updateSelectedScreen(screenId);
+    };
+
+    return (
+      <div>
+        <div className="select">
+          <select defaultValue={currentScreen.id} onChange={updateSelectedScreen.bind(this)}>
+            {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
+          </select>
+        </div>
+        <br /><br />
+        <DroppableScreen
+          screenInfo={currentScreen}
+          width={width}
+          assignComponentToMaster={() => {}}
+        />
+      </div>
+    );
+  }
+
   public render() {
     const { match: { params }, chapters, assets } = this.props;
     const timeline = this.getTimeline();
@@ -267,7 +304,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1, padding: 0, display: "flex", justifyContent: "space-between", flexDirection: "column"}}>
-          <div style={{width: "100%"}} />
+          <div style={{width: "100%"}}>
+            {this.renderScreen()}
+          </div>
 
           <div style={{marginBottom: trackHeight / 2, display: (trackLayout.isEmpty()) ? "none" : "block"}}>
             <div style={{width: "100%", height: 38, borderTop: "2px solid #161616"}}>
@@ -361,6 +400,7 @@ function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> 
 function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
   return {
     timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch)
+    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
   };
 }
 
