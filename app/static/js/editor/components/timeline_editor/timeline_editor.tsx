@@ -271,7 +271,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <div style={{marginBottom: trackHeight / 2, display: (trackLayout.isEmpty()) ? "none" : "block"}}>
             <div style={{width: "100%", height: 38, borderTop: "2px solid #161616"}}>
               <p style={{fontSize: 20, padding: "5px 20px", fontWeight: "bold", textAlign: "right"}}>
-                <TimeConverter seconds={Math.floor((scrubberPosition / this.canvasWidth) * chapterDuration)} />
+                <TimeConverter seconds={Math.floor(((scrubberPosition - 150) / (this.canvasWidth - 150)) * chapterDuration)} />
                 &nbsp;/&nbsp;
                 <TimeConverter seconds={chapterDuration} />
               </p>
