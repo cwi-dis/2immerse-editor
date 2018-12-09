@@ -3,6 +3,7 @@ import { List } from "immutable";
 import { Group, Line, Rect } from "react-konva";
 import { Vector2d } from "konva";
 
+import PreviewImage from "./preview_image";
 import { TimelineElement } from "../../reducers/timelines";
 
 interface TimelineProps {
@@ -16,10 +17,7 @@ interface TimelineProps {
   elementRemoved: (id: string) => void;
 }
 
-interface TimelineState {
-}
-
-class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
+class TimelineTrack extends React.Component<TimelineProps, {}> {
   private initialYPosition?: number;
 
   public constructor(props: TimelineProps) {
@@ -91,20 +89,28 @@ class TimelineTrack extends React.Component<TimelineProps, TimelineState> {
           startX = elementStart + elementWidth;
 
           return (
-            <Rect
-              key={element.id || i}
-              x={elementStart}
-              y={0}
-              width={elementWidth}
-              height={height}
-              fill={(element.color) ? element.color : "#E06C56"}
-              stroke="#000000"
-              strokeWidth={1}
-              draggable={true}
-              onDragMove={this.onDragMove.bind(this, element.id)}
-              onDragStart={(e) => this.initialYPosition = e.evt.clientY}
-              dragBoundFunc={dragBoundFunc}
-            />
+            <Group key={element.id || i}>
+              <Rect
+                x={elementStart}
+                y={0}
+                width={elementWidth}
+                height={height}
+                fill={(element.color) ? element.color : "#E06C56"}
+                stroke="#000000"
+                strokeWidth={1}
+                draggable={true}
+                onDragMove={this.onDragMove.bind(this, element.id)}
+                onDragStart={(e) => this.initialYPosition = e.evt.clientY}
+                dragBoundFunc={dragBoundFunc}
+              />
+              {element.previewUrl &&
+                <PreviewImage
+                  url={element.previewUrl}
+                  position={[elementStart, 1]}
+                  height={height - 2}
+                />
+              }
+            </Group>
           );
         })}
         {trackLock()}
