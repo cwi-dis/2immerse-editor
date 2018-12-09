@@ -311,7 +311,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     navigate(`/timeline/${chapter.id}`);
   }
 
-  private renderScreen() {
+  private renderScreen(screenHeight: number) {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
 
     if (!currentScreenId) {
@@ -337,7 +337,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         <br /><br />
         <DroppableScreen
           screenInfo={currentScreen}
-          width={width}
+          height={screenHeight}
           assignElementToRegion={this.onComponentDroppedOnScreen.bind(this)}
         />
       </div>
@@ -358,11 +358,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const trackLayout = this.getTrackLayout();
     const { trackHeight, scrubberPosition } = this.state;
 
+    const screenAreaHeight = window.innerHeight - ((trackLayout.count() + 1) * trackHeight + 40) - 150;
+
     return (
       <div className="columnlayout">
         <div className="column-content" style={{flexGrow: 1, padding: 0, display: "flex", justifyContent: "space-between", flexDirection: "column"}}>
           <div style={{width: "100%"}}>
-            {this.renderScreen()}
+            {this.renderScreen(screenAreaHeight)}
           </div>
 
           <div style={{marginBottom: trackHeight / 2, display: (trackLayout.isEmpty()) ? "none" : "block"}}>
