@@ -205,7 +205,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         return;
       }
 
-      const dropTime = (x / this.canvasWidth) * this.getChapterDuration();
+      const dropTime = ((x - 150) / (this.canvasWidth - 150)) * this.getChapterDuration();
       let curTime = 0;
 
       const [dropIndex, ] = track.timelineElements!.findEntry((e) => {
