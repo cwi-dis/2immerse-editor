@@ -8,10 +8,11 @@ describe("Document actions", () => {
     const expected: actionTypes.ASSIGN_DOCUMENT_ID = {
       type: "ASSIGN_DOCUMENT_ID",
       payload: {
-        documentId: "document1"
+        documentId: "document1",
+        baseUrl: "http://some.url"
       }
     };
 
-    expect(actionCreators.assignDocumentId("document1")).toEqual(expected);
+    expect(actionCreators.assignDocumentId("document1", "http://some.url")).toEqual(expected);
   });
 });
