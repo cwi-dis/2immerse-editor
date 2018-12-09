@@ -1,5 +1,5 @@
 import * as React from "react";
-import { List, Map } from "immutable";
+import { List, Map, Set } from "immutable";
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
@@ -55,8 +55,8 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const accessPath = util.getChapterAccessPath(chapters, chapterid);
 
     const allRegions = previewScreens.reduce((regions, screen) => {
-      return regions.concat(screen.regions);
-    }, List<ScreenRegion>());
+      return regions.concat(screen.regions.map((r) => r.id));
+    }, Set<string>());
 
     const ancestorChapterIds = accessPath.reduce((chapterIds, _, i) => {
       const keyPath = util.generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
@@ -91,12 +91,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return tracks;
     }, List<TimelineTrackModel>()).concat(mergedDescendantTracks);
 
-    return allRegions.map((region) => {
+    return allRegions.map((regionId) => {
       return {
-        regionId: region.id,
-        track: activeTracks.find((track) => track.regionId === region.id)
+        regionId: regionId,
+        track: activeTracks.find((track) => track.regionId === regionId)
       };
-    });
+    }).toList();
   }
 
   public componentWillMount() {
