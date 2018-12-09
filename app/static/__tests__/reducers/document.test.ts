@@ -27,4 +27,13 @@ describe("Document reducer", () => {
       )
     ).toEqual({ documentId: "document2" });
   });
+
+  it("should assign the given document ID and baseUrl on ASSIGN_DOCUMENT_ID", () => {
+    expect(
+      reducer(
+        undefined,
+        { type: "ASSIGN_DOCUMENT_ID", payload: { documentId: "document2", baseUrl: "http://some.url" } } as any
+      )
+    ).toEqual({ documentId: "document2", baseUrl: "http://some.url" });
+  });
 });
