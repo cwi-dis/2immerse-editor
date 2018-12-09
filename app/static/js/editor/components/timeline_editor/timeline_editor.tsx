@@ -208,11 +208,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           previewUrl,
           elementId
         );
-
-        util.makeRequest("GET", url + "/getChapters").then((data) => {
-          console.log("CHAPTERS");
-          console.log(JSON.parse(data));
-        });
       });
     }
   }
