@@ -109,7 +109,27 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   private elementRemoved(timelineId: string, trackId: string, elementId: string) {
-    this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
+    const { documentId } = this.props.document;
+    const url = `/api/v1/document/${documentId}/editing`;
+    const timeline = this.getTimeline();
+
+    if (!timeline) {
+      console.error("Timeline not found");
+      return;
+    }
+
+    util.makeRequest("POST", url + `/deleteElement?elementID=${elementId}`).then(() => {
+      const [, track] = util.findById(timeline.timelineTracks!, trackId);
+      const { timelineElements } = track;
+
+      const deletePromise = (timelineElements!.count() - 1 <= 0)
+        ? util.makeRequest("POST", url + `/deleteTrack?trackID=${trackId}`)
+        : Promise.resolve("");
+
+      deletePromise.then(() => {
+        this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
+      });
+    });
   }
 
   private getTimeline() {
