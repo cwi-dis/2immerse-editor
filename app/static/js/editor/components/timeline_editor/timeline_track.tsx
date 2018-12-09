@@ -8,6 +8,7 @@ import { TimelineElement } from "../../reducers/timelines";
 
 interface TimelineTrackProps {
   name: string;
+  labelColor?: string;
   width: number;
   height: number;
   elements: List<TimelineElement>;
@@ -44,8 +45,8 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   }
 
   public render() {
-    const { width, height, elements, scrubberPosition, name, offsets } = this.props;
-    const [startOffset, endOffset] = this.props.offsets || [0, 0];
+    const { width, height, elements, scrubberPosition, name, offsets, labelColor } = this.props;
+    const [startOffset, endOffset] = offsets || [0, 0];
     const trackDuration = (this.props.trackDuration)
       ? this.props.trackDuration
       : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
@@ -83,7 +84,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
           y={0}
           width={startOffset}
           height={height}
-          fill="#262626"
+          fill={labelColor || "#262626"}
         />
         <Text x={5} y={(height / 2) - 8} text={name} fontSize={16} fill="#B1B1B1" />
         <Rect
@@ -141,12 +142,14 @@ interface EmptyTrackProps {
   height: number;
   scrubberPosition: number;
   offsets?: [number, number];
+  labelColor?: string;
 }
 
 export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
   return (
     <TimelineTrack
       name={props.name}
+      labelColor={props.labelColor}
       elements={List()}
       locked={false}
       elementRemoved={() => { }}

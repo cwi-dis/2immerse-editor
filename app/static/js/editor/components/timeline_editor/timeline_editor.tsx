@@ -56,13 +56,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     };
   }
 
-  private getTrackLayout(): List<{ regionId: string, name: string, track?: TimelineTrackModel }> {
+  private getTrackLayout(): List<{ regionId: string, name: string, color: string, track?: TimelineTrackModel }> {
     const { match, chapters, screens: { previewScreens }, timelines } = this.props;
     const { chapterid } = match.params;
     const accessPath = util.getChapterAccessPath(chapters, chapterid);
 
     const allRegions = previewScreens.reduce((regions, screen) => {
-      return regions.concat(screen.regions.map((r) => `${r.id};${r.name || r.id}`));
+      return regions.concat(screen.regions.map((r) => `${r.id};${r.name || r.id};${r.color || ""}`));
     }, Set<string>());
 
     const ancestorChapterIds = accessPath.reduce((chapterIds, _, i) => {
@@ -99,11 +99,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }, List<TimelineTrackModel>()).concat(mergedDescendantTracks);
 
     return allRegions.map((descriptor) => {
-      const [regionId, name] = descriptor.split(";");
+      const [regionId, name, color] = descriptor.split(";");
 
       return {
         regionId,
         name,
+        color,
         track: activeTracks.find((track) => track.regionId === regionId)
       };
     }).toList();
@@ -271,7 +272,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     };
 
     return (
-      <div>
+      <div style={{padding: 15}}>
         <div className="select">
           <select defaultValue={currentScreen.id} onChange={updateSelectedScreen.bind(this)}>
             {previewScreens.map((screen, i) => <option key={i} value={screen.id}>{screen.name}</option>)}
@@ -331,13 +332,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   />
 
                   {trackLayout.map((layoutEntry, i) => {
-                    const { track, name } = layoutEntry;
+                    const { track, name, color } = layoutEntry;
 
                     if (!track) {
                       return (
                         <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                           <EmptyTrack
                             name={name}
+                            labelColor={color}
                             width={this.canvasWidth}
                             height={trackHeight}
                             scrubberPosition={scrubberPosition}
@@ -351,6 +353,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                       <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                         <TimelineTrack
                           name={name}
+                          labelColor={color}
                           elements={track.timelineElements!}
                           locked={track.locked}
                           elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
