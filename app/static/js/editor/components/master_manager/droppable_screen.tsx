@@ -10,7 +10,8 @@ import { ComponentPlacement } from "../../reducers/masters";
 
 interface DroppableScreenProps {
   screenInfo: ScreenModel;
-  width: number;
+  width?: number;
+  height?: number;
   currentLayout?: string;
   placedComponents?: List<ComponentPlacement>;
 
@@ -70,17 +71,34 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   }
 
   public render() {
-    const { screenInfo: screen, width, placedComponents } = this.props;
-    const computedHeight = (screen.orientation === "landscape")
-      ? 9 / 16 * width
-      : 16 / 9 * width;
+    const { screenInfo: screen, width, height, placedComponents } = this.props;
+    let computedHeight: number, computedWidth: number;
+
+    if (width && height) {
+      computedWidth = width;
+      computedHeight = height;
+    } else if (width && !height) {
+      computedWidth = width;
+      computedHeight = (screen.orientation === "landscape")
+        ? 9 / 16 * width
+        : 16 / 9 * width;
+    } else if (!width && height) {
+      computedHeight = height;
+      computedWidth = (screen.orientation === "landscape")
+        ? 16 / 9 * height
+        : 9 / 16 * height;
+    } else {
+      return null;
+    }
+
+    console.log("screen size:", computedWidth, computedHeight);
 
     return (
       <div style={{display: "table", margin: "0 auto"}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
-        <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
+        <Stage width={computedWidth} height={computedHeight} ref={(e) => this.stageWrapper = e}>
           <Screen
             screenInfo={screen}
-            width={width}
+            width={computedWidth}
             height={computedHeight}
             placedComponents={placedComponents}
           />
