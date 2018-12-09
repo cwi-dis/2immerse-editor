@@ -89,11 +89,12 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
           y={0}
           width={width}
           height={height}
-          fill="#252525"
+          fill="#202020"
         />
         {elements.map((element, i) => {
-          const elementStart = startX + (width * (element.offset / trackDuration));
-          const elementWidth = width * (element.duration / trackDuration);
+          const trackWidth = width - 150;
+          const elementStart = startX + (trackWidth * (element.offset / trackDuration));
+          const elementWidth = trackWidth * (element.duration / trackDuration);
 
           startX = elementStart + elementWidth;
 
