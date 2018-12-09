@@ -357,6 +357,28 @@ describe("Timelines reducer", () => {
     expect(elements.get(0).previewUrl).toEqual("http://some.url");
   });
 
+  it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK with the given element id", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", timelineElements: List(), locked: false})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10, elementId: "newelement" }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(1);
+
+    expect(elements.get(0).id).toEqual("newelement");
+    expect(elements.get(0).componentId).toEqual("component1");
+    expect(elements.get(0).offset).toEqual(0);
+    expect(elements.get(0).duration).toEqual(10);
+  });
+
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
