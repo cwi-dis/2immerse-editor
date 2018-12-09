@@ -146,12 +146,14 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     });
 
     const submitUrl = "/api/v1/document?url=" + this.urlInput.value;
+    const docBaseUrl = this.urlInput.value.split("/").slice(0, -1).join("/") + "/";
+
     makeRequest("POST", submitUrl).then((data) => {
       const { documentId } = JSON.parse(data);
       console.log("document id:", documentId);
 
       this.setState({ isLoading: false });
-      this.props.documentActions.assignDocumentId(documentId);
+      this.props.documentActions.assignDocumentId(documentId, docBaseUrl);
     });
   }
 
