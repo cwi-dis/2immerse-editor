@@ -282,6 +282,38 @@ describe("Async timeline actions", () => {
     expect(store.getActions()).toEqual(expectedActions);
   });
 
+  it("should create a new timeline track and add an element to it with the given track and element ids on addTimelineTrackAndAddElement", () => {
+    const expectedActions = [
+      { type: "ADD_TIMELINE_TRACK", payload: {
+        timelineId: "timeline1",
+        regionId: "region1",
+        trackId: "newtrack",
+        locked: false
+      }},
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: {
+        timelineId: "timeline1",
+        trackId: "track1",
+        componentId: "component1",
+        duration: 10,
+        offset: 0,
+        insertPosition: -1,
+        previewUrl: "http://some.url",
+        elementId: "newelement"
+      }}
+    ];
+
+    const store = mockStore({
+      timelines: List([
+        new Timeline({ id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+          new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List()})
+        ])})
+      ])
+    });
+
+    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10, 0, "http://some.url", "newtrack", "newelement"));
+    expect(store.getActions()).toEqual(expectedActions);
+  });
+
   it("should just remove an element on removeElementAndUpdateTrack if there are multiple elements", () => {
     const expectedActions = [
       { type: "REMOVE_ELEMENT", payload: {
