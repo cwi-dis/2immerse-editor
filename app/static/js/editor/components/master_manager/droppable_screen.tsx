@@ -11,9 +11,11 @@ import { ComponentPlacement } from "../../reducers/masters";
 interface DroppableScreenProps {
   screenInfo: ScreenModel;
   width: number;
-  assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => void;
   currentLayout?: string;
   placedComponents?: List<ComponentPlacement>;
+
+  assignComponentToMaster?: (masterId: string, screenId: string, regionId: string, componentId: string) => void;
+  assignElementToRegion?: (componentId: string, regionId: string) => void;
 }
 
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
@@ -44,11 +46,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
 
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-
-    if (!this.props.currentLayout) {
-      alert("Please create and select a master layout before assigning components");
-      return;
-    }
+    const { assignElementToRegion } = this.props;
 
     const componentId = e.dataTransfer.getData("text/plain");
     const screenId = this.props.screenInfo.id;
@@ -62,11 +60,9 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     if (dropRegion) {
       console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screenId);
 
-      this.props.assignComponentToMaster(
-        masterId,
-        screenId,
-        dropRegion.id,
-        componentId
+      assignElementToRegion && assignElementToRegion(
+        componentId,
+        dropRegion.id
       );
     } else {
       console.error("could not find region at", x, y);
