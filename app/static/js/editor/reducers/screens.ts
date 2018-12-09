@@ -197,12 +197,12 @@ actionHandler.addHandler("UPDATE_SELECTED_SCREEN", (state, action: actions.UPDAT
 });
 
 actionHandler.addHandler("PLACE_REGION_ON_SCREEN", (state, action: actions.PLACE_REGION_ON_SCREEN) => {
-  const { screenId, position, size, color } = action.payload;
+  const { screenId, position, size, regionId, color } = action.payload;
   const [screenIndex] = findById(state.previewScreens, screenId);
 
   return state.updateIn(["previewScreens", screenIndex, "regions"], (regions: List<ScreenRegion>) => {
     return regions.push({
-      id: shortid.generate(),
+      id: regionId || shortid.generate(),
       position,
       size,
       splitFrom: [null],
