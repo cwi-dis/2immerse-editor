@@ -160,6 +160,62 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return util.getChapterDuration(chapter, timelines);
   }
 
+  private onComponentDroppedOnScreen(componentId: string, regionId: string) {
+    const trackLayout = this.getTrackLayout();
+    const layoutEntry = trackLayout.find((track) => track.regionId === regionId);
+
+    if (!layoutEntry) {
+      return;
+    }
+
+    const timeline = this.getTimeline()!;
+    const [, asset] = util.findById(this.props.assets, componentId);
+    const previewUrl = this.props.document.baseUrl + asset.previewUrl;
+
+    const { documentId } = this.props.document;
+    const url = `/api/v1/document/${documentId}/editing`;
+
+    if (!layoutEntry.track) {
+      console.log("Creating track and adding element");
+
+      util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${layoutEntry.regionId}`).then((trackId) => {
+        util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
+          console.log("new track", trackId, "new element", elementId);
+
+          this.props.timelineActions.addTimelineTrackAndAddElement(
+            timeline.id,
+            layoutEntry.regionId,
+            componentId,
+            10, 0,
+            previewUrl,
+            trackId,
+            elementId
+          );
+        });
+      });
+    } else {
+      const { track } = layoutEntry;
+      console.log("Adding element to track", track.id);
+
+      const addElementUrl = url + `/addElement?trackID=${track.id}&assetID=${asset.id}`;
+
+      util.makeRequest("POST", addElementUrl).then((elementId) => {
+        console.log("new element", elementId);
+
+        this.props.timelineActions.addElementToTimelineTrack(
+          timeline.id,
+          track.id,
+          componentId,
+          10,
+          0,
+          -1,
+          previewUrl,
+          elementId
+        );
+      });
+    }
+  }
+
   private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
@@ -282,7 +338,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         <DroppableScreen
           screenInfo={currentScreen}
           width={width}
-          assignComponentToMaster={() => {}}
+          assignElementToRegion={this.onComponentDroppedOnScreen.bind(this)}
         />
       </div>
     );
@@ -402,7 +458,7 @@ function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> 
 
 function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
   return {
-    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch)
+    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch),
     screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
   };
 }
