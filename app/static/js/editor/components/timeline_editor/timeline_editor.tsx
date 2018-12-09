@@ -40,6 +40,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private stageWrapper: Nullable<Stage>;
 
   private readonly scrubberHeight = 15;
+  private readonly trackOffsets: [number, number] = [150, 25];
   private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   public constructor(props: TimelineEditorProps) {
@@ -205,7 +206,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         return;
       }
 
-      const dropTime = ((x - 150) / (this.canvasWidth - 150)) * this.getChapterDuration();
+      const dropTime = ((x - this.trackOffsets[0]) / (this.canvasWidth - (this.trackOffsets[0] + this.trackOffsets[1]))) * this.getChapterDuration();
       let curTime = 0;
 
       const [dropIndex, ] = track.timelineElements!.findEntry((e) => {
@@ -271,7 +272,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           <div style={{marginBottom: trackHeight / 2, display: (trackLayout.isEmpty()) ? "none" : "block"}}>
             <div style={{width: "100%", height: 38, borderTop: "2px solid #161616"}}>
               <p style={{fontSize: 20, padding: "5px 20px", fontWeight: "bold", textAlign: "right"}}>
-                <TimeConverter seconds={Math.floor(((scrubberPosition - 150) / (this.canvasWidth - 150)) * chapterDuration)} />
+                <TimeConverter seconds={Math.floor(((scrubberPosition - this.trackOffsets[0]) / (this.canvasWidth - (this.trackOffsets[0] + this.trackOffsets[1]))) * chapterDuration)} />
                 &nbsp;/&nbsp;
                 <TimeConverter seconds={chapterDuration} />
               </p>
@@ -286,7 +287,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   <ScrubberHead
                     width={this.canvasWidth}
                     headPosition={scrubberPosition}
-                    offset={150}
+                    offsets={this.trackOffsets}
                     headPositionUpdated={(x) => this.setState({ scrubberPosition: x })}
                   />
 
@@ -301,6 +302,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                             width={this.canvasWidth}
                             height={trackHeight}
                             scrubberPosition={scrubberPosition}
+                            offsets={this.trackOffsets}
                           />
                         </Group>
                       );
@@ -317,6 +319,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                           height={this.state.trackHeight}
                           trackDuration={chapterDuration}
                           scrubberPosition={scrubberPosition}
+                          offsets={this.trackOffsets}
                         />
                       </Group>
                     );
