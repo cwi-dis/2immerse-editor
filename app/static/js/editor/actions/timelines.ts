@@ -21,14 +21,15 @@ function removeTimeline(timelineId: string): REMOVE_TIMELINE {
   };
 }
 
-export type ADD_TIMELINE_TRACK = PayloadAction<"ADD_TIMELINE_TRACK", {timelineId: string, regionId: string, locked: boolean}>;
-function addTimelineTrack(timelineId: string, regionId: string, locked = false): ADD_TIMELINE_TRACK {
+export type ADD_TIMELINE_TRACK = PayloadAction<"ADD_TIMELINE_TRACK", {timelineId: string, regionId: string, locked: boolean, trackId?: string}>;
+function addTimelineTrack(timelineId: string, regionId: string, locked = false, trackId?: string): ADD_TIMELINE_TRACK {
   return {
     type: "ADD_TIMELINE_TRACK",
     payload: {
       timelineId,
       regionId,
-      locked
+      locked,
+      trackId
     }
   };
 }
@@ -122,7 +123,7 @@ function removeElementAndUpdateTrack(timelineId: string, trackId: string, elemen
 export interface TimelineActions extends ActionCreatorsMapObject {
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
-  addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean) => ADD_TIMELINE_TRACK;
+  addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean, trackId?: string) => ADD_TIMELINE_TRACK;
   addTimelineTrackAndAddElement: (timelineId: string, regionId: string, componentId: string, duration?: number, offset?: number, previewUrl?: string) => AsyncAction<void>;
   removeTimelineTrack: (timelineId: string, trackId: string) => REMOVE_TIMELINE_TRACK;
   addElementToTimelineTrack: (timelineId: string, trackId: string, componentId: string, duration: number, offset?: number, insertPosition?: number, previewUrl?: string) => ADD_ELEMENT_TO_TIMELINE_TRACK;
