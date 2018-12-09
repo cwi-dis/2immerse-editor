@@ -153,16 +153,27 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const [, asset] = util.findById(this.props.assets, componentId);
     const previewUrl = this.props.document.baseUrl + asset.previewUrl;
 
+    const { documentId } = this.props.document;
+    const url = `/api/v1/document/${documentId}/editing`;
+
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
-      this.props.timelineActions.addTimelineTrackAndAddElement(
-        timeline.id,
-        selectedTrack.regionId,
-        componentId,
-        10,
-        0,
-        previewUrl
-      );
+
+      util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${selectedTrack.regionId}`).then((trackId) => {
+        util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
+          console.log("new track", trackId, "new element", elementId);
+
+          this.props.timelineActions.addTimelineTrackAndAddElement(
+            timeline.id,
+            selectedTrack.regionId,
+            componentId,
+            10, 0,
+            previewUrl,
+            trackId,
+            elementId
+          );
+        });
+      });
     } else {
       const { track } = selectedTrack;
 
@@ -179,17 +190,22 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         return curTime > dropTime;
       }) || [-1];
 
-      console.log("Adding element at time", dropTime, "index", dropIndex);
+      console.log("Adding element at time", dropTime, "index", dropIndex, "to track", track.id);
 
-      this.props.timelineActions.addElementToTimelineTrack(
-        timeline.id,
-        track.id,
-        componentId,
-        10,
-        0,
-        dropIndex,
-        previewUrl
-      );
+      util.makeRequest("POST", url + `/addElement?trackID=${track.id}&assetID=${asset.id}`).then((elementId) => {
+        console.log("new element", elementId);
+
+        this.props.timelineActions.addElementToTimelineTrack(
+          timeline.id,
+          track.id,
+          componentId,
+          10,
+          0,
+          dropIndex,
+          previewUrl,
+          elementId
+        );
+      });
     }
   }
 
