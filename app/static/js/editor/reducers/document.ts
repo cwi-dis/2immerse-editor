@@ -3,10 +3,12 @@ import * as actions from "../actions/document";
 
 export interface DocumentState {
   documentId: string;
+  baseUrl: string;
 }
 
 export const initialState: DocumentState = {
-  documentId: ""
+  documentId: "",
+  baseUrl: ""
 };
 
 const actionHandler = new ActionHandler<DocumentState>(initialState);
