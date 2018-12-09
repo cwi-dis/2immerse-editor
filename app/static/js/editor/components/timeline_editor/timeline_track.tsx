@@ -1,12 +1,13 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Group, Line, Rect } from "react-konva";
+import { Group, Line, Rect, Text } from "react-konva";
 import { Vector2d } from "konva";
 
 import PreviewImage from "./preview_image";
 import { TimelineElement } from "../../reducers/timelines";
 
-interface TimelineProps {
+interface TimelineTrackProps {
+  name: string;
   width: number;
   height: number;
   elements: List<TimelineElement>;
@@ -17,10 +18,10 @@ interface TimelineProps {
   elementRemoved: (id: string) => void;
 }
 
-class TimelineTrack extends React.Component<TimelineProps, {}> {
+class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   private initialYPosition?: number;
 
-  public constructor(props: TimelineProps) {
+  public constructor(props: TimelineTrackProps) {
     super(props);
   }
 
@@ -42,7 +43,7 @@ class TimelineTrack extends React.Component<TimelineProps, {}> {
   }
 
   public render() {
-    const { width, height, elements, scrubberPosition } = this.props;
+    const { width, height, elements, scrubberPosition, name } = this.props;
     const trackDuration = (this.props.trackDuration)
       ? this.props.trackDuration
       : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
@@ -71,12 +72,20 @@ class TimelineTrack extends React.Component<TimelineProps, {}> {
       }
     };
 
-    let startX = 0;
+    let startX = 150;
 
     return (
       <Group>
         <Rect
           x={0}
+          y={0}
+          width={150}
+          height={height}
+          fill="#262626"
+        />
+        <Text x={5} y={(height / 2) - 8} text={name} fontSize={16} fill="#B1B1B1" />
+        <Rect
+          x={150}
           y={0}
           width={width}
           height={height}
@@ -116,12 +125,14 @@ class TimelineTrack extends React.Component<TimelineProps, {}> {
         {trackLock()}
         {scrubber()}
         <Line points={[0, height - 0.5, width, height - 0.5]} stroke="#161616" strokeWidth={1} />
+        <Line points={[0, 0.5, width, 0.5]} stroke="#161616" strokeWidth={1} />
       </Group>
     );
   }
 }
 
 interface EmptyTrackProps {
+  name: string;
   width: number;
   height: number;
   scrubberPosition: number;
@@ -130,6 +141,7 @@ interface EmptyTrackProps {
 export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
   return (
     <TimelineTrack
+      name={props.name}
       elements={List()}
       locked={false}
       elementRemoved={() => { }}
