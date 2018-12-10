@@ -218,6 +218,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       const { track } = layoutEntry;
       console.log("Adding element to track", track.id);
 
+      if (track.timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
+        alert("Tracks without fixed duration can only have a single element");
+        return;
+      }
+
       asset = this.assignAssetDuration(asset);
       if (asset.duration === 0) {
         return;
@@ -305,6 +310,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         curTime += e.offset + e.duration;
         return curTime > dropTime;
       }) || [-1];
+
+      if (track.timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
+        alert("Tracks without fixed duration can only have a single element");
+        return;
+      }
 
       asset = this.assignAssetDuration(asset);
       if (asset.duration === 0) {
