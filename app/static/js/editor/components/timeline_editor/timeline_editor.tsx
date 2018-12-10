@@ -10,6 +10,8 @@ import * as util from "../../util";
 
 import { ChapterState, Chapter } from "../../reducers/chapters";
 import { ScreenState } from "../../reducers/screens";
+import { Asset, AssetState } from "../../reducers/assets";
+import { DocumentState } from "../../reducers/document";
 import { TimelineState, TimelineTrack as TimelineTrackModel } from "../../reducers/timelines";
 
 import { actionCreators as timelineActionCreators, TimelineActions } from "../../actions/timelines";
@@ -21,8 +23,6 @@ import ProgramStructure from "../program_author/program_structure";
 import DroppableScreen from "../master_manager/droppable_screen";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
-import { AssetState } from "../../reducers/assets";
-import { DocumentState } from "../../reducers/document";
 
 interface TimelineEditorProps extends RouterProps {
   assets: AssetState;
@@ -160,6 +160,23 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return util.getChapterDuration(chapter, timelines);
   }
 
+  private assignAssetDuration(asset: Asset): Asset {
+    if (asset.duration === 0) {
+      const duration = prompt("Please specify the element's duration (in seconds)");
+
+      if (duration == null || duration === "") {
+        return asset;
+      }
+
+      return {
+        ...asset,
+        duration: parseInt(duration, 10)
+      };
+    }
+
+    return asset;
+  }
+
   private onComponentDroppedOnScreen(componentId: string, regionId: string) {
     const trackLayout = this.getTrackLayout();
     const layoutEntry = trackLayout.find((track) => track.regionId === regionId);
@@ -169,7 +186,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
 
     const timeline = this.getTimeline()!;
-    const [, asset] = util.findById(this.props.assets, componentId);
+    let [, asset] = util.findById(this.props.assets, componentId);
     const previewUrl = this.props.document.baseUrl + asset.previewUrl;
 
     const { documentId } = this.props.document;
@@ -196,6 +213,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     } else {
       const { track } = layoutEntry;
       console.log("Adding element to track", track.id);
+
+      asset = this.assignAssetDuration(asset);
+      if (asset.duration === 0) {
+        return;
+      }
 
       const addElementUrl = url + `/addElement?trackID=${track.id}&assetID=${asset.id}`;
 
@@ -234,7 +256,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
 
-    const [, asset] = util.findById(this.props.assets, componentId);
+    let [, asset] = util.findById(this.props.assets, componentId);
     const previewUrl = this.props.document.baseUrl + asset.previewUrl;
 
     const { documentId } = this.props.document;
@@ -273,6 +295,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         curTime += e.offset + e.duration;
         return curTime > dropTime;
       }) || [-1];
+
+      asset = this.assignAssetDuration(asset);
+      if (asset.duration === 0) {
+        return;
+      }
 
       console.log("Adding element at time", dropTime, "index", dropIndex, "to track", track.id);
       const addElementUrl = (dropIndex < 0)
