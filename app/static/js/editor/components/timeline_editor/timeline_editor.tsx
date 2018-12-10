@@ -186,7 +186,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             timeline.id,
             layoutEntry.regionId,
             componentId,
-            10, 0,
+            asset.duration, 0,
             previewUrl,
             trackId,
             elementId
@@ -206,8 +206,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           timeline.id,
           track.id,
           componentId,
-          10,
-          0,
+          asset.duration, 0,
           -1,
           previewUrl,
           elementId
@@ -252,7 +251,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
             timeline.id,
             selectedTrack.regionId,
             componentId,
-            10, 0,
+            asset.duration, 0,
             previewUrl,
             trackId,
             elementId
@@ -287,8 +286,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
           timeline.id,
           track.id,
           componentId,
-          10,
-          0,
+          asset.duration, 0,
           dropIndex,
           previewUrl,
           elementId
