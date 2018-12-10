@@ -47,9 +47,13 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   public render() {
     const { width, height, elements, scrubberPosition, name, offsets, labelColor } = this.props;
     const [startOffset, endOffset] = offsets || [0, 0];
-    const trackDuration = (this.props.trackDuration)
+    let trackDuration = (this.props.trackDuration)
       ? this.props.trackDuration
       : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
+
+    if (trackDuration === 0) {
+      trackDuration = 1;
+    }
 
     const dragBoundFunc = function (): Vector2d {
       return this.getAbsolutePosition();
