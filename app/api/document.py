@@ -1821,7 +1821,8 @@ class DocumentEditing:
             name = elt.get(NS_AUTH("name"))
             descr = elt.get(NS_AUTH("description"))
             url = elt.get(NS_AUTH("previewUrl"))
-            rv.append(dict(id=id, name=name, description=descr, previewUrl=url))
+            duration = float(elt.get(NS_AUTH("duration")))
+            rv.append(dict(id=id, name=name, description=descr, previewUrl=url, duration=duration))
         return rv
 
     def getLayout(self):
