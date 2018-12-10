@@ -786,7 +786,7 @@ describe("Timelines reducer", () => {
     expect(element.duration).toBe(23);
   });
 
-  it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing 0", () => {
+  it("should update a given element's length on UPDATE_ELEMENT_LENGTH if it's 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -798,6 +798,24 @@ describe("Timelines reducer", () => {
     const transformedState = reducer(
       initialState,
       { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: 0 }} as any
+    );
+
+    const element = transformedState.get(0).timelineTracks.get(0).timelineElements.get(0);
+    expect(element.duration).toBe(0);
+  });
+
+  it("should return the state untransformed on UPDATE_ELEMENT_LENGTH when passing a length less than 0", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: -5 }} as any
     );
 
     expect(transformedState).toEqual(initialState);

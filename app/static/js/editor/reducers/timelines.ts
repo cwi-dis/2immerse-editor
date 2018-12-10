@@ -189,7 +189,7 @@ actionHandler.addHandler("REMOVE_ELEMENT", (state, action: actions.REMOVE_ELEMEN
 actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE_ELEMENT_LENGTH) => {
   const { timelineId, trackId, elementId, length } = action.payload;
 
-  if (length <= 0) {
+  if (length < 0) {
     return state;
   }
 
