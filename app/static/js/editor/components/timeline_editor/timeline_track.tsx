@@ -101,7 +101,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
         />
         <Text x={width - 22} y={(height / 2) - ((height - 20) / 2)} text={"+"} fontSize={height - 20} fill="#B1B1B1" />
         {elements.map((element, i) => {
-          const duration = (element.duration === 0) ? trackDuration : element.duration;
+          const duration = (element.duration === 0 && element.offset === 0) ? trackDuration : element.duration;
 
           const trackWidth = width - startOffset - endOffset;
           const elementStart = startX + (trackWidth * (element.offset / trackDuration));
