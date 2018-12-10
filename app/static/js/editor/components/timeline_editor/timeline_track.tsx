@@ -18,6 +18,7 @@ interface TimelineTrackProps {
   offsets?: [number, number];
 
   elementRemoved: (id: string) => void;
+  elementClicked: (id: string, currentDuration: number) => void;
 }
 
 class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
@@ -119,6 +120,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
                 stroke="#000000"
                 strokeWidth={1}
                 draggable={true}
+                onClick={this.props.elementClicked.bind(this, element.id, element.duration)}
                 onDragMove={this.onDragMove.bind(this, element.id)}
                 onDragStart={(e) => this.initialYPosition = e.evt.clientY}
                 dragBoundFunc={dragBoundFunc}
