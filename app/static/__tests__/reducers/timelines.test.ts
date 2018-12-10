@@ -521,7 +521,31 @@ describe("Timelines reducer", () => {
     expect(elements.get(0).offset).toEqual(0);
   });
 
-  it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length is 0", () => {
+  it("should add an element with duration 0 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
+    const initialState = List([
+      new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
+        new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({id: "element1", componentId: "component1", offset: 10, duration: 30}),
+          new TimelineElement({id: "element2", componentId: "component2", offset: 10, duration: 30})
+        ])})
+      ])})
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 0, insertPosition: 0 }} as any
+    );
+
+    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+
+    expect(elements.count()).toEqual(3);
+
+    expect(elements.get(0).componentId).toEqual("component3");
+    expect(elements.get(0).duration).toEqual(0);
+    expect(elements.get(0).offset).toEqual(0);
+  });
+
+  it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length less than 0", () => {
     const initialState = List([
       new Timeline({id: "timeline1", chapterId: "chapter1", timelineTracks: List([
         new TimelineTrack({id: "track1", regionId: "region1", locked: false, timelineElements: List([
@@ -532,7 +556,7 @@ describe("Timelines reducer", () => {
 
     const transformedState = reducer(
       initialState,
-      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: 0, insertPosition: -1 }} as any
+      { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: -5, insertPosition: -1 }} as any
     );
 
     expect(initialState).toBe(transformedState);
