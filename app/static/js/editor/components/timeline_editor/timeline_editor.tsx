@@ -199,6 +199,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
           console.log("new track", trackId, "new element", elementId);
 
+          if (asset.duration > 0) {
+            util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
+          }
+
           this.props.timelineActions.addTimelineTrackAndAddElement(
             timeline.id,
             layoutEntry.regionId,
@@ -270,6 +274,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${selectedTrack.regionId}`).then((trackId) => {
         util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
           console.log("new track", trackId, "new element", elementId);
+
+          if (asset.duration > 0) {
+            util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
+          }
 
           this.props.timelineActions.addTimelineTrackAndAddElement(
             timeline.id,
