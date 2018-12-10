@@ -320,6 +320,20 @@ export function mergeTimelines(chapter: Chapter, timelines: List<Timeline>): Tim
         const childTrack = childTimeline.timelineTracks!.find((t) => t.regionId === track.regionId);
 
         if (childTrack) {
+          const elementDuration = childTrack.timelineElements!.reduce((sum, e) => sum + e.offset + e.duration, 0);
+
+          if (elementDuration === 0) {
+            const first = childTrack.timelineElements!.first()!;
+
+            return track.update("timelineElements", (elements) => elements!.push(new TimelineElement({
+              id: first.id,
+              componentId: first.componentId,
+              duration: duration,
+              offset: 0,
+              previewUrl: first.previewUrl
+            })));
+          }
+
           return track.update("timelineElements", (elements) => elements!.concat(childTrack.timelineElements!));
         }
 
@@ -502,7 +516,7 @@ export function trimTimelineTrack(track: TimelineTrack, start: number, end: numb
     return track;
   }
 
-  const trackDuration = track.timelineElements!.reduce((sum, e) => sum + e.duration, 0);
+  const trackDuration = track.timelineElements!.reduce((sum, e) => sum + e.duration + e.offset, 0);
   if (track.timelineElements!.count() > 0 && trackDuration === 0) {
     return track;
   }
