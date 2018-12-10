@@ -1807,7 +1807,7 @@ describe("Utility function mergeTimelines()", () => {
     expect(util.mergeTimelines(chapter, timelines).id).toEqual("timeline1");
   });
 
-  it("should replace a zero width element with a dummy with duration", () => {
+  it("should replace a zero width element with a dummy with duration of an adjacent element", () => {
     const chapter = new Chapter({ id: "chapter1", children: List([
       new Chapter({ id: "chapter1.1" })
     ])});
@@ -1833,6 +1833,41 @@ describe("Utility function mergeTimelines()", () => {
     expect(track1.regionId).toEqual("region1");
     expect(track1.timelineElements.count()).toEqual(1);
     expect(track1.timelineElements.get(0).duration).toEqual(50);
+
+    expect(track2.regionId).toEqual("region2");
+    expect(track2.timelineElements.count()).toEqual(2);
+  });
+
+  it("should pad the end of a track with an empty element if it's too short", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 10})
+        ])}),
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e3", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.timelineTracks.count()).toEqual(2);
+
+    const [track1, track2] = merged.timelineTracks.toArray();
+
+    expect(track1.regionId).toEqual("region1");
+    expect(track1.timelineElements.count()).toEqual(2);
+
+    expect(track1.timelineElements.get(0).offset).toEqual(0);
+    expect(track1.timelineElements.get(0).duration).toEqual(10);
+    expect(track1.timelineElements.get(1).offset).toEqual(40);
+    expect(track1.timelineElements.get(1).duration).toEqual(0);
 
     expect(track2.regionId).toEqual("region2");
     expect(track2.timelineElements.count()).toEqual(2);
