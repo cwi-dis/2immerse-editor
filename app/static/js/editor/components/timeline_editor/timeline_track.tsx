@@ -161,6 +161,7 @@ export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
       elements={List()}
       locked={false}
       elementRemoved={() => { }}
+      elementClicked={() => { }}
       width={props.width}
       height={props.height}
       offsets={props.offsets}
