@@ -567,7 +567,7 @@ describe("Utility function trimTimelineTrack()", () => {
   it("should return the track unchanged if the track only contains zero-duration elements", () => {
     const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
       new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 0 }),
-      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 0 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 0, duration: 0 }),
       new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 0 }),
     ])});
 
@@ -1805,6 +1805,37 @@ describe("Utility function mergeTimelines()", () => {
     const timelines = List([new Timeline({ id: "timeline1", chapterId: "chapter1" })]);
 
     expect(util.mergeTimelines(chapter, timelines).id).toEqual("timeline1");
+  });
+
+  it("should replace a zero width element with a dummy with duration", () => {
+    const chapter = new Chapter({ id: "chapter1", children: List([
+      new Chapter({ id: "chapter1.1" })
+    ])});
+
+    const timelines = List([
+      new Timeline({ id: "timeline2", chapterId: "chapter1.1", timelineTracks: List([
+        new TimelineTrack({ id: "track1", regionId: "region1", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e1", componentId: "c1", offset: 0, duration: 0})
+        ])}),
+        new TimelineTrack({ id: "track2", regionId: "region2", locked: false, timelineElements: List([
+          new TimelineElement({ id: "e2", componentId: "c1", offset: 0, duration: 30}),
+          new TimelineElement({ id: "e3", componentId: "c1", offset: 0, duration: 20})
+        ])})
+      ])}),
+    ]);
+
+    const merged = util.mergeTimelines(chapter, timelines);
+
+    expect(merged.timelineTracks.count()).toEqual(2);
+
+    const [track1, track2] = merged.timelineTracks.toArray();
+
+    expect(track1.regionId).toEqual("region1");
+    expect(track1.timelineElements.count()).toEqual(1);
+    expect(track1.timelineElements.get(0).duration).toEqual(50);
+
+    expect(track2.regionId).toEqual("region2");
+    expect(track2.timelineElements.count()).toEqual(2);
   });
 
   it("should merge the chapter's timeline with the child's timeline if the chapter has a single child", () => {
