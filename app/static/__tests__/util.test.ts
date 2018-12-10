@@ -564,6 +564,16 @@ describe("Utility function trimTimelineTrack()", () => {
     expect(util.trimTimelineTrack(track, 50, 30)).toBe(track);
   });
 
+  it("should return the track unchanged if the track only contains zero-duration elements", () => {
+    const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
+      new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 0 }),
+      new TimelineElement({ id: "e2", componentId: "", offset: 5, duration: 0 }),
+      new TimelineElement({ id: "e3", componentId: "", offset: 0, duration: 0 }),
+    ])});
+
+    expect(util.trimTimelineTrack(track, 30, 50)).toBe(track);
+  });
+
   it("should return an empty track if start is equal to end", () => {
     const track = new TimelineTrack({ id: "", regionId: "", locked: false, timelineElements: List([
       new TimelineElement({ id: "e1", componentId: "", offset: 0, duration: 10 }),
