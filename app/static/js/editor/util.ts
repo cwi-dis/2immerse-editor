@@ -334,7 +334,20 @@ export function mergeTimelines(chapter: Chapter, timelines: List<Timeline>): Tim
             })));
           }
 
-          return track.update("timelineElements", (elements) => elements!.concat(childTrack.timelineElements!));
+          return track.update("timelineElements", (elements) => {
+            elements = elements!.concat(childTrack.timelineElements!);
+
+            if (elementDuration < duration) {
+              elements = elements.push(new TimelineElement({
+                id: "",
+                componentId: "",
+                duration: 0,
+                offset: duration - elementDuration
+              }));
+            }
+
+            return elements;
+          });
         }
 
         return track.update("timelineElements", (elements) => elements!.push(new TimelineElement({

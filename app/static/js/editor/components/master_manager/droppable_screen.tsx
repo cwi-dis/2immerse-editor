@@ -91,8 +91,6 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
       return null;
     }
 
-    console.log("screen size:", computedWidth, computedHeight);
-
     return (
       <div style={{display: "table", margin: "0 auto"}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
         <Stage width={computedWidth} height={computedHeight} ref={(e) => this.stageWrapper = e}>
