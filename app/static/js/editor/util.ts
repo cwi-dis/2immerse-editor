@@ -502,5 +502,10 @@ export function trimTimelineTrack(track: TimelineTrack, start: number, end: numb
     return track;
   }
 
+  const trackDuration = track.timelineElements!.reduce((sum, e) => sum + e.duration, 0);
+  if (track.timelineElements!.count() > 0 && trackDuration === 0) {
+    return track;
+  }
+
   return trimBack(trimFront(track, start), duration);
 }
