@@ -216,9 +216,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       });
     } else {
       const { track } = layoutEntry;
+      const { timelineElements } = track;
       console.log("Adding element to track", track.id);
 
-      if (track.timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
+      if (timelineElements!.count() > 0 && timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
         alert("Tracks without fixed duration can only have a single element");
         return;
       }
@@ -297,6 +298,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       });
     } else {
       const { track } = selectedTrack;
+      const { timelineElements } = track;
 
       if (track.locked) {
         console.log("Cannot place element on locked track");
@@ -311,7 +313,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         return curTime > dropTime;
       }) || [-1];
 
-      if (track.timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
+      if (timelineElements!.count() > 0 && timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
         alert("Tracks without fixed duration can only have a single element");
         return;
       }
