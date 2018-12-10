@@ -141,6 +141,26 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     });
   }
 
+  private elementClicked(timelineId: string, trackId: string, elementId: string, currentDuration: number) {
+    const duration = prompt("Please specify the element's duration (in seconds)", currentDuration.toString());
+
+    if (duration == null || duration === "") {
+      return;
+    }
+
+    const { documentId } = this.props.document;
+    const url = `/api/v1/document/${documentId}/editing`;
+
+    util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${duration}`).then(() => {
+      this.props.timelineActions.updateElementLength(
+        timelineId,
+        trackId,
+        elementId,
+        parseInt(duration, 10)
+      );
+    });
+  }
+
   private getTimeline() {
     const { match: { params } } = this.props;
     const timelineFound = util.findByKey(this.props.timelines, params.chapterid, "chapterId");
@@ -464,6 +484,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                           elements={track.timelineElements!}
                           locked={track.locked}
                           elementRemoved={this.elementRemoved.bind(this, timeline.id, track.id)}
+                          elementClicked={this.elementClicked.bind(this, timeline.id, track.id)}
                           width={this.canvasWidth}
                           height={this.state.trackHeight}
                           trackDuration={chapterDuration}
