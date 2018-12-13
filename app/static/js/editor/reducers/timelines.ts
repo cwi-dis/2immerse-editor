@@ -4,6 +4,7 @@ import * as shortid from "shortid";
 import { findById } from "../util";
 import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/timelines";
+import { ChapterTree } from "../components/start_page";
 
 export interface TimelineElementAttributes {
   id: string;
@@ -50,6 +51,40 @@ export type TimelineState = List<Timeline>;
 export const initialState: TimelineState = List([]);
 
 const actionHandler = new ActionHandler<TimelineState>(initialState);
+
+actionHandler.addHandler("LOAD_TIMELINES", (state, action: actions.LOAD_TIMELINES) => {
+  const { tree } = action.payload;
+
+  const createTimelines = (chapter: ChapterTree): List<Timeline> => {
+    const { id, chapters, tracks } = chapter;
+
+    return List([
+      new Timeline({
+        id: shortid.generate(),
+        chapterId: id,
+        timelineTracks: List(tracks.map((track) => {
+          return new TimelineTrack({
+            id: track.id,
+            regionId: track.region,
+            locked: false,
+            timelineElements: List(track.elements.map((e) => new TimelineElement({
+              id: shortid.generate(),
+              componentId: e.asset,
+              duration: (e.duration >= 999999) ? 0 : e.duration,
+              offset: e.offset || 0
+            })))
+          });
+        }))
+      })
+    ]).concat(
+      chapters.reduce((list, child) => {
+        return list.concat(createTimelines(child));
+      }, List())
+    );
+  };
+
+  return createTimelines(tree);
+});
 
 actionHandler.addHandler("ADD_TIMELINE", (state, action: actions.ADD_TIMELINE) => {
   const { chapterId } = action.payload;
