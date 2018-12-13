@@ -1,5 +1,16 @@
 import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction, AsyncAction, findById } from "../util";
+import { ChapterTree } from "../components/start_page";
+
+export type LOAD_TIMELINES = PayloadAction<"LOAD_TIMELINES", { tree: ChapterTree }>;
+function loadTimelines(tree: ChapterTree): LOAD_TIMELINES {
+  return {
+    type: "LOAD_TIMELINES",
+    payload: {
+      tree
+    }
+  };
+}
 
 export type ADD_TIMELINE = PayloadAction<"ADD_TIMELINE", {chapterId: string}>;
 function addTimeline(chapterId: string): ADD_TIMELINE {
@@ -121,6 +132,7 @@ function removeElementAndUpdateTrack(timelineId: string, trackId: string, elemen
 }
 
 export interface TimelineActions extends ActionCreatorsMapObject {
+  loadTimelines: (tree: ChapterTree) => LOAD_TIMELINES;
   addTimeline: (chapterId: string) => ADD_TIMELINE;
   removeTimeline: (timelineId: string) => REMOVE_TIMELINE;
   addTimelineTrack: (timelineId: string, regionId: string, locked?: boolean, trackId?: string) => ADD_TIMELINE_TRACK;
@@ -135,6 +147,7 @@ export interface TimelineActions extends ActionCreatorsMapObject {
 }
 
 export const actionCreators: TimelineActions = {
+  loadTimelines,
   addTimeline,
   removeTimeline,
   addTimelineTrack,
