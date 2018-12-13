@@ -2,15 +2,18 @@
 
 import * as actionTypes from "../../js/editor/actions/chapters";
 import { actionCreators } from "../../js/editor/actions/chapters";
-import { List } from "immutable";
-import { Chapter } from "../../js/editor/reducers/chapters";
 
 describe("Chapter actions", () => {
   it("should create a LOAD_CHAPTER_TREE action", () => {
-    const tree = List([new Chapter({
-      id: "chapter1",
-      name: "Root Chapter"
-    })]);
+    const tree = {
+      id: "root",
+      name: "Root Chapter",
+      tracks: [],
+      chapters: [
+        { id: "child1", name: "Child 1", tracks: [], chapters: []},
+        { id: "child2", name: "Child 2", tracks: [], chapters: []}
+      ]
+    };
 
     const expected: actionTypes.LOAD_CHAPTER_TREE = {
       type: "LOAD_CHAPTER_TREE",

@@ -53,7 +53,12 @@ describe("Chapters reducer", () => {
   it("should load an entire tree on LOAD_CHAPTER_TREE", () => {
     const state = reducer(
       undefined,
-      { type: "LOAD_CHAPTER_TREE", payload: { tree: List([new Chapter({ id: "chapter1", name: "Chapter 1"})]) }} as any
+      { type: "LOAD_CHAPTER_TREE", payload: { tree: {
+        id: "chapter1",
+        name: "Chapter 1",
+        chapters: [],
+        tracks: []
+      } }} as any
     );
 
     expect(state.count()).toEqual(1);
@@ -68,12 +73,17 @@ describe("Chapters reducer", () => {
     ]);
 
     const transformedState = reducer(
-      undefined,
+      state,
       { type: "LOAD_CHAPTER_TREE", payload: {
-        tree: List([new Chapter({ id: "chapter1", name: "Chapter 1", children: List([
-          new Chapter({ id: "chapter1.1", name: "Chapter 1.1"}),
-          new Chapter({ id: "chapter1.2", name: "Chapter 1.2"})
-        ])})])
+        tree: {
+          id: "chapter1",
+          name: "Chapter 1",
+          tracks: [],
+          chapters: [
+            { id: "chapter1.1", name: "Chapter 1.1", tracks: [], chapters: [] },
+            { id: "chapter1.2", name: "Chapter 1.2", tracks: [], chapters: [] },
+          ]
+        }
       }} as any
     );
 
