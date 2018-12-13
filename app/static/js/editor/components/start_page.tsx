@@ -20,10 +20,14 @@ interface Layout {
   regions: Array<{ id: string, name: string, color: string }>;
 }
 
-interface ChapterTree {
+export interface ChapterTree {
   id: string;
   name: string;
-  tracks: Array<any>;
+  tracks: Array<{
+    id: string,
+    region: string,
+    elements: Array<{ asset: string, duration: number, offset: number}>
+  }>;
   chapters: Array<ChapterTree>;
 }
 
