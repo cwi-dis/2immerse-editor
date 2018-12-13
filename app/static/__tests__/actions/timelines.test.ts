@@ -9,6 +9,29 @@ import { actionCreators } from "../../js/editor/actions/timelines";
 import { Timeline, TimelineTrack, TimelineElement } from "../../js/editor/reducers/timelines";
 
 describe("Timeline actions", () => {
+  it("should create an LOAD_TIMELINES action", () => {
+    const expected: actionTypes.LOAD_TIMELINES = {
+      type: "LOAD_TIMELINES",
+      payload: {
+        tree: {
+          id: "root",
+          name: "Root",
+          chapters: [{ id: "child", name: "Child", chapters: [], tracks: [] }],
+          tracks: [{ id: "track1", region: "region1", elements: [] }]
+        }
+      }
+    };
+
+    const tree = {
+      id: "root",
+      name: "Root",
+      chapters: [{ id: "child", name: "Child", chapters: [], tracks: [] }],
+      tracks: [{ id: "track1", region: "region1", elements: [] }]
+    };
+
+    expect(actionCreators.loadTimelines(tree)).toEqual(expected);
+  });
+
   it("should create an ADD_TIMELINE action", () => {
     const expected: actionTypes.ADD_TIMELINE = {
       type: "ADD_TIMELINE",
