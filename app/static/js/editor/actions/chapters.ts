@@ -1,9 +1,9 @@
 import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
-import { ChapterState } from "../reducers/chapters";
+import { ChapterTree } from "../components/start_page";
 
-export type LOAD_CHAPTER_TREE = PayloadAction<"LOAD_CHAPTER_TREE", { tree: ChapterState }>;
-function loadChapterTree(tree: ChapterState): LOAD_CHAPTER_TREE {
+export type LOAD_CHAPTER_TREE = PayloadAction<"LOAD_CHAPTER_TREE", { tree: ChapterTree }>;
+function loadChapterTree(tree: ChapterTree): LOAD_CHAPTER_TREE {
   return {
     type: "LOAD_CHAPTER_TREE",
     payload: {
@@ -64,7 +64,7 @@ function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
 }
 
 export interface ChapterActions extends ActionCreatorsMapObject {
-  loadChapterTree: (tree: ChapterState) => LOAD_CHAPTER_TREE;
+  loadChapterTree: (tree: ChapterTree) => LOAD_CHAPTER_TREE;
   addChapterAfter: (accessPath: Array<number>, id?: string) => ADD_CHAPTER_AFTER;
   addChapterBefore: (accessPath: Array<number>, id?: string) => ADD_CHAPTER_BEFORE;
   addChapterChild: (accessPath: Array<number>, id?: string) => ADD_CHAPTER_CHILD;

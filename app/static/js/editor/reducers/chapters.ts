@@ -3,6 +3,7 @@ import * as shortid from "shortid";
 import { generateChapterKeyPath, Nullable } from "../util";
 import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/chapters";
+import { ChapterTree } from "../components/start_page";
 
 export interface ChapterAttributes {
   id: string;
@@ -25,7 +26,21 @@ export const initialState: List<Chapter> = List([
 const actionHandler = new ActionHandler<ChapterState>(initialState);
 
 actionHandler.addHandler("LOAD_CHAPTER_TREE", (state, action: actions.LOAD_CHAPTER_TREE) => {
-  return action.payload.tree;
+  const { tree } = action.payload;
+
+  const parseChapter = (tree: ChapterTree): Chapter => {
+    return new Chapter({
+      id: tree.id,
+      name: tree.name,
+      children: List(tree.chapters.map((child) => {
+        return parseChapter(child);
+      }))
+    });
+  };
+
+  return List([
+    parseChapter(tree)
+  ]);
 });
 
 actionHandler.addHandler("ADD_CHAPTER_BEFORE", (state, action: actions.ADD_CHAPTER_BEFORE) => {

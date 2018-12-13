@@ -48,22 +48,6 @@ function getRegionForArea(id: string, layout: Layout) {
   })!;
 }
 
-function parseChapterTree(tree: ChapterTree): ChapterState {
-  const parseChapter = (tree: ChapterTree): Chapter => {
-    return new Chapter({
-      id: tree.id,
-      name: tree.name,
-      children: List(tree.chapters.map((child) => {
-        return parseChapter(child);
-      }))
-    });
-  };
-
-  return List([
-    parseChapter(tree)
-  ]);
-}
-
 class StartPage extends React.Component<StartPageProps, StartPageState> {
   private urlInput: Nullable<HTMLInputElement>;
   private fileInput: Nullable<HTMLInputElement>;
@@ -121,9 +105,8 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       }).then((data) => {
         const chapterTree: ChapterTree = JSON.parse(data);
         console.log("chapter tree", chapterTree);
-        const chapters = parseChapterTree(chapterTree);
 
-        this.props.chapterActions.loadChapterTree(chapters);
+        this.props.chapterActions.loadChapterTree(chapterTree);
 
         const createTimelines = (chapters: List<Chapter>) => {
           chapters.forEach((chapter) => {
