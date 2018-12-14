@@ -115,6 +115,232 @@ describe("Timelines reducer", () => {
     ).toEqual(state);
   });
 
+  it("should replace the existing timelines on LOAD_TIMELINES", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "root",
+        name: "Root",
+        chapters: [],
+        tracks: []
+      } }} as any
+    );
+
+    expect(transformedState.count()).toEqual(1);
+  });
+
+  it("should create a timeline for all entries in the chapter tree", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [
+          { id: "chapter1.1", name: "Chapter 1.1", chapters: [], tracks: [] },
+          { id: "chapter1.2", name: "Chapter 1.2", chapters: [
+            { id: "chapter1.2.1", name: "Chapter 1.2.1", chapters: [], tracks: [] },
+            { id: "chapter1.2.2", name: "Chapter 1.2.2", chapters: [
+              { id: "chapter1.2.2.1", name: "Chapter 1.2.2.1", chapters: [], tracks: [] },
+            ], tracks: [] },
+            { id: "chapter1.2.3", name: "Chapter 1.2.3", chapters: [], tracks: [] },
+            { id: "chapter1.2.4", name: "Chapter 1.2.4", chapters: [], tracks: [] },
+          ], tracks: [] },
+          { id: "chapter1.3", name: "Chapter 1.3", chapters: [], tracks: [] }
+        ],
+        tracks: []
+      } }} as any
+    );
+
+    expect(transformedState.count()).toEqual(9);
+  });
+
+  it("should allocate a new track for each track in the tree", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [
+          { id: "chapter1.1", name: "Chapter 1.1", chapters: [], tracks: [
+            { id: "track1", region: "region1", elements: [] },
+            { id: "track2", region: "region2", elements: [] }
+          ] },
+          { id: "chapter1.2", name: "Chapter 1.2", chapters: [
+            { id: "chapter1.2.1", name: "Chapter 1.2.1", chapters: [], tracks: [] },
+            { id: "chapter1.2.2", name: "Chapter 1.2.2", chapters: [
+              { id: "chapter1.2.2.1", name: "Chapter 1.2.2.1", chapters: [], tracks: [
+                { id: "track3", region: "region1", elements: [] },
+                { id: "track4", region: "region2", elements: [] }
+              ] },
+            ], tracks: [] },
+            { id: "chapter1.2.3", name: "Chapter 1.2.3", chapters: [], tracks: [] },
+            { id: "chapter1.2.4", name: "Chapter 1.2.4", chapters: [], tracks: [] },
+          ], tracks: [] },
+          { id: "chapter1.3", name: "Chapter 1.3", chapters: [], tracks: [] }
+        ],
+        tracks: [
+          { id: "track5", region: "region3", elements: [] }
+        ]
+      } }} as any
+    );
+
+    expect(transformedState.count()).toEqual(9);
+
+    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track5");
+    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region3");
+
+    expect(transformedState.get(1).timelineTracks.count()).toEqual(2);
+    expect(transformedState.get(1).timelineTracks.get(0).id).toEqual("track1");
+    expect(transformedState.get(1).timelineTracks.get(0).regionId).toEqual("region1");
+    expect(transformedState.get(1).timelineTracks.get(1).id).toEqual("track2");
+    expect(transformedState.get(1).timelineTracks.get(1).regionId).toEqual("region2");
+
+    expect(transformedState.get(5).timelineTracks.count()).toEqual(2);
+    expect(transformedState.get(5).timelineTracks.get(0).id).toEqual("track3");
+    expect(transformedState.get(5).timelineTracks.get(0).regionId).toEqual("region1");
+    expect(transformedState.get(5).timelineTracks.get(1).id).toEqual("track4");
+    expect(transformedState.get(5).timelineTracks.get(1).regionId).toEqual("region2");
+  });
+
+  it("should allocate a new element for each element in the tree", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [
+          { id: "chapter1.1", name: "Chapter 1.1", chapters: [], tracks: [
+            { id: "track1", region: "region1", elements: [
+              { asset: "logo", duration: 10, offset: 0 },
+              { asset: "video", duration: 10, offset: 5 }
+            ] },
+            { id: "track2", region: "region2", elements: [] }
+          ] },
+          { id: "chapter1.2", name: "Chapter 1.2", chapters: [
+            { id: "chapter1.2.1", name: "Chapter 1.2.1", chapters: [], tracks: [] },
+            { id: "chapter1.2.2", name: "Chapter 1.2.2", chapters: [
+              { id: "chapter1.2.2.1", name: "Chapter 1.2.2.1", chapters: [], tracks: [
+                { id: "track3", region: "region1", elements: [
+                  { asset: "video2", duration: 34, offset: 2 },
+                  { asset: "livestream", duration: 0, offset: 5 }
+                ] },
+                { id: "track4", region: "region2", elements: [] }
+              ] },
+            ], tracks: [] },
+            { id: "chapter1.2.3", name: "Chapter 1.2.3", chapters: [], tracks: [] },
+            { id: "chapter1.2.4", name: "Chapter 1.2.4", chapters: [], tracks: [] },
+          ], tracks: [] },
+          { id: "chapter1.3", name: "Chapter 1.3", chapters: [], tracks: [] }
+        ],
+        tracks: [
+          { id: "track5", region: "region3", elements: [] }
+        ]
+      } }} as any
+    );
+
+    expect(transformedState.get(1).timelineTracks.count()).toEqual(2);
+    expect(transformedState.get(1).timelineTracks.get(0).id).toEqual("track1");
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.count()).toEqual(2);
+
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).componentId).toEqual("logo");
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(10);
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).componentId).toEqual("video");
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).duration).toEqual(10);
+    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).offset).toEqual(5);
+
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).componentId).toEqual("video2");
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(34);
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(2);
+
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).componentId).toEqual("livestream");
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).duration).toEqual(0);
+    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).offset).toEqual(5);
+  });
+
+  it("should set an element's offset to 0 if it is undefined", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [],
+        tracks: [
+          { id: "track5", region: "region3", elements: [
+            { asset: "logo", duration: 10 },
+          ] }
+        ]
+      } }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(10);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+  });
+
+  it("should set an element's duration to 0 if it is 999999", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [],
+        tracks: [
+          { id: "track5", region: "region3", elements: [
+            { asset: "logo", duration: 999999 },
+          ] }
+        ]
+      } }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(0);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+  });
+
+  it("should set an element's duration to 0 if it larger than 999999", () => {
+    const initialState = List([
+    ]);
+
+    const transformedState = reducer(
+      initialState,
+      { type: "LOAD_TIMELINES", payload: { tree: {
+        id: "chapter1",
+        name: "Root",
+        chapters: [],
+        tracks: [
+          { id: "track5", region: "region3", elements: [
+            { asset: "logo", duration: 12345634557 },
+          ] }
+        ]
+      } }} as any
+    );
+
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(0);
+    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+  });
+
   it("should create a new timeline for a chapter on ADD_TIMELINE if the list is empty", () => {
     const state = reducer(
       undefined,
