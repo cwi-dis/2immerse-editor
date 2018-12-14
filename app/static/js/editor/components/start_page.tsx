@@ -111,15 +111,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         console.log("chapter tree", chapterTree);
 
         this.props.chapterActions.loadChapterTree(chapterTree);
-
-        const createTimelines = (chapters: List<Chapter>) => {
-          chapters.forEach((chapter) => {
-            this.props.timelineActions.addTimeline(chapter.id);
-            createTimelines(chapter.children!);
-          });
-        };
-
-        createTimelines(chapters);
+        this.props.timelineActions.loadTimelines(chapterTree);
       }).then(() => {
         navigate("/layout");
       });
