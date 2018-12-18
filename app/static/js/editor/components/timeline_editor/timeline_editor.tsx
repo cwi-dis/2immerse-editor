@@ -389,7 +389,6 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
 
     const [, currentScreen] = util.findById(previewScreens, currentScreenId);
-    const width = (currentScreen.orientation === "landscape") ? 800 : 300;
 
     const updateSelectedScreen = (e: React.FormEvent<HTMLSelectElement>) => {
       const screenId = e.currentTarget.value;
