@@ -22,7 +22,7 @@ interface Asset {
   duration: number;
 }
 
-interface Region {
+interface Area {
   region: string;
   x: number;
   y: number;
@@ -34,7 +34,7 @@ interface Device {
   name: string;
   type: "communal" | "personal";
   orientation: "portrait" | "landscape";
-  areas: Array<Region>;
+  areas: Array<Area>;
 }
 
 interface Region {
@@ -123,13 +123,12 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         console.log("layout", layout);
 
         layout.devices.forEach((device) => {
-          const regions = device.areas.map((area) => {
-            const { color, name } = getRegionForArea(area.region, layout);
+          const regions: Array<Area & Region> = device.areas.map((area) => {
+            const { id, name, color } = getRegionForArea(area.region, layout);
 
             return {
               ...area,
-              color,
-              name
+              id, name, color
             };
           });
 
