@@ -14,19 +14,56 @@ import { actionCreators as assetActionCreators, AssetActions } from "../actions/
 import { actionCreators as chapterActionCreators, ChapterActions } from "../actions/chapters";
 import { actionCreators as timelineActionCreators, TimelineActions } from "../actions/timelines";
 
+interface Asset {
+  id: string;
+  name: string;
+  description: string;
+  previewUrl: string;
+  duration: number;
+}
+
+interface Region {
+  region: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+interface Device {
+  name: string;
+  type: "communal" | "personal";
+  orientation: "portrait" | "landscape";
+  areas: Array<Region>;
+}
+
+interface Region {
+  id: string;
+  name: string;
+  color: string;
+}
+
 interface Layout {
-  devices: Array<any>;
-  regions: Array<{ id: string, name: string, color: string }>;
+  devices: Array<Device>;
+  regions: Array<Region>;
+}
+
+interface Element {
+  asset: string;
+  duration: number;
+  offset: number;
+}
+
+interface Track {
+  id: string;
+  region: string;
+  elements: Array<Element>;
 }
 
 export interface ChapterTree {
   id: string;
   name: string;
-  tracks: Array<{
-    id: string,
-    region: string,
-    elements: Array<{ asset: string, duration: number, offset: number}>
-  }>;
+  tracks: Array<Track>;
   chapters: Array<ChapterTree>;
 }
 
@@ -72,7 +109,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       const baseUrl = `/api/v1/document/${documentId}/editing/`;
 
       makeRequest("GET", baseUrl + "getAssets").then((data) => {
-        const assets: Array<any> = JSON.parse(data);
+        const assets: Array<Asset> = JSON.parse(data);
         console.log("assets", assets);
 
         assets.forEach((asset) => {
@@ -85,8 +122,8 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         const layout: Layout = JSON.parse(data);
         console.log("layout", layout);
 
-        layout.devices.forEach((device: any) => {
-          const regions = device.areas.map((area: any) => {
+        layout.devices.forEach((device) => {
+          const regions = device.areas.map((area) => {
             const { color, name } = getRegionForArea(area.region, layout);
 
             return {
@@ -158,6 +195,14 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       borderRadius: 15,
     };
 
+    const onMethodUpdated = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+      const selectedMethod = ev.target.value as "url" | "upload";
+
+      this.setState({
+        selectedMethod
+      });
+    };
+
     return (
       <div className="columnlayout">
         <div className="column-content" style={{width: "100%"}}>
@@ -168,7 +213,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
                 <label className="label">Start session from</label>
                 <div className="control">
                   <div className="select is-fullwidth is-info">
-                    <select className="is-info" value={selectedMethod} onChange={(ev: any) => this.setState({ selectedMethod: ev.target.value })}>
+                    <select className="is-info" value={selectedMethod} onChange={onMethodUpdated.bind(this)}>
                       <option value="upload">File upload&emsp;&emsp;</option>
                       <option value="url">URL</option>
                     </select>
