@@ -1222,7 +1222,7 @@ class DocumentRemote(object):
         for contextID in self.document.serve().allContextIDs:
             wsUrl = GlobalSettings.websocketInternalService + "bus-message/remote-control-clock-" + contextID
             try:
-                r = requests.post(wsUrl, json=command, verify=False)
+                r = requests.post(wsUrl, json=command)
                 r.raise_for_status()
                 didOne = True
             except requests.exceptions.RequestException:
@@ -1670,7 +1670,7 @@ class DocumentAsync(threading.Thread):
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
 
-        self.socket = SocketIO(websocket_service, verify=False)
+        self.socket = SocketIO(websocket_service)
         self.channel = self.socket.define(SocketIONamespace, "/trigger")
 
         self.roomFrontend = str23compat(self.document.documentId)
