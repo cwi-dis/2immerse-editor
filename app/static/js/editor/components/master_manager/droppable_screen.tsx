@@ -51,7 +51,6 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
 
     const componentId = e.dataTransfer.getData("text/plain");
     const screenId = this.props.screenInfo.id;
-    const masterId = this.props.currentLayout!;
 
     const stage: KonvaStage = this.getStage();
 
