@@ -1676,13 +1676,14 @@ class DocumentAsync(threading.Thread):
         self.roomFrontend = str23compat(self.document.documentId)
         self.roomUpdates = 'toBackend-' + str23compat(self.document.documentId)
         self.roomModifications = 'toTimelines-' + str23compat(self.document.documentId)
-
-        self.channel.on('STATUS', self.incomingDocumentStatus)
-
-        self.channel.emit('JOIN', self.roomUpdates)
-
+        self._setupChannel()
+        self.channel.on_connect = self._setupChannel
         self.running = True
         self.start()
+        
+    def _setupChannel(self):
+        self.channel.on('STATUS', self.incomingDocumentStatus)
+        self.channel.emit('JOIN', self.roomUpdates)
 
     def getIncomingConnectionInfo(self):
         websocket_service = GlobalSettings.websocketInternalService
