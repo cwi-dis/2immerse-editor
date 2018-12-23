@@ -2,6 +2,7 @@ import * as React from "react";
 import { AssetState } from "../../reducers/assets";
 
 interface DMAppcContainerProps {
+  baseUrl: string;
   assets: AssetState;
 }
 
@@ -11,24 +12,30 @@ class DMAppcContainer extends React.Component<DMAppcContainerProps, {}> {
   }
 
   public render() {
-    const { assets } = this.props;
+    const { assets, baseUrl } = this.props;
 
     return (
       <div style={{height: "50%", overflowY: "scroll", backgroundColor: "#353535", borderTop: "1px solid #161616", padding: 2}}>
         {assets.map((asset, i: number) => {
+          const previewUrl = baseUrl + asset.previewUrl;
+
           return (
             <div
               key={i}
               draggable={true}
               onDragStart={this.setDragData.bind(this, asset.id)}
-              style={{backgroundColor: "#262626", margin: 3, width: 140, height: 140, padding: 5, float: "left"}}
+              style={{backgroundColor: "#262626", margin: 3, height: 100, padding: 10, display: "flex"}}
             >
-              <b style={{fontSize: 15}}>{asset.name}</b>
-              <p style={{marginTop: 10, fontSize: 12}}>{asset.description}</p>
+              <div style={{height: 80, width: 80}}>
+                <img src={previewUrl} style={{ width: 80, maxHeight: 80 }} />
+              </div>
+              <div style={{marginLeft: 15}}>
+                <b style={{fontSize: 15}}>{asset.name}</b>
+                <p style={{marginTop: 10, fontSize: 12}}>{asset.description}</p>
+              </div>
             </div>
           );
         })}
-        <br style={{clear: "both"}} />
       </div>
     );
   }
