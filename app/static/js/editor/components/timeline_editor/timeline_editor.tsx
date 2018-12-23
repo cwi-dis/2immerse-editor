@@ -510,7 +510,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
               chapterClicked={this.onChapterClicked.bind(this)}
             />
           </div>
-          <DMAppcContainer assets={assets} />
+          <DMAppcContainer baseUrl={this.props.document.baseUrl} assets={assets} />
         </div>
       </div>
     );
