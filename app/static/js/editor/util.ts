@@ -223,37 +223,22 @@ export function parseQueryString(query: string): Map<string, string | undefined>
   return result;
 }
 
-export function shortenUrl(originalUrl: string): Promise<string> {
+export async function shortenUrl(originalUrl: string): Promise<string> {
   const data = JSON.stringify({ longUrl: originalUrl });
+  const response = await makeRequest("POST", "/shorturl", data, "application/json");
+  const { id } = JSON.parse(response);
 
-  return new Promise((resolve, reject) => {
-    makeRequest(
-      "POST", `/shorturl`,
-      data, "application/json"
-    ).then((response) => {
-      const { id } = JSON.parse(response);
-      const shortUrl = `${location.protocol}//${location.host}/shorturl/${id}`;
-
-      resolve(shortUrl);
-    }).catch((err) => {
-      reject(err);
-    });
-  });
+  return `${location.protocol}//${location.host}/shorturl/${id}`;
 }
 
-export function validateLayout(layout: any): Promise<void> {
-  return new Promise((resolve, reject) => {
-    makeRequest("GET", "/static/dist/v4-document-schema.json").then((data) => {
-      const schema = JSON.parse(data);
-      const result = validate(layout, schema);
+export async function validateLayout(layout: any) {
+  const data = await makeRequest("GET", "/static/dist/v4-document-schema.json");
+  const schema = JSON.parse(data);
+  const result = validate(layout, schema);
 
-      if (result.valid) {
-        resolve();
-      } else {
-        reject(result.errors);
-      }
-    });
-  });
+  if (!result.valid) {
+    throw result.errors;
+  }
 }
 
 export function getCanvasDropPosition(stageWrapper: Nullable<Stage>, pageX: number, pageY: number) {
