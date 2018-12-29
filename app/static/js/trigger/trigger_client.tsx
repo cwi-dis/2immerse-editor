@@ -64,53 +64,54 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     };
   }
 
-  private fetchEvents() {
+  private async fetchEvents() {
     const url = `/api/v1/document/${this.props.documentId}/events`;
     console.log("updating events");
 
-    makeRequest("GET", url).then((data) => {
+    try {
+      const data = await makeRequest("GET", url);
       const events: Array<Event> = JSON.parse(data);
 
       this.setState({
         events,
         pageIsLoading: false
       });
-    }).catch((err) => {
+    } catch (err) {
       console.error("Could not fetch triggers:", err);
       this.setState({
         pageIsLoading: false,
         fetchError: err
       });
-    });
+    }
   }
 
-  private subscribeToEventUpdates() {
-    makeRequest("GET", "/api/v1/configuration").then((data) => {
-      const { websocketService }: { [index: string]: string } = JSON.parse(data);
-      const { documentId } = this.props;
+  private async subscribeToEventUpdates() {
+    const data = await makeRequest("GET", "/api/v1/configuration");
 
-      const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
-      console.log("Connecting to", url);
+    const { websocketService }  = JSON.parse(data);
+    const { documentId } = this.props;
 
-      this.socket = io(url, { transports: ["websocket"] });
+    const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
+    console.log("Connecting to", url);
 
-      this.socket.on("connect", () => {
-        console.log("Connected to websocket-service");
+    this.socket = io(url, { transports: ["websocket"] });
 
-        this.socket.emit("JOIN", documentId, () => {
-          console.log("Joined channel for document ID", documentId);
-        });
+    this.socket.on("connect", () => {
+      console.log("Connected to websocket-service");
+
+      this.socket.emit("JOIN", documentId, () => {
+        console.log("Joined channel for document ID", documentId);
       });
+    });
 
-      this.socket.on("EVENTS", (data: { events: Array<Event>, remote: PreviewStatus }) => {
-        console.log("Received trigger event update");
-        const { events, remote } = data;
+    this.socket.on("EVENTS", (data: { events: Array<Event>, remote: PreviewStatus }) => {
+      console.log("Received trigger event update");
+      const { events, remote } = data;
 
-        this.setState({
-          events,
-          previewStatus: remote,
-          pageIsLoading: false
-        });
+      this.setState({
+        events,
+        previewStatus: remote,
+        pageIsLoading: false
       });
     });
   }

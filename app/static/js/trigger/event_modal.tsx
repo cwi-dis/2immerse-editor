@@ -76,7 +76,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
     });
   }
 
-  private launchEvent() {
+  private async launchEvent() {
     const { event, documentId, onTriggered, triggerMode } = this.props;
     let endpoint: string, requestMethod: "PUT" | "POST";
 
@@ -93,13 +93,14 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
 
     console.log("Launching event at url", url, "with data", data);
 
-    makeRequest(requestMethod, url, data, "application/json").then((data) => {
+    try {
+      await makeRequest(requestMethod, url, data, "application/json");
       console.log("success");
       onTriggered("success");
-    }).catch((err) => {
+    } catch (err) {
       console.log("error:", err);
       onTriggered("error");
-    });
+    }
   }
 
   private updateParamField(i: number, ev: React.ChangeEvent<HTMLInputElement>) {

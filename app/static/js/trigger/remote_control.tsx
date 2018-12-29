@@ -85,18 +85,19 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.setState({ showdirty: !showdirty });
   }
 
-  private sendControlCommand(command: any) {
+  private async sendControlCommand(command: any) {
     const { previewStatus } = this.props;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
 
     if (previewStatus.active) {
       console.log("Sending playback command: ", command);
 
-      makeRequest("POST", controlUrl, JSON.stringify(command), "application/json").then(() => {
+      try {
+        await makeRequest("POST", controlUrl, JSON.stringify(command), "application/json");
         console.log("Playback state toggled");
-      }).catch((err) => {
+      } catch (err) {
         console.warn("Could not toggle playback:", err);
-      });
+      }
     } else {
       console.log("Preview not active, this is a no-op");
     }

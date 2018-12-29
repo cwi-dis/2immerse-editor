@@ -56,7 +56,7 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     const queryData = parseQueryString(location.hash);
     console.log("parsed hash:", queryData);
 
@@ -76,12 +76,13 @@ class App extends React.Component<{}, AppState> {
         isLoading: true
       });
 
-      makeRequest("POST", submitUrl).then((data) => {
+      try {
+        const data = await makeRequest("POST", submitUrl);
         const { documentId } = JSON.parse(data);
         console.log("got document id:", documentId);
 
         this.assignDocumentId(documentId);
-      }).catch((err) => {
+      } catch (err) {
         console.error(err);
 
         this.setState({
@@ -91,7 +92,7 @@ class App extends React.Component<{}, AppState> {
             message: err.body && JSON.parse(err.body).message
           }
         });
-      });
+      }
     } else if (queryData.has("documentId")) {
         this.assignDocumentId(queryData.get("documentId")!);
     }

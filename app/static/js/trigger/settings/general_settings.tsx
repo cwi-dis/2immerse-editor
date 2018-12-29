@@ -36,14 +36,15 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     this.state = {};
   }
 
-  public componentDidMount() {
-    makeRequest("GET", this.settingsUrl).then((response) => {
+  public async componentDidMount() {
+    try {
+      const response = await makeRequest("GET", this.settingsUrl);
       this.setState({
         settings: JSON.parse(response)
       });
-    }).catch((err) => {
+    } catch (err) {
       console.error("Could not retrieve settings:", err);
-    });
+    }
   }
 
   private renderDebugLinks(links: {[key: string]: string}) {

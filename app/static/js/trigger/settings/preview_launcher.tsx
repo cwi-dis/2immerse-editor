@@ -25,7 +25,7 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
     return `${location.protocol}//${location.host}/api/v1/document/${this.props.documentId}/preview`;
   }
 
-  public componentDidMount() {
+  public async componentDidMount() {
     const previewUrl = this.getPreviewUrl();
 
     QRCode.toCanvas(this.qrCanvas, previewUrl, (err) => {
@@ -34,15 +34,16 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
       }
     });
 
-    shortenUrl(previewUrl).then((shortUrl) => {
+    try {
+      const shortUrl = await shortenUrl(previewUrl);
       console.log("shortened preview url: ", shortUrl);
 
       this.setState({
         shortUrl
       });
-    }).catch((err) => {
+    } catch (err) {
       console.error("could not get preview url:", err);
-    });
+    }
   }
 
   public render() {

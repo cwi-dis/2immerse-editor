@@ -13,13 +13,14 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
   const { documentId, clearSession, fetchError } = props;
   const downloadUrl = `/api/v1/document/${documentId}`;
 
-  const deleteSession = () => {
-    makeRequest("DELETE", `/api/v1/document/${documentId}`).then(() => {
+  const deleteSession = async () => {
+    try {
+      await makeRequest("DELETE", `/api/v1/document/${documentId}`);
       console.log("Document deleted successfully");
       clearSession();
-    }).catch((err) => {
+    } catch (err) {
       console.error("Could not delete document:", err);
-    });
+    }
   };
 
   return (

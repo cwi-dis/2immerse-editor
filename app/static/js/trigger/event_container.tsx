@@ -85,7 +85,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     );
   }
 
-  private launchEvent(triggerMode = "trigger") {
+  private async launchEvent(triggerMode = "trigger") {
     const { event, documentId } = this.props;
     let endpoint: string, requestMethod: "PUT" | "POST";
 
@@ -104,14 +104,15 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
 
     console.log("Launching basic event at url", url, "with data", data);
 
-    makeRequest(requestMethod, url, data, "application/json").then((data) => {
+    try {
+      await makeRequest(requestMethod, url, data, "application/json");
       console.log("success");
       this.setState({ flashSuccess: true});
       this.props.onTriggered && this.props.onTriggered();
-    }).catch((err) => {
+    } catch (err) {
       console.error("error:", err);
       this.setState({ flashError: true});
-    });
+    }
   }
 
   private renderParamCount(count: number) {

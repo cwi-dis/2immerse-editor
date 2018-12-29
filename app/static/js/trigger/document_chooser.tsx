@@ -36,17 +36,18 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     };
   }
 
-  public componentDidMount() {
-    makeRequest("GET", "/api/v1/document").then((data) => {
+  public async componentDidMount() {
+    try {
+      const data = await makeRequest("GET", "/api/v1/document")
       const documents = JSON.parse(data);
       console.log("Fetched list of documents:", documents);
 
       this.setState({
         existingDocuments: documents
       });
-    }).catch((err) => {
+    } catch (err) {
       console.error("Could not fetch existing documents:", err);
-    });
+    }
   }
 
   private methodUpdated(ev: any) {
@@ -58,7 +59,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     });
   }
 
-  private submitForm(ev: React.FormEvent<HTMLFormElement>) {
+  private async submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
     let submitUrl = "/api/v1/document";
@@ -81,19 +82,20 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       isLoading: true
     });
 
-    makeRequest("POST", submitUrl, formData).then((data) => {
+    try {
+      const data = await makeRequest("POST", submitUrl, formData)
       this.setState({
         isLoading: false
       });
 
       const { documentId } = JSON.parse(data);
       this.props.assignDocumentId(documentId);
-    }).catch((err) => {
+    } catch (err) {
       this.setState({
         isLoading: false,
         ajaxError: err
       });
-    });
+    }
   }
 
   public render() {
