@@ -117,7 +117,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
-  private elementRemoved(timelineId: string, trackId: string, elementId: string) {
+  private async elementRemoved(timelineId: string, trackId: string, elementId: string) {
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
     const timeline = this.getTimeline();
@@ -127,21 +127,19 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return;
     }
 
-    util.makeRequest("POST", url + `/deleteElement?elementID=${elementId}`).then(() => {
-      const [, track] = util.findById(timeline.timelineTracks!, trackId);
-      const { timelineElements } = track;
+    await util.makeRequest("POST", url + `/deleteElement?elementID=${elementId}`);
 
-      const deletePromise = (timelineElements!.count() - 1 <= 0)
-        ? util.makeRequest("POST", url + `/deleteTrack?trackID=${trackId}`)
-        : Promise.resolve("");
+    const [, track] = util.findById(timeline.timelineTracks!, trackId);
+    const { timelineElements } = track;
 
-      deletePromise.then(() => {
-        this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
-      });
-    });
+    if (timelineElements!.count() - 1 <= 0) {
+      await util.makeRequest("POST", url + `/deleteTrack?trackID=${trackId}`);
+    }
+
+    this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
   }
 
-  private elementClicked(timelineId: string, trackId: string, elementId: string, currentDuration: number) {
+  private async elementClicked(timelineId: string, trackId: string, elementId: string, currentDuration: number) {
     const duration = prompt("Please specify the element's duration (in seconds)", currentDuration.toString());
 
     if (duration == null || duration === "") {
@@ -151,14 +149,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
 
-    util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${duration}`).then(() => {
-      this.props.timelineActions.updateElementLength(
-        timelineId,
-        trackId,
-        elementId,
-        parseInt(duration, 10)
-      );
-    });
+    await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${duration}`);
+
+    this.props.timelineActions.updateElementLength(
+      timelineId,
+      trackId,
+      elementId,
+      parseInt(duration, 10)
+    );
   }
 
   private getTimeline() {
@@ -197,7 +195,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return asset;
   }
 
-  private onComponentDroppedOnScreen(componentId: string, regionId: string) {
+  private async onComponentDroppedOnScreen(componentId: string, regionId: string) {
     const trackLayout = this.getTrackLayout();
     const layoutEntry = trackLayout.find((track) => track.regionId === regionId);
 
@@ -215,25 +213,23 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     if (!layoutEntry.track) {
       console.log("Creating track and adding element");
 
-      util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${layoutEntry.regionId}`).then((trackId) => {
-        util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
-          console.log("new track", trackId, "new element", elementId);
+      const trackId = await util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${layoutEntry.regionId}`);
+      const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`);
+      console.log("new track", trackId, "new element", elementId);
 
-          if (asset.duration > 0) {
-            util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
-          }
+      if (asset.duration > 0) {
+        util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
+      }
 
-          this.props.timelineActions.addTimelineTrackAndAddElement(
-            timeline.id,
-            layoutEntry.regionId,
-            componentId,
-            asset.duration, 0,
-            previewUrl,
-            trackId,
-            elementId
-          );
-        });
-      });
+      this.props.timelineActions.addTimelineTrackAndAddElement(
+        timeline.id,
+        layoutEntry.regionId,
+        componentId,
+        asset.duration, 0,
+        previewUrl,
+        trackId,
+        elementId
+      );
     } else {
       const { track } = layoutEntry;
       const { timelineElements } = track;
@@ -249,27 +245,24 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         return;
       }
 
-      const addElementUrl = url + `/addElement?trackID=${track.id}&assetID=${asset.id}`;
+      const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${track.id}&assetID=${asset.id}`);
+      console.log("new element", elementId);
 
-      util.makeRequest("POST", addElementUrl).then((elementId) => {
-        console.log("new element", elementId);
+      await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
 
-        util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`).then(() => {
-          this.props.timelineActions.addElementToTimelineTrack(
-            timeline.id,
-            track.id,
-            componentId,
-            asset.duration, 0,
-            -1,
-            previewUrl,
-            elementId
-          );
-        });
-      });
+      this.props.timelineActions.addElementToTimelineTrack(
+        timeline.id,
+        track.id,
+        componentId,
+        asset.duration, 0,
+        -1,
+        previewUrl,
+        elementId
+      );
     }
   }
 
-  private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
+  private async onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
@@ -297,25 +290,23 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
 
-      util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${selectedTrack.regionId}`).then((trackId) => {
-        util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`).then((elementId) => {
-          console.log("new track", trackId, "new element", elementId);
+      const trackId = await util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${selectedTrack.regionId}`);
+      const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`);
+      console.log("new track", trackId, "new element", elementId);
 
-          if (asset.duration > 0) {
-            util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
-          }
+      if (asset.duration > 0) {
+        util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
+      }
 
-          this.props.timelineActions.addTimelineTrackAndAddElement(
-            timeline.id,
-            selectedTrack.regionId,
-            componentId,
-            asset.duration, 0,
-            previewUrl,
-            trackId,
-            elementId
-          );
-        });
-      });
+      this.props.timelineActions.addTimelineTrackAndAddElement(
+        timeline.id,
+        selectedTrack.regionId,
+        componentId,
+        asset.duration, 0,
+        previewUrl,
+        trackId,
+        elementId
+      );
     } else {
       const { track } = selectedTrack;
       const { timelineElements } = track;
@@ -348,21 +339,20 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
         ? url + `/addElement?trackID=${track.id}&assetID=${asset.id}`
         : url + `/addElement?trackID=${track.id}&assetID=${asset.id}&insertPosition=${dropIndex}`;
 
-      util.makeRequest("POST", addElementUrl).then((elementId) => {
-        console.log("new element", elementId);
+      const elementId = await util.makeRequest("POST", addElementUrl);
+      console.log("new element", elementId);
 
-        util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`).then(() => {
-          this.props.timelineActions.addElementToTimelineTrack(
-            timeline.id,
-            track.id,
-            componentId,
-            asset.duration, 0,
-            dropIndex,
-            previewUrl,
-            elementId
-          );
-        });
-      });
+      await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
+
+      this.props.timelineActions.addElementToTimelineTrack(
+        timeline.id,
+        track.id,
+        componentId,
+        asset.duration, 0,
+        dropIndex,
+        previewUrl,
+        elementId
+      );
     }
   }
 
