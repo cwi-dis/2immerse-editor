@@ -26,19 +26,20 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     };
   }
 
-  public componentDidMount() {
-    makeRequest("GET", "/version").then((data) => {
+  public async componentDidMount() {
+    try {
+      const data = await makeRequest("GET", "/version");
       const [branch, revision] = JSON.parse(data);
 
       this.setState({
         branch,
         revision
       });
-    }).catch(() => {
+    } catch {
       this.setState({
         fetchError: true
       });
-    });
+    }
   }
 
   public render() {

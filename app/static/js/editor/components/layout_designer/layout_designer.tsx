@@ -97,10 +97,12 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       const file = e.target.files[0];
       const reader = new FileReader();
 
-      reader.onload = () => {
+      reader.onload = async () => {
         const layout = JSON.parse(reader.result!.toString());
 
-        validateLayout(layout).then(() => {
+        try {
+          await validateLayout(layout);
+
           if (layout.version === undefined || layout.version !== 4) {
             alert("Can only process version 4 layout documents");
           } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
@@ -108,10 +110,10 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
           } else {
             this.parseLayoutTemplates(layout.templates);
           }
-        }).catch((errors) => {
+        } catch (errors) {
           alert("Layout validation failed");
           console.error(errors);
-        });
+        }
       };
 
       reader.readAsText(file);
