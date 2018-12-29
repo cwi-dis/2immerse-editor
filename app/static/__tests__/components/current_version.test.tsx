@@ -17,7 +17,7 @@ describe("Component <CurrentVersion/>", () => {
 
     await promise;
 
-    expect(currentVersion.props().commitUrl).toEqual("https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/");
+    expect(currentVersion.props().commitUrl).toEqual("https://github.com/cwi-dis/2immerse-editor/commit/");
     expect(currentVersion.state().branch).toEqual("some_branch");
     expect(currentVersion.state().revision).toEqual("some_commit_hash");
     expect(currentVersion.state().fetchError).toBeFalsy();
@@ -25,7 +25,7 @@ describe("Component <CurrentVersion/>", () => {
     expect(
       currentVersion.render().find("a").first().prop("href")
     ).toEqual(
-      "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/some_commit_hash"
+      "https://github.com/cwi-dis/2immerse-editor/commit/some_commit_hash"
     );
 
     stubbedFn.restore();
