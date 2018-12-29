@@ -22,20 +22,21 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
     };
   }
 
-  private submitFileForm() {
-    makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json").then(() => {
+  private async submitFileForm() {
+    try {
+      await makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json");
       this.setState({
         submitSuccess: true,
         fileData: ""
       });
 
       this.props.onSubmit();
-    }).catch(() => {
+    } catch {
       this.setState({
         submitSuccess: false,
         fileData: ""
       });
-    });
+    }
   }
 
   private renderNotification() {

@@ -20,13 +20,11 @@ class Config extends React.Component<{}, ConfigState> {
     };
   }
 
-  public fetchConfigData() {
-    makeRequest("GET", "/api/v1/configuration").then((data) => {
-      const config = JSON.parse(data);
-      this.setState({ formData: config});
-    }).catch((error) => {
-      console.error("Could not retrieve configuration:", error);
-    });
+  public async fetchConfigData() {
+    const data = await makeRequest("GET", "/api/v1/configuration");
+    const config = JSON.parse(data);
+
+    this.setState({ formData: config});
   }
 
   public componentDidMount() {

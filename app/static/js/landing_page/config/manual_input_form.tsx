@@ -55,21 +55,22 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     });
   }
 
-  private submitManualForm() {
+  private async submitManualForm() {
     const configData = pluck(this.state.formData, this.formKeys);
 
-    makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json").then(() => {
+    try {
+      await makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json");
       this.setState({
         formTainted: false,
         submitSuccess: true
       });
 
       this.props.onSubmit();
-    }).catch(() => {
+    } catch {
       this.setState({
         submitSuccess: false
       });
-    });
+    }
   }
 
   private renderNotification() {
