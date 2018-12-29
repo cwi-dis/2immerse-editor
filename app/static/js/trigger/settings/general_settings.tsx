@@ -6,16 +6,20 @@ interface GeneralSettingsProps {
   documentId: string;
 }
 
+interface GeneralSettings {
+  playerMode: string;
+  startPaused: boolean;
+  description: string;
+  viewerExtraOffset: string;
+  previewFromWebcam: boolean;
+  enableControls: boolean;
+  debugLinks: { [key: string]: string };
+}
+
+type GeneralSettingsKey = keyof GeneralSettings;
+
 interface GeneralSettingsState {
-  settings?: {
-    playerMode: string,
-    startPaused: boolean,
-    description: string,
-    viewerExtraOffset: string,
-    previewFromWebcam: boolean,
-    enableControls: boolean,
-    debugLinks: {[key: string]: string}
-  };
+  settings?: GeneralSettings;
   saveSuccessful?: boolean;
 }
 
