@@ -62,25 +62,30 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     return renderedLinks;
   }
 
-  private changePlayerMode(e: React.ChangeEvent<HTMLSelectElement>) {
-    const { value } = e.target;
-    console.log("changing playerMode:", value);
+  private async updateSettingsKey(key: GeneralSettingsKey, value: string | boolean) {
+    try {
+      console.log("changing", key, "to", value);
 
-    makeRequest("PUT", this.settingsUrl, {playerMode: value}, "application/json").then(() => {
+      await makeRequest("PUT", this.settingsUrl, { [key]: value }, "application/json");
       let { settings } = this.state;
 
       if (settings) {
-        settings.playerMode = value;
+        settings[key] = value;
 
         this.setState({
           settings,
           saveSuccessful: true
         });
       }
-    }).catch((err) => {
-      console.error("could not set playerMode:", err);
+    } catch (err) {
+      console.error("could not set", key, err);
       this.setState({ saveSuccessful: false });
-    });
+    }
+  }
+
+  private changePlayerMode(e: React.ChangeEvent<HTMLSelectElement>) {
+    const { value } = e.target;
+    this.updateSettingsKey("playerMode", value);
   }
 
   private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
