@@ -101,59 +101,56 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     };
   }
 
-  public componentDidUpdate() {
+  public async componentDidUpdate() {
     const { documentId } = this.props.document;
 
     if (documentId !== "") {
       console.log("constructing document", documentId);
       const baseUrl = `/api/v1/document/${documentId}/editing/`;
 
-      makeRequest("GET", baseUrl + "getAssets").then((data) => {
-        const assets: Array<Asset> = JSON.parse(data);
-        console.log("assets", assets);
+      const assetData = await makeRequest("GET", baseUrl + "getAssets");
+      const assets: Array<Asset> = JSON.parse(assetData);
+      console.log("assets", assets);
 
-        assets.forEach((asset) => {
-          const { id, name, description, previewUrl, duration } = asset;
-          this.props.assetActions.addAsset(id, name, description, previewUrl, duration);
-        });
-
-        return makeRequest("GET", baseUrl + "getLayout");
-      }).then((data) => {
-        const layout: Layout = JSON.parse(data);
-        console.log("layout", layout);
-
-        layout.devices.forEach((device) => {
-          const regions: Array<Area & Region> = device.areas.map((area) => {
-            const { id, name, color } = getRegionForArea(area.region, layout);
-
-            return {
-              ...area,
-              id, name, color
-            };
-          });
-
-          this.props.screenActions.addDeviceAndPlaceRegions(
-            device.type,
-            device.name,
-            device.orientation,
-            regions
-          );
-        });
-
-        return makeRequest("GET", baseUrl + "getChapters");
-      }).then((data) => {
-        const chapterTree: ChapterTree = JSON.parse(data);
-        console.log("chapter tree", chapterTree);
-
-        this.props.chapterActions.loadChapterTree(chapterTree);
-        this.props.timelineActions.loadTimelines(chapterTree);
-      }).then(() => {
-        navigate("/layout");
+      assets.forEach((asset) => {
+        const { id, name, description, previewUrl, duration } = asset;
+        this.props.assetActions.addAsset(id, name, description, previewUrl, duration);
       });
+
+      const layoutData = await makeRequest("GET", baseUrl + "getLayout");
+      const layout: Layout = JSON.parse(layoutData);
+      console.log("layout", layout);
+
+      layout.devices.forEach((device) => {
+        const regions: Array<Area & Region> = device.areas.map((area) => {
+          const { id, name, color } = getRegionForArea(area.region, layout);
+
+          return {
+            ...area,
+            id, name, color
+          };
+        });
+
+        this.props.screenActions.addDeviceAndPlaceRegions(
+          device.type,
+          device.name,
+          device.orientation,
+          regions
+        );
+      });
+
+      const chapterData = await makeRequest("GET", baseUrl + "getChapters");
+      const chapterTree: ChapterTree = JSON.parse(chapterData);
+      console.log("chapter tree", chapterTree);
+
+      this.props.chapterActions.loadChapterTree(chapterTree);
+      this.props.timelineActions.loadTimelines(chapterTree);
+
+      navigate("/layout");
     }
   }
 
-  private submitForm(ev: React.FormEvent<HTMLFormElement>) {
+  private async submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
     let formData: FormData | undefined;
@@ -174,13 +171,12 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       isLoading: true
     });
 
-    makeRequest("POST", submitUrl, formData).then((data) => {
-      const { documentId } = JSON.parse(data);
-      console.log("document id:", documentId);
+    const data = await makeRequest("POST", submitUrl, formData);
+    const { documentId } = JSON.parse(data);
+    console.log("document id:", documentId);
 
-      this.setState({ isLoading: false });
-      this.props.documentActions.assignDocumentId(documentId, docBaseUrl);
-    });
+    this.setState({ isLoading: false });
+    this.props.documentActions.assignDocumentId(documentId, docBaseUrl);
   }
 
   public render() {
