@@ -48,7 +48,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     navigate(`/timeline/${chapter.id}`);
   }
 
-  private handleRemoveClick(accessPath: Array<number>): void {
+  private async handleRemoveClick(accessPath: Array<number>) {
     if (accessPath.length === 1 && accessPath[0] === 0 && this.props.chapters.count() === 1) {
       alert("Root node cannot be removed");
       return;
@@ -63,27 +63,25 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing/deleteChapter?chapterID=${chapter.id}`;
 
-    makeRequest("POST", url).then(() => {
-      this.props.chapterActions.removeChapter(accessPath);
-    });
+    await makeRequest("POST", url);
+    this.props.chapterActions.removeChapter(accessPath);
   }
 
-  private handleLabelClick(accessPath: Array<number>, currentName: string | undefined): void {
+  private async handleLabelClick(accessPath: Array<number>, currentName: string | undefined) {
     const chapterName = prompt("Chapter name:", currentName || "");
 
     if (chapterName !== null && chapterName !== "") {
-        const chapter = getChapterByPath(this.props.chapters, accessPath);
-        const { documentId } = this.props.document;
+      const chapter = getChapterByPath(this.props.chapters, accessPath);
+      const { documentId } = this.props.document;
 
-        const url = `/api/v1/document/${documentId}/editing/renameChapter?chapterID=${chapter.id}&name=${encodeURIComponent(chapterName)}`;
+      const url = `/api/v1/document/${documentId}/editing/renameChapter?chapterID=${chapter.id}&name=${encodeURIComponent(chapterName)}`;
 
-        makeRequest("POST", url).then(() => {
-          this.props.chapterActions.renameChapter(accessPath, chapterName);
-        });
+      await makeRequest("POST", url);
+      this.props.chapterActions.renameChapter(accessPath, chapterName);
     }
   }
 
-  private handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom"): void {
+  private async handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom") {
     const { documentId } = this.props.document;
     const chapter = getChapterByPath(this.props.chapters, accessPath);
 
@@ -92,17 +90,14 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     };
 
     if (handlePosition === "left") {
-      makeRequest("POST", getUrl("addChapterBefore")).then((chapterId) => {
-        this.props.chapterActions.addChapterBefore(accessPath, chapterId);
-      });
+      const chapterId = await makeRequest("POST", getUrl("addChapterBefore"));
+      this.props.chapterActions.addChapterBefore(accessPath, chapterId);
     } else if (handlePosition === "right") {
-      makeRequest("POST", getUrl("addChapterAfter")).then((chapterId) => {
-        this.props.chapterActions.addChapterAfter(accessPath, chapterId);
-      });
+      const chapterId = await makeRequest("POST", getUrl("addChapterAfter"));
+      this.props.chapterActions.addChapterAfter(accessPath, chapterId);
     } else {
-      makeRequest("POST", getUrl("addSubChapter")).then((chapterId) => {
-        this.props.chapterActions.addChapterChild(accessPath, chapterId);
-      });
+      const chapterId = await makeRequest("POST", getUrl("addSubChapter"));
+      this.props.chapterActions.addChapterChild(accessPath, chapterId);
     }
   }
 
