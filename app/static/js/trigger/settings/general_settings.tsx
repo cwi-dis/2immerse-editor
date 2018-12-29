@@ -90,65 +90,17 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
   private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
     const value = (e.target.value === "true") ? true : false;
-    console.log("changing startPaused:", value);
-
-    makeRequest("PUT", this.settingsUrl, {startPaused: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.startPaused = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set startPaused:", err);
-      this.setState({ saveSuccessful: false });
-    });
+    this.updateSettingsKey("startPaused", value);
   }
 
   private changePreviewFromWebcam(e: React.ChangeEvent<HTMLInputElement>) {
     const value = (e.target.value === "true") ? true : false;
-    console.log("changing previewFromWebcam:", value);
-
-    makeRequest("PUT", this.settingsUrl, {previewFromWebcam: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.previewFromWebcam = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set previewFromWebcam:", err);
-      this.setState({ saveSuccessful: false });
-    });
+    this.updateSettingsKey("previewFromWebcam", value);
   }
 
   private changeEnableControls(e: React.ChangeEvent<HTMLInputElement>) {
     const value = (e.target.value === "true") ? true : false;
-    console.log("changing enableControls:", value);
-
-    makeRequest("PUT", this.settingsUrl, {enableControls: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.enableControls = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set enableControls:", err);
-      this.setState({ saveSuccessful: false });
-    });
+    this.updateSettingsKey("enableControls", value);
   }
 
   private changeDescription() {
@@ -158,22 +110,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
 
     const { value } = this.descriptionRef;
-
-    makeRequest("PUT", this.settingsUrl, {description: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.description = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set description:", err);
-      this.setState({ saveSuccessful: false });
-    });
+    this.updateSettingsKey("description", value);
   }
 
   private changeViewerExtraOffset() {
@@ -182,22 +119,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
 
     const { value } = this.viewerExtraOffsetRef;
-
-    makeRequest("PUT", this.settingsUrl, {viewerExtraOffset: value}, "application/json").then(() => {
-      let { settings } = this.state;
-
-      if (settings) {
-        settings.viewerExtraOffset = value;
-
-        this.setState({
-          settings,
-          saveSuccessful: true
-        });
-      }
-    }).catch((err) => {
-      console.error("could not set override offset:", err);
-      this.setState({ saveSuccessful: false });
-    });
+    this.updateSettingsKey("viewerExtraOffset", value);
   }
 
   private renderNotification() {
