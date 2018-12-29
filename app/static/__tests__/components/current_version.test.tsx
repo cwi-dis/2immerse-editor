@@ -8,68 +8,70 @@ import * as util from "../../js/editor/util";
 import CurrentVersion, { CurrentVersionProps, CurrentVersionState } from "../../js/editor/components/current_version";
 
 describe("Component <CurrentVersion/>", () => {
-  it("should render a commit hash", () => {
+  it("should render a commit hash", async () => {
     const promise = Promise.resolve(JSON.stringify(["some_branch", "some_commit_hash"]));
-    const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
+    const stubbedFn = stub(util, "makeRequest").returns(promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(<CurrentVersion />);
     expect.assertions(5);
 
-    return promise.then(() => {
-      expect(currentVersion.props().commitUrl).toEqual("https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/");
-      expect(currentVersion.state().branch).toEqual("some_branch");
-      expect(currentVersion.state().revision).toEqual("some_commit_hash");
-      expect(currentVersion.state().fetchError).toBeFalsy();
+    await promise;
 
-      expect(
-        currentVersion.render().find("a").first().prop("href")
-      ).toEqual(
-        "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/some_commit_hash"
-      );
+    expect(currentVersion.props().commitUrl).toEqual("https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/");
+    expect(currentVersion.state().branch).toEqual("some_branch");
+    expect(currentVersion.state().revision).toEqual("some_commit_hash");
+    expect(currentVersion.state().fetchError).toBeFalsy();
 
-      stubbedFn.restore();
-    });
+    expect(
+      currentVersion.render().find("a").first().prop("href")
+    ).toEqual(
+      "https://gitlab-ext.irt.de/2-immerse/2immerse-editor/commit/some_commit_hash"
+    );
+
+    stubbedFn.restore();
   });
 
-  it("should render an empty component if request to /version fails", () => {
+  it("should render an empty component if request to /version fails", async () => {
     const promise = Promise.reject("error");
-    const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
+    const stubbedFn = stub(util, "makeRequest").returns(promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(<CurrentVersion />);
     expect.assertions(4);
 
-    return promise.catch(() => {
+    try {
+      await promise;
+    } catch {
       stubbedFn.restore();
-    }).then(() => {
+
       expect(currentVersion.isEmptyRender()).toBeTruthy();
       expect(currentVersion.state().branch).toEqual("");
       expect(currentVersion.state().revision).toEqual("");
       expect(currentVersion.state().fetchError).toBeTruthy();
-    });
+    }
   });
 
-  it("should take the commit URL as a prop", () => {
+  it("should take the commit URL as a prop", async () => {
     const promise = Promise.resolve(JSON.stringify(["some_other_branch", "some_other_commit_hash"]));
-    const stubbedFn = stub(util, "makeRequest").callsFake(() => promise);
+    const stubbedFn = stub(util, "makeRequest").returns(promise);
 
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(
       <CurrentVersion commitUrl="http://my-commit-url.com/" />
     );
     expect.assertions(5);
 
-    return promise.then(() => {
-      expect(currentVersion.props().commitUrl).toEqual("http://my-commit-url.com/");
-      expect(currentVersion.state().branch).toEqual("some_other_branch");
-      expect(currentVersion.state().revision).toEqual("some_other_commit_hash");
-      expect(currentVersion.state().fetchError).toBeFalsy();
+    await promise;
 
-      expect(
-        currentVersion.render().find("a").first().prop("href")
-      ).toEqual(
-        "http://my-commit-url.com/some_other_commit_hash"
-      );
+    expect(currentVersion.props().commitUrl).toEqual("http://my-commit-url.com/");
+    expect(currentVersion.state().branch).toEqual("some_other_branch");
+    expect(currentVersion.state().revision).toEqual("some_other_commit_hash");
+    expect(currentVersion.state().fetchError).toBeFalsy();
 
-      stubbedFn.restore();
-    });
+    expect(
+      currentVersion.render().find("a").first().prop("href")
+    ).toEqual(
+      "http://my-commit-url.com/some_other_commit_hash"
+    );
+
+    stubbedFn.restore();
   });
 });
