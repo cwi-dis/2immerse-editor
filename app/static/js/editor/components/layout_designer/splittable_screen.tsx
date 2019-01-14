@@ -48,16 +48,14 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
-    const clickedRegion = regions.findEntry((region) => {
+    const clickedRegion = regions.find((region) => {
       const topLeft = region.position;
       const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
 
       return x >= topLeft[0] && x < bottomRight[0] && y >= topLeft[1] && y < bottomRight[1];
     });
 
-    if (clickedRegion) {
-      return clickedRegion[1];
-    }
+    return clickedRegion;
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
