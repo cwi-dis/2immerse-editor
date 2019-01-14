@@ -4,7 +4,7 @@ import { connect, Dispatch } from "react-redux";
 import { List } from "immutable";
 import { Layer, Rect, Stage } from "react-konva";
 
-import { Coords, countLeafNodes, generateChapterKeyPath, getCanvasDropPosition, getTreeHeight, Nullable, getChapterByPath, makeRequest } from "../../util";
+import { Coords, countLeafNodes, generateChapterKeyPath, getTreeHeight, getChapterByPath, makeRequest } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
 import { ApplicationState, navigate } from "../../store";
@@ -32,8 +32,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
-  private stageWrapper: Nullable<Stage>;
-  private treeLayout: Array<{chapterId: string, accessPath: Array<number>, position: Coords, size: Coords}>;
 
   private handleChapterClick(accessPath: Array<number>): void {
     const keyPath = generateChapterKeyPath(accessPath);
@@ -179,40 +177,6 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     return [xOffset + this.boxMargin[0], 10];
   }
 
-  private computeTreeLayout(renderedTree: Array<any>) {
-    this.treeLayout = renderedTree.filter((node) => {
-      return node.type === ChapterNode;
-    }).map((node: ChapterNode) => {
-      return {
-        chapterId: node.props.chapter.id,
-        accessPath: node.props.currentPath,
-        position: node.props.position,
-        size: node.props.size
-      };
-    });
-  }
-
-  private onDrop(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
-    const [dropX, dropY] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
-    const masterId = e.dataTransfer.getData("text/plain");
-
-    console.log("drop event coords:", dropX, dropY);
-
-    const dropZone = this.treeLayout.filter((node) => {
-      const [x, y] = node.position;
-      const [w, h] = node.size;
-
-      return dropX >= x && dropX <= x + w && dropY >= y && dropY <= y + h;
-    })[0];
-
-    if (dropZone) {
-      this.props.chapterActions.assignMasterToTree(dropZone.accessPath, masterId);
-    } else {
-      console.log("Component not dropped on node");
-    }
-  }
-
   public render() {
     const { chapters } = this.props;
 
@@ -221,14 +185,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 
     const treeOffset = this.getTreeOffset(chapters);
     const renderedTree = this.drawChapterTree(chapters, treeOffset);
-    this.computeTreeLayout(renderedTree);
 
     return (
       <div className="columnlayout">
         <div className="column-content">
           <h3>Author Program</h3>
-          <div onDragOver={(e) => e.preventDefault()} onDrop={this.onDrop.bind(this)}>
-            <Stage ref={(e: any) => this.stageWrapper = e} width={this.canvasWidth} height={canvasHeight}>
+          <div>
+            <Stage width={this.canvasWidth} height={canvasHeight}>
               <Layer>
                 {renderedTree}
                 <Rect
