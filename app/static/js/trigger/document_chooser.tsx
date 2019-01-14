@@ -38,7 +38,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
   public async componentDidMount() {
     try {
-      const data = await makeRequest("GET", "/api/v1/document")
+      const data = await makeRequest("GET", "/api/v1/document");
       const documents = JSON.parse(data);
       console.log("Fetched list of documents:", documents);
 
@@ -83,7 +83,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     });
 
     try {
-      const data = await makeRequest("POST", submitUrl, formData)
+      const data = await makeRequest("POST", submitUrl, formData);
       this.setState({
         isLoading: false
       });

@@ -26,7 +26,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
 
   public componentDidMount() {
     this.documentInterval = setInterval(async () => {
-      const data = await makeRequest("GET", "/api/v1/document")
+      const data = await makeRequest("GET", "/api/v1/document");
       const documents = JSON.parse(data);
       console.log("Fetched list of documents:", documents);
 
