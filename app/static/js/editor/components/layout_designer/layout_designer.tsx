@@ -56,10 +56,13 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   private parseTemplateRegions(regions: {portrait: Array<TemplateRegion>, landscape: Array<TemplateRegion>}, name: string, type: "communal" | "personal") {
     const { portrait, landscape } = regions;
 
+    // Add new device in portrait orientation if there are portrait-oriented regions
     if (portrait.length > 0) {
+      // Add device
       this.props.screenActions.addDevice(type, name, "portrait");
       const newScreen = this.props.screens.previewScreens.last()!;
 
+      // Iterate over regions and place them on the new screen
       portrait.forEach(({ region }) => {
         this.props.screenActions.placeRegionOnScreen(
           newScreen.id,
@@ -69,10 +72,13 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       });
     }
 
+    // Add new device in landscape orientation if there are landscape-oriented regions
     if (landscape.length > 0) {
+      // Add device
       this.props.screenActions.addDevice(type, name, "landscape");
       const newScreen = this.props.screens.previewScreens.last()!;
 
+      // Iterate over regions and place them on the new screen
       landscape.forEach(({ region }) => {
         this.props.screenActions.placeRegionOnScreen(
           newScreen.id,
@@ -84,6 +90,7 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 
   private parseLayoutTemplates(templates: Array<LayoutTemplate>): void {
+    // Parse regions for all templates
     templates.forEach((template) => {
       const { communal, personal } = template.layout;
 
@@ -97,12 +104,15 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
       const file = e.target.files[0];
       const reader = new FileReader();
 
+      // Parse file contents once file is fully loaded
       reader.onload = async () => {
         const layout = JSON.parse(reader.result!.toString());
 
         try {
+          // Make sure layout is valid
           await validateLayout(layout);
 
+          // Can only parse layout version 4 and model 'template'
           if (layout.version === undefined || layout.version !== 4) {
             alert("Can only process version 4 layout documents");
           } else if (layout.layoutModel === undefined || layout.layoutModel !== "template") {
@@ -131,6 +141,8 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   public render() {
     const { screenActions } = this.props;
     const { previewScreens: screens } = this.props.screens;
+
+    // Filter screens based on personal and communal devices
     const personalScreens = screens.filter((screen) => screen.type === "personal");
     const communalScreens = screens.filter((screen) => screen.type === "communal");
 

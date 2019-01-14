@@ -48,6 +48,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
+    // Get first region the given coords fall into
     const clickedRegion = regions.find((region) => {
       const topLeft = region.position;
       const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
@@ -61,10 +62,12 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   private splitRegion(orientation: "horizontal" | "vertical") {
     const stage: KonvaStage = this.getStage();
 
+    // Get click coords and try to find associated region
     const [x, y] = this.state.canvasClick!;
     const clickedRegion = this.getClickedRegion(x / stage.width(), y / stage.height());
 
     if (clickedRegion) {
+      // Split region at the given point and update redux state
       const splitPosition = (orientation === "horizontal") ? y / stage.height() : x / stage.width();
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
     }
@@ -74,6 +77,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     const stage: KonvaStage = this.getStage();
     const {x, y} = stage.getPointerPosition();
 
+    // Open context menu once screen area has been clicked
     this.setState({
       contextMenu: {
         visible: true,
@@ -88,6 +92,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     const { width, screenInfo } = this.props;
     const { contextMenu } = this.state;
 
+    // Compute height of screen based on width and aspect ratio
     const computedHeight = (screenInfo.orientation === "landscape")
       ? 9 / 16 * width
       : 16 / 9 * width;

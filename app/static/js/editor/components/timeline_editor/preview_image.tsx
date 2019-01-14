@@ -23,9 +23,11 @@ class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState>
   }
 
   public componentDidMount() {
+    // Construct new Image object and set src to props.url
     const image = new Image();
     image.src = this.props.url;
 
+    // Update state once image is loaded
     image.onload = () => {
       this.setState({ image });
     };
@@ -35,6 +37,7 @@ class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState>
     const { position: [x, y], height } = this.props;
     const { image } = this.state;
 
+    // Render and scale image once it's loaded
     if (image !== null) {
       const width = (image.width / image.height) * height;
 

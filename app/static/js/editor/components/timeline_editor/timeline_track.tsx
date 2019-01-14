@@ -34,8 +34,10 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
     }
 
     const { clientY } = e.evt;
+    // Calculate y offset from position drag was started from
     const offsetY = Math.abs(this.initialYPosition - clientY);
 
+    // If drag offset is > 100, invoke callback to remove element and force update of canvas
     if (offsetY > 100) {
       console.log("removing element with id", id);
 
@@ -48,10 +50,13 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   public render() {
     const { width, height, elements, scrubberPosition, name, offsets, labelColor } = this.props;
     const [startOffset, endOffset] = offsets || [0, 0];
+
+    // Get track duration which has been passed in or calculate duration from track elements
     let trackDuration = (this.props.trackDuration)
       ? this.props.trackDuration
       : elements.reduce((sum, { duration, offset }) => sum + duration + offset, 0);
 
+    // If track has no duration (e.g. for live elements, set duration to 1, so we don't get div/0 error)
     if (trackDuration === 0) {
       trackDuration = 1;
     }
@@ -60,6 +65,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
       return this.getAbsolutePosition();
     };
 
+    // Render line for scrubber position if available
     const scrubber = () => {
       if (scrubberPosition) {
         return (
@@ -72,6 +78,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
       }
     };
 
+    // Render semi-transparent rect over track if track is locked to prevent modification
     const trackLock = () => {
       if (this.props.locked !== undefined && this.props.locked === true) {
         return (
@@ -103,12 +110,15 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
         {elements.map((element, i) => {
           const duration = (element.duration === 0 && element.offset === 0) ? trackDuration : element.duration;
 
+          // Scale element width to track duration
           const trackWidth = width - startOffset - endOffset;
           const elementStart = startX + (trackWidth * (element.offset / trackDuration));
           const elementWidth = trackWidth * (duration / trackDuration);
 
+          // Update startX so we know where to start drawing the next element
           startX = elementStart + elementWidth;
 
+          // Render element and potential preview image
           return (
             <Group key={element.id || i}>
               <Rect

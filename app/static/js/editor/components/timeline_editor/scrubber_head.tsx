@@ -42,6 +42,7 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
     const a = (2 * height) / Math.sqrt(3);
     const r = a / Math.sqrt(3);
 
+    // Function which guarantees that scrubber cannot be dragged outside bounds of timeline tracks
     const dragBoundFunc = (pos: Vector2d): Vector2d => {
       return {
         x: (pos.x > width - endOffset) ? width - endOffset : (pos.x < startOffset) ? startOffset : pos.x,

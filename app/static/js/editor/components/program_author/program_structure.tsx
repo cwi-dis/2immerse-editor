@@ -27,11 +27,14 @@ const ProgramStructure: React.SFC<ProgramStructureProps> = (props) => {
           const bullet = (chapter.children!.isEmpty()) ? rightTriangle : downTriangle;
 
           const currentPath = accessPath.concat([i]);
+
+          // If we're working with the selected chapter, highlight it
           const bgColor = (selectedChapter && arraysEqual(currentPath, selectedChapter)) ? "#389CEB" : "transparent";
           const txtColor = (selectedChapter && arraysEqual(currentPath, selectedChapter))
             ? "#FFFFFF"
             : (chapter.name) ? "inherit" : "#555555";
 
+          // Return label for current chapter and call function recursively on children
           return (
             <div key={i}>
               <div

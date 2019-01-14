@@ -82,6 +82,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
 
     let textRef: Nullable<any>;
 
+    // Render handles if the chapter node is currently hovered over
     if (this.state.hovered) {
       return (
         <Group>
@@ -119,6 +120,7 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
         </Group>
       );
     } else if (hasChildren) {
+      // Draw connector line at the bottom if the chapter node has children and is not hovered
       const startX = x + boxWidth / 2;
       const startY = y + boxHeight + 24;
 
