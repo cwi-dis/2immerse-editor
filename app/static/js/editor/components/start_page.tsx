@@ -79,25 +79,26 @@ interface StartPageProps {
 
 interface StartPageState {
   isLoading: boolean;
-  selectedMethod: "url" | "upload";
+  selectedMethod: "url" | "upload" | "id";
+  existingDocuments: Array<{ id: string, description: string }>;
 }
 
 function getRegionForArea(id: string, layout: Layout) {
-  return List(layout.regions).find((region) => {
-    return region.id === id;
-  })!;
+  return List(layout.regions).find((region) => region.id === id)!;
 }
 
 class StartPage extends React.Component<StartPageProps, StartPageState> {
   private urlInput: Nullable<HTMLInputElement>;
   private fileInput: Nullable<HTMLInputElement>;
+  private idInput: Nullable<HTMLSelectElement>;
 
   constructor(props: never) {
     super(props);
 
     this.state = {
       isLoading: false,
-      selectedMethod: "url"
+      selectedMethod: "url",
+      existingDocuments: []
     };
   }
 
@@ -173,6 +174,9 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     } else if (this.urlInput && this.urlInput.value) {
       submitUrl = "/api/v1/document?url=" + this.urlInput.value;
       docBaseUrl = this.urlInput.value.split("/").slice(0, -1).join("/") + "/";
+    } else if (this.idInput && this.idInput.value) {
+      this.props.documentActions.assignDocumentId(this.idInput.value, docBaseUrl);
+      return;
     }
 
     this.setState({
@@ -221,6 +225,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
                     <select className="is-info" value={selectedMethod} onChange={onMethodUpdated.bind(this)}>
                       <option value="upload">File upload&emsp;&emsp;</option>
                       <option value="url">URL</option>
+                      <option value="id">Document ID</option>
                     </select>
                   </div>
                 </div>
@@ -233,11 +238,24 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
                     <input key="url" className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
                   </div>
                 </div>
-              :
+              : (selectedMethod === "upload") ?
                 <div className="field">
                   <label className="label">File</label>
                   <div className="control">
                     <input key="upload" className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
+                  </div>
+                </div>
+              :
+                <div className="field">
+                  <label className="label">Document ID</label>
+                  <div className="control">
+                    <div className="select is-fullwidth is-info">
+                      <select key="id" ref={(e) => this.idInput = e} required={true}>
+                        {this.state.existingDocuments.map((document, i) => {
+                          return <option key={i} value={document.id}>{document.description}</option>;
+                        })}
+                      </select>
+                    </div>
                   </div>
                 </div>
              }
