@@ -108,20 +108,25 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       console.log("constructing document", documentId);
       const baseUrl = `/api/v1/document/${documentId}/editing/`;
 
+      // Retrieve document assets and parse them
       const assetData = await makeRequest("GET", baseUrl + "getAssets");
       const assets: Array<Asset> = JSON.parse(assetData);
       console.log("assets", assets);
 
+      // Allocate all assets locally
       assets.forEach((asset) => {
         const { id, name, description, previewUrl, duration } = asset;
         this.props.assetActions.addAsset(id, name, description, previewUrl, duration);
       });
 
+      // Retrieve layout and parse it
       const layoutData = await makeRequest("GET", baseUrl + "getLayout");
       const layout: Layout = JSON.parse(layoutData);
       console.log("layout", layout);
 
+      // Allocate devices and create regions
       layout.devices.forEach((device) => {
+        // Join areas with corresponding regions
         const regions: Array<Area & Region> = device.areas.map((area) => {
           const { id, name, color } = getRegionForArea(area.region, layout);
 
@@ -131,6 +136,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
           };
         });
 
+        // Allocate device and create regions
         this.props.screenActions.addDeviceAndPlaceRegions(
           device.type,
           device.name,
@@ -139,10 +145,12 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
         );
       });
 
+      // Retrieve and parse chapter data
       const chapterData = await makeRequest("GET", baseUrl + "getChapters");
       const chapterTree: ChapterTree = JSON.parse(chapterData);
       console.log("chapter tree", chapterTree);
 
+      // Load chapter tree and timelines
       this.props.chapterActions.loadChapterTree(chapterTree);
       this.props.timelineActions.loadTimelines(chapterTree);
 
@@ -171,10 +179,12 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
       isLoading: true
     });
 
+    // Submit form data and get new document ID
     const data = await makeRequest("POST", submitUrl, formData);
     const { documentId } = JSON.parse(data);
     console.log("document id:", documentId);
 
+    // Assign document ID to local session
     this.setState({ isLoading: false });
     this.props.documentActions.assignDocumentId(documentId, docBaseUrl);
   }

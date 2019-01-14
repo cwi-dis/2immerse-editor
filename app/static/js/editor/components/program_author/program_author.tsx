@@ -37,6 +37,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     const keyPath = generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
 
+    // Retrieve timeline for clicked chapter, if it doesn't exist, create a new one
     const timeline = this.props.timelines.find((timeline) => timeline.chapterId === chapter.id)!;
     if (timeline === undefined) {
       console.log("Adding new timeline for chapter");
@@ -47,11 +48,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 
   private async handleRemoveClick(accessPath: Array<number>) {
+    // Do nothing if root node has been clicked
     if (accessPath.length === 1 && accessPath[0] === 0 && this.props.chapters.count() === 1) {
       alert("Root node cannot be removed");
       return;
     }
 
+    // Do nothing if chapter has descendants
     const chapter = getChapterByPath(this.props.chapters, accessPath);
     if (!chapter.children!.isEmpty()) {
       alert("Cannot remove a chapter which has descendants");
@@ -61,19 +64,23 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing/deleteChapter?chapterID=${chapter.id}`;
 
+    // Delete chapter on the server and update redux tree
     await makeRequest("POST", url);
     this.props.chapterActions.removeChapter(accessPath);
   }
 
   private async handleLabelClick(accessPath: Array<number>, currentName: string | undefined) {
+    // Prompt user for new chapter name
     const chapterName = prompt("Chapter name:", currentName || "");
 
+    // Make sure chosen name is valid and not empty
     if (chapterName !== null && chapterName !== "") {
       const chapter = getChapterByPath(this.props.chapters, accessPath);
       const { documentId } = this.props.document;
 
       const url = `/api/v1/document/${documentId}/editing/renameChapter?chapterID=${chapter.id}&name=${encodeURIComponent(chapterName)}`;
 
+      // Update chapter name on server then refresh redux tree
       await makeRequest("POST", url);
       this.props.chapterActions.renameChapter(accessPath, chapterName);
     }
@@ -87,6 +94,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
       return `/api/v1/document/${documentId}/editing/${action}?chapterID=${chapter.id}`;
     };
 
+    // Add new chapter before, after or below current chapter depending on clicked handle
     if (handlePosition === "left") {
       const chapterId = await makeRequest("POST", getUrl("addChapterBefore"));
       this.props.chapterActions.addChapterBefore(accessPath, chapterId);
@@ -108,6 +116,8 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
       const currentPath = accessPath.concat(i);
       const hasChildren = chapter.has("children") && !(chapter.get("children")!).isEmpty();
 
+      // Render chapter node and connectors for current chapter, then make recursive
+      // call to method on child nodes, combine it all into single list
       let rects = [(
         <ChapterNode
           key={`group.${currentPath}`}
@@ -138,6 +148,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
         />
       );
 
+      // Update drawing position
       startPos[0] += boxWidth + this.boxMargin[0];
 
       return result.concat(rects);
@@ -145,9 +156,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 
   private adjustBoxWidth() {
+    // Get number of leaf nodes and compute totla width of tree using default box width
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
     const treeWidth = this.defaultBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
+    // Adjust box width if bottom level of tree is larger than canvas
     if (treeWidth >= this.canvasWidth) {
       this.boxSize[0] = (this.canvasWidth - this.boxMargin[0] * (leafNodes + 1)) / leafNodes;
     } else {
@@ -158,6 +171,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private adjustCanvasHeight(chapters: List<Chapter>) {
     const defaultCanvasHeight = this.boxSize[1] * 2 + this.boxMargin[1] * 2;
 
+    // Get number of tree levels and compute required graph height
     const treeHeight = getTreeHeight(chapters);
     const neededCanvasHeight = treeHeight * this.boxSize[1] + treeHeight * this.boxMargin[1];
 
@@ -169,6 +183,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 
   private getTreeOffset(chapters: List<Chapter>): Coords {
+    // Get x offset for graph in order to center it on the canvas
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
     const treeWidth = this.boxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
@@ -180,9 +195,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   public render() {
     const { chapters } = this.props;
 
+    // Adjust height of canvas and default box width
     const canvasHeight = this.adjustCanvasHeight(chapters) + this.boxMargin[1];
     this.adjustBoxWidth();
 
+    // Draw tree with given offsets
     const treeOffset = this.getTreeOffset(chapters);
     const renderedTree = this.drawChapterTree(chapters, treeOffset);
 

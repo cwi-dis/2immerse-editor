@@ -61,10 +61,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { chapterid } = match.params;
     const accessPath = util.getChapterAccessPath(chapters, chapterid);
 
+    // Collect all regions from all screens in a set
     const allRegions = previewScreens.reduce((regions, screen) => {
       return regions.concat(screen.regions.map((r) => `${r.id};${r.name || r.id};${r.color || ""}`));
     }, Set<string>());
 
+    // Get chapter IDs of ancestors of current chapter
     const ancestorChapterIds = accessPath.reduce((chapterIds, _, i) => {
       const keyPath = util.generateChapterKeyPath(accessPath.slice(0, i + 1).toArray());
       return chapterIds.push(chapters.getIn(keyPath).id);
@@ -72,21 +74,27 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     const keyPath = util.generateChapterKeyPath(accessPath.toArray());
     const chapter = chapters.getIn(keyPath);
+    // Merge all timelines of descendants of current chapter into one
     const mergedDescendantTracks = util.mergeTimelines(chapter, timelines).timelineTracks!;
 
+    // Get duration of current chapter
     const chapterDuration = this.getChapterDuration();
+    // Compute how much needs to be trimmed off ancestor chapters
     const ancestorOffsets = util.getAncestorOffsets(
       chapters, timelines, accessPath.toArray()
     ).reduce((map, [, chapterId, offset]) => {
       return map.set(chapterId, offset);
     }, Map<string, number>());
 
+    // Get active ancestor tracks, trim them and merge with descendants
     const activeTracks = timelines.reduce((tracks, timeline) => {
       if (ancestorChapterIds.contains(timeline.chapterId)) {
         return tracks.concat(timeline.timelineTracks!.map((track) => {
+          // Lock track if it's the current chapter's
           track = track.set("locked", chapterid !== timeline.chapterId);
           const offset = ancestorOffsets.get(timeline.chapterId);
 
+          // Trim track if there is an offset to be applied
           if (offset) {
             track = util.trimTimelineTrack(track, offset, offset + chapterDuration);
           }
@@ -98,6 +106,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return tracks;
     }, List<TimelineTrackModel>()).concat(mergedDescendantTracks);
 
+    // Map over all regions and insert active tracks
     return allRegions.map((descriptor) => {
       const [regionId, name, color] = descriptor.split(";");
 
@@ -127,21 +136,25 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       return;
     }
 
+    // Delete element on server
     await util.makeRequest("POST", url + `/deleteElement?elementID=${elementId}`);
 
     const [, track] = util.findById(timeline.timelineTracks!, trackId);
     const { timelineElements } = track;
 
+    // Delete entire track on server if it has become empty
     if (timelineElements!.count() - 1 <= 0) {
       await util.makeRequest("POST", url + `/deleteTrack?trackID=${trackId}`);
     }
 
+    // Update redux state
     this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
   }
 
   private async elementClicked(timelineId: string, trackId: string, elementId: string, currentDuration: number) {
     const duration = prompt("Please specify the element's duration (in seconds)", currentDuration.toString());
 
+    // Don't do anything if duration is empty
     if (duration == null || duration === "") {
       return;
     }
@@ -149,8 +162,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
 
+    // Update element duration on server
     await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${duration}`);
 
+    // Update redux state
     this.props.timelineActions.updateElementLength(
       timelineId,
       trackId,
@@ -196,6 +211,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 
   private async onComponentDroppedOnScreen(componentId: string, regionId: string) {
+    // Compute track layout for current chapter and find layout entry
     const trackLayout = this.getTrackLayout();
     const layoutEntry = trackLayout.find((track) => track.regionId === regionId);
 
@@ -210,17 +226,21 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
 
+    // Create new track if track layout has no track for given region
     if (!layoutEntry.track) {
       console.log("Creating track and adding element");
 
+      // Create track and element on server
       const trackId = await util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${layoutEntry.regionId}`);
       const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`);
       console.log("new track", trackId, "new element", elementId);
 
+      // Immediately assign duration if duration is > 0
       if (asset.duration > 0) {
         util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
       }
 
+      // Create element in redux state tree
       this.props.timelineActions.addTimelineTrackAndAddElement(
         timeline.id,
         layoutEntry.regionId,
@@ -235,21 +255,26 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       const { timelineElements } = track;
       console.log("Adding element to track", track.id);
 
+      // Check whether track has elements but those elements have duration of 0
       if (timelineElements!.count() > 0 && timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
         alert("Tracks without fixed duration can only have a single element");
         return;
       }
 
+      // Prompt user to assign duration to asset and return if duration is still 0
       asset = this.assignAssetDuration(asset);
       if (asset.duration === 0) {
         return;
       }
 
+      // Create element on server
       const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${track.id}&assetID=${asset.id}`);
       console.log("new element", elementId);
 
+      // Set element duration on server
       await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
 
+      // Update redux state tree
       this.props.timelineActions.addElementToTimelineTrack(
         timeline.id,
         track.id,
@@ -267,12 +292,16 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
 
+    // Get position where element was dropped on track layout canvas
     const [x, y] = util.getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
     console.log("Component dropped at", x, y);
 
+    // Compute track layout
     const trackLayout = this.getTrackLayout();
+    // Compute index of track element was dropped over
     const trackIndex = Math.floor((y - this.scrubberHeight) / this.state.trackHeight);
 
+    // Make sure track index is valid
     if (trackIndex < 0 || trackIndex >= trackLayout.count()) {
       console.log("Track index", trackIndex, "invalid");
       return;
@@ -287,17 +316,21 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
 
+    // Check if track already has a track object
     if (!selectedTrack.track) {
       console.log("Creating track and adding element");
 
+      // Create new track and element on the server
       const trackId = await util.makeRequest("POST", url + `/addTrack?chapterID=${timeline.chapterId}&regionID=${selectedTrack.regionId}`);
       const elementId = await util.makeRequest("POST", url + `/addElement?trackID=${trackId}&assetID=${asset.id}`);
       console.log("new track", trackId, "new element", elementId);
 
+      // Set duration if duration is 0
       if (asset.duration > 0) {
         util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
       }
 
+      // Update redux state
       this.props.timelineActions.addTimelineTrackAndAddElement(
         timeline.id,
         selectedTrack.regionId,
@@ -311,39 +344,48 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
       const { track } = selectedTrack;
       const { timelineElements } = track;
 
+      // Make sure element cannot be dropped on locked track
       if (track.locked) {
         console.log("Cannot place element on locked track");
         return;
       }
 
+      // Calculate timestamp element has been dropped at
       const dropTime = ((x - this.trackOffsets[0]) / (this.canvasWidth - (this.trackOffsets[0] + this.trackOffsets[1]))) * this.getChapterDuration();
       let curTime = 0;
 
+      // Get element after which the new element is to be inserted at
       const [dropIndex, ] = track.timelineElements!.findEntry((e) => {
         curTime += e.offset + e.duration;
         return curTime > dropTime;
       }) || [-1];
 
+      // Make sure existing elements have fixed durations
       if (timelineElements!.count() > 0 && timelineElements!.reduce((sum, e) => sum + e.duration, 0) === 0) {
         alert("Tracks without fixed duration can only have a single element");
         return;
       }
 
+      // Prompt user to assign duration to new element
       asset = this.assignAssetDuration(asset);
       if (asset.duration === 0) {
         return;
       }
 
+      // Insert element either at the end or the given position
       console.log("Adding element at time", dropTime, "index", dropIndex, "to track", track.id);
       const addElementUrl = (dropIndex < 0)
         ? url + `/addElement?trackID=${track.id}&assetID=${asset.id}`
         : url + `/addElement?trackID=${track.id}&assetID=${asset.id}&insertPosition=${dropIndex}`;
 
+      // Create element on the server
       const elementId = await util.makeRequest("POST", addElementUrl);
       console.log("new element", elementId);
 
+      // Set duration on the server
       await util.makeRequest("POST", url + `/setElementDuration?elementID=${elementId}&duration=${asset.duration}`);
 
+      // Update redux state tree
       this.props.timelineActions.addElementToTimelineTrack(
         timeline.id,
         track.id,
@@ -362,6 +404,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     const timeline = util.findByKey(this.props.timelines, chapter.id as any, "chapterId");
 
+    // If clicked chapter has no timeline yet, create one
     if (timeline === undefined) {
       console.log("Adding new timeline for chapter");
       this.props.timelineActions.addTimeline(chapter.id);
@@ -373,6 +416,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   private renderScreen(screenHeight: number) {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
 
+    // If there is no screen currently selected, use the first one
     if (!currentScreenId) {
       this.props.screenActions.updateSelectedScreen(previewScreens.first()!.id);
       return null;
@@ -380,11 +424,13 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
     const [, currentScreen] = util.findById(previewScreens, currentScreenId);
 
+    // Callback for updating selected screen
     const updateSelectedScreen = (e: React.FormEvent<HTMLSelectElement>) => {
       const screenId = e.currentTarget.value;
       this.props.screenActions.updateSelectedScreen(screenId);
     };
 
+    // Render current screen and dropdown for screen selection
     return (
       <div style={{padding: 15}}>
         <div className="select">
@@ -406,16 +452,20 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const { match: { params }, chapters, assets } = this.props;
     const timeline = this.getTimeline();
 
+    // Don't render anything if current chapter has no timeline
     if (timeline === undefined) {
       return null;
     }
 
+    // Get chapter duration
     const chapterDuration = this.getChapterDuration();
     console.log("Chapter duration:", chapterDuration);
 
+    // Compute track layout
     const trackLayout = this.getTrackLayout();
     const { trackHeight, scrubberPosition } = this.state;
 
+    // Compute how much space can be reserved for rendering the preview screens
     const screenAreaHeight = window.innerHeight - ((trackLayout.count() + 1) * trackHeight + 40) - 150;
 
     return (
@@ -450,6 +500,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                   {trackLayout.map((layoutEntry, i) => {
                     const { track, name, color } = layoutEntry;
 
+                    // Render empty, unlocked track if region has no track
                     if (!track) {
                       return (
                         <Group key={i} y={i * trackHeight + this.scrubberHeight}>
@@ -465,6 +516,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                       );
                     }
 
+                    // Render track with elements if it exists
                     return (
                       <Group key={i} y={i * trackHeight + this.scrubberHeight}>
                         <TimelineTrack

@@ -79,11 +79,14 @@ interface Region {
 
 function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", areas: Array<Region>): AsyncAction<void> {
   return (dispatch, getState) => {
+    // Add new device with given params
     dispatch(addDevice(type, name, orientation, false));
 
+    // Get newly created device
     const { screens } = getState();
     const screen = screens.previewScreens.get(-1)!;
 
+    // Allocate given regions on new device
     areas.forEach((area) => {
       const { x, y, w, h, region, color, name } = area;
       dispatch(placeRegionOnScreen(screen.id, [x, y], [w, h], region, name, color));
