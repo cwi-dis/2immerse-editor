@@ -105,8 +105,10 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   return (
     <Stage width={width} height={height} ref={(e) => stageRef && stageRef(e)}>
       <Layer>
-        <Rect x={0} y={0} width={width} height={height} fill="white" />
-        {renderRegions(width, height)}
+        <Group x={frame.screenOffset[0] * width} y={frame.screenOffset[1] * height}>
+          <Rect x={0} y={0} width={width * frame.screenSize[0]} height={height * frame.screenSize[1]} fill="white" />
+          {renderRegions(width * frame.screenSize[0], height * frame.screenSize[1])}
+        </Group>
       </Layer>
     </Stage>
   );
