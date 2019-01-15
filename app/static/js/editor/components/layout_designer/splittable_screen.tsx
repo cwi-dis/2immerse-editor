@@ -79,13 +79,13 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
       ? 9 / 16 * width
       : 16 / 9 * width;
 
-    const onContextMenuClick = () => {
+    const closeContextMenu = () => {
       this.setState({contextMenu: {visible: false, x: 0, y: 0}});
     };
 
     return (
-      <div>
-        <ContextMenu {...contextMenu} onItemClicked={onContextMenuClick}>
+      <div onClick={closeContextMenu}>
+        <ContextMenu {...contextMenu} onItemClicked={closeContextMenu}>
           <ContextMenuEntry name="Split horizontal" callback={this.splitRegion.bind(this, "horizontal")} />
           <ContextMenuEntry name="Split vertical" callback={this.splitRegion.bind(this, "vertical")} />
           <ContextMenuDivider />
@@ -105,7 +105,7 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
             <Screen
               height={computedHeight}
               screenInfo={screenInfo}
-              onScreenClicked={this.handleCanvasClick.bind(this)}
+              onContextMenu={this.handleCanvasClick.bind(this)}
             />
           </div>
         </div>
