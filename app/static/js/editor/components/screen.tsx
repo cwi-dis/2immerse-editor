@@ -2,16 +2,15 @@ import * as React from "react";
 import { List } from "immutable";
 import { Layer, Rect, Group, Text, Stage } from "react-konva";
 
-import { Nullable } from "../util";
+import { Nullable, getCanvasDropPosition } from "../util";
 import DeviceFrame from "./device_frame";
 import { Screen as ScreenModel, ScreenRegion } from "../reducers/screens";
-import { ComponentPlacement } from "../reducers/masters";
 
 export interface ScreenProps {
   screenInfo: ScreenModel;
   height: number;
-  placedComponents?: List<ComponentPlacement>;
   stageRef?: (stage: Nullable<Stage>) => void;
+  onComponentDropped?: (componentId: string, x: number, y: number) => void;
 }
 
 interface DeviceFrameDescription {
@@ -37,6 +36,7 @@ const deviceFrames: { [key: string]: DeviceFrameDescription } = {
 };
 
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
+  let stageWrapper: Nullable<Stage>;
   const { height, screenInfo: screen, stageRef } = props;
 
   const frame = deviceFrames[screen.type];
@@ -66,16 +66,42 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     );
   };
 
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const data = e.dataTransfer.getData("text/plain");
+
+    const [x, y] = getCanvasDropPosition(stageWrapper, e.pageX, e.pageY);
+    const [regionX, regionY] = [
+      ((x - frame.screenOffset[0]) * frame.screenSize[0]) / ((width - frame.screenOffset[0]) * frame.screenSize[0]),
+      ((y - frame.screenOffset[1]) * frame.screenSize[1]) / ((height - frame.screenOffset[1]) * frame.screenSize[1])
+    ];
+
+    console.log("canvas drop:", x, y);
+    console.log("region drop:", regionX, regionY);
+
+    props.onComponentDropped && props.onComponentDropped(data, regionX, regionY);
+  };
+
+  const onClick = () => {};
+
   return (
-    <Stage width={width} height={height} ref={(e) => stageRef && stageRef(e)}>
-      <Layer>
-        <DeviceFrame key={frame.url} src={frame.url} width={width} height={height} />
-        <Group x={frame.screenOffset[0] * width} y={frame.screenOffset[1] * height}>
-          <Rect x={0} y={0} width={width * frame.screenSize[0]} height={height * frame.screenSize[1]} fill="white" />
-          {renderRegions(width * frame.screenSize[0], height * frame.screenSize[1])}
-        </Group>
-      </Layer>
-    </Stage>
+    <div onDragOver={(e) => e.preventDefault()} onDrop={onDrop} onClick={onClick}>
+      <Stage width={width} height={height} ref={(e) => (stageWrapper = e) && stageRef && stageRef(e)}>
+        <Layer>
+          <DeviceFrame
+            key={frame.url}
+            src={frame.url}
+            width={width}
+            height={height}
+          />
+          <Group x={frame.screenOffset[0] * width} y={frame.screenOffset[1] * height}>
+            <Rect x={0} y={0} width={width * frame.screenSize[0]} height={height * frame.screenSize[1]} fill="white" />
+            {renderRegions(width * frame.screenSize[0], height * frame.screenSize[1])}
+          </Group>
+        </Layer>
+      </Stage>
+    </div>
   );
 };
 
