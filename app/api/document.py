@@ -1661,8 +1661,10 @@ class DocumentAsync(threading.Thread):
         self.logger = self.document.logger.getChild('async')
         self.logger.debug('DocumentAsync: created')
         threading.Thread.__init__(self)
-        self.socket = None
-        self.channel = None
+        self.socketIn = None
+        self.socketOut = None
+        self.channelIn = None
+        self.channelOut = None
         if self.document.testMode:
             return
         websocket_service = GlobalSettings.websocketInternalService
@@ -1670,20 +1672,23 @@ class DocumentAsync(threading.Thread):
         if websocket_service[-1] == "/":
             websocket_service = websocket_service[:-1]
 
-        self.socket = SocketIO(websocket_service)
-        self.channel = self.socket.define(SocketIONamespace, "/trigger")
+        self.socketIn = SocketIO(websocket_service)
+        self.socketOut = SocketIO(websocket_service)
+        self.channelIn = self.socketIn.define(SocketIONamespace, "/trigger")
+        self.channelOut = self.socketOut.define(SocketIONamespace, "/trigger")
 
         self.roomFrontend = str23compat(self.document.documentId)
         self.roomUpdates = 'toBackend-' + str23compat(self.document.documentId)
         self.roomModifications = 'toTimelines-' + str23compat(self.document.documentId)
+        self.channelIn.on('reconnect', self._setupChannel)
+        self.channelIn.on('STATUS', self.incomingDocumentStatus)
         self._setupChannel()
-        self.channel.on_connect = self._setupChannel
         self.running = True
         self.start()
         
     def _setupChannel(self):
-        self.channel.on('STATUS', self.incomingDocumentStatus)
-        self.channel.emit('JOIN', self.roomUpdates)
+        self.logger.debug('DocumentAsync joining channel')
+        self.channelIn.emit('JOIN', self.roomUpdates)
 
     def getIncomingConnectionInfo(self):
         websocket_service = GlobalSettings.websocketInternalService
@@ -1706,7 +1711,7 @@ class DocumentAsync(threading.Thread):
         self.logger.debug('DocumentAsync listener started')
         while self.running:
             try:
-                self.socket.wait(5)
+                self.socketIn.wait(5)
             except:
                 # I hate bare except clauses, but I don't know what to do else...
                 import traceback
@@ -1720,18 +1725,18 @@ class DocumentAsync(threading.Thread):
     @synchronized
     def broadcastEventsToFrontends(self):
         events = self.document.events().get(caller='broadcast')
-        if not self.channel:
+        if not self.channelOut:
             self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...) skipped (test mode)')
             return
         self.logger.debug('DocumentAsync.broadcastEventsToFrontends(...)')
-        self.channel.emit("BROADCAST_EVENTS", self.roomFrontend, events)
+        self.channelOut.emit("BROADCAST_EVENTS", self.roomFrontend, events)
 
     def forwardDocumentModifications(self, modifications):
-        if not self.channel:
+        if not self.channelOut:
             self.logger.debug('DocumentAsync.forwardDocumentModifications(...) skipped (test mode)' )
             return
         self.logger.debug('DocumentAsync.forwardDocumentModifications(...)' )
-        self.channel.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
+        self.channelOut.emit("BROADCAST_UPDATES", self.roomModifications, modifications)
 
     def incomingDocumentStatus(self, documentState):
         self.logger.debug('DocumentAsync.incomingDocumentStatus(%s)' % repr(documentState))
@@ -1745,8 +1750,6 @@ class DocumentEditing:
         self.logger = self.document.logger.getChild('editing')
         self.logger.debug('DocumentEditing: created')
         threading.Thread.__init__(self)
-        self.socket = None
-        self.channel = None
 
     def getChapters(self):
         """Return complete chapter tree.
