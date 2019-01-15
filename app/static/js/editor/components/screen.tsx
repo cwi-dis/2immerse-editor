@@ -7,7 +7,6 @@ import { ComponentPlacement } from "../reducers/masters";
 
 export interface ScreenProps {
   screenInfo: ScreenModel;
-  width: number;
   height: number;
   placedComponents?: List<ComponentPlacement>;
   componentClicked?: (componentId: string, regionId: string) => void;
@@ -36,7 +35,10 @@ const deviceFrames: { [key: string]: DeviceFrame } = {
 };
 
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
-  const { width, height, screenInfo: screen } = props;
+  const { height, screenInfo: screen } = props;
+
+  const frame = deviceFrames[screen.type];
+  const width = frame.aspect * height;
 
   const componentClicked = (componentId: string, regionId: string) => {
     if (props.componentClicked === undefined) {
