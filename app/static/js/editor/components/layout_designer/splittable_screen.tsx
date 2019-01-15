@@ -60,23 +60,18 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
   }
 
   private splitRegion(orientation: "horizontal" | "vertical") {
-    const stage: KonvaStage = this.getStage();
-
     // Get click coords and try to find associated region
     const [x, y] = this.state.canvasClick!;
-    const clickedRegion = this.getClickedRegion(x / stage.width(), y / stage.height());
+    const clickedRegion = this.getClickedRegion(x, y);
 
     if (clickedRegion) {
       // Split region at the given point and update redux state
-      const splitPosition = (orientation === "horizontal") ? y / stage.height() : x / stage.width();
+      const splitPosition = (orientation === "horizontal") ? y : x;
       this.props.splitRegion(clickedRegion.id, orientation, splitPosition);
     }
   }
 
-  private handleCanvasClick(ev: MouseEvent) {
-    const stage: KonvaStage = this.getStage();
-    const {x, y} = stage.getPointerPosition();
-
+  private handleCanvasClick(ev: MouseEvent, x: number, y: number) {
     // Open context menu once screen area has been clicked
     this.setState({
       contextMenu: {
@@ -119,11 +114,12 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
           </span>
         </p>
         <div>
-          <div style={{display: "table", margin: "0 auto"}} onClickCapture={this.handleCanvasClick.bind(this)}>
+          <div style={{display: "table", margin: "0 auto"}}>
             <Screen
               height={computedHeight}
               screenInfo={screenInfo}
               stageRef={(e) => this.stageWrapper = e}
+              onScreenClicked={this.handleCanvasClick.bind(this)}
             />
           </div>
         </div>
