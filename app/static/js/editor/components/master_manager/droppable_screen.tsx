@@ -45,17 +45,11 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     }
   }
 
-  private onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
-    e.preventDefault();
+  private onComponentDropped(componentId: string, x: number, y: number) {
     const { assignElementToRegion } = this.props;
 
-    const componentId = e.dataTransfer.getData("text/plain");
     const screenId = this.props.screenInfo.id;
-
-    const stage: KonvaStage = this.getStage();
-
-    const [x, y] = getCanvasDropPosition(this.stageWrapper, e.pageX, e.pageY);
-    const dropRegion = this.getDropRegion(x / stage.width(), y / stage.height());
+    const dropRegion = this.getDropRegion(x, y);
 
     if (dropRegion) {
       console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screenId);
@@ -70,7 +64,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   }
 
   public render() {
-    const { screenInfo: screen, width, height, placedComponents } = this.props;
+    const { screenInfo: screen, width, height } = this.props;
     let computedHeight: number;
 
     if (width && height) {
@@ -86,12 +80,12 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     }
 
     return (
-      <div style={{display: "table", margin: "0 auto"}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+      <div style={{display: "table", margin: "0 auto"}}>
         <Screen
           screenInfo={screen}
           height={computedHeight}
-          placedComponents={placedComponents}
           stageRef={(e) => this.stageWrapper = e}
+          onComponentDropped={this.onComponentDropped.bind(this)}
         />
       </div>
     );
