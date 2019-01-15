@@ -120,9 +120,11 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
         </p>
         <div>
           <div style={{display: "table", margin: "0 auto"}} onClickCapture={this.handleCanvasClick.bind(this)}>
-            <Stage width={width} height={computedHeight} ref={(e) => this.stageWrapper = e}>
-              <Screen width={width} height={computedHeight} screenInfo={screenInfo} />
-            </Stage>
+            <Screen
+              height={computedHeight}
+              screenInfo={screenInfo}
+              stageRef={(e) => this.stageWrapper = e}
+            />
           </div>
         </div>
         <br />

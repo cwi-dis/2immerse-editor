@@ -1,7 +1,8 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Layer, Rect, Group, Text } from "react-konva";
+import { Layer, Rect, Group, Text, Stage } from "react-konva";
 
+import { Nullable } from "../util";
 import { Screen as ScreenModel, ScreenRegion } from "../reducers/screens";
 import { ComponentPlacement } from "../reducers/masters";
 
@@ -9,6 +10,7 @@ export interface ScreenProps {
   screenInfo: ScreenModel;
   height: number;
   placedComponents?: List<ComponentPlacement>;
+  stageRef?: (stage: Nullable<Stage>) => void;
   componentClicked?: (componentId: string, regionId: string) => void;
 }
 
@@ -35,7 +37,7 @@ const deviceFrames: { [key: string]: DeviceFrame } = {
 };
 
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
-  const { height, screenInfo: screen } = props;
+  const { height, screenInfo: screen, stageRef } = props;
 
   const frame = deviceFrames[screen.type];
   const width = frame.aspect * height;
@@ -101,10 +103,12 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   };
 
   return (
-    <Layer>
-      <Rect x={0} y={0} width={width} height={height} fill="white" />
-      {renderRegions(width, height)}
-    </Layer>
+    <Stage width={width} height={height} ref={(e) => stageRef && stageRef(e)}>
+      <Layer>
+        <Rect x={0} y={0} width={width} height={height} fill="white" />
+        {renderRegions(width, height)}
+      </Layer>
+    </Stage>
   );
 };
 
