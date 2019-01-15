@@ -3,7 +3,6 @@ import { List } from "immutable";
 import { Stage } from "react-konva";
 import { Stage as KonvaStage } from "konva";
 
-import { Nullable, getCanvasDropPosition } from "../../util";
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import { ComponentPlacement } from "../../reducers/masters";
@@ -20,16 +19,6 @@ interface DroppableScreenProps {
 }
 
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
-  private stageWrapper: Nullable<Stage>;
-
-  private getStage() {
-    if (!this.stageWrapper) {
-      throw new Error("Stage ref is null");
-    }
-
-    return this.stageWrapper.getStage();
-  }
-
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
@@ -84,7 +73,6 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
         <Screen
           screenInfo={screen}
           height={computedHeight}
-          stageRef={(e) => this.stageWrapper = e}
           onComponentDropped={this.onComponentDropped.bind(this)}
         />
       </div>
