@@ -4,13 +4,14 @@ import { Layer, Rect, Group, Text, Stage } from "react-konva";
 
 import { Nullable, getCanvasDropPosition } from "../util";
 import DeviceFrame from "./device_frame";
-import { Screen as ScreenModel, ScreenRegion } from "../reducers/screens";
+import { Screen as ScreenModel } from "../reducers/screens";
 
 export interface ScreenProps {
   screenInfo: ScreenModel;
   height: number;
   stageRef?: (stage: Nullable<Stage>) => void;
   onComponentDropped?: (componentId: string, x: number, y: number) => void;
+  onScreenClicked?: (e: React.MouseEvent<HTMLDivElement>, x: number, y: number) => void;
 }
 
 interface DeviceFrameDescription {
@@ -84,7 +85,12 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     props.onComponentDropped && props.onComponentDropped(data, regionX, regionY);
   };
 
-  const onClick = () => {};
+  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    const [regionX, regionY] = getRegionCoords(e.pageX, e.pageY);
+    props.onScreenClicked && props.onScreenClicked(e, regionX, regionY);
+  };
 
   return (
     <div onDragOver={(e) => e.preventDefault()} onDrop={onDrop} onClick={onClick}>
