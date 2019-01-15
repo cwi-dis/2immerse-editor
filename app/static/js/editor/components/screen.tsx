@@ -13,6 +13,25 @@ export interface ScreenProps {
   componentClicked?: (componentId: string, regionId: string) => void;
 }
 
+interface DeviceFrame {
+  url: string;
+  screenOffset: [number, number];
+  screenSize: [number, number];
+}
+
+const deviceFrames: { [key: string]: DeviceFrame } = {
+  "communal": {
+    url: "/static/img/tv_frame.png",
+    screenOffset: [127 / 1964, 107 / 1366],
+    screenSize: [1708 / 1964, 1144 / 1366]
+  },
+  "personal": {
+    url: "/static/img/phone_frame.png",
+    screenOffset: [80 / 970, 155 / 1756],
+    screenSize: [805 / 970, 1429 / 1756]
+  }
+};
+
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   const { width, height, screenInfo: screen } = props;
 

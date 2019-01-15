@@ -28,6 +28,7 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
 
   public async componentDidMount() {
     try {
+      // Request current branch and revision from API
       const data = await makeRequest("GET", "/version");
       const [branch, revision] = JSON.parse(data);
 
