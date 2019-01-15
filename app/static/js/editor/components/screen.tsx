@@ -50,18 +50,16 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
           const [w, h] = region.size;
 
           return (
-            <Group key={i}>
-              <Rect
-                x={x * width}
-                y={y * height}
-                width={w * width}
-                height={h * height}
-                fill={region.color || "transparent"}
-                stroke="black"
-                strokeWidth={1}
-              />
-              {renderLabels(region)}
-            </Group>
+            <Rect
+              key={i}
+              x={x * width}
+              y={y * height}
+              width={w * width}
+              height={h * height}
+              fill={region.color || "transparent"}
+              stroke="black"
+              strokeWidth={1}
+            />
           );
         })}
       </Group>
