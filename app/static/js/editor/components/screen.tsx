@@ -11,7 +11,7 @@ export interface ScreenProps {
   height: number;
   stageRef?: (stage: Nullable<Stage>) => void;
   onComponentDropped?: (componentId: string, x: number, y: number) => void;
-  onScreenClicked?: (e: React.MouseEvent<HTMLDivElement>, x: number, y: number) => void;
+  onContextMenu?: (e: React.MouseEvent<HTMLDivElement>, x: number, y: number) => void;
 }
 
 interface DeviceFrameDescription {
@@ -85,15 +85,15 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     props.onComponentDropped && props.onComponentDropped(data, regionX, regionY);
   };
 
-  const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     const [regionX, regionY] = getRegionCoords(e.pageX, e.pageY);
-    props.onScreenClicked && props.onScreenClicked(e, regionX, regionY);
+    props.onContextMenu && props.onContextMenu(e, regionX, regionY);
   };
 
   return (
-    <div onDragOver={(e) => e.preventDefault()} onDrop={onDrop} onClick={onClick}>
+    <div onDragOver={(e) => e.preventDefault()} onDrop={onDrop} onContextMenu={onContextMenu}>
       <Stage width={width} height={height} ref={(e) => (stageWrapper = e) && stageRef && stageRef(e)}>
         <Layer>
           <DeviceFrame
