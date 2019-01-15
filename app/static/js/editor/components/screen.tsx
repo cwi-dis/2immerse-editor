@@ -66,19 +66,20 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     );
   };
 
+  const getRegionCoords = (pageX: number, pageY: number) => {
+    const [x, y] = getCanvasDropPosition(stageWrapper, pageX, pageY);
+
+    return [
+      (x - (frame.screenOffset[0] * width)) / (frame.screenSize[0] * width),
+      (y - (frame.screenOffset[1] * height)) / (frame.screenSize[1] * height),
+    ];
+  };
+
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     const data = e.dataTransfer.getData("text/plain");
-
-    const [x, y] = getCanvasDropPosition(stageWrapper, e.pageX, e.pageY);
-    const [regionX, regionY] = [
-      (x - (frame.screenOffset[0] * width)) / (frame.screenSize[0] * width),
-      (y - (frame.screenOffset[1] * height)) / (frame.screenSize[1] * height),
-    ];
-
-    console.log("canvas drop:", x, y);
-    console.log("region drop:", regionX, regionY);
+    const [regionX, regionY] = getRegionCoords(e.pageX, e.pageY);
 
     props.onComponentDropped && props.onComponentDropped(data, regionX, regionY);
   };
