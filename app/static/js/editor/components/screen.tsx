@@ -12,7 +12,6 @@ export interface ScreenProps {
   height: number;
   placedComponents?: List<ComponentPlacement>;
   stageRef?: (stage: Nullable<Stage>) => void;
-  componentClicked?: (componentId: string, regionId: string) => void;
 }
 
 interface DeviceFrameDescription {
@@ -42,40 +41,6 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
 
   const frame = deviceFrames[screen.type];
   const width = frame.aspect * height;
-
-  const componentClicked = (componentId: string, regionId: string) => {
-    if (props.componentClicked === undefined) {
-      console.log(`Component ${componentId} clicked in region ${regionId}`);
-    } else {
-      props.componentClicked(componentId, regionId);
-    }
-  };
-
-  const renderLabels = (region: ScreenRegion) => {
-    if (props.placedComponents) {
-      const [x, y] = region.position;
-      const [w] = region.size;
-
-      const components = props.placedComponents.filter((p) => p.region === region.id);
-
-      return components.map((component, i) => {
-        return (
-          <Text
-            x={x * width}
-            y={y * height + i * 20}
-            width={w * width}
-            fontSize={15}
-            padding={5}
-            text={component.component}
-            key={`${region.id}-${i}`}
-            onClick={componentClicked.bind(null, component.component, component.region)}
-          />
-        );
-      });
-    }
-
-    return null;
-  };
 
   const renderRegions = (width: number, height: number) => {
     return (
