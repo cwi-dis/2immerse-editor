@@ -73,8 +73,8 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
 
     const [x, y] = getCanvasDropPosition(stageWrapper, e.pageX, e.pageY);
     const [regionX, regionY] = [
-      ((x - frame.screenOffset[0]) * frame.screenSize[0]) / ((width - frame.screenOffset[0]) * frame.screenSize[0]),
-      ((y - frame.screenOffset[1]) * frame.screenSize[1]) / ((height - frame.screenOffset[1]) * frame.screenSize[1])
+      (x - (frame.screenOffset[0] * width)) / (frame.screenSize[0] * width),
+      (y - (frame.screenOffset[1] * height)) / (frame.screenSize[1] * height),
     ];
 
     console.log("canvas drop:", x, y);
