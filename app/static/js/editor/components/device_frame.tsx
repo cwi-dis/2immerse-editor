@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Image as KonvaImage } from "react-konva";
 
-import { Nullable, Coords } from "../util";
+import { Nullable } from "../util";
 
 interface DeviceFrameProps {
   src: string;

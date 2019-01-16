@@ -1,6 +1,5 @@
 import * as React from "react";
-import { List } from "immutable";
-import { Layer, Rect, Group, Text, Stage } from "react-konva";
+import { Layer, Rect, Group, Stage } from "react-konva";
 
 import { Nullable, getCanvasDropPosition } from "../util";
 import DeviceFrame from "./device_frame";
@@ -21,7 +20,7 @@ interface DeviceFrameDescription {
   aspect: number;
 }
 
-const deviceFrames: { [key: string]: DeviceFrameDescription } = {
+const deviceFrames: { [key in "communal" | "personal"]: DeviceFrameDescription } = {
   "communal": {
     url: "/static/img/tv_frame.png",
     screenOffset: [127 / 1964, 107 / 1366],

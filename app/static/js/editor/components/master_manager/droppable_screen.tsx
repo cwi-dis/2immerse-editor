@@ -1,7 +1,5 @@
 import * as React from "react";
 import { List } from "immutable";
-import { Stage } from "react-konva";
-import { Stage as KonvaStage } from "konva";
 
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
