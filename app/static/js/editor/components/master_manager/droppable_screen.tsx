@@ -18,8 +18,10 @@ interface DroppableScreenProps {
 
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
+    // Get all regions associated to current screen
     const regions = this.props.screenInfo.regions;
 
+    // Find topmost region where [x,y] fall into
     const dropRegion = regions.reverse().findEntry((region) => {
       const topLeft = region.position;
       const bottomRight = [topLeft[0] + region.size[0], topLeft[1] + region.size[1]];
@@ -27,6 +29,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
       return x >= topLeft[0] && x < bottomRight[0] && y >= topLeft[1] && y < bottomRight[1];
     });
 
+    // Return region if found, undefined otherwise
     if (dropRegion) {
       return dropRegion[1];
     }
@@ -35,12 +38,15 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   private onComponentDropped(componentId: string, x: number, y: number) {
     const { assignElementToRegion } = this.props;
 
+    // Get screen ID and find region component has been dropped over
     const screenId = this.props.screenInfo.id;
     const dropRegion = this.getDropRegion(x, y);
 
+    // If region was found, call assignElementToRegion() callback, just print error otherwise
     if (dropRegion) {
       console.log("dropped component", componentId, "in region", dropRegion.id, "of screen", screenId);
 
+      // Invoke callback with component ID and region ID if it exists
       assignElementToRegion && assignElementToRegion(
         componentId,
         dropRegion.id
@@ -55,12 +61,15 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     let computedHeight: number;
 
     if (width && !height) {
+      // Compute height with fixed aspect based on orientation and width
       computedHeight = (screen.orientation === "landscape")
         ? 9 / 16 * width
         : 16 / 9 * width;
     } else if (!width && !height) {
+      // Render nothing if neither height nor width are given
       return null;
     } else {
+      // Assign height to computedHeight if height is set
       computedHeight = height!;
     }
 

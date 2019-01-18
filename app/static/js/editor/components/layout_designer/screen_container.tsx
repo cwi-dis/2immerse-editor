@@ -16,6 +16,8 @@ interface ScreenContainerProps {
 }
 
 const ScreenContainer: React.SFC<ScreenContainerProps> = (props) => {
+  // Render a series of screens one after the other with a title and screen count,
+  // hooking up callbacks for splitting regions to props based on screen IDs
   return (
     <div className={["column", "is-" + props.numColumns].join(" ")} ref={props.colRef}>
       <h3 style={{textAlign: "center"}}>{props.title} ({props.screens.count()})</h3>

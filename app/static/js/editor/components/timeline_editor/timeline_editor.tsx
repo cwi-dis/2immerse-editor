@@ -176,8 +176,10 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private getTimeline() {
     const { match: { params } } = this.props;
+    // Find timeline for current chapter
     const timelineFound = util.findByKey(this.props.timelines, params.chapterid, "chapterId");
 
+    // Return undefined if timeline does not exist
     if (!timelineFound) {
       return undefined;
     }
@@ -187,20 +189,25 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private getChapterDuration() {
     const { match: { params }, chapters, timelines } = this.props;
+    // Retrieve data for current chapter
     const accessPath = util.getChapterAccessPath(chapters, params.chapterid).toArray();
     const chapter = chapters.getIn(util.generateChapterKeyPath(accessPath));
 
+    // Calculate duration of chapter using associated timelines
     return util.getChapterDuration(chapter, timelines);
   }
 
   private assignAssetDuration(asset: Asset): Asset {
     if (asset.duration === 0) {
+      // Prompt user to assign duration to asset if asset duration is 0
       const duration = prompt("Please specify the element's duration (in seconds)");
 
+      // Make sure duration is valid
       if (duration == null || duration === "") {
         return asset;
       }
 
+      // Update duration
       return {
         ...asset,
         duration: parseInt(duration, 10)
@@ -220,6 +227,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
 
     const timeline = this.getTimeline()!;
+    // Find asset and create preview URL
     let [, asset] = util.findById(this.props.assets, componentId);
     const previewUrl = this.props.document.baseUrl + asset.previewUrl;
 
@@ -289,6 +297,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
 
   private async onComponentDroppedOnTrack(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
+    // Get component ID from drag event
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
 
@@ -310,6 +319,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     const selectedTrack = trackLayout.get(trackIndex)!;
     console.log("Placing component on track ", trackIndex, selectedTrack);
 
+    // Find asset based on component ID
     let [, asset] = util.findById(this.props.assets, componentId);
     const previewUrl = this.props.document.baseUrl + asset.previewUrl;
 

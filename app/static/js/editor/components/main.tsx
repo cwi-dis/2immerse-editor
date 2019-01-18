@@ -19,6 +19,7 @@ import "../../../css/style.css";
 const App = withRouter(Layout);
 
 window.onload = () => {
+  // Construct routing table for application with history
   render(
     <Provider store={store}>
       <ConnectedRouter history={history}>

@@ -2,6 +2,7 @@ import * as React from "react";
 
 export type ContextMenuDivider = React.SFC<{}>;
 export const ContextMenuDivider: ContextMenuDivider = (props) => {
+  // Line to visibly divide context menu entries from each other
   return (
     <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}} />
   );
@@ -29,6 +30,7 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
     const { name, callback } = this.props;
     const { selected } = this.state;
 
+    // Render background colour of entry based on 'selected' state
     const style: React.CSSProperties = {
       padding: "2px 40px 2px 20px",
       cursor: "pointer",
@@ -37,6 +39,7 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
       fontSize: "11pt"
     };
 
+    // Use mouse events to determine if current entry is hovered over and invoke callback when clicked
     return (
       <div
         onMouseOver={() => this.setState({selected: true})}
@@ -61,6 +64,7 @@ interface ContextMenuProps {
 }
 
 class ContextMenu extends React.Component<ContextMenuProps, {}> {
+  // Default function for when onItemClicked is not passed in from the outside
   public static defaultProps = {
     onItemClicked: () => {}
   };
@@ -68,6 +72,7 @@ class ContextMenu extends React.Component<ContextMenuProps, {}> {
   public render() {
     const {x, y, visible, children} = this.props;
 
+    // Render context menu at absolute position [x, y]
     const style: React.CSSProperties = {
       position: "absolute",
       left: x,
@@ -79,6 +84,7 @@ class ContextMenu extends React.Component<ContextMenuProps, {}> {
     };
 
     if (visible) {
+      // Render div at given position with entries as child elements
       return (
         <div
           onClickCapture={() => this.props.onItemClicked!()}
@@ -91,6 +97,7 @@ class ContextMenu extends React.Component<ContextMenuProps, {}> {
       );
     }
 
+    // Render nothing if 'visible' property is false
     return null;
   }
 }

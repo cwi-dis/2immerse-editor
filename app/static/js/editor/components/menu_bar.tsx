@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 
 class MenuBar extends React.Component<{}, {}> {
   public render() {
+    // Render bar on top of screen with basic navigation links
     return (
       <div className="menubar">
         <div>

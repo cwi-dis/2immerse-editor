@@ -9,15 +9,18 @@ interface DMAppcContainerProps {
 const DMAppcContainer: React.SFC<DMAppcContainerProps> = (props) => {
   const { assets, baseUrl } = props;
 
+  // Set dataTransfer property in drag event object to current asset ID
   const setDragData = (assetId: string, e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("text/plain", assetId);
   };
 
+  // Render all assets as a list with name, description and preview image
   return (
     <div style={{height: "50%", overflowY: "scroll", backgroundColor: "#353535", borderTop: "1px solid #161616", padding: 2}}>
       {assets.map((asset, i: number) => {
         const previewUrl = baseUrl + asset.previewUrl;
 
+        // Set draggable to true and assign asset ID on drag start
         return (
           <div
             key={i}
