@@ -85,7 +85,8 @@ function selectNewestLayout(): SELECT_NEWEST_LAYOUT {
 }
 
 export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void> {
-  return (dispatch, getState) => {
+  // Add new layout first and then selected newly created layout
+  return (dispatch) => {
     dispatch(addMasterLayout(name));
     dispatch(selectNewestLayout());
   };

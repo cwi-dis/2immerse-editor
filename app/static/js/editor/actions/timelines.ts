@@ -107,24 +107,31 @@ function toggleTrackLock(timelineId: string, trackId: string): TOGGLE_TRACK_LOCK
 
 function addTimelineTrackAndAddElement(timelineId: string, regionId: string, componentId: string, duration: number, offset: number, previewUrl?: string, trackId?: string, elementId?: string): AsyncAction<void> {
   return (dispatch, getState) => {
+    // Add new timeline track to given timeline for region with lock state false
     dispatch(addTimelineTrack(timelineId, regionId, false, trackId));
 
+    // Retrieve timeline object
     const { timelines } = getState();
     const [, timeline] = findById(timelines, timelineId);
 
+    // Get newly created track from timeline
     const track = timeline.timelineTracks!.last()!;
+    // Add new element to the end of the track
     dispatch(addElementToTimelineTrack(timeline.id, track.id, componentId, duration, offset, -1, previewUrl, elementId));
   };
 }
 
 function removeElementAndUpdateTrack(timelineId: string, trackId: string, elementId: string): AsyncAction<void> {
   return (dispatch, getState) => {
+    // Remove element with the given ID from the given timeline track
     dispatch(removeElement(timelineId, trackId, elementId));
 
+    // Get updated state and find timeline track
     const { timelines } = getState();
     const [, timeline] = findById(timelines, timelineId);
     const [, track] = findById(timeline.timelineTracks!, trackId);
 
+    // If track is now empty, delete it as well
     if (track.timelineElements!.isEmpty()) {
       dispatch(removeTimelineTrack(timelineId, trackId));
     }
