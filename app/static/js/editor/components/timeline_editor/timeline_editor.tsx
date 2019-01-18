@@ -287,7 +287,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
-  private async onComponentDropped(e: React.DragEvent<HTMLDivElement>) {
+  private async onComponentDroppedOnTrack(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     const componentId = e.dataTransfer.getData("text/plain");
     const timeline = this.getTimeline()!;
@@ -483,7 +483,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
                 <TimeConverter seconds={chapterDuration} />
               </p>
             </div>
-            <div style={{marginLeft: 20}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDropped.bind(this)}>
+            <div style={{marginLeft: 20}} onDragOver={(e) => e.preventDefault()} onDrop={this.onComponentDroppedOnTrack.bind(this)}>
               <Stage
                 ref={(e: any) => this.stageWrapper = e}
                 width={this.canvasWidth}
