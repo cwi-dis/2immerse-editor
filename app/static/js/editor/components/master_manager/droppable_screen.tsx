@@ -54,16 +54,14 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     const { screenInfo: screen, width, height } = this.props;
     let computedHeight: number;
 
-    if (width && height) {
-      computedHeight = height;
-    } else if (width && !height) {
+    if (width && !height) {
       computedHeight = (screen.orientation === "landscape")
         ? 9 / 16 * width
         : 16 / 9 * width;
-    } else if (!width && height) {
-      computedHeight = height;
-    } else {
+    } else if (!width && !height) {
       return null;
+    } else {
+      computedHeight = height!;
     }
 
     return (
