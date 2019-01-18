@@ -35,24 +35,31 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
   private getButtonLabel(triggerMode = "trigger"): string {
     const { event } = this.props;
 
+    // Return 'configure' if the event has any params which need to be set
     if (event.parameters.filter((param) => param.type !== "set").length > 0) {
       return "configure";
     } else if (triggerMode === "enqueue") {
+      // Return enqueue if trigger mode is 'enqueue'
       return "enqueue";
     } else if (event.verb) {
+      // Otherwise render the verb contained in the event itelf
       return event.verb;
     } else if (event.modify) {
+      // Return 'modify' if the modify flag is set
       return "modify";
     }
 
+    // By default return 'show'
     return "show";
   }
 
   private renderEventModal() {
+    // Render nothing if showEventModal is false
     if (!this.state.showEventModal) {
       return null;
     }
 
+    // Create modal using a portal and render event params
     return createPortal(
       <div className="modal is-active">
         <div className="modal-background" />
@@ -90,13 +97,17 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     let endpoint: string, requestMethod: "PUT" | "POST";
 
     if (triggerMode === "trigger") {
+      // If triggerMode is 'trigger' and the modify flag is set, the endpoint
+      // is modify and the request method is PUT
       endpoint = event.modify ? "modify" : "trigger";
       requestMethod = event.modify ? "PUT" : "POST";
     } else {
+      // In enqueue mode, the endpoint is 'enqueue' and the request method is POST
       endpoint = "enqueue";
       requestMethod = "POST";
     }
 
+    // Compose URL and stringify event params
     const url = `/api/v1/document/${documentId}/events/${event.id}/${endpoint}`;
     const data = JSON.stringify(event.parameters.map((param) => {
       return { parameter: param.parameter, value: param.value };
@@ -105,21 +116,25 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     console.log("Launching basic event at url", url, "with data", data);
 
     try {
+      // Launch event and invoke onTriggered callback if successful
       await makeRequest(requestMethod, url, data, "application/json");
       console.log("success");
       this.setState({ flashSuccess: true});
       this.props.onTriggered && this.props.onTriggered();
     } catch (err) {
+      // Signal error if the request failed
       console.error("error:", err);
       this.setState({ flashError: true});
     }
   }
 
   private renderParamCount(count: number) {
+    // Render nothing if event has no params
     if (count === 0) {
       return null;
     }
 
+    // Render param count otherwise
     return (
       <p style={{fontStyle: "italic"}}>{count} parameter{(count === 1) ? "" : "s"}</p>
     );
@@ -129,6 +144,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     const { event } = this.props;
     const { isLoading, flashSuccess, flashError } = this.state;
 
+    // Count params which don't have a preset value
     const paramCount = event.parameters.filter((param) => param.type !== "set").length;
 
     const boxStyle: React.CSSProperties = {
@@ -139,6 +155,7 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
       margin: 10, padding: 25
     };
 
+    // Render div displaying basic event properties
     return (
       <div style={boxStyle}>
         <div style={{display: "flex"}}>

@@ -9,6 +9,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
   switch (props.type) {
   case "duration":
   case "time":
+    // Render a numeric input field if type is either 'duration' or 'time'
     return (
       <input
         className="input is-info"
@@ -19,6 +20,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
       />
     );
   case "string":
+    // Render a string input field if type is 'string'
     return (
       <input
         className="input is-info"
@@ -28,6 +30,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
       />
     );
   case "url":
+    // Render a URL input field if type is 'url'
     return (
       <input
         className="input is-info"
@@ -37,6 +40,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
       />
     );
   case "const":
+    // Render a disabled input field with the given value if type is 'const'
     return (
       <input
         className="input"
@@ -46,6 +50,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
       />
     );
   case "selection":
+    // Render a dropdown with associated values if type is 'selection'
     return (
       <div className="select is-fullwidth">
         <select onChange={props.onChange.bind(this)} value={props.value}>
@@ -56,6 +61,7 @@ const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputField
       </div>
     );
   default:
+    // Render error message otherwise
     return <div>Parameter type not recognised</div>;
   }
 };

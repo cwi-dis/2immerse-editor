@@ -27,6 +27,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
   constructor(props: DocumentChooserProps) {
     super(props);
 
+    // Try to load last selected method from localStorage
     const selectedMethod = localStorage.getItem("selectedMethod") as InputMethod;
 
     this.state = {
@@ -38,6 +39,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
   public async componentDidMount() {
     try {
+      // Get list of available documents from server
       const data = await makeRequest("GET", "/api/v1/document");
       const documents = JSON.parse(data);
       console.log("Fetched list of documents:", documents);
@@ -65,6 +67,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     let submitUrl = "/api/v1/document";
     let formData: FormData | undefined;
 
+    // Construct form data and submit URL based on selected input method
     if (this.fileInput && this.fileInput.files) {
       const document = this.fileInput.files.item(0)!;
 
@@ -83,6 +86,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     });
 
     try {
+      // Submit form data and assign document ID to local session
       const data = await makeRequest("POST", submitUrl, formData);
       this.setState({
         isLoading: false
@@ -108,6 +112,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
       borderRadius: 15,
     };
 
+    // Get default value for URL field from localStorage
     const urlDefaultValue = localStorage.getItem("urlDefault");
     const BackButton = asBackButton<{ href: string }>("a");
 

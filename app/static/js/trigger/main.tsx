@@ -7,6 +7,7 @@ import "bulma/css/bulma.css";
 import "../../css/style.css";
 
 window.onload = () => {
+  // Render app and attach it to div 'react'
   render(
     <App />,
     document.getElementById("react")
