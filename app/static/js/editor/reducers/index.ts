@@ -8,6 +8,7 @@ import masters from "./masters";
 import screens from "./screens";
 import timelines from "./timelines";
 
+// Combine all reducers into a single reducer
 const rootReducer = combineReducers({
   assets,
   chapters,
