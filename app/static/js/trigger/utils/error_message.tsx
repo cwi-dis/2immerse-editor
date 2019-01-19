@@ -8,7 +8,7 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage: React.SFC<ErrorMessageProps> = (props) => {
-
+  // Display HTTP error message, also rendering the document ID if available
   return (
     <div className="content" style={{width: "50vw", margin: "15% auto"}}>
       <article className="message is-danger">

@@ -14,12 +14,14 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
 
   private seekBy() {
     if (this.seekByField) {
+      // Get value from event as number and invoke callback
       const value = this.seekByField.valueAsNumber;
       this.props.seekBy(value);
     }
   }
 
   private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
+    // Get value from event as number and invoke callback
     const value = e.target.valueAsNumber;
     this.props.updateOffset(value);
   }
@@ -27,6 +29,7 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
   public render() {
     const { position, timeOffset } = this.props;
 
+    // Don't render anything if position is undefined
     if (position === undefined) {
       return null;
     }
@@ -47,6 +50,8 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
       borderTop: "10px solid #FFFFFF"
     };
 
+    // Render timecode popup at given absolute position with options to seek by
+    // n seconds and adjust the timecode fudge factor
     return (
       <div style={{position: "absolute", top, left}}>
         <div style={boxStyle}>

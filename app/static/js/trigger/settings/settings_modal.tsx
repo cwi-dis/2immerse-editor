@@ -12,8 +12,10 @@ interface SettingsModalProps {
 
 class SettingsModal extends React.Component<SettingsModalProps, {}> {
   private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
+    // Compile URL for the current document
     const apiUrl = `${location.origin}/api/v1/document/${this.props.documentId}`;
 
+    // Copy URL to user's clipboard
     e.preventDefault();
     e.clipboardData.setData("text/plain", apiUrl);
 
@@ -23,6 +25,8 @@ class SettingsModal extends React.Component<SettingsModalProps, {}> {
   public render() {
     const { fetchError } = this.props;
 
+    // Render document ID, session settings, preview launcher and general settings
+    // Don't render preview launcher and general settings if there has been an error
     return (
       <div className="settings-modal">
         <p style={{ textAlign: "center", borderBottom: "1px solid #DBDBDB", paddingBottom: 15 }}>

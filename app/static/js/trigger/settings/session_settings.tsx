@@ -15,14 +15,18 @@ const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
 
   const deleteSession = async () => {
     try {
+      // Delete session on the server
       await makeRequest("DELETE", `/api/v1/document/${documentId}`);
       console.log("Document deleted successfully");
+      // Invoke clearSession callback if delete was successful
       clearSession();
     } catch (err) {
       console.error("Could not delete document:", err);
     }
   };
 
+  // Render button for saving an clearing the session. If there was an error
+  // in the application, the save and delete buttons are disabled
   return (
     <div style={{borderBottom: "1px solid #DBDBDB", paddingBottom: 15}}>
       {fetchError === undefined ?

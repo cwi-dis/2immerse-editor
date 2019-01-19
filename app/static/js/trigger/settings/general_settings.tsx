@@ -38,6 +38,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
   public async componentDidMount() {
     try {
+      // Retrieve all the settings from the server and update state
       const response = await makeRequest("GET", this.settingsUrl);
       this.setState({
         settings: JSON.parse(response)
@@ -50,12 +51,14 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
   private renderDebugLinks(links: {[key: string]: string}) {
     const renderedLinks: Array<JSX.Element> = [];
 
+    // Compile a list of <a> elements from the debug links
     for (let key in links) {
       if (links.hasOwnProperty(key)) {
         renderedLinks.push(
           <a key={key} target="_blank" href={links[key]}>{key}</a>
         );
 
+        // Insert <br> element after each line
         renderedLinks.push(<br key={key + "br"} />);
       }
     }
@@ -67,9 +70,11 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     try {
       console.log("changing", key, "to", value);
 
+      // Setting given key to new value
       await makeRequest("PUT", this.settingsUrl, { [key]: value }, "application/json");
       let { settings } = this.state;
 
+      // Update state accordingly if request was successful
       if (settings) {
         settings[key] = value;
 
@@ -79,6 +84,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         });
       }
     } catch (err) {
+      // Display warning if request failed
       console.error("could not set", key, err);
       this.setState({ saveSuccessful: false });
     }
@@ -90,16 +96,19 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
   }
 
   private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
+    // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("startPaused", value);
   }
 
   private changePreviewFromWebcam(e: React.ChangeEvent<HTMLInputElement>) {
+    // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("previewFromWebcam", value);
   }
 
   private changeEnableControls(e: React.ChangeEvent<HTMLInputElement>) {
+    // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("enableControls", value);
   }
@@ -110,6 +119,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
       return;
     }
 
+    // Update description via ref
     const { value } = this.descriptionRef;
     this.updateSettingsKey("description", value);
   }
@@ -119,6 +129,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
       return;
     }
 
+    // Update viewer offset via ref
     const { value } = this.viewerExtraOffsetRef;
     this.updateSettingsKey("viewerExtraOffset", value);
   }
@@ -126,13 +137,16 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
   private renderNotification() {
     const { saveSuccessful } = this.state;
 
+    // Render nothing if saveSuccessful is not set
     if (saveSuccessful === undefined) {
       return;
     } else {
+      // Clear notification after 1 second
       setTimeout(() => {
         this.setState({ saveSuccessful: undefined });
       }, 1000);
 
+      // Render success message if saveSuccessful is true
       if (saveSuccessful === true) {
         return (
           <div className="notification is-success" style={{ margin: "0 0 15px 0", padding: "0.5rem" }}>
@@ -141,6 +155,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
         );
       }
 
+      // Render error message otherwise
       return (
         <div className="notification is-danger" style={{margin: "0 0 15px 0", padding: "0.5rem"}}>
           Could not save settings
@@ -152,10 +167,12 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
   public render() {
     const { settings } = this.state;
 
+    // Don't render anything if there are no settings
     if (settings === undefined) {
       return null;
     }
 
+    // Render input fields for all options
     return (
       <div style={{marginTop: 10}}>
         {this.renderNotification()}
