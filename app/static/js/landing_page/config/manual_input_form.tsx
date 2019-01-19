@@ -118,7 +118,10 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     this.setState((prevState) => {
       return {
         ...prevState,
-        [key]: value,
+        formData: {
+          ...prevState.formData,
+          [key]: value
+        },
         formTainted: true
       };
     });
