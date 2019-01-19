@@ -25,7 +25,9 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   }
 
   public componentDidMount() {
+    // Request list of documents every second
     this.documentInterval = setInterval(async () => {
+      // Fetch data, parse and update state
       const data = await makeRequest("GET", "/api/v1/document");
       const documents = JSON.parse(data);
       console.log("Fetched list of documents:", documents);
@@ -37,16 +39,19 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
   }
 
   public componentWillUnmount() {
+    // Clear interval for fetching documents on unmount
     if (this.documentInterval) {
       clearInterval(this.documentInterval);
     }
   }
 
   private continueClicked() {
+    // Make sure refs exist and the list of documents is non-empty
     if (this.idInput && this.modeInput && this.state.existingDocuments.length > 0) {
       const { value } = this.idInput;
       const mode = this.modeInput.value;
 
+      // Redirect to viewer
       console.log("Continue button clicked:", value, mode);
       location.href = `/api/v1/document/${value}/viewer${mode}`;
     }
@@ -61,6 +66,7 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
       borderRadius: 15,
     };
 
+    // Instantiate higher-order component using a Link component
     const BackButton = asBackButton(Link);
 
     return (

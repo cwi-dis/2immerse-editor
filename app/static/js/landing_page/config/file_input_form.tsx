@@ -24,6 +24,7 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
 
   private async submitFileForm() {
     try {
+      // Submit config file and update state
       await makeRequest("PUT", "/api/v1/configuration", this.state.fileData, "application/json");
       this.setState({
         submitSuccess: true,
@@ -40,20 +41,24 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
   }
 
   private renderNotification() {
+    // Don't render anything if submitSuccess is undefined
     if (this.state.submitSuccess === undefined) {
       return;
     }
 
+    // Render notification and close automatically after 5s
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
     const timeout = setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
 
+    // Callback for closing the notification
     const closeNotification = () => {
       clearTimeout(timeout);
       this.setState({submitSuccess: undefined});
     };
 
+    // Render notification message
     return (
       <div>
         <br />
@@ -68,6 +73,7 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
   }
 
   public render() {
+    // Render form for uploading a JSON config file
     return (
       <div>
         <h4>Upload JSON Config File</h4>

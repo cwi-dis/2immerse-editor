@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import CurrentVersion from "../editor/components/current_version";
 
 const LandingPage: React.SFC<{}> = () => {
+  // Render landing page with links to editor and trigger app as well as link
+  // to preview player and global config
   return (
     <div>
       <h1 className="landingpage-caption title is-1">2-IMMERSE Authoring Platform</h1>

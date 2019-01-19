@@ -21,6 +21,7 @@ class Config extends React.Component<{}, ConfigState> {
   }
 
   public async fetchConfigData() {
+    // Fetch config from server and update state
     const data = await makeRequest("GET", "/api/v1/configuration");
     const config = JSON.parse(data);
 
@@ -28,6 +29,7 @@ class Config extends React.Component<{}, ConfigState> {
   }
 
   public componentDidMount() {
+    // Fetch config on init
     this.fetchConfigData();
   }
 
@@ -42,6 +44,8 @@ class Config extends React.Component<{}, ConfigState> {
 
     const BackButton = asBackButton(Link);
 
+    // Render config options and allow the user to either manually change the
+    // values or upload a config file
     return (
       <div style={boxStyle}>
         <div style={{position: "absolute", top: 10, left: 10}}>

@@ -10,6 +10,7 @@ import "bulma/css/bulma.css";
 import "../../css/style.css";
 
 window.onload = () => {
+  // Initialise hash router, establish routes and attach to div 'react'
   render(
     <HashRouter>
       <Switch>

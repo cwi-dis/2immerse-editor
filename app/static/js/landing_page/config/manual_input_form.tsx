@@ -28,6 +28,7 @@ interface ManualInputFormState {
 class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputFormState> {
   private modeValues: Array<string> = ["standalone"];
 
+  // List of valid form fields
   private formKeys: Array<keyof FormValues> = [
     "layoutService", "clientApiUrl", "logLevel",
     "timelineService", "mode", "noKibana", "websocketService"
@@ -36,6 +37,7 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   public constructor(props: ManualInputFormProps) {
     super(props);
 
+    // Initialise form data from props
     this.state = {
       formData: props.formData,
       formTainted: false
@@ -43,6 +45,7 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   }
 
   public componentWillReceiveProps(newProps: ManualInputFormProps) {
+    // Update state if props are about to be changed
     this.setState((prevState) => {
       const newState = {...prevState};
 
@@ -56,9 +59,11 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   }
 
   private async submitManualForm() {
+    // Filter form data to make sure only valid keys are submitted
     const configData = pluck(this.state.formData, this.formKeys);
 
     try {
+      // Update config data on server and invoke submit callback
       await makeRequest("PUT", "/api/v1/configuration", JSON.stringify(configData), "application/json");
       this.setState({
         formTainted: false,
@@ -67,6 +72,7 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
 
       this.props.onSubmit();
     } catch {
+      // Trigger error condition if request fails
       this.setState({
         submitSuccess: false
       });
@@ -74,21 +80,26 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   }
 
   private renderNotification() {
+    // Don't render anything if submitSuccess is not defined
     if (this.state.submitSuccess === undefined) {
       return;
     }
 
+    // Set notification colour based on state of submitSuccess
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
+    // Display notification for 5s
     const timeout = setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
 
+    // Callback for closing the notification
     const closeNotification = () => {
       console.log("timeout:", timeout);
       clearTimeout(timeout);
       this.setState({submitSuccess: undefined});
     };
 
+    // Render notification
     return (
       <div>
         <br />
@@ -103,21 +114,20 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
   }
 
   private updateFormData(key: keyof FormValues, value: string | boolean) {
+    // Update key in form data and set tainted condition to true
     this.setState((prevState) => {
-      const newState = {
+      return {
         ...prevState,
+        [key]: value,
         formTainted: true
       };
-
-      newState.formData[key] = value;
-
-      return newState;
     });
   }
 
   public render() {
     const { formData } = this.state;
 
+    // Render form input fields for known config values
     return (
       <div>
         <h4>Manual Configuration</h4>
