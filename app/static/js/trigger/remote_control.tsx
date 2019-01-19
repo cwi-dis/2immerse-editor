@@ -46,11 +46,15 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public componentDidMount() {
+    // Update timer every 10ms
     this.timerInterval = setInterval(() => {
       const { position, lastPositionUpdate } = this.state;
       const { previewStatus: { playing } } = this.props;
 
+      // Only update timer if the preview is playing
       if (playing && position && lastPositionUpdate) {
+        // Increase the timer by difference between current time and last time
+        // position was updated
         const delta = (Date.now() / 1000) - lastPositionUpdate;
 
         this.setState({
@@ -62,10 +66,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   public componentWillUnmount() {
+    // Clear function to update timer once component is unmounted
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
   static getDerivedStateFromProps(nextProps: RemoteControlProps, prevState: RemoteControlState): Nullable<RemoteControlState> {
+    // Update timer data before render in case it was updated through props
     return {
       ...prevState,
       position: nextProps.previewStatus.position || prevState.position,
@@ -74,6 +80,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private togglePlayback() {
+    // Toggle playback
     const { previewStatus } = this.props;
     this.sendControlCommand({ playing: !previewStatus.playing });
   }
@@ -81,6 +88,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   private toggleGuideFeed() {
     const { showdirty } = this.state;
 
+    // Toggle whether the dirty or clean feed should be shown and update state
     this.sendControlCommand({ showdirty: !showdirty });
     this.setState({ showdirty: !showdirty });
   }
@@ -89,13 +97,16 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     const { previewStatus } = this.props;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
 
+    // Only send commands if preview is running
     if (previewStatus.active) {
       console.log("Sending playback command: ", command);
 
       try {
+        // Send command to endpoint
         await makeRequest("POST", controlUrl, JSON.stringify(command), "application/json");
         console.log("Playback state toggled");
       } catch (err) {
+        // Print message on error
         console.warn("Could not toggle playback:", err);
       }
     } else {
@@ -106,9 +117,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   private renderTimestamp() {
     let { position, timeOffset } = this.state;
 
+    // Only render timestamp if timer has initialised
     if (position) {
+      // Add offset if present
       position += timeOffset || 0;
 
+      // Extract hours, mins, secs and ms from timestamp
       const hours = Math.floor(position / 3600);
       const minutes = Math.floor(position / 60) - hours * 60;
       const seconds = Math.floor(position) - minutes * 60 - hours * 3600;
@@ -117,6 +131,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       return `${padStart(hours, 2)}:${padStart(minutes, 2)}:${padStart(seconds, 2)}.${padStart(msecs, 3)}`;
     }
 
+    // Return empty timecode if timer hasn't initialised yet
     return "--:--:--.---";
   }
 
@@ -127,22 +142,27 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private seekBy(value: number) {
+    // Seek stream by n seconds
     this.sendControlCommand({ adjust: value });
 
+    // Close popup
     this.setState({
       timecodePopup: undefined
     });
   }
 
   private toggleTimecodePopup() {
+    // Close popup if it's open already
     if (this.state.timecodePopup !== undefined) {
       this.setState({ timecodePopup: undefined });
       return;
     }
 
     if (this.timecodeBox) {
+      // Get absolute position of div displaying timecode
       const rect = this.timecodeBox.getBoundingClientRect();
 
+      // Render timecode popup at position of timecode div
       this.setState({
         timecodePopup: { top: -162, left: rect.left }
       });
@@ -150,10 +170,12 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
   }
 
   private renderSettingsModal() {
+    // Don't render anything if showSettingsModal is false
     if (!this.state.showSettingsModal) {
       return;
     }
 
+    // Render settings window through a portal
     return createPortal(
       <SettingsModal {...this.props} />,
       document.getElementById("modal-root")!
@@ -192,6 +214,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
       cursor: "pointer"
     };
 
+    // Render button for settings, playback controls and timecode window
     return (
       <div style={containerStyle}>
         <button

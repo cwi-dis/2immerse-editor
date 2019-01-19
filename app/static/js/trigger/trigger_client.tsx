@@ -65,10 +65,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   private async fetchEvents() {
+    // Fetch events via the REST interface
     const url = `/api/v1/document/${this.props.documentId}/events`;
     console.log("updating events");
 
     try {
+      // Make request and update state
       const data = await makeRequest("GET", url);
       const events: Array<Event> = JSON.parse(data);
 
@@ -77,6 +79,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         pageIsLoading: false
       });
     } catch (err) {
+      // Set error message if request fails
       console.error("Could not fetch triggers:", err);
       this.setState({
         pageIsLoading: false,
@@ -86,28 +89,34 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   private async subscribeToEventUpdates() {
+    // Retrieve websocket endpoint from API
     const data = await makeRequest("GET", "/api/v1/configuration");
 
     const { websocketService }  = JSON.parse(data);
     const { documentId } = this.props;
 
+    // Initialise websocket URL
     const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
     console.log("Connecting to", url);
 
+    // Connect to websocket
     this.socket = io(url, { transports: ["websocket"] });
 
     this.socket.on("connect", () => {
       console.log("Connected to websocket-service");
 
+      // Join channel for document ID
       this.socket.emit("JOIN", documentId, () => {
         console.log("Joined channel for document ID", documentId);
       });
     });
 
+    // Subscribe to the EVENTS event on the channel
     this.socket.on("EVENTS", (data: { events: Array<Event>, remote: PreviewStatus }) => {
       console.log("Received trigger event update");
       const { events, remote } = data;
 
+      // Update events and preview status every time a new message comes in
       this.setState({
         events,
         previewStatus: remote,
@@ -117,18 +126,23 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public componentDidMount() {
+    // Fetch events via REST the first time round and then subscribe to the
+    // Websocket channel
     this.fetchEvents();
     this.subscribeToEventUpdates();
   }
 
   public componentWillUnmount() {
+    // Close Websocket on unmount
     this.socket.close();
   }
 
   private renderMainContent(triggerMode: string): JSX.Element {
+    // Render spinner if page is in loading state
     if (this.state.pageIsLoading) {
       return <LoadingSpinner />;
     } else if (this.state.fetchError) {
+      // Render error message if an error occurred
       const { status, statusText } = this.state.fetchError;
 
       return (
@@ -139,6 +153,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
         />
       );
     } else {
+      // Render list of events
       const { events } = this.state;
 
       return (
@@ -152,6 +167,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
   }
 
   public render() {
+    // Render main content and remote control
     return (
       <React.Fragment>
         <div id="modal-root" />

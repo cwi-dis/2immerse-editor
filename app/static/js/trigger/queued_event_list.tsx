@@ -11,12 +11,14 @@ interface QueuedEventContainerProps {
 const QueuedEventContainer: React.SFC<QueuedEventContainerProps> = (props) => {
   const { event, documentId } = props;
 
+  // Foreground and background colours for event containers
   const colors: { [key: string]: [string, string] } = {
     "abstract": ["#161616", "transparent"],
     "ready": ["#C95A26", "#795341"],
     "active": ["#23D160", "#0C4620"]
   };
 
+  // Get colours based on type of event
   const [borderColor, bgColor] = colors[event.state];
   const containerStyle: React.CSSProperties = {
     border: `1px solid ${borderColor}`,
@@ -25,10 +27,12 @@ const QueuedEventContainer: React.SFC<QueuedEventContainerProps> = (props) => {
   };
 
   const dequeueEvent = async () => {
+    // Drop an event from the queue
     console.log("Dequeueing event", event.id);
     const url = `/api/v1/document/${documentId}/events/${event.id}/dequeue`;
 
     try {
+      // Launch request and print message console
       await makeRequest("POST", url);
       console.log("Event dequeued successfully");
     } catch (err) {
@@ -51,8 +55,11 @@ interface QueuedEventListProps {
 
 const QueuedEventList: React.SFC<QueuedEventListProps> = (props) => {
   const { events, documentId } = props;
+  // Get active events
   const activeEvents = events.filter((event) => event.state === "active");
 
+  // Get all queued events and replace the ones which have an active version
+  // with that active version
   const queuedEvents = events.filter((event) => {
     return event.state === "ready";
   }).map((event) => {
