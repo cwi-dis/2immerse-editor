@@ -26,6 +26,9 @@ import { Stage } from "react-konva";
 export type Coords = [number, number];
 export type Nullable<T> = T | null;
 
+/**
+ * Standard props for react-router.
+ */
 export interface RouterProps {
   match: {
     path: string;
@@ -37,14 +40,28 @@ export interface RouterProps {
   history: History;
 }
 
+/**
+ * Basic action without payload and string for name of action.
+ */
 interface Action {
   type: string;
 }
 
+/**
+ * Basic action without payload and generic type for name of action.
+ *
+ * @param T String literal type for name of action
+ */
 export interface BasicAction<T extends string> extends Action {
   type: T;
 }
 
+/**
+ * Action which includes a payload.
+ *
+ * @param T String literal type for name of action
+ * @param U Shape of payload
+ */
 export interface PayloadAction<T extends string, U> extends BasicAction<T> {
   payload: U;
 }
@@ -52,6 +69,12 @@ export interface PayloadAction<T extends string, U> extends BasicAction<T> {
 // Basic colour palette for screen regions
 export const colorPalette = ["#f67088", "#f77276", "#f7745f", "#f77637", "#e88131", "#db8831", "#d08e31", "#c79231", "#be9631", "#b59931", "#ad9c31", "#a49f31", "#9ba231", "#91a531", "#86a731", "#77aa31", "#63ae31", "#41b231", "#31b252", "#32b16a", "#33b07a", "#33af85", "#34ae8e", "#34ad96", "#35ad9d", "#35aca4", "#36acaa", "#36abb0", "#36aab6", "#37a9bd", "#38a8c5", "#38a7cd", "#39a6d8", "#3aa4e6", "#49a0f4", "#6e9af4", "#8795f4", "#9a8ff4", "#ac88f4", "#bc81f4", "#cc79f4", "#dc6ff4", "#ed61f4", "#f45ee9", "#f562d9", "#f565cc", "#f568bf", "#f56ab3", "#f66ca6", "#f66e99"];
 
+/**
+ * Type alias which wraps and simplifies ThunkAction.
+ *
+ * @param R Return value of async action
+ * @param A Actions used within action creator
+ */
 export type AsyncAction<R, A extends Action> = ThunkAction<R, ApplicationState, void, A>;
 
 type HTTPMethods = "GET" | "POST" | "PUT" | "DELETE";

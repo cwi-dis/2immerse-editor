@@ -86,7 +86,6 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
 
   private renderScreen() {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
-    const { currentLayout: currentLayoutId } = this.props.masters;
 
     // Render only message if there are no layouts yet
     if (!currentScreenId) {
@@ -98,7 +97,6 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     // Find object for current screen and retrieve components
     const [, currentScreen] = findById(previewScreens, currentScreenId);
     const width = (currentScreen.orientation === "landscape") ? 800 : 300;
-    const componentsOnScreen = this.getComponentsOnScreen(currentScreenId, currentLayoutId);
 
     // Render screen selecttor and current screen with component labels
     return (
@@ -111,10 +109,7 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
         <br /><br />
         <DroppableScreen
           screenInfo={currentScreen}
-          currentLayout={currentLayoutId}
           width={width}
-          placedComponents={componentsOnScreen}
-          assignComponentToMaster={this.props.masterActions.assignComponentToMaster}
         />
       </div>
     );

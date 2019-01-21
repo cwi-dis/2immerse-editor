@@ -19,20 +19,43 @@ import { List } from "immutable";
 
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
-import { ComponentPlacement } from "../../reducers/masters";
 
+/**
+ * Props for DroppableScreen
+ *
+ * @param screenInfo An object containing data associated with a preview screen
+ * @param width The width of the rendered screen. Optional
+ * @param height The height of the rendered screen. Optional
+ * @param assignElementToRegion Callback to assign a component dropped on screen to a region. Optional
+ */
 interface DroppableScreenProps {
   screenInfo: ScreenModel;
   width?: number;
   height?: number;
-  currentLayout?: string;
-  placedComponents?: List<ComponentPlacement>;
 
-  assignComponentToMaster?: (masterId: string, screenId: string, regionId: string, componentId: string) => void;
   assignElementToRegion?: (componentId: string, regionId: string) => void;
 }
 
+/**
+ * DroppableScreen represents a preview screen and renders all regions contained
+ * within that screen. The screen information is passed in through the
+ * `screenInfo` prop. The screen can render at an arbitray size, determined by
+ * the props `width` and `height`. Though both are optional, at least one of
+ * them must be defined, otherwise the component does not render anything.
+ *
+ * This component also defines a callback `assignElementToRegion`, which is
+ * invoked whenever an element is dropped over a screen region. The callback
+ * receives the id of the component as well as the id of the region as params.
+ */
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
+  /**
+   * Returns the topmost region which contains the point `[x, y]`, or undefined
+   * if no such region can be found
+   *
+   * @param x X coordinate of the drop location
+   * @param y Y coordinate of the drop location
+   * @returns The region which contains `[x, y]`
+   */
   private getDropRegion(x: number, y: number): ScreenRegion | undefined {
     // Get all regions associated to current screen
     const regions = this.props.screenInfo.regions;
@@ -51,6 +74,13 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     }
   }
 
+  /**
+   * Callback invoked when an element has been dropped over a screen region.
+   *
+   * @param componentId ID of the component which has been dropped
+   * @param x X coordinate of the drop location
+   * @param y Y coordinate of the drop location
+   */
   private onComponentDropped(componentId: string, x: number, y: number) {
     const { assignElementToRegion } = this.props;
 
@@ -72,6 +102,9 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
     }
   }
 
+  /**
+   * Render this component.
+   */
   public render() {
     const { screenInfo: screen, width, height } = this.props;
     let computedHeight: number;
