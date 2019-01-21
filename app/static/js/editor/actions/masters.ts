@@ -84,7 +84,7 @@ function selectNewestLayout(): SELECT_NEWEST_LAYOUT {
   };
 }
 
-export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void> {
+export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void, ADD_MASTER_LAYOUT | SELECT_NEWEST_LAYOUT> {
   // Add new layout first and then selected newly created layout
   return (dispatch) => {
     dispatch(addMasterLayout(name));
@@ -94,7 +94,7 @@ export function addMasterLayoutAndUpdateCurrent(name: string): AsyncAction<void>
 
 export interface MasterActions extends ActionCreatorsMapObject {
   addMasterLayout: (name: string) => ADD_MASTER_LAYOUT;
-  addMasterLayoutAndUpdateCurrent: (name: string) => AsyncAction<void>;
+  addMasterLayoutAndUpdateCurrent: (name: string) => AsyncAction<void, ADD_MASTER_LAYOUT | SELECT_NEWEST_LAYOUT>;
   removeMasterLayout: (masterId: string) => REMOVE_MASTER_LAYOUT;
   updateSelectedLayout: (layoutId: string) => UPDATE_SELECTED_LAYOUT;
   assignComponentToMaster: (masterId: string, screenId: string, regionId: string, componentId: string) => ASSIGN_COMPONENT_TO_MASTER;

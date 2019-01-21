@@ -77,7 +77,7 @@ interface Region {
   region: string;
 }
 
-function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", areas: Array<Region>): AsyncAction<void> {
+function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", areas: Array<Region>): AsyncAction<void, ADD_DEVICE | PLACE_REGION_ON_SCREEN> {
   return (dispatch, getState) => {
     // Add new device with given params
     dispatch(addDevice(type, name, orientation, false));
@@ -96,7 +96,7 @@ function addDeviceAndPlaceRegions(type: "personal" | "communal", name: string, o
 
 export interface ScreenActions extends ActionCreatorsMapObject {
   addDevice: (type: "personal" | "communal", name?: string, orientation?: "landscape" | "portrait", createRootRegion?: boolean) => ADD_DEVICE;
-  addDeviceAndPlaceRegions: (type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>) => AsyncAction<void>;
+  addDeviceAndPlaceRegions: (type: "personal" | "communal", name: string, orientation: "landscape" | "portrait", regions: Array<Region>) => AsyncAction<void, ADD_DEVICE | PLACE_REGION_ON_SCREEN>;
   removeDevice: (id: string) => REMOVE_DEVICE;
   splitRegion: (screenId: string, regionId: string, orientation: "horizontal" | "vertical", position: number) => SPLIT_REGION;
   undoLastSplit: (screenId: string) => UNDO_LAST_SPLIT;
