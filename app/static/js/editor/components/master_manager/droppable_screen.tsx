@@ -22,11 +22,6 @@ import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 
 /**
  * Props for DroppableScreen
- *
- * @param screenInfo An object containing data associated with a preview screen
- * @param width The width of the rendered screen. Optional
- * @param height The height of the rendered screen. Optional
- * @param assignElementToRegion Callback to assign a component dropped on screen to a region. Optional
  */
 interface DroppableScreenProps {
   screenInfo: ScreenModel;
@@ -46,6 +41,11 @@ interface DroppableScreenProps {
  * This component also defines a callback `assignElementToRegion`, which is
  * invoked whenever an element is dropped over a screen region. The callback
  * receives the id of the component as well as the id of the region as params.
+ *
+ * @param screenInfo An object containing data associated with a preview screen
+ * @param width The width of the rendered screen. Optional
+ * @param height The height of the rendered screen. Optional
+ * @param assignElementToRegion Callback to assign a component dropped on screen to a region. Optional
  */
 class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   /**
@@ -103,7 +103,7 @@ class DroppableScreen extends React.Component<DroppableScreenProps, {}> {
   }
 
   /**
-   * Render this component.
+   * Renders the component.
    */
   public render() {
     const { screenInfo: screen, width, height } = this.props;
