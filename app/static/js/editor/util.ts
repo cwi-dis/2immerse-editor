@@ -497,33 +497,6 @@ export function getChapterDuration(chapter: Chapter, timelines: List<Timeline>):
   ]).max() || 0;
 }
 
-export function getBranchDuration(chapters: List<Chapter>, timelines: List<Timeline>, accessPath: Array<number>): number {
-  // Return 0 if access path is empty
-  if (accessPath.length === 0) {
-    return 0;
-  }
-
-  // Retrieve durations of ancestor chapters as a list
-  const ancestorDurations = List(accessPath.slice(0, accessPath.length - 1).map((_, i) => {
-    // Retrieve timeline associated with chapter given by path
-    const keyPath = generateChapterKeyPath(accessPath.slice(0, i + 1));
-    const chapter = chapters.getIn(keyPath) as Chapter;
-    const timeline = timelines.find((t) => t.chapterId === chapter.id);
-
-    // Calculate length of timeline
-    return getTimelineLength(timeline);
-  }));
-
-  // Retrieve current chapter and calculate its duration taking child chapters
-  // into account
-  const keyPath = generateChapterKeyPath(accessPath);
-  const chapter = chapters.getIn(keyPath) as Chapter;
-  const chapterDuration = getChapterDuration(chapter, timelines);
-
-  // Find maximum duration among current chapter and its ancestors
-  return ancestorDurations.push(chapterDuration).max()!;
-}
-
 export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Timeline>, accessPath: Array<number>, partialOffset = 0): List<[Array<number>, string, number]> {
   // If access path has length 1, we have no ancestors
   if (accessPath.length === 1) {
