@@ -205,9 +205,9 @@ function mapStateToProps(state: ApplicationState): Partial<LayoutDesignerProps> 
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<ScreenActions>): Partial<LayoutDesignerProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): Partial<LayoutDesignerProps> {
   return {
-    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
+    screenActions: bindActionCreators(screenActionCreators, dispatch)
   };
 }
 

@@ -581,8 +581,8 @@ function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> 
 
 function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
   return {
-    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch),
-    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
+    timelineActions: bindActionCreators(timelineActionCreators, dispatch),
+    screenActions: bindActionCreators(screenActionCreators, dispatch)
   };
 }
 

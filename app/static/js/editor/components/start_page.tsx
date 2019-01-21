@@ -282,13 +282,13 @@ function mapStateToProps(state: ApplicationState): Partial<StartPageProps> {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<DocumentActions>): Partial<StartPageProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): Partial<StartPageProps> {
   return {
-    assetActions: bindActionCreators<AssetActions>(assetActionCreators, dispatch),
-    documentActions: bindActionCreators<DocumentActions>(documentActionCreators, dispatch),
-    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch),
-    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch),
-    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch),
+    assetActions: bindActionCreators(assetActionCreators, dispatch),
+    documentActions: bindActionCreators(documentActionCreators, dispatch),
+    screenActions: bindActionCreators(screenActionCreators, dispatch),
+    chapterActions: bindActionCreators(chapterActionCreators, dispatch),
+    timelineActions: bindActionCreators(timelineActionCreators, dispatch),
   };
 }
 

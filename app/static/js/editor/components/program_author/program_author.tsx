@@ -243,10 +243,10 @@ function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<ChapterActions>): Partial<ProgramAuthorProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): Partial<ProgramAuthorProps> {
   return {
-    chapterActions: bindActionCreators<ChapterActions>(chapterActionCreators, dispatch),
-    timelineActions: bindActionCreators<TimelineActions>(timelineActionCreators, dispatch)
+    chapterActions: bindActionCreators(chapterActionCreators, dispatch),
+    timelineActions: bindActionCreators(timelineActionCreators, dispatch)
   };
 }
 

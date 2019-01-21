@@ -155,10 +155,10 @@ function mapStateToProps(state: ApplicationState): Partial<MasterManagerProps> {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<MasterActions & ScreenActions>): Partial<MasterManagerProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): Partial<MasterManagerProps> {
   return {
-    masterActions: bindActionCreators<MasterActions>(masterActionCreators, dispatch),
-    screenActions: bindActionCreators<ScreenActions>(screenActionCreators, dispatch)
+    masterActions: bindActionCreators(masterActionCreators, dispatch),
+    screenActions: bindActionCreators(screenActionCreators, dispatch)
   };
 }
 
