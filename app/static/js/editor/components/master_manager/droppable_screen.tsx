@@ -15,7 +15,6 @@
  */
 
 import * as React from "react";
-import { List } from "immutable";
 
 import Screen from "../screen";
 import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
