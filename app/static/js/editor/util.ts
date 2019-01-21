@@ -58,6 +58,16 @@ type HTTPMethods = "GET" | "POST" | "PUT" | "DELETE";
 type PromiseResolve = (data: string) => void;
 type PromiseReject = (err: {status: number, statusText: string, body?: string}) => void;
 
+/**
+ * Launches a HTTP request for the given URL and method. Returns a promise
+ * which resolves to a string containing the response text on success.
+ *
+ * @param method HTTP method. One of GET, POST, PUT or DELETE
+ * @param url The target URL for the request
+ * @param data Optional. Data to send with the request
+ * @param contentType Optional. Content type of the request data
+ * @returns A promise which resolves to the response body
+ */
 export function makeRequest(method: HTTPMethods, url: string, data?: any, contentType?: string): Promise<string> {
   // Return promise for HTTP request
   return new Promise<string>((resolve: PromiseResolve, reject: PromiseReject) => {
@@ -77,7 +87,7 @@ export function makeRequest(method: HTTPMethods, url: string, data?: any, conten
       }
     };
 
-    // Reject promise on errir
+    // Reject promise on error
     xhr.onerror = () => {
       reject({
         status: xhr.status,
@@ -101,6 +111,16 @@ export function makeRequest(method: HTTPMethods, url: string, data?: any, conten
   });
 }
 
+/**
+ * Pads a string on the left side with a given character to a specified length.
+ * If the input string is longer than the target length or the padding string
+ * is longer than one character, the input string will be returned unchanged.
+ *
+ * @param s The object to pad. Will be converted to string first
+ * @param targetLength The target length of the desired string
+ * @param pad The character the string should be padded with. Must be a single char
+ * @returns The padded string
+ */
 export function padStart(s: any, targetLength: number, pad = "0") {
   s = s.toString();
 
@@ -114,6 +134,13 @@ export function padStart(s: any, targetLength: number, pad = "0") {
   return Array(targetLength - s.length).fill(pad).join("") + s;
 }
 
+/**
+ * Transforms a string by capitalising its first letter. If the first character
+ * is not a letter or the string is empty, the input will be returned unchanged.
+ *
+ * @param str Input string
+ * @returns The input string with the first letter capitalised
+ */
 export function capitalize(str: string): string {
   // If string if empty, return unchanged
   if (str.length === 0) {
@@ -124,6 +151,14 @@ export function capitalize(str: string): string {
   return str[0].toUpperCase() + str.slice(1);
 }
 
+/**
+ * Selects a subset of key-value pairs from an object and returns a new object
+ * containing only the selected keys.
+ *
+ * @param obj Object to pluck keys from
+ * @param keys Names of keys that should be plucked
+ * @returns A new object with the given subset of keys
+ */
 export function pluck<T>(obj: T, keys: Array<keyof T>): Partial<T> {
   // Result is of type Partial<T>, i.e. contains a subset of keys in T
   const result: Partial<T> = {};
@@ -136,16 +171,43 @@ export function pluck<T>(obj: T, keys: Array<keyof T>): Partial<T> {
   return result;
 }
 
+/**
+ * Finds an object in a given collection by investigating each entry's key 'id'
+ * and checking it against the given search value.
+ *
+ * @param collection Collection to search
+ * @param search Value to search for
+ * @returns The index the entry was found at and the entry itself as a tuple
+ */
 export function findById<T extends {id: U}, U>(collection: Collection.Indexed<T>, search: U): [number, T] {
   // Find given data in collection under the key id, returns [index, found_object]
   return findByKey(collection as any, search, "id" as never)! as [number, T];
 }
 
+/**
+ * Finds an object in a given collection by investigating each entry's key
+ * given by the parameter `key` and checking it against the given search value.
+ * This is a more generic version of `findById()`
+ *
+ * @param collection Collection to search
+ * @param search Value to search for
+ * @param key The key which shall be checked
+ * @returns The index the entry was found at and the entry itself as a tuple
+ */
 export function findByKey<T extends {[V in keyof T]: U}, U, V extends keyof T>(collection: Collection.Indexed<T>, search: U, key: V): [number, T] | undefined {
   // Find entry in collection under the key given by 'key', returns [index, found_object]
   return collection.findEntry((value: T) => value[key] === search);
 }
 
+/**
+ * Generates an array containing indices to accessing nodes in a tree data
+ * structure. Its input parameter is simply a list of indices. This list is
+ * transformed in such a way, that it can be used to access tree data
+ * structures the way they have been implemented in this project.
+ *
+ * @param accessPath An array of numbers specifying indices to index a tree
+ * @returns A modified access path to navigate the actual data structure
+ */
 export function generateChapterKeyPath(accessPath: Array<number>): List<number | string> {
   // If the given access path is empty return empty List object
   if (accessPath.length === 0) {
@@ -159,6 +221,14 @@ export function generateChapterKeyPath(accessPath: Array<number>): List<number |
   }, [])).push(accessPath[accessPath.length - 1]);
 }
 
+/**
+ * Returns a list of indices for accessing the chapter node identified by the
+ * given id in a tree-like data structure of chapter nodes.
+ *
+ * @param chapters A tree-like data structure containing chapter nodes
+ * @param chapterId The id of the chapter we want the path for
+ * @returns A list of indices for locating the chapter with the given id in the tree
+ */
 export function getChapterAccessPath(chapters: List<Chapter>, chapterId: string): List<number> {
   // Find chapter with given ID in chapter tree by visiting all nodes recursively
   return chapters.reduce((accessPath, chapter, i) => {
@@ -179,6 +249,14 @@ export function getChapterAccessPath(chapters: List<Chapter>, chapterId: string)
   }, List<number>());
 }
 
+/**
+ * Returns a flattened list of all descendants of the given chapter node. This
+ * function either accepts a single chapter node or a list or chapters (i.e.
+ * a level of a chapter tree).
+ *
+ * @param chapters Single chapter or list of chapters
+ * @returns A flattened list of all descendants of the given chapter
+ */
 export function getDescendantChapters(chapters: List<Chapter> | Chapter): List<Chapter> {
   const fn = (chapters: List<Chapter>, ids: List<Chapter>) => {
     // Map over chapter list and return chapters as flat list
@@ -198,6 +276,14 @@ export function getDescendantChapters(chapters: List<Chapter> | Chapter): List<C
   return fn((chapters as Chapter).children!, List());
 }
 
+/**
+ * Returns a random integer between the given bounds, or between 0 and 10 if
+ * no bounds are given. The values for the bounds are rounded to integers.
+ *
+ * @param min Lower bound for random number
+ * @param max Upper bound for random number
+ * @returns A random number within the given bounds
+ */
 export function getRandomInt(min: number = 0, max: number = 10) {
   // Throw error if min > max
   if (min > max) {
@@ -212,12 +298,28 @@ export function getRandomInt(min: number = 0, max: number = 10) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+/**
+ * Checks if a given value is between the given bounds. The check can either be
+ * performed inclusive or exclusive.
+ *
+ * @param x The number to be checked
+ * @param lowerBound The lower bound
+ * @param higherBound The upper bound
+ * @param inclusive Whether the check should include the bounds or not
+ * @returns True or false
+ */
 export function between(x: number, lowerBound: number, higherBound: number, inclusive = false): boolean {
   // Check whether given value is within bounds
   return (inclusive) ? x >= lowerBound && x <= higherBound
                      : x > lowerBound && x < higherBound;
 }
 
+/**
+ * Takes a node in a chapter tree and counts leaf nodes reachable from it.
+ *
+ * @param chapter Chapter node from which to start counting
+ * @returns Number of leaf nodes
+ */
 export function countLeafNodes(chapter: Chapter): number {
   // Get children of given chapter
   const children = chapter.get("children") as List<Chapter>;
@@ -233,6 +335,12 @@ export function countLeafNodes(chapter: Chapter): number {
   }, 0);
 }
 
+/**
+ * Takes a node in a chapter tree and returns leaf nodes reachable from it.
+ *
+ * @param chapter Chapter node from which to start
+ * @returns Leaf nodes as a flat list
+ */
 export function getLeafNodes(chapter: Chapter): List<Chapter> {
   // Get children of given chapter
   const children = chapter.get("children") as List<Chapter>;
@@ -248,6 +356,13 @@ export function getLeafNodes(chapter: Chapter): List<Chapter> {
   }, List([]));
 }
 
+/**
+ * Returns the number of levels in a tree of chapters starting from the given
+ * level.
+ *
+ * @param chapters List of tree nodes from which to start
+ * @returns The number of levels in the tree
+ */
 export function getTreeHeight(chapters: List<Chapter>): number {
   // If given list is empty, tree has height 0
   if (chapters.count() === 0) {
@@ -260,6 +375,12 @@ export function getTreeHeight(chapters: List<Chapter>): number {
   }).max()!;
 }
 
+/**
+ * Parses a query string returns the parsed values in a map.
+ *
+ * @param query The query string to parse
+ * @returns A map containing the parsed values as key-value pairs
+ */
 export function parseQueryString(query: string): Map<string, string | undefined> {
   // Initialise empty map for storing results
   let result = Map<string, string | undefined>();
@@ -285,6 +406,12 @@ export function parseQueryString(query: string): Map<string, string | undefined>
   return result;
 }
 
+/**
+ * Shortens a given URL and returns a promise for the shortened URL.
+ *
+ * @param originalUrl URL to shorten
+ * @returns A promise which should resovle to the shortened URL
+ */
 export async function shortenUrl(originalUrl: string): Promise<string> {
   // Construct data for request and send it
   const data = JSON.stringify({ longUrl: originalUrl });
@@ -296,6 +423,12 @@ export async function shortenUrl(originalUrl: string): Promise<string> {
   return `${location.protocol}//${location.host}/shorturl/${id}`;
 }
 
+/**
+ * Validates a layout document against a schema. If the layout validates
+ * correctly, the function returns void, otherwise it will throw an error.
+ *
+ * @param layout The layout to validate
+ */
 export async function validateLayout(layout: any) {
   // Retrieve and parse schema for layout
   const data = await makeRequest("GET", "/static/dist/v4-document-schema.json");
@@ -310,6 +443,17 @@ export async function validateLayout(layout: any) {
   }
 }
 
+/**
+ * Takes a ref to a Konva Stage component and two numbers representing absolute
+ * positions on the screen and returns the coordinates for the same point but
+ * relative to the top-left corner of the Stage instead of the screen. Throws
+ * an error if the Stage ref is null.
+ *
+ * @param stageWrapper Ref to a Stage component
+ * @param pageX Absolute x position on screen
+ * @param pageY Absolute y position on screen
+ * @returns The [x,y] coordinates relative to the top-left corner of the given Stage
+ */
 export function getCanvasDropPosition(stageWrapper: Nullable<Stage>, pageX: number, pageY: number) {
   // Throw error if stage ref is null
   if (!stageWrapper) {
@@ -327,6 +471,14 @@ export function getCanvasDropPosition(stageWrapper: Nullable<Stage>, pageX: numb
   ];
 }
 
+/**
+ * Compares two arrays element by element and returns whether they are equal or
+ * not.
+ *
+ * @param a First array
+ * @param b Second array
+ * @returns True if the arrays are equal, false otherwise
+ */
 export function arraysEqual<T>(a: Array<T>, b: Array<T>): boolean {
   // If array lengths are different, arrays are not equal
   if (a.length !== b.length) {
@@ -343,6 +495,16 @@ export function arraysEqual<T>(a: Array<T>, b: Array<T>): boolean {
   return true;
 }
 
+/**
+ * Takes a chapter node and visits all its children, investigating their
+ * timelines, merging them along the way, resulting in a single timeline which
+ * represents the global timeline view seen from the given chapter as it would
+ * be rendered in a standard non-linear video editor.
+ *
+ * @param chapter Chapter to merge the timelines for
+ * @param timelines A list of timelines associated to the chapter nodes
+ * @returns The current chapter's timeline merged with all descendant timelines
+ */
 export function mergeTimelines(chapter: Chapter, timelines: List<Timeline>): Timeline {
   // Find timeline for given chapter
   const chapterTimeline = timelines.find((t) => t.chapterId === chapter.id) || new Timeline();
@@ -473,6 +635,14 @@ export function mergeTimelines(chapter: Chapter, timelines: List<Timeline>): Tim
   });
 }
 
+/**
+ * Returns the length of a timeline by summing up durations and offsets of all
+ * its timeline elements on all its tracks. The function thenreturns the length
+ * of its longest track
+ *
+ * @param timeline The timeline for which we went to know the length of
+ * @returns The duration of the longest track in the timeline
+ */
 export function getTimelineLength(timeline: Timeline | undefined): number {
   if (timeline) {
     // Map over all tracks and return duration of longest track
@@ -485,6 +655,17 @@ export function getTimelineLength(timeline: Timeline | undefined): number {
   return 0;
 }
 
+/**
+ * Returns the total duration of the given chapter. This is calculated by
+ * getting the timeline length of the current chapter and then recursively
+ * visiting all children and summing up their timeline lengths. The result is
+ * the duration of the chapter taking the durations or its descendants into
+ * account.
+ *
+ * @param chapter The chapter for which we want to get the duration
+ * @param timelines Timelines associated to the given chapter nodes
+ * @returns The duration of a chapter taking into account durations of descendants
+ */
 export function getChapterDuration(chapter: Chapter, timelines: List<Timeline>): number {
   // Find timeline associated with chapter
   const timeline = timelines.find((t) => t.chapterId === chapter.id);
@@ -497,6 +678,18 @@ export function getChapterDuration(chapter: Chapter, timelines: List<Timeline>):
   ]).max() || 0;
 }
 
+/**
+ * Calculates for each ancestor of the chapter accessible by `accessPath` the
+ * offset that needs to be subtracted from the front of the timeline of said
+ * ancestor to align it with the chapter given by `accessPath`. Returns a list
+ * of tuples containing for each ancestor its access path, id and offset in
+ * seconds.
+ *
+ * @param chapters Complete chapter tree
+ * @param timelines List of timelines associated to the chapter tree
+ * @param accessPath Acces path of the node to be investigates
+ * @returns A list containing a tuple for each ancestor with id and offset
+ */
 export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Timeline>, accessPath: Array<number>, partialOffset = 0): List<[Array<number>, string, number]> {
   // If access path has length 1, we have no ancestors
   if (accessPath.length === 1) {
@@ -523,11 +716,28 @@ export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Time
   );
 }
 
+/**
+ * Returns the chapter that is obtained by navigating the tree using the values
+ * in `accessPath` as indices.
+ *
+ * @param chapters Complete chapter tree
+ * @param accessPath Access path of the chapter to retrieve
+ * @returns The chapter found using the access path
+ */
 export function getChapterByPath(chapters: List<Chapter>, accessPath: Array<number>): Chapter {
   // Return chapter object directly given an access path
   return chapters.getIn(generateChapterKeyPath(accessPath));
 }
 
+/**
+ * Cut a specified amount of seconds from the end of a given timeline track.
+ * This is done by adjusting the durations and/or offsets of the elements
+ * contained in the track. An empty track is returned unchanged.
+ *
+ * @param track Timeline track to be trimmed
+ * @param end Time in seconds that should be trimmed off the end
+ * @returns The timeline track trimmed to the given length
+ */
 export function trimBack(track: TimelineTrack, end: number): TimelineTrack {
   // If track has no elements, it does not need to be trimmed
   if (!track.timelineElements || track.timelineElements.isEmpty()) {
@@ -568,6 +778,15 @@ export function trimBack(track: TimelineTrack, end: number): TimelineTrack {
   return track.set("timelineElements", elements);
 }
 
+/**
+ * Cut a specified amount of seconds from the beginning of a given timeline
+ * track. This is done by adjusting the durations and/or offsets of the
+ * elements contained in the track. An empty track is returned unchanged.
+ *
+ * @param track Timeline track to be trimmed
+ * @param start Time in seconds that should be trimmed from the beginning
+ * @returns The timeline track trimmed to the given length
+ */
 export function trimFront(track: TimelineTrack, start: number): TimelineTrack {
   // If track has no elements, it does not need to be trimmed
   if (!track.timelineElements || track.timelineElements.isEmpty()) {
@@ -611,6 +830,16 @@ export function trimFront(track: TimelineTrack, start: number): TimelineTrack {
   return track.set("timelineElements", elements);
 }
 
+/**
+ * Cut a specified amount of seconds from the beginning and end of a given
+ * timeline track. This is done by adjusting the durations and/or offsets of
+ * the * elements contained in the track. An empty track is returned unchanged.
+ *
+ * @param track Timeline track to be trimmed
+ * @param start Time in seconds that should be trimmed from the beginning
+ * @param start Time in seconds that should be trimmed at the end
+ * @returns The timeline track trimmed to the given length
+ */
 export function trimTimelineTrack(track: TimelineTrack, start: number, end: number): TimelineTrack {
   // Calculate desired trim duration
   const duration = end - start;
