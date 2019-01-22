@@ -34,11 +34,17 @@ import NodeConnectors from "./node_connectors";
 import ProgramStructure from "./program_structure";
 import { DocumentState } from "../../reducers/document";
 
+/**
+ * Props defining action creators used in the component.
+ */
 interface ProgramAuthorActionProps {
   chapterActions: ChapterActions;
   timelineActions: TimelineActions;
 }
 
+/**
+ * Props defining parts of the application state used in the component.
+ */
 interface ProgramAuthorConnectedProps {
   chapters: ChapterState;
   document: DocumentState;
@@ -47,13 +53,27 @@ interface ProgramAuthorConnectedProps {
 
 type ProgramAuthorProps = ProgramAuthorActionProps & ProgramAuthorConnectedProps;
 
+/**
+ * ProgramAuthor is a Redux-connected component responsible for rendering and
+ * manipulating the chapter structure in the shape of a tree. It receives all
+ * its props via the Redux state tree.
+ */
 class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
+  // Default size of one chapter node
   private readonly defaultBoxSize: Coords = [200, 120];
+  // Margin between tree nodes
   private readonly boxMargin: Coords = [40, 55];
+  // Default width of the canvas the tree is drawn on
   private readonly canvasWidth = window.innerWidth - 40 - 300;
 
   private boxSize: Coords = this.defaultBoxSize.slice() as Coords;
 
+  /**
+   * Callback invoked when a chapter node is clicked. This is intended to be
+   * used to navigate to the timeline editor for the chapter that was clicked.
+   *
+   * @param accessPath The access path of the chapter node that was clicked
+   */
   private handleChapterClick(accessPath: Array<number>): void {
     const keyPath = generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
@@ -68,6 +88,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     navigate(`/timeline/${chapter.id}`);
   }
 
+  /**
+   * Callback invoked when the close icon on a chapter node is clicked.
+   *
+   * @param accessPath The access path of the chapter node that was clicked
+   */
   private async handleRemoveClick(accessPath: Array<number>) {
     // Do nothing if root node has been clicked
     if (accessPath.length === 1 && accessPath[0] === 0 && this.props.chapters.count() === 1) {
@@ -90,6 +115,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     this.props.chapterActions.removeChapter(accessPath);
   }
 
+  /**
+   * Callback invoked when the name label of a chapter node is clicked. This is
+   * intended to be used to change the name of a chapter.
+   *
+   * @param accessPath The access path of the chapter node that was clicked
+   * @param currentName The current name of the chapter node
+   */
   private async handleLabelClick(accessPath: Array<number>, currentName: string | undefined) {
     // Prompt user for new chapter name
     const chapterName = prompt("Chapter name:", currentName || "");
@@ -107,6 +139,14 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     }
   }
 
+  /**
+   * Callback invoked when one of the three handles of a chapter node is
+   * clicked. These handles are intended to be used to add new chapters either
+   * before, after or as children of the clicked chapter.
+   *
+   * @param accessPath The access path of the chapter node that was clicked
+   * @param currentName The position of the handle that was clicked. Either `left`, `right` or `bottom`
+   */
   private async handleAddChapterClick(accessPath: Array<number>, handlePosition: "left" | "right" | "bottom") {
     const { documentId } = this.props.document;
     const chapter = getChapterByPath(this.props.chapters, accessPath);
@@ -128,7 +168,17 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     }
   }
 
-  private drawChapterTree(chapters: List<Chapter>, startPos = [20, 20], accessPath: Array<number> = []): Array<any> {
+  /**
+   * Draws the chapter tree starting from the level passed in as first argument.
+   * Visits all children in the data structure and draws them recursively as
+   * well and configures callbacks for interaction with the chapter nodes.
+   *
+   * @param chapters Tree level from which to start drawing
+   * @param startPos Position to start drawing at.
+   * @param accessPath Access path of the current chapter. Optional, only used for recursion.
+   * @returns A series of components ready to be rendered inside a Stage component
+   */
+  private drawChapterTree(chapters: List<Chapter>, startPos: [number, number], accessPath: Array<number> = []): Array<any> {
     return chapters.reduce((result: Array<any>, chapter, i) => {
       const [x, y] = startPos;
 
@@ -176,8 +226,12 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     }, []);
   }
 
+  /**
+   * Adjust the base width of chapter node boxes based on tree size and
+   * available canvas width.
+   */
   private adjustBoxWidth() {
-    // Get number of leaf nodes and compute totla width of tree using default box width
+    // Get number of leaf nodes and compute total width of tree using default box width
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
     const treeWidth = this.defaultBoxSize[0] * leafNodes + this.boxMargin[0] * (leafNodes + 1);
 
@@ -189,6 +243,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     }
   }
 
+  /**
+   * Adjust the height of the drawing canvas based on the number of tree levels
+   * and available screen real estate.
+   *
+   * @param chapters Chapter tree which will be drawn
+   * @returns The calculated canvas height
+   */
   private adjustCanvasHeight(chapters: List<Chapter>) {
     const defaultCanvasHeight = this.boxSize[1] * 2 + this.boxMargin[1] * 2;
 
@@ -203,6 +264,13 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     return defaultCanvasHeight;
   }
 
+  /**
+   * Calculates the offset for the first level of the tree such that the tree
+   * can be drawn centred on the canvas.
+   *
+   * @param chapters Chapter tree which will be drawn
+   * @returns Offsets for `x` and `y` for the root of the tree such that the tree is centred on the canvas
+   */
   private getTreeOffset(chapters: List<Chapter>): Coords {
     // Get x offset for graph in order to center it on the canvas
     const leafNodes = this.props.chapters.reduce((sum, chapter) => sum + countLeafNodes(chapter), 0);
@@ -213,6 +281,9 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     return [xOffset + this.boxMargin[0], 10];
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const { chapters } = this.props;
 
@@ -256,6 +327,11 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 }
 
+/**
+ * Maps application state to component props.
+ *
+ * @param state Application state
+ */
 function mapStateToProps(state: ApplicationState): ProgramAuthorConnectedProps {
   return {
     chapters: state.chapters,
@@ -264,6 +340,11 @@ function mapStateToProps(state: ApplicationState): ProgramAuthorConnectedProps {
   };
 }
 
+/**
+ * Wraps action creators with the dispatch function and maps them to props.
+ *
+ * @param dispatch Dispatch function for the configured store
+ */
 function mapDispatchToProps(dispatch: Dispatch<any>): ProgramAuthorActionProps {
   return {
     chapterActions: bindActionCreators(chapterActionCreators, dispatch),
