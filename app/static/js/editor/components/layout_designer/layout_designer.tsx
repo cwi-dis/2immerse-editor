@@ -46,10 +46,15 @@ interface LayoutTemplate {
   };
 }
 
-type LayoutDesignerProps = {
-  screens: ScreenState
-  screenActions: ScreenActions
-};
+interface LayoutDesignerActionProps {
+  screenActions: ScreenActions;
+}
+
+interface LayoutDesignerConnectedProps {
+  screens: ScreenState;
+}
+
+type LayoutDesignerProps = LayoutDesignerActionProps & LayoutDesignerConnectedProps;
 
 interface LayoutDesignerState {
   personalScreenWidth: number;
@@ -215,13 +220,13 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 }
 
-function mapStateToProps(state: ApplicationState): Partial<LayoutDesignerProps> {
+function mapStateToProps(state: ApplicationState): LayoutDesignerConnectedProps {
   return {
     screens: state.screens,
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>): Partial<LayoutDesignerProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): LayoutDesignerActionProps {
   return {
     screenActions: bindActionCreators(screenActionCreators, dispatch)
   };

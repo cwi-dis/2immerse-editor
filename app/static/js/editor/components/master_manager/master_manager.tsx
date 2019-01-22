@@ -32,12 +32,17 @@ import { ComponentPlacement } from "../../reducers/masters";
 import DMAppcContainer from "./dmappc_container";
 import DroppableScreen from "./droppable_screen";
 
-interface MasterManagerProps {
-  masters: MasterState;
-  screens: ScreenState;
+interface MasterManagerActionProps {
   masterActions: MasterActions;
   screenActions: ScreenActions;
 }
+
+interface MasterManagerConnectedProps {
+  masters: MasterState;
+  screens: ScreenState;
+}
+
+type MasterManagerProps = MasterManagerActionProps & MasterManagerConnectedProps;
 
 class MasterManager extends React.Component<MasterManagerProps, {}> {
   public componentDidMount() {
@@ -159,14 +164,14 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
   }
 }
 
-function mapStateToProps(state: ApplicationState): Partial<MasterManagerProps> {
+function mapStateToProps(state: ApplicationState): MasterManagerConnectedProps {
   return {
     masters: state.masters,
     screens: state.screens
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>): Partial<MasterManagerProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): MasterManagerActionProps {
   return {
     masterActions: bindActionCreators(masterActionCreators, dispatch),
     screenActions: bindActionCreators(screenActionCreators, dispatch)

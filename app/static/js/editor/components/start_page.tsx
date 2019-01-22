@@ -83,15 +83,19 @@ export interface ChapterTree {
   chapters: Array<ChapterTree>;
 }
 
-interface StartPageProps {
-  document: DocumentState;
-
+interface StartPageActionProps {
   documentActions: DocumentActions;
   screenActions: ScreenActions;
   assetActions: AssetActions;
   chapterActions: ChapterActions;
   timelineActions: TimelineActions;
 }
+
+interface StartPageConnectedProps {
+  document: DocumentState;
+}
+
+type StartPageProps = StartPageActionProps & StartPageConnectedProps;
 
 interface StartPageState {
   isLoading: boolean;
@@ -292,13 +296,13 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
   }
 }
 
-function mapStateToProps(state: ApplicationState): Partial<StartPageProps> {
+function mapStateToProps(state: ApplicationState): StartPageConnectedProps {
   return {
     document: state.document
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>): Partial<StartPageProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): StartPageActionProps {
   return {
     assetActions: bindActionCreators(assetActionCreators, dispatch),
     documentActions: bindActionCreators(documentActionCreators, dispatch),

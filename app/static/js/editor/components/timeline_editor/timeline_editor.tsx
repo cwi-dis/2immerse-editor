@@ -40,16 +40,20 @@ import DroppableScreen from "../master_manager/droppable_screen";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
 
-interface TimelineEditorProps extends RouterProps {
+interface TimelineEditorActionProps {
+  timelineActions: TimelineActions;
+  screenActions: ScreenActions;
+}
+
+interface TimelineEditorConnectedProps {
   assets: AssetState;
   document: DocumentState;
   chapters: ChapterState;
   screens: ScreenState;
   timelines: TimelineState;
-
-  timelineActions: TimelineActions;
-  screenActions: ScreenActions;
 }
+
+type TimelineEditorProps = RouterProps & TimelineEditorActionProps & TimelineEditorConnectedProps;
 
 interface TimelineEditorState {
   scrubberPosition: number;
@@ -585,7 +589,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 }
 
-function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> {
+function mapStateToProps(state: ApplicationState): TimelineEditorConnectedProps {
   return {
     assets: state.assets,
     document: state.document,
@@ -595,7 +599,7 @@ function mapStateToProps(state: ApplicationState): Partial<TimelineEditorProps> 
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>): Partial<TimelineEditorProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): TimelineEditorActionProps {
   return {
     timelineActions: bindActionCreators(timelineActionCreators, dispatch),
     screenActions: bindActionCreators(screenActionCreators, dispatch)

@@ -34,13 +34,18 @@ import NodeConnectors from "./node_connectors";
 import ProgramStructure from "./program_structure";
 import { DocumentState } from "../../reducers/document";
 
-interface ProgramAuthorProps {
-  chapters: ChapterState;
-  document: DocumentState;
-  timelines: TimelineState;
+interface ProgramAuthorActionProps {
   chapterActions: ChapterActions;
   timelineActions: TimelineActions;
 }
+
+interface ProgramAuthorConnectedProps {
+  chapters: ChapterState;
+  document: DocumentState;
+  timelines: TimelineState;
+}
+
+type ProgramAuthorProps = ProgramAuthorActionProps & ProgramAuthorConnectedProps;
 
 class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   private readonly defaultBoxSize: Coords = [200, 120];
@@ -251,7 +256,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
   }
 }
 
-function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
+function mapStateToProps(state: ApplicationState): ProgramAuthorConnectedProps {
   return {
     chapters: state.chapters,
     timelines: state.timelines,
@@ -259,7 +264,7 @@ function mapStateToProps(state: ApplicationState): Partial<ProgramAuthorProps> {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<any>): Partial<ProgramAuthorProps> {
+function mapDispatchToProps(dispatch: Dispatch<any>): ProgramAuthorActionProps {
   return {
     chapterActions: bindActionCreators(chapterActionCreators, dispatch),
     timelineActions: bindActionCreators(timelineActionCreators, dispatch)
