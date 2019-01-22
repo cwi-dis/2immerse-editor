@@ -122,10 +122,10 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     };
   }
 
-  public async componentDidUpdate() {
+  public async componentDidUpdate(prevProps: StartPageProps) {
     const { documentId } = this.props.document;
 
-    if (documentId !== "") {
+    if (documentId !== "" && documentId !== prevProps.document.documentId) {
       console.log("constructing document", documentId);
       const baseUrl = `/api/v1/document/${documentId}/editing/`;
 
