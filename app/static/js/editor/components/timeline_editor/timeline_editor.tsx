@@ -40,11 +40,17 @@ import DroppableScreen from "../master_manager/droppable_screen";
 import TimelineTrack, { EmptyTrack } from "./timeline_track";
 import DMAppcContainer from "../master_manager/dmappc_container";
 
+/**
+ * Props defining action creators used in the component.
+ */
 interface TimelineEditorActionProps {
   timelineActions: TimelineActions;
   screenActions: ScreenActions;
 }
 
+/**
+ * Props defining parts of the application state used in the component.
+ */
 interface TimelineEditorConnectedProps {
   assets: AssetState;
   document: DocumentState;
@@ -55,11 +61,21 @@ interface TimelineEditorConnectedProps {
 
 type TimelineEditorProps = RouterProps & TimelineEditorActionProps & TimelineEditorConnectedProps;
 
+/**
+ * State for TimelineEditor
+ */
 interface TimelineEditorState {
   scrubberPosition: number;
   trackHeight: number;
 }
 
+/**
+ * TimelineEditor is a Redux-connected component responsible for rendering and
+ * manipulating the timeline for a given chapter by dragging elements to
+ * timeline tracks or preview screens, thereby composing the presentation on
+ * an element-level. This works in idea like a traditional non-linear video
+ * editor. It receives all its props via the Redux state tree.
+ */
 class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditorState> {
   private stageWrapper: Nullable<Stage>;
 
@@ -76,6 +92,19 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     };
   }
 
+  /**
+   * Computes the global track layout as seen from the current chapter. This
+   * means that elements on timeline for the current chapter govern the duration
+   * if the timeline and elements located in ancestor chapters are trimmed to
+   * fit inside the timeline and rendered on locked tracks. Moreover, descendant
+   * tracks are merged and also rendered on locked tracks. I.e. only tracks
+   * which contain elements associated to the current chapter can be changed.
+   * The function returns a list with an entry for each region on all preview
+   * screens, containing region ID, color and a track object if there were any
+   * elements assigned to that track in some chapter in the current branch.
+   *
+   * @returns The global track layout as seen from the current chapter
+   */
   private getTrackLayout(): List<{ regionId: string, name: string, color: string, track?: TimelineTrackModel }> {
     const { match, chapters, screens: { previewScreens }, timelines } = this.props;
     const { chapterid } = match.params;
@@ -139,6 +168,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }).toList();
   }
 
+  /**
+   * Callback invoked when the component mounts for the first time. Checks
+   * whether there is a timeline associated to the given chapter and redirects
+   * back to the ProgramAuthor component if not.
+   */
   public componentWillMount() {
     if (this.getTimeline() === undefined) {
       console.log("Chapter has no timeline yet, redirecting to ProgramAuthor");
@@ -146,6 +180,15 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
+  /**
+   * Callback invoked when the user triggers the event for removing a specific
+   * element on a timeline track. The callback receives timeline, track and
+   * element ID and updates the Redux tree accordingly.
+   *
+   * @param timelineId The ID of the timeline on which the removed element is located
+   * @param trackId The ID of the track in which the removed element is located
+   * @param elementId The ID of the removed element itself
+   */
   private async elementRemoved(timelineId: string, trackId: string, elementId: string) {
     const { documentId } = this.props.document;
     const url = `/api/v1/document/${documentId}/editing`;
@@ -171,6 +214,18 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     this.props.timelineActions.removeElementAndUpdateTrack(timelineId, trackId, elementId);
   }
 
+  /**
+   * Callback invoked when the user clicks an element on a timeline track. The
+   * callback receives timeline, track, element ID and current duration of the
+   * element. This function is intended for the user to update an element's
+   * duration. This is achieved by showing the user a prompt to type in a new
+   * duration. If the selected duration is invalid of if the user cancels the
+   * prompt, the function does nothing.
+   *
+   * @param timelineId The ID of the timeline on which the removed element is located
+   * @param trackId The ID of the track in which the removed element is located
+   * @param elementId The ID of the removed element itself
+   */
   private async elementClicked(timelineId: string, trackId: string, elementId: string, currentDuration: number) {
     const duration = prompt("Please specify the element's duration (in seconds)", currentDuration.toString());
 
@@ -194,6 +249,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     );
   }
 
+  /**
+   * Returns the timeline associated with the current chapter.
+   *
+   * @returns The timeline for the current chapter
+   */
   private getTimeline() {
     const { match: { params } } = this.props;
     // Find timeline for current chapter
@@ -207,6 +267,12 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return timelineFound[1];
   }
 
+  /**
+   * Returns the duration of the current chapter, taking durations of descendant
+   * chapters into account.
+   *
+   * @returns The duration of the current chapter
+   */
   private getChapterDuration() {
     const { match: { params }, chapters, timelines } = this.props;
     // Retrieve data for current chapter
@@ -217,6 +283,16 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return util.getChapterDuration(chapter, timelines);
   }
 
+  /**
+   * Assigns a new duration to a given asset, but only if the current duration
+   * of the asset is equal to zero. If the asset's duration is not zero, the
+   * asset is returned unchanged. This is acheived by opening a dialogue,
+   * prompting to select a duration for the asset. If the new value is invalid
+   * or the user cancels the prompt, the asset is returne unchanged.
+   *
+   * @param asset The asset for which the duration shall be updated
+   * @returns The updated asset
+   */
   private assignAssetDuration(asset: Asset): Asset {
     if (asset.duration === 0) {
       // Prompt user to assign duration to asset if asset duration is 0
@@ -237,6 +313,15 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     return asset;
   }
 
+  /**
+   * Callback invoked when an element is dropped into a preview screen region.
+   * The callback receives the component and region ID for the region the
+   * component was dropped into. Updates the data structures on the server as
+   * well as the Redux state.
+   *
+   * @param componentId ID of component which was dropped
+   * @param regionId  ID of region component was dropped into
+   */
   private async onComponentDroppedOnScreen(componentId: string, regionId: string) {
     // Compute track layout for current chapter and find layout entry
     const trackLayout = this.getTrackLayout();
@@ -315,6 +400,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
+  /**
+   * Callback invoked when an element is dropped onto a timeline track. The
+   * callback receives the original drag event and updates the data structures
+   * on the server as well as the Redux state.
+   *
+   * @param componentId ID of component which was dropped
+   * @param regionId  ID of region component was dropped into
+   */
   private async onComponentDroppedOnTrack(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     // Get component ID from drag event
@@ -428,6 +521,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     }
   }
 
+  /**
+   * Callback invoked when the name of a chapter in the program structure
+   * sidebar is clicked. The callback receives the access path of the chapter
+   * that was clicked and navigates to the TimelineEditor for that chapter.
+   *
+   * @param componentId ID of component which was dropped
+   * @param regionId  ID of region component was dropped into
+   */
   private onChapterClicked(accessPath: Array<number>) {
     const keyPath = util.generateChapterKeyPath(accessPath);
     const chapter: Chapter = this.props.chapters.getIn(keyPath);
@@ -443,6 +544,14 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     navigate(`/timeline/${chapter.id}`);
   }
 
+  /**
+   * Renders a preview screen components can be dropped into. The actual screen
+   * that is rendered depends on the `currentScreen` property found in the
+   * Redux state.
+   *
+   * @param screenHeight Desired height of the screen to be rendered
+   * @returns JSX elements for placing and rendering the screen
+   */
   private renderScreen(screenHeight: number) {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
 
@@ -478,6 +587,9 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
     );
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const { match: { params }, chapters, assets } = this.props;
     const timeline = this.getTimeline();
@@ -589,6 +701,11 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
   }
 }
 
+/**
+ * Maps application state to component props.
+ *
+ * @param state Application state
+ */
 function mapStateToProps(state: ApplicationState): TimelineEditorConnectedProps {
   return {
     assets: state.assets,
@@ -599,6 +716,11 @@ function mapStateToProps(state: ApplicationState): TimelineEditorConnectedProps 
   };
 }
 
+/**
+ * Wraps action creators with the dispatch function and maps them to props.
+ *
+ * @param dispatch Dispatch function for the configured store
+ */
 function mapDispatchToProps(dispatch: Dispatch<any>): TimelineEditorActionProps {
   return {
     timelineActions: bindActionCreators(timelineActionCreators, dispatch),
