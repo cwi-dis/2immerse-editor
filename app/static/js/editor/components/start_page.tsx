@@ -83,6 +83,9 @@ export interface ChapterTree {
   chapters: Array<ChapterTree>;
 }
 
+/**
+ * Props defining action creators used in the component.
+ */
 interface StartPageActionProps {
   documentActions: DocumentActions;
   screenActions: ScreenActions;
@@ -91,22 +94,41 @@ interface StartPageActionProps {
   timelineActions: TimelineActions;
 }
 
+/**
+ * Props defining parts of the application state used in the component.
+ */
 interface StartPageConnectedProps {
   document: DocumentState;
 }
 
 type StartPageProps = StartPageActionProps & StartPageConnectedProps;
 
+/**
+ * State for StartPage
+ */
 interface StartPageState {
   isLoading: boolean;
   selectedMethod: "url" | "upload" | "id";
   existingDocuments: Array<{ id: string, description: string }>;
 }
 
+/**
+ * Scans a layout document retrieved from the API for a region corresponding to
+ * the given area ID and returns it. Returns `undefined` otherwise
+ *
+ * @param id Area ID to search for
+ * @param layout Layout document where we want to find the region corresponding to the area
+ * @returns The region for the given area ID or `undefined`
+ */
 function getRegionForArea(id: string, layout: Layout) {
   return List(layout.regions).find((region) => region.id === id)!;
 }
 
+/**
+ * StartPage is a Redux-connected component responsible for loading the initial
+ * document, parsing it and creating the required data structures in the Redux
+ * state tree. It receives all its props via the Redux state tree.
+ */
 class StartPage extends React.Component<StartPageProps, StartPageState> {
   private urlInput: Nullable<HTMLInputElement>;
   private fileInput: Nullable<HTMLInputElement>;
@@ -122,6 +144,16 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     };
   }
 
+  /**
+   * Callback which is invoked after the component updated. Here this is used
+   * after a new document ID has been assigned to the Redux state tree. It
+   * requests all data associated to the document from the server, parses it
+   * and allocated the relevant data structures in the redux state tree. This
+   * is only done if the document ID is non-empty. Navigates to the
+   * LayoutDesigner component after all data has been processed.
+   *
+   * @param prevProps Props as they were before the update
+   */
   public async componentDidUpdate(prevProps: StartPageProps) {
     const { documentId } = this.props.document;
 
@@ -179,6 +211,18 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     }
   }
 
+  /**
+   * Callback invoked in response to submission of the form. It can either take
+   * a URL to an existing document, the ID of a document which already exists
+   * on the server or a document uploaded from the local file system. After
+   * uploading the data to the server, it receives the new document ID and
+   * updates the Redux state accordingly, which in turn triggers
+   * `componentDidUpdate()`. That function will then retrieve the processed
+   * document data from the server, generate the state tree and redirect to
+   * the LayoutDesigner.
+   *
+   * @param ev The original form event triggered by the submission
+   */
   private async submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
@@ -213,6 +257,9 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
     this.props.documentActions.assignDocumentId(documentId, docBaseUrl);
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { selectedMethod } = this.state;
 
@@ -296,12 +343,22 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
   }
 }
 
+/**
+ * Maps application state to component props.
+ *
+ * @param state Application state
+ */
 function mapStateToProps(state: ApplicationState): StartPageConnectedProps {
   return {
     document: state.document
   };
 }
 
+/**
+ * Wraps action creators with the dispatch function and maps them to props.
+ *
+ * @param dispatch Dispatch function for the configured store
+ */
 function mapDispatchToProps(dispatch: Dispatch<any>): StartPageActionProps {
   return {
     assetActions: bindActionCreators(assetActionCreators, dispatch),
