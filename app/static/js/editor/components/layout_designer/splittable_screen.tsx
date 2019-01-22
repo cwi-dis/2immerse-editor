@@ -20,6 +20,9 @@ import { Screen as ScreenModel, ScreenRegion } from "../../reducers/screens";
 import Screen from "../screen";
 import ContextMenu, { ContextMenuEntry, ContextMenuDivider } from "../context_menu";
 
+/**
+ * Props for SplittableScreen
+ */
 export interface SplittableScreenProps {
   screenInfo: ScreenModel;
   width: number;
@@ -28,6 +31,9 @@ export interface SplittableScreenProps {
   undoLastSplit: () => void;
 }
 
+/**
+ * State for SplittableScreen
+ */
 interface SplittableScreenState {
   contextMenu: {
     visible: boolean,
@@ -37,6 +43,22 @@ interface SplittableScreenState {
   canvasClick?: [number, number];
 }
 
+/**
+ * SplittableScreen represents a preview screen and renders all regions contained
+ * within that screen. This type of screen is intended to be used inside the
+ * LayoutDesigner component and allows the user to segment the screen into
+ * regions by splitting existing regions. For this purpose, it has callbacks for
+ * splitting an existing region or undoing the most recent split for whenever
+ * such an event is triggered. The screen information is passed in through the
+ * `screenInfo` prop. The screen can render at an different sizes, determined by
+ * the prop `width`. Height is then calculated corresponding to that.
+ *
+ * @param screenInfo An object containing data associated with a preview screen
+ * @param width The width of the rendered screen
+ * @param removeDevice Callback triggered when the user selects the option to remove the screen
+ * @param splitRegion Callback triggered when the user splits a region
+ * @param undoLastSplit Callback triggered when the user undoes the last split
+ */
 class SplittableScreen extends React.Component<SplittableScreenProps, SplittableScreenState> {
   constructor(props: SplittableScreenProps) {
     super(props);
@@ -48,6 +70,13 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     };
   }
 
+  /**
+   * Returns the topmost screen region which contains the coordinates given by
+   * `x` and `y`, or `undefined` if the coordinates are outside screen bounds.
+   *
+   * @param x X coordinate of the click event
+   * @param y Y coordinate of the click event
+   */
   private getClickedRegion(x: number, y: number): ScreenRegion | undefined {
     const regions = this.props.screenInfo.regions;
 
@@ -62,6 +91,13 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     return clickedRegion;
   }
 
+  /**
+   * Splits the current region either horizontally or vertically, thus creating
+   * two new sub-regions. The old region will be destroyed in the process. The
+   * split position is determined by the `[x, y]` coordinates found in `state`.
+   *
+   * @param orientation Orientation of the split. Either `horizontal` or `vertical`
+   */
   private splitRegion(orientation: "horizontal" | "vertical") {
     // Get click coords and try to find associated region
     const [x, y] = this.state.canvasClick!;
@@ -74,6 +110,15 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     }
   }
 
+  /**
+   * Callback invoked when the user clicks on a screen region. Receives the
+   * original mouse event that was fired as well as the coordinates the user
+   * clicked at relative to the top-left corner of the canvas.
+   *
+   * @param ev Original mouse event object
+   * @param x X coordinate relative to the top-left corner of the canvas
+   * @param y Y coordinate relative to the top-left corner of the canvas
+   */
   private handleCanvasClick(ev: MouseEvent, x: number, y: number) {
     // Open context menu once screen area has been clicked
     this.setState({
@@ -86,6 +131,9 @@ class SplittableScreen extends React.Component<SplittableScreenProps, Splittable
     });
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { width, screenInfo } = this.props;
     const { contextMenu } = this.state;

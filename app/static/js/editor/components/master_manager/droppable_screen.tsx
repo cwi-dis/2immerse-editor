@@ -32,10 +32,12 @@ interface DroppableScreenProps {
 
 /**
  * DroppableScreen represents a preview screen and renders all regions contained
- * within that screen. The screen information is passed in through the
- * `screenInfo` prop. The screen can render at an arbitray size, determined by
- * the props `width` and `height`. Though both are optional, at least one of
- * them must be defined, otherwise the component does not render anything.
+ * within that screen and allows the user to drop elements onto it via drag and
+ * drop. A callback then returns the ID of the region that the component has
+ * been dropped on. The screen information is passed in through the `screenInfo`
+ * prop. The screen can render at an arbitray size, determined by * the props
+ * `width` and `height`. Though both are optional, at least one of * them must
+ * be defined, otherwise the component does not render anything.
  *
  * This component also defines a callback `assignElementToRegion`, which is
  * invoked whenever an element is dropped over a screen region. The callback
