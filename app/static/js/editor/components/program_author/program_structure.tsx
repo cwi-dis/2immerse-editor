@@ -19,6 +19,9 @@ import { List } from "immutable";
 import { Chapter } from "../../reducers/chapters";
 import { Nullable, arraysEqual } from "../../util";
 
+/**
+ * Props for ProgramStructure.
+ */
 interface ProgramStructureProps {
   chapters: List<Chapter>;
   levelIndent: number;
@@ -26,12 +29,27 @@ interface ProgramStructureProps {
   chapterClicked: (accessPath: Array<number>) => void;
 }
 
+// Unicode codepoints for list bullet points
 const rightTriangle = String.fromCodePoint(9656);
 const downTriangle = String.fromCodePoint(9662);
 
+/**
+ * This component renders a chapter tree as a list, starting from the level
+ * passed in the `chapters` prop. Child levels are indented by the amount given
+ * in the prop `levelIndent`. Optionally, the access path of a selected chapter
+ * can be passed in, which will be highlighted in the list. Finally, a callback
+ * triggered when one of the entries is clicked must be provided.
+ *
+ * @param chapters Chapter tree to render
+ * @param levelIndent Amount child levels should be indented in pixels
+ * @param selectedChapter Access path of currently selected chapter. Optional
+ * @param chapterClicked Callback invoked when a chapter is clicked. Receives the clicked chapters access path
+ */
 const ProgramStructure: React.SFC<ProgramStructureProps> = (props) => {
   const { chapters, levelIndent, chapterClicked, selectedChapter } = props;
 
+  // Render the chapter tree as a list recursively starting from the level
+  // passed as argument, indenting child levels accordingly
   const renderTreeLevel = (chapters: List<Chapter>, accessPath: Array<number> = []): Nullable<JSX.Element> => {
     if (chapters.isEmpty()) {
       return null;
