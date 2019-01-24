@@ -19,16 +19,32 @@ import { Image as KonvaImage } from "react-konva";
 
 import { Nullable } from "../util";
 
+/**
+ * Props for DeviceFrame
+ */
 interface DeviceFrameProps {
   src: string;
   width: number;
   height: number;
 }
 
+/**
+ * State for DeviceFrame
+ */
 interface DeviceFrameState {
   image: Nullable<HTMLImageElement>;
 }
 
+/**
+ * DeviceFrame is a component intended to render a graphical device frame
+ * around a preview screen. The device frame to be rendered is passed in via
+ * the `src` props and `width` and `height` represent the size that the frame
+ * should be rendered at.
+ *
+ * @param src An URL pointing to a device frame
+ * @param width The width of the rendered device frame
+ * @param height The height of the rendered device frame
+ */
 class DeviceFrame extends React.Component<DeviceFrameProps, DeviceFrameState> {
   constructor(props: DeviceFrameProps) {
     super(props);
@@ -38,6 +54,11 @@ class DeviceFrame extends React.Component<DeviceFrameProps, DeviceFrameState> {
     };
   }
 
+  /**
+   * Invoked after the component is mounted. Loads the image from the URL found
+   * in the `src` prop and updates the state after the image has finished
+   * loading.
+   */
   public componentDidMount() {
     // Construct new Image object and set src to props.src
     const image = new Image();
@@ -49,6 +70,9 @@ class DeviceFrame extends React.Component<DeviceFrameProps, DeviceFrameState> {
     };
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { width, height } = this.props;
     const { image } = this.state;
