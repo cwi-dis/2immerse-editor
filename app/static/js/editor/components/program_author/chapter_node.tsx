@@ -20,22 +20,6 @@ import { Group, Rect, Text, Line } from "react-konva";
 import { Coords, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
-interface ChapterNodeProps {
-  chapter: Chapter;
-  position: Coords;
-  size: Coords;
-  currentPath: Array<number>;
-
-  boxClick: (currentPath: Array<number>, position: Coords, size: Coords) => void;
-  nameLabelClick: (currentPath: Array<number>, currentName: string) => void;
-  addChapterClick: (currentPath: Array<number>, handlePosition: "left" | "right" | "bottom") => void;
-  removeChapterClick: (currentPath: Array<number>) => void;
-}
-
-interface ChapterNodeState {
-  hovered: boolean;
-}
-
 interface BoxHandleProps {
   x: number;
   y: number;
@@ -75,6 +59,22 @@ const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
     </Group>
   );
 };
+
+interface ChapterNodeProps {
+  chapter: Chapter;
+  position: Coords;
+  size: Coords;
+  currentPath: Array<number>;
+
+  boxClick: (currentPath: Array<number>, position: Coords, size: Coords) => void;
+  nameLabelClick: (currentPath: Array<number>, currentName: string) => void;
+  addChapterClick: (currentPath: Array<number>, handlePosition: "left" | "right" | "bottom") => void;
+  removeChapterClick: (currentPath: Array<number>) => void;
+}
+
+interface ChapterNodeState {
+  hovered: boolean;
+}
 
 class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
   private strokeColors = {
