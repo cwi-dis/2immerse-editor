@@ -32,6 +32,9 @@ interface NodeConnectorsProps {
 const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
   const { nodeCount, currentIndex, hasChildren, position } = props;
 
+  // Colour of the lines
+  const color = "#2B98F0";
+
   const [x, y] = position;
   const [width, height] = props.boxSize;
   const [xMargin, yMargin] = props.margins;
@@ -45,13 +48,13 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
     const endY = y + height + yMargin - 10;
 
     connectorLines.push(
-      <Line key={`bottom.${position}`} points={[centerX, bottomY, centerX, endY]} stroke="#2B98F0" strokeWidth={1} />,
+      <Line key={`bottom.${position}`} points={[centerX, bottomY, centerX, endY]} stroke={color} strokeWidth={1} />,
     );
   }
 
   // Draw connector on the upper side
   connectorLines.push(
-    <Line key={`top.${position}`} points={[centerX, y - 1, centerX, y - 10]} stroke="#2B98F0" strokeWidth={1} />,
+    <Line key={`top.${position}`} points={[centerX, y - 1, centerX, y - 10]} stroke={color} strokeWidth={1} />,
   );
 
   // If node has more than one child
@@ -62,7 +65,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
       const endX = x + width + xMargin / 2;
 
       connectorLines.push(
-        <Line key={`right.${position}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+        <Line key={`right.${position}`} points={[startX, y - 10, endX, y - 10]} stroke={color} strokeWidth={1} />
       );
     } else if (currentIndex === nodeCount - 1) {
       // If node is the rightmost node in a tree level
@@ -70,7 +73,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
       const endX = x + width / 2;
 
       connectorLines.push(
-        <Line key={`left.${position}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+        <Line key={`left.${position}`} points={[startX, y - 10, endX, y - 10]} stroke={color} strokeWidth={1} />
       );
     } else {
       // Internal nodes
@@ -78,7 +81,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
       const endX = x + width + xMargin / 2;
 
       connectorLines.push(
-        <Line key={`middle.${position}`} points={[startX, y - 10, endX, y - 10]} stroke="#2B98F0" strokeWidth={1} />
+        <Line key={`middle.${position}`} points={[startX, y - 10, endX, y - 10]} stroke={color} strokeWidth={1} />
       );
     }
   }
