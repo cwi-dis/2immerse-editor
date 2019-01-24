@@ -20,6 +20,9 @@ import { List } from "immutable";
 import { Screen as ScreenModel } from "../../reducers/screens";
 import SplittableScreen from "./splittable_screen";
 
+/**
+ * Props for ScreenContainer
+ */
 interface ScreenContainerProps {
   screens: List<ScreenModel>;
   title: string;
@@ -31,6 +34,23 @@ interface ScreenContainerProps {
   undoLastSplit: (screenId: string) => void;
 }
 
+/**
+ * General container for grouping a type of preview screens (e.g. all personal
+ * devices). Has a title and label for number of devices at the very top and
+ * then renders all preview screens passed in one after the other from top to
+ * bottom. The container also forwards a series of callbacks for removing
+ * devices, splitting regions and undoing splits to the preview screens within
+ * the container.
+ *
+ * @param screens Preview screens to be rendered in this container
+ * @param title Title for container
+ * @param screenWidth Width the screens inside the container should be rendered at
+ * @param numColumns Number of on-screen columns the container should take up
+ * @param colRef A refernce to the wrapping `div` element
+ * @param removeDevice Callback for when a device should be removed. Receives the ID of the device
+ * @param splitRegion Callback for when a region should be split. Receives ID of the screen, region, split orientation and split position
+ * @param undoLastSplit Callback for when the last split should be undone. Receives the screen ID
+ */
 const ScreenContainer: React.SFC<ScreenContainerProps> = (props) => {
   // Render a series of screens one after the other with a title and screen count,
   // hooking up callbacks for splitting regions to props based on screen IDs
