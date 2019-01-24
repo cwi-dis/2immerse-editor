@@ -19,6 +19,9 @@ import { Group, Line } from "react-konva";
 
 import { Coords } from "../../util";
 
+/**
+ * Props for NodeConnectors.
+ */
 interface NodeConnectorsProps {
   boxSize: Coords;
   margins: Coords;
@@ -29,6 +32,17 @@ interface NodeConnectorsProps {
   hasChildren: boolean;
 }
 
+/**
+ * This component renders connectors between the current node and nodes above,
+ * to the left and right potentially child nodes.
+ *
+ * @param boxSize Size of the box for which we want to draw connectors for
+ * @param margins Margins between the boxes given as `[x, y]`
+ * @param position Position of the box
+ * @param nodeCount Number of nodes on the current level of the tree
+ * @param currentIndex Index of the current node
+ * @param hasChildren Whether the node has any children
+ */
 const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
   const { nodeCount, currentIndex, hasChildren, position } = props;
 
