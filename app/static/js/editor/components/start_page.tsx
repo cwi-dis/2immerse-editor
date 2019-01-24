@@ -22,6 +22,7 @@ import * as classNames from "classnames";
 
 import { Nullable, makeRequest } from "../util";
 import { ApplicationState, navigate } from "../store";
+import { Asset, Area, ChapterTree, Layout, Region } from "../api_types";
 import { DocumentState } from "../reducers/document";
 
 import { actionCreators as documentActionCreators, DocumentActions } from "../actions/document";
@@ -29,59 +30,6 @@ import { actionCreators as screenActionCreators, ScreenActions } from "../action
 import { actionCreators as assetActionCreators, AssetActions } from "../actions/assets";
 import { actionCreators as chapterActionCreators, ChapterActions } from "../actions/chapters";
 import { actionCreators as timelineActionCreators, TimelineActions } from "../actions/timelines";
-
-interface Asset {
-  id: string;
-  name: string;
-  description: string;
-  previewUrl: string;
-  duration: number;
-}
-
-interface Area {
-  region: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
-interface Device {
-  name: string;
-  type: "communal" | "personal";
-  orientation: "portrait" | "landscape";
-  areas: Array<Area>;
-}
-
-interface Region {
-  id: string;
-  name: string;
-  color: string;
-}
-
-interface Layout {
-  devices: Array<Device>;
-  regions: Array<Region>;
-}
-
-interface Element {
-  asset: string;
-  duration: number;
-  offset: number;
-}
-
-interface Track {
-  id: string;
-  region: string;
-  elements: Array<Element>;
-}
-
-export interface ChapterTree {
-  id: string;
-  name: string;
-  tracks: Array<Track>;
-  chapters: Array<ChapterTree>;
-}
 
 /**
  * Props defining action creators used in the component.
