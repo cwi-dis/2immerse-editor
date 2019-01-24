@@ -16,7 +16,7 @@
 
 import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction, AsyncAction, findById } from "../util";
-import { ChapterTree } from "../components/start_page";
+import { ChapterTree } from "../api_types";
 
 export type LOAD_TIMELINES = PayloadAction<"LOAD_TIMELINES", { tree: ChapterTree }>;
 function loadTimelines(tree: ChapterTree): LOAD_TIMELINES {

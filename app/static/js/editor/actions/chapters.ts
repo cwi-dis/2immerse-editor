@@ -16,7 +16,7 @@
 
 import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
-import { ChapterTree } from "../components/start_page";
+import { ChapterTree } from "../api_types";
 
 export type LOAD_CHAPTER_TREE = PayloadAction<"LOAD_CHAPTER_TREE", { tree: ChapterTree }>;
 function loadChapterTree(tree: ChapterTree): LOAD_CHAPTER_TREE {

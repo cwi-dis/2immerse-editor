@@ -19,7 +19,7 @@ import * as shortid from "shortid";
 import { generateChapterKeyPath, Nullable } from "../util";
 import { ActionHandler } from "../action_handler";
 import * as actions from "../actions/chapters";
-import { ChapterTree } from "../components/start_page";
+import { ChapterTree } from "../api_types";
 
 export interface ChapterAttributes {
   id: string;
