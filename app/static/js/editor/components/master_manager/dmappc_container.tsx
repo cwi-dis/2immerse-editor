@@ -15,13 +15,29 @@
  */
 
 import * as React from "react";
-import { AssetState } from "../../reducers/assets";
+import { List } from "immutable";
+import { Asset } from "../../api_types";
 
+/**
+ * Props for DMAppcContainer
+ */
 interface DMAppcContainerProps {
   baseUrl: string;
-  assets: AssetState;
+  assets: List<Asset>;
 }
 
+/**
+ * This component renders a container at half the height of the screen and a
+ * container for each asset passed in through the `assets` prop. This container
+ * renders a preview image for each asset, its title and a short description.
+ * Each of these asset containers has its `draggable` property set to true, i.e.
+ * the container can be dragged onto other elements and data can be transferred
+ * this way. In this instance, the element the asset container has been dropped
+ * over receives the asset's ID.
+ *
+ * @param baseUrl Base URL for `previewUrl` in assets
+ * @param assets List of assets to be rendered inside this container
+ */
 const DMAppcContainer: React.SFC<DMAppcContainerProps> = (props) => {
   const { assets, baseUrl } = props;
 
