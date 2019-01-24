@@ -24,6 +24,9 @@ import { actionCreators as screenActionCreators, ScreenActions } from "../../act
 import ScreenContainer from "./screen_container";
 import { validateLayout } from "../../util";
 
+/**
+ * Region in a template as it is found in a layout document.
+ */
 interface TemplateRegion {
   region: {
     id: string,
@@ -32,6 +35,9 @@ interface TemplateRegion {
   };
 }
 
+/**
+ * Layouts as they are defined in a standard layout document
+ */
 interface LayoutTemplate {
   deviceType: string;
   layout: {
@@ -46,21 +52,38 @@ interface LayoutTemplate {
   };
 }
 
+/**
+ * Props defining action creators used in the component.
+ */
 interface LayoutDesignerActionProps {
   screenActions: ScreenActions;
 }
 
+/**
+ * Props defining parts of the application state used in the component.
+ */
 interface LayoutDesignerConnectedProps {
   screens: ScreenState;
 }
 
 type LayoutDesignerProps = LayoutDesignerActionProps & LayoutDesignerConnectedProps;
 
+/**
+ * State for LayoutDesigner
+ */
 interface LayoutDesignerState {
   personalScreenWidth: number;
   communalScreenWidth: number;
 }
 
+/**
+ * TimelineEditor is a Redux-connected component responsible for rendering and
+ * manipulating preview screens. The user can add personal or communal preview
+ * devices and design layouts by splitting screen regions horizontally or
+ * vertically. For more complex layouts, the components has the option to upload
+ * existing layouts and parse them. It receives all its props via the Redux
+ * state tree.
+ */
 class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesignerState> {
   private communalColumn: HTMLDivElement;
   private personalColumn: HTMLDivElement;
@@ -74,6 +97,16 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     };
   }
 
+  /**
+   * Parses a data structure containing screen regions obtained from a valid
+   * layout document and creates preview devices for it containing the
+   * specified regions. The function also requires the name and type of preview
+   * device to be passed in.
+   *
+   * @param regions A data structure containing template regions retrieved from a layout document
+   * @param name The name for the preview device
+   * @param type The type of preview device. One of `personal` or `communal`
+   */
   private parseTemplateRegions(regions: {portrait: Array<TemplateRegion>, landscape: Array<TemplateRegion>}, name: string, type: "communal" | "personal") {
     const { portrait, landscape } = regions;
 
@@ -110,6 +143,12 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     }
   }
 
+  /**
+   * Parses a list of layout templates and creates the necessary preview screens
+   * and regions in the Redux state tree.
+   *
+   * @param templates A list of layout templates
+   */
   private parseLayoutTemplates(templates: Array<LayoutTemplate>): void {
     // Parse regions for all templates
     templates.forEach((template) => {
@@ -120,6 +159,14 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     });
   }
 
+  /**
+   * Retrieves a layout file from the event that is passed, reads it, validates
+   * the loaded file against a schema and attempts to parse the file and
+   * allocate preview screens and regions for it. If any step along the way
+   * fails, an error message is shown.
+   *
+   * @param e Event fired in response to a file upload
+   */
   private loadTemplate(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length >= 1) {
       const file = e.target.files[0];
@@ -152,6 +199,10 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     }
   }
 
+  /**
+   * Invoked after the component has mounted. Sets the preview screen width
+   * based on the actual width of the divs containing the screens in the DOM.
+   */
   public componentDidMount() {
     this.setState({
       personalScreenWidth: this.personalColumn.clientWidth,
@@ -159,6 +210,9 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
     });
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const { screenActions } = this.props;
     const { previewScreens: screens } = this.props.screens;
@@ -220,12 +274,22 @@ class LayoutDesigner extends React.Component<LayoutDesignerProps, LayoutDesigner
   }
 }
 
+/**
+ * Maps application state to component props.
+ *
+ * @param state Application state
+ */
 function mapStateToProps(state: ApplicationState): LayoutDesignerConnectedProps {
   return {
     screens: state.screens,
   };
 }
 
+/**
+ * Wraps action creators with the dispatch function and maps them to props.
+ *
+ * @param dispatch Dispatch function for the configured store
+ */
 function mapDispatchToProps(dispatch: Dispatch<any>): LayoutDesignerActionProps {
   return {
     screenActions: bindActionCreators(screenActionCreators, dispatch)
