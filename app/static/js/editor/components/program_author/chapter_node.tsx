@@ -20,6 +20,9 @@ import { Group, Rect, Text, Line } from "react-konva";
 import { Coords, Nullable } from "../../util";
 import { Chapter } from "../../reducers/chapters";
 
+/**
+ * Props for BoxHandle
+ */
 interface BoxHandleProps {
   x: number;
   y: number;
@@ -28,6 +31,17 @@ interface BoxHandleProps {
   onClick: () => void;
 }
 
+/**
+ * This component renders a handle on one of the sides of a chapter node, which
+ * when clicked can be used to add a new chapter before, after or below the
+ * clicked node. This is facilitated by the `onClick` callback. The cursor is
+ * also changed to a pointer if the handle is hovered over.
+ *
+ * @param x X coordinate of the handle
+ * @param y Y coordinate of the handle
+ * @param size Size of the handle
+ * @param onClick Callback which is triggered when the user clicks the handle
+ */
 const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
   const {x, y, size, onClick} = props;
   let textRef: Nullable<any>;
@@ -60,6 +74,9 @@ const BoxHandle: React.SFC<BoxHandleProps> = (props) => {
   );
 };
 
+/**
+ * Props for ChapterNode
+ */
 interface ChapterNodeProps {
   chapter: Chapter;
   position: Coords;
@@ -72,11 +89,30 @@ interface ChapterNodeProps {
   removeChapterClick: (currentPath: Array<number>) => void;
 }
 
+/**
+ * State for ChapterNode
+ */
 interface ChapterNodeState {
   hovered: boolean;
 }
 
+/**
+ * ChapterNode is a component which renders the representation of a chapter as
+ * a box onto a canvas and provides callbacks for all interactions related to
+ * the node, such as clicking the chapter itself, the close symbol, the name
+ * label or the handles for adding new chapters.
+ *
+ * @param chapter The chapter node to be rendered
+ * @param position The `[x, y]` position the node should be rendered at
+ * @param size The size of the node as `[w, h]`
+ * @param currentPath The path to the current node by navigating the tree.
+ * @param boxClick Callback invoked when the node itself is clicked. Receives the access path.
+ * @param nameLabelClick Callback invoked when the chapters label is clicked. Receives the access path and the current name.
+ * @param addChapterClick Callback invoked when one of the handles is clicked. Receives the access path and the position of the handle that was clicked.
+ * @param removeChapterClick Callback invoked when the `x` symbol of the chapter is clicked. Receives the access path.
+ */
 class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
+  // Colours for the edge of the node in default and hovered state
   private strokeColors = {
     default: "#000000",
     hover: "#2B98F0"
@@ -90,6 +126,14 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     };
   }
 
+  /**
+   * Renders the handles for adding new chapters on the left, right and bottom
+   * of the chapter, but only if the chapter is hovered. If the chapter has
+   * children, this function renders a connecting line to the child nodes. If
+   * the chapter has no children and is not hovered, it renders nothing.
+   *
+   * @returns The rendered handles if chapter is hovered and has children, nothing otherwise
+   */
   private renderHandles(): Nullable<JSX.Element> {
     const {chapter, position, size, currentPath} = this.props;
     const [x, y] = position;
@@ -152,6 +196,9 @@ class ChapterNode extends React.Component<ChapterNodeProps, ChapterNodeState> {
     return null;
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const {chapter, position, size, currentPath} = this.props;
 
