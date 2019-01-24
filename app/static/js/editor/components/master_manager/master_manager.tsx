@@ -32,11 +32,17 @@ import { ComponentPlacement } from "../../reducers/masters";
 import DMAppcContainer from "./dmappc_container";
 import DroppableScreen from "./droppable_screen";
 
+/**
+ * Props defining action creators used in the component.
+ */
 interface MasterManagerActionProps {
   masterActions: MasterActions;
   screenActions: ScreenActions;
 }
 
+/**
+ * Props defining parts of the application state used in the component.
+ */
 interface MasterManagerConnectedProps {
   masters: MasterState;
   screens: ScreenState;
@@ -44,7 +50,18 @@ interface MasterManagerConnectedProps {
 
 type MasterManagerProps = MasterManagerActionProps & MasterManagerConnectedProps;
 
+/**
+ * MasterManager is a Redux-connected component responsible for rendering
+ * preview screens, which can be used for dropping components on top of and thus
+ * assigning them to master layouts. It also provides elements for * creating
+ * and updating such master layouts. It receives all its props via the Redux
+ * state tree.
+ */
 class MasterManager extends React.Component<MasterManagerProps, {}> {
+  /**
+   * Invoked after the component is first mounted. Sets the `currentScreen`
+   * prop if it is not set already.
+   */
   public componentDidMount() {
     const { previewScreens, currentScreen } = this.props.screens;
 
@@ -54,6 +71,11 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     }
   }
 
+  /**
+   * Callback to add a new master layout. Shows a dialogue prompting the user
+   * to choose a name for the layout. If the name is empty or the user cancels
+   * the prompt, no new layout is created.
+   */
   private addMaster() {
     // Prompt user to assign name to master
     const masterName = prompt("Master layout name:");
@@ -64,12 +86,27 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     }
   }
 
+  /**
+   * Callback which is invoked in response to the user selecting a new preview
+   * screen.
+   *
+   * @param e Form event from which the screen ID is retrieved
+   */
   private updateSelectedScreen(e: React.FormEvent<HTMLSelectElement>) {
     // Update current screen to be screen given by ID in event
     const screenId = e.currentTarget.value;
     this.props.screenActions.updateSelectedScreen(screenId);
   }
 
+  /**
+   * This function returns a list of components which have been placed onto the
+   * given screen for the given layout. If the given layout does not exist or
+   * does not have any components assigned to it, `undefined` is returned.
+   *
+   * @param screenId ID of screen for which we want to get the components
+   * @param layoutId ID of layout for which we want to get the components
+   * @returns A list of components placed onto the given screen for the given layout
+   */
   private getComponentsOnScreen(screenId: string, layoutId?: string): List<ComponentPlacement> | undefined {
     // Return undefined if no layout was selected
     if (!layoutId) {
@@ -89,6 +126,13 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     return currentLayout.placedComponents.filter((p) => p.screen === screenId);
   }
 
+  /**
+   * Renders the preview screen and sets it up so that the user can place
+   * elements on it via drag and drop. Also renders a dropdown where the user
+   * can update the current screen.
+   *
+   * @returns JSX elements which render the preview screen and a dropdown for selecting the screen
+   */
   private renderScreen() {
     const { currentScreen: currentScreenId, previewScreens } = this.props.screens;
 
@@ -120,6 +164,9 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
     );
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const { layouts, currentLayout } = this.props.masters;
 
@@ -164,6 +211,11 @@ class MasterManager extends React.Component<MasterManagerProps, {}> {
   }
 }
 
+/**
+ * Maps application state to component props.
+ *
+ * @param state Application state
+ */
 function mapStateToProps(state: ApplicationState): MasterManagerConnectedProps {
   return {
     masters: state.masters,
@@ -171,6 +223,11 @@ function mapStateToProps(state: ApplicationState): MasterManagerConnectedProps {
   };
 }
 
+/**
+ * Wraps action creators with the dispatch function and maps them to props.
+ *
+ * @param dispatch Dispatch function for the configured store
+ */
 function mapDispatchToProps(dispatch: Dispatch<any>): MasterManagerActionProps {
   return {
     masterActions: bindActionCreators(masterActionCreators, dispatch),
