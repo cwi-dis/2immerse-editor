@@ -17,7 +17,15 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 
+/**
+ * This component renders a menu bar which is fixed to the top of the page and
+ * simply contains links for `react-router` which point to the core connected
+ * components of the application.
+ */
 class MenuBar extends React.Component<{}, {}> {
+  /**
+   * Renders the component
+   */
   public render() {
     // Render bar on top of screen with basic navigation links
     return (
