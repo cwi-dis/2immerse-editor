@@ -29,7 +29,7 @@ export interface CurrentVersionProps {
 
 class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersionState> {
   public static defaultProps: CurrentVersionProps = {
-    commitUrl: "https://github.com/cwi-dis/2immerse-editor/commit/"
+    commitUrl: "https://github.com/2-IMMERSE/editor/commit/"
   };
 
   constructor(props: CurrentVersionProps) {
