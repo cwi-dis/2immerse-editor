@@ -16,23 +16,42 @@
 
 import * as React from "react";
 
-export type ContextMenuDivider = React.SFC<{}>;
-export const ContextMenuDivider: ContextMenuDivider = (props) => {
-  // Line to visibly divide context menu entries from each other
-  return (
-    <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}} />
-  );
-};
+/**
+ * Divider line for context menu entries. Can be passed as child to a
+ * `ContextMenu` component.
+ */
+export class ContextMenuDivider extends React.Component<{}> {
+  public render() {
+    // Line to visibly divide context menu entries from each other
+    return (
+      <div className="divider" style={{width: "100%", marginTop: 1, height: 2, borderTop: "1px solid #BBBBBB"}} />
+    );
+  }
+}
 
+/**
+ * Props for ContextMenuEntry
+ */
 interface ContextMenuEntryProps {
   name: string;
   callback: () => void;
 }
 
+/**
+ * State for ContextMenuEntry
+ */
 interface ContextMenuEntryState {
   selected: boolean;
 }
 
+/**
+ * Components of type ContextMenuEntry are meant to be passed as children to
+ * a `ContextMenu` component. It takes a text label for the entry and a callback
+ * which is invoked when the entry is clicked.
+ *
+ * @param name Label for the entry
+ * @param callback Callback triggered when the entry is clicked
+ */
 export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, ContextMenuEntryState> {
   constructor(props: ContextMenuEntryProps) {
     super(props);
@@ -42,6 +61,9 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
     };
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { name, callback } = this.props;
     const { selected } = this.state;
@@ -70,6 +92,9 @@ export class ContextMenuEntry extends React.Component<ContextMenuEntryProps, Con
   }
 }
 
+/**
+ * Props for ContextMenu
+ */
 interface ContextMenuProps {
   x: number;
   y: number;
@@ -79,12 +104,29 @@ interface ContextMenuProps {
   onItemClicked?: () => void;
 }
 
+/**
+ * Renders a context menu at the given position rendering its children as
+ * context menu entries. The children should be of type `ContextMenuEntry` and
+ * cannot be empty. In order for the context menu to be visible, the `visible`
+ * props needs to be set to true. The component also provides a callback
+ * `onItemClicked()` which is triggered whenever any entry is clicked. This can
+ * be used to close the context menu.
+ *
+ * @param x X position the menu should be rendered at
+ * @param y Y position the menu should be rendered at
+ * @param visible Whether the menu is visible
+ * @param children The context menu entries provided as React children
+ * @param onItemClicked Callback which is triggered whenever an item is clicked. Optional
+ */
 class ContextMenu extends React.Component<ContextMenuProps, {}> {
   // Default function for when onItemClicked is not passed in from the outside
   public static defaultProps = {
     onItemClicked: () => {}
   };
 
+  /**
+   * Renders the component
+   */
   public render() {
     const {x, y, visible, children} = this.props;
 
