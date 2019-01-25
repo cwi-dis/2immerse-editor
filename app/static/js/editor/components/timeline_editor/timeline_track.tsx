@@ -22,6 +22,9 @@ import { Vector2d } from "konva";
 import PreviewImage from "./preview_image";
 import { TimelineElement } from "../../reducers/timelines";
 
+/**
+ * Props for TimelineTrack
+ */
 interface TimelineTrackProps {
   name: string;
   labelColor?: string;
@@ -37,6 +40,28 @@ interface TimelineTrackProps {
   elementClicked: (id: string, currentDuration: number) => void;
 }
 
+/**
+ * TimelineTrack represents a track on a timeline which contains and renders
+ * the elements contained in that track. Each track is associated with a screen
+ * region, has a colour, a name and a certain duration in seconds. Moreover,
+ * it is possible to lock the track to prevent modification and pass in a
+ * scrubber position, which renders as a vertical line across the track to
+ * indicate the current position within the track. The component also provides
+ * callbacks which are triggered when elements are clicked or removed. Elements
+ * are removed by dragging them off the timeline track.
+ *
+ * @param name The name of the track
+ * @param labelColor The background color of the label. Optional
+ * @param width The width of the track
+ * @param height The height of the track
+ * @param elements The elements that should be rendered on the track
+ * @param trackDuration The duration of the track in seconds. Optional
+ * @param scrubberPosition The position of the scrubber head in pixels. Optional
+ * @param locked Whether the track is locked
+ * @param offsets Margins to the left and right of the track. Optional, given as `[lmargin, rmargin]`
+ * @param elementRemoved Callback invoked when an element is removed from the track. Receives the ID of the element that has been removed
+ * @param elementClicked Callback invoked when an element is clicked. Receives the ID and the current duration of the element that has been clicked
+ */
 class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   private initialYPosition?: number;
 
@@ -44,12 +69,22 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
     super(props);
   }
 
-  private onDragMove(id: string, e: any) {
+  /**
+   * Callback invoked when an element is dragged on the timeline track. This
+   * callback is intended to check whether an element should be removed. This
+   * is done by calculating the different between the current Y position of the
+   * mouse and the Y position where the eveent was first triggered. If the
+   * difference is greater than 100 pixels, the element removal callback is
+   * triggered.
+   *
+   * @param id The ID of the element that was dragged
+   * @param clientY The current Y position of the mouse
+   */
+  private onDragMove(id: string, clientY: number) {
     if (this.initialYPosition === undefined) {
       return;
     }
 
-    const { clientY } = e.evt;
     // Calculate y offset from position drag was started from
     const offsetY = Math.abs(this.initialYPosition - clientY);
 
@@ -63,6 +98,9 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { width, height, elements, scrubberPosition, name, offsets, labelColor } = this.props;
     const [startOffset, endOffset] = offsets || [0, 0];
@@ -147,7 +185,7 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
                 strokeWidth={1}
                 draggable={true}
                 onClick={this.props.elementClicked.bind(this, element.id, element.duration)}
-                onDragMove={this.onDragMove.bind(this, element.id)}
+                onDragMove={(e) => this.onDragMove(element.id, e.evt.clientY)}
                 onDragStart={(e) => this.initialYPosition = e.evt.clientY}
                 dragBoundFunc={dragBoundFunc}
               />
@@ -170,6 +208,9 @@ class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
   }
 }
 
+/**
+ * Props for EmptyTrack
+ */
 interface EmptyTrackProps {
   name: string;
   width: number;
@@ -179,6 +220,21 @@ interface EmptyTrackProps {
   labelColor?: string;
 }
 
+/**
+ * EmptyTrack is a component created for convenience when one wants to render a
+ * track which does not contain any timeline elements yet. It is simply a
+ * wrapper around TimelineTrack wich a couple defaults for certain props such
+ * as the callbacks, which are empty functions or the list of elements, which is
+ * also empty. All other props are simply passed through to the inner
+ * TimelineTrack.
+ *
+ * @param name The name of the track
+ * @param width The width of the track
+ * @param height The height of the track
+ * @param scrubberPosition The position of the scrubber head in pixels. Optional
+ * @param offsets Margins to the left and right of the track. Optional, given as `[lmargin, rmargin]`
+ * @param labelColor The background color of the label. Optional
+ */
 export const EmptyTrack: React.SFC<EmptyTrackProps> = (props) => {
   return (
     <TimelineTrack
