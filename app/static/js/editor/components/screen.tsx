@@ -18,16 +18,8 @@ import * as React from "react";
 import { Layer, Rect, Group, Stage } from "react-konva";
 
 import { Nullable, getCanvasDropPosition } from "../util";
-import DeviceFrame from "./device_frame";
 import { Screen as ScreenModel } from "../reducers/screens";
-
-export interface ScreenProps {
-  screenInfo: ScreenModel;
-  height: number;
-  stageRef?: (stage: Nullable<Stage>) => void;
-  onComponentDropped?: (componentId: string, x: number, y: number) => void;
-  onContextMenu?: (e: React.MouseEvent<HTMLDivElement>, x: number, y: number) => void;
-}
+import DeviceFrame from "./device_frame";
 
 interface DeviceFrameDescription {
   url: string;
@@ -53,6 +45,34 @@ const deviceFrames: { [key in "communal" | "personal"]: DeviceFrameDescription }
   }
 };
 
+/**
+ * Props for screen
+ */
+export interface ScreenProps {
+  screenInfo: ScreenModel;
+  height: number;
+  stageRef?: (stage: Nullable<Stage>) => void;
+  onComponentDropped?: (componentId: string, x: number, y: number) => void;
+  onContextMenu?: (e: React.MouseEvent<HTMLDivElement>, x: number, y: number) => void;
+}
+
+/**
+ * This is a generic component for rendering preview screens and its associated
+ * regions. Based on the screen type (`communal` or `personal`) it also renders
+ * a corresponding device frame (i.e. a TV screen or a mobile phone). One can
+ * specify the height of the screen while the width is then calculated based on
+ * that and the aspect ratio of the device frame. This component also provides
+ * callbacks for when a comonent is dropped onto one of the regions or when the
+ * user attempts to open a context menu by right-clicking on a screen region.
+ * These callbacks are used by `DroppableScreen` and `SplittableScreen`
+ * correspondingly.
+ *
+ * @param screenInfo A screen object containing the regions to be rendered
+ * @param height Height the screen should be rendered at
+ * @param stageRef A callback returning a ref to the stage object inside the screen
+ * @param onComponentDropped Callback invoked when a component has been dropped onto the screen. Optional, receives the component ID and the drop coordinates
+ * @param onContextMenu Callback invoked when the user right-clicks the screen. Receives the original mouse event and the click coordinates
+ */
 const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
   let stageWrapper: Nullable<Stage>;
   const { height, screenInfo: screen, stageRef } = props;
@@ -103,6 +123,7 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     ];
   };
 
+  // Callback triggered when something is dropped onto this screen
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
@@ -115,6 +136,7 @@ const Screen: React.SFC<ScreenProps> = (props: ScreenProps) => {
     props.onComponentDropped && props.onComponentDropped(data, regionX, regionY);
   };
 
+  // Callback triggered when the user right-clicks the screen
   const onContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
 
