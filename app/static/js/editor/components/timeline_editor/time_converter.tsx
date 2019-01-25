@@ -17,11 +17,23 @@
 import * as React from "react";
 import { padStart } from "../../util";
 
+/**
+ * Props for TimeConverter
+ */
 interface TimeConverterProps {
   seconds: number;
   style?: React.CSSProperties;
 }
 
+/**
+ * TimeConverter takes a numeric value for seconds and uses it to render a
+ * timecode consisting of hours, minutes and seconds. All values are padded to
+ * the left with zeroes. So for instance, passing the value 345 for the prop
+ * `seconds` will result in a timecode `00:05:45` to be generated.
+ *
+ * @param seconds The time in seconds we want to generate a timecode for
+ * @param style CSS style for the wrapping element
+ */
 const TimeConverter: React.SFC<TimeConverterProps> = (props) => {
   let { seconds, style } = props;
   // Function for padding a number with leading zeroes
