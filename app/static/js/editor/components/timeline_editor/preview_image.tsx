@@ -19,16 +19,32 @@ import { Image as KonvaImage } from "react-konva";
 
 import { Nullable, Coords } from "../../util";
 
+/**
+ * Props for PreviewImage
+ */
 interface PreviewImageProps {
   url: string;
   position: Coords;
   height: number;
 }
 
+/**
+ * State for PreviewImage
+ */
 interface PreviewImageState {
   image: Nullable<HTMLImageElement>;
 }
 
+/**
+ * PreviewImage is a component intended to render a preview image on a timeline
+ * track. The preview image to be rendered is passed in via the `url` prop and
+ * its height via the `height` prop. It can also be freely placed, using the
+ * `position` prop. Before rendering it is then scaled proportionally.
+ *
+ * @param url An URL pointing to the preview image
+ * @param position The position of the image on its canvas. Given as `[x, y]`
+ * @param height The desired height of the image
+ */
 class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState> {
   constructor(props: PreviewImageProps) {
     super(props);
@@ -38,6 +54,11 @@ class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState>
     };
   }
 
+  /**
+   * Invoked after the component is mounted. Loads the image from the URL found
+   * in the `url` prop and updates the state after the image has finished
+   * loading.
+   */
   public componentDidMount() {
     // Construct new Image object and set src to props.url
     const image = new Image();
@@ -49,12 +70,16 @@ class PreviewImage extends React.Component<PreviewImageProps, PreviewImageState>
     };
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { position: [x, y], height } = this.props;
     const { image } = this.state;
 
     // Render and scale image once it's loaded
     if (image !== null) {
+      // Calculate image width using given height
       const width = (image.width / image.height) * height;
 
       return (

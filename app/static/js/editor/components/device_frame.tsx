@@ -38,7 +38,7 @@ interface DeviceFrameState {
 /**
  * DeviceFrame is a component intended to render a graphical device frame
  * around a preview screen. The device frame to be rendered is passed in via
- * the `src` props and `width` and `height` represent the size that the frame
+ * the `src` prop and `width` and `height` represent the size that the frame
  * should be rendered at.
  *
  * @param src An URL pointing to a device frame
@@ -77,7 +77,7 @@ class DeviceFrame extends React.Component<DeviceFrameProps, DeviceFrameState> {
     const { width, height } = this.props;
     const { image } = this.state;
 
-    // Render and scale image once it's loaded
+    // Render image once it's loaded
     if (image !== null) {
       return (
         <KonvaImage
