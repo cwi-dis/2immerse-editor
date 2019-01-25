@@ -19,6 +19,9 @@ import { RegularPolygon } from "react-konva";
 
 import { Vector2d } from "konva";
 
+/**
+ * Props for ScrubberHead
+ */
 interface ScrubberHeadProps {
   width: number;
   headPosition?: number;
@@ -26,10 +29,26 @@ interface ScrubberHeadProps {
   headPositionUpdated: (position: number) => void;
 }
 
+/**
+ * State for ScrubberHead
+ */
 interface ScrubberHeadState {
   headPosition: number;
 }
 
+/**
+ * ScrubberHead renders a triangle on top of a series of timeline tracks with
+ * which the user can can seek through the current timeline by dragging it
+ * left and right. The component must be initialised with the width of the
+ * timeline it is associated with in pixels and an initial head position. One
+ * can also specify offsets to the left and right and a callback which is
+ * invoked every time the head is moved by the user.
+ *
+ * @param width The total width of the timeline (in pixels)
+ * @param headPosition The initial position of the scrubber head (in pixels). Optional
+ * @param offsets The margins of the timeline to the left and right. Optional, given as `[lmargin, rmargin]`
+ * @param headPositionUpdated Callback invoked whenever the user moves the scrubber head. Receives the new position
+ */
 class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState> {
   public constructor(props: ScrubberHeadProps) {
     super(props);
@@ -39,8 +58,14 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
     };
   }
 
-  private headPositionUpdated(e: any) {
-    const newPosition: number = e.target.attrs.x;
+  /**
+   * Callback invoked in response to the user dragging the scrubber head along
+   * the timeline. Receives the updated position as parameter, invokes the
+   * `headPositionUpdated()` function passed in as prop and updates state.
+   *
+   * @param newPosition The updated head position
+   */
+  private headPositionUpdated(newPosition: number) {
     this.props.headPositionUpdated(newPosition);
 
     this.setState({
@@ -48,6 +73,9 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
     });
   }
 
+  /**
+   * Renders the component.
+   */
   public render() {
     const { width, offsets } = this.props;
     const [startOffset, endOffset] = offsets || [0, 0];
@@ -55,6 +83,7 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
 
     const height = 14;
 
+    // Calculate the radius for drawing a three-sided regular polygon
     const a = (2 * height) / Math.sqrt(3);
     const r = a / Math.sqrt(3);
 
@@ -74,7 +103,7 @@ class ScrubberHead extends React.Component<ScrubberHeadProps, ScrubberHeadState>
         x={headPosition}
         y={height - r}
         draggable={true}
-        onDragMove={this.headPositionUpdated.bind(this)}
+        onDragMove={(e) => this.headPositionUpdated(e.target.attrs.x)}
         dragBoundFunc={dragBoundFunc}
         fill="#2B98F0"
       />
