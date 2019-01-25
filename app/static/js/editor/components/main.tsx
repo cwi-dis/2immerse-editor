@@ -32,8 +32,13 @@ import StartPage from "./start_page";
 import "bulma/css/bulma.css";
 import "../../../css/style.css";
 
+// Wrap the Layout component with a router
 const App = withRouter(Layout);
 
+/**
+ * Callback triggered when the window is loaded. Renders the application to the
+ * DOM and attaches it to the `react` DOM node.
+ */
 window.onload = () => {
   // Construct routing table for application with history
   render(
