@@ -17,16 +17,30 @@
 import * as React from "react";
 import { makeRequest } from "../util";
 
+/**
+ * Props for CurrentVersion
+ */
+export interface CurrentVersionProps {
+  commitUrl?: string;
+}
+
+/**
+ * State for CurrentVersion
+ */
 export interface CurrentVersionState {
   branch: string;
   revision: string;
   fetchError: boolean;
 }
 
-export interface CurrentVersionProps {
-  commitUrl?: string;
-}
-
+/**
+ * Renders a label in the bottom left of the screen which displays the current
+ * branch name and revision hash. This data is retrieved from the API. If the
+ * data could not be retrieved, nothing is rendered. Moreover, when clicked,
+ * the user is redirected to the corresponding commit in the repository.
+ *
+ * @param commitUrl URL which when combined with the commit hash points to said commit. Optional
+ */
 class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersionState> {
   public static defaultProps: CurrentVersionProps = {
     commitUrl: "https://github.com/2-IMMERSE/editor/commit/"
@@ -42,6 +56,11 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     };
   }
 
+  /**
+   * Called when the component first mounts. Retrieves the current branch name
+   * and revision hash from the API and updates the state or sets the error
+   * condition if the request fails.
+   */
   public async componentDidMount() {
     try {
       // Request current branch and revision from API
@@ -59,6 +78,9 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { branch, revision } = this.state;
     const style: React.CSSProperties = {
@@ -71,6 +93,8 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
       color: "#999999"
     };
 
+    // Render nothing if branch name or revision are empty or if the fetchError
+    // flag is true
     if (branch !== "" && revision !== "" && !this.state.fetchError) {
       return (
         <div style={style}>
