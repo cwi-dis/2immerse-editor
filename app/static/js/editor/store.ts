@@ -27,6 +27,7 @@ import { MasterState } from "./reducers/masters";
 import { ScreenState } from "./reducers/screens";
 import { TimelineState } from "./reducers/timelines";
 
+// Combined application state
 export interface ApplicationState {
   assets: AssetState;
   chapters: ChapterState;
@@ -50,7 +51,14 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk), applyMiddleware(router))
 );
 
-// Utility function to easily navigate the application using the router
+/**
+ * Allows navigation to a different part of the application by dispatching a
+ * `push()` action on the store with the given route descriptor and optional
+ * state as parameters.
+ *
+ * @param route Route to navigate to
+ * @param state State to pass to the route. Optional
+ */
 export function navigate(route: LocationDescriptor, state?: any): RouterAction {
   return store.dispatch(push(route, state));
 }
