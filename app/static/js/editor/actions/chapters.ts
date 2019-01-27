@@ -19,6 +19,12 @@ import { PayloadAction } from "../util";
 import { ChapterTree } from "../api_types";
 
 export type LOAD_CHAPTER_TREE = PayloadAction<"LOAD_CHAPTER_TREE", { tree: ChapterTree }>;
+/**
+ * Creates an action for loading and parsing an entire hierarchical chapter
+ * structure received from the API.
+ *
+ * @param tree A tree-like data structure for chapters obtained from the API
+ */
 function loadChapterTree(tree: ChapterTree): LOAD_CHAPTER_TREE {
   return {
     type: "LOAD_CHAPTER_TREE",
@@ -29,6 +35,13 @@ function loadChapterTree(tree: ChapterTree): LOAD_CHAPTER_TREE {
 }
 
 export type ADD_CHAPTER_BEFORE = PayloadAction<"ADD_CHAPTER_BEFORE", {accessPath: Array<number>, id?: string}>;
+/**
+ * Creates an action for creating a new chapter before the chapter given by the
+ * access path.
+ *
+ * @param accessPath Access path of the chapter before which the new chapter shall be created
+ * @param id ID of the new chapter. Optional
+ */
 function addChapterBefore(accessPath: Array<number>, id?: string): ADD_CHAPTER_BEFORE {
   return {
     type: "ADD_CHAPTER_BEFORE",
@@ -39,6 +52,13 @@ function addChapterBefore(accessPath: Array<number>, id?: string): ADD_CHAPTER_B
 }
 
 export type ADD_CHAPTER_AFTER = PayloadAction<"ADD_CHAPTER_AFTER", {accessPath: Array<number>, id?: string}>;
+/**
+ * Creates an action for creating a new chapter after the chapter given by the
+ * access path.
+ *
+ * @param accessPath Access path of the chapter after which the new chapter shall be created
+ * @param id ID of the new chapter. Optional
+ */
 function addChapterAfter(accessPath: Array<number>, id?: string): ADD_CHAPTER_AFTER {
   return {
     type: "ADD_CHAPTER_AFTER",
@@ -49,6 +69,13 @@ function addChapterAfter(accessPath: Array<number>, id?: string): ADD_CHAPTER_AF
 }
 
 export type ADD_CHAPTER_CHILD = PayloadAction<"ADD_CHAPTER_CHILD", {accessPath: Array<number>, id?: string}>;
+/**
+ * Creates an action for creating a new chapter as a child of the chapter given
+ * by the access path.
+ *
+ * @param accessPath Access path of the chapter under which the new chapter shall be created
+ * @param id ID of the new chapter. Optional
+ */
 function addChapterChild(accessPath: Array<number>, id?: string): ADD_CHAPTER_CHILD {
   return {
     type: "ADD_CHAPTER_CHILD",
@@ -59,6 +86,12 @@ function addChapterChild(accessPath: Array<number>, id?: string): ADD_CHAPTER_CH
 }
 
 export type RENAME_CHAPTER = PayloadAction<"RENAME_CHAPTER", {accessPath: Array<number>, name: string}>;
+/**
+ * Creates an action for renaming the chapter given by the access path.
+ *
+ * @param accessPath Access path of the chapter to be renamed
+ * @param name The new name of the chapter
+ */
 function renameChapter(accessPath: Array<number>, name: string): RENAME_CHAPTER {
   return {
     type: "RENAME_CHAPTER",
@@ -70,6 +103,11 @@ function renameChapter(accessPath: Array<number>, name: string): RENAME_CHAPTER 
 }
 
 export type REMOVE_CHAPTER = PayloadAction<"REMOVE_CHAPTER", {accessPath: Array<number>}>;
+/**
+ * Creates an action for deleting the chapter given by the access path.
+ *
+ * @param accessPath Access path of the chapter to be deleted
+ */
 function removeChapter(accessPath: Array<number>): REMOVE_CHAPTER {
   return {
     type: "REMOVE_CHAPTER",

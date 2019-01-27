@@ -18,6 +18,15 @@ import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
 
 export type ADD_ASSET = PayloadAction<"ADD_ASSET", {id: string, name: string, description: string, previewUrl: string, duration?: number}>;
+/**
+ * Creates an action for adding a new asset.
+ *
+ * @param id ID of the asset to add
+ * @param name Name of the asset
+ * @param description Description of the asset
+ * @param previewUrl URL pointing to a preview image
+ * @param duration Duration of the asset. Optional
+ */
 function addAsset(id: string, name: string, description: string, previewUrl: string, duration?: number): ADD_ASSET {
   return {
     type: "ADD_ASSET",

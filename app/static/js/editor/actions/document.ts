@@ -18,6 +18,14 @@ import { ActionCreatorsMapObject } from "redux";
 import { PayloadAction } from "../util";
 
 export type ASSIGN_DOCUMENT_ID = PayloadAction<"ASSIGN_DOCUMENT_ID", {documentId: string, baseUrl: string}>;
+/**
+ * Creates an action for setting a new document, effectively starting a new
+ * editing session. The action also takes a base URL which is prepended to all
+ * relative URLs in the document such as preview image.
+ *
+ * @param documentId Document ID to set
+ * @param baseUrl Base URL associated to the document
+ */
 function assignDocumentId(documentId: string, baseUrl: string): ASSIGN_DOCUMENT_ID {
   return {
     type: "ASSIGN_DOCUMENT_ID",
