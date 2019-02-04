@@ -333,8 +333,9 @@ export function getRandomInt(min: number = 0, max: number = 10) {
  */
 export function between(x: number, lowerBound: number, higherBound: number, inclusive = false): boolean {
   // Check whether given value is within bounds
-  return (inclusive) ? x >= lowerBound && x <= higherBound
-                     : x > lowerBound && x < higherBound;
+  return (inclusive)
+    ? x >= lowerBound && x <= higherBound
+    : x > lowerBound && x < higherBound;
 }
 
 /**
