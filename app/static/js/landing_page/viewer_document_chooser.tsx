@@ -21,12 +21,20 @@ import { Link } from "react-router-dom";
 import { makeRequest, Nullable } from "../editor/util";
 import asBackButton from "../trigger/utils/back_button";
 
-interface DocumentChooserState {
+/**
+ * State for ViewerDocumentChooser
+ */
+interface ViewerDocumentChooserState {
   isLoading: boolean;
   existingDocuments: Array<{ id: string, description: string }>;
 }
 
-class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
+/**
+ * This component provides the user with a way to start a preview player by
+ * selecting a document from a list of active documents in either `default`,
+ * `TV` or `standalone` mode.
+ */
+class ViewerDocumentChooser extends React.Component<{}, ViewerDocumentChooserState> {
   private documentInterval: any;
   private idInput: Nullable<HTMLSelectElement>;
   private modeInput: Nullable<HTMLSelectElement>;
@@ -40,6 +48,11 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
     };
   }
 
+  /**
+   * Invoked after the first time the component is mounted. Fetches a list of
+   * existing documents from the server once every 1000ms and updates the state
+   * accordingly.
+   */
   public componentDidMount() {
     // Request list of documents every second
     this.documentInterval = setInterval(async () => {
@@ -54,6 +67,9 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
     }, 1000);
   }
 
+  /**
+   * Invoked before the component is unmounted.
+   */
   public componentWillUnmount() {
     // Clear interval for fetching documents on unmount
     if (this.documentInterval) {
@@ -61,6 +77,12 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
     }
   }
 
+  /**
+   * Callback invoked when the *Continue* button is clicked by the user. Makes
+   * sure that all input fields are valid and there are existing documents
+   * present. If all conditions are met, the user is redirected to the preview
+   * player.
+   */
   private continueClicked() {
     // Make sure refs exist and the list of documents is non-empty
     if (this.idInput && this.modeInput && this.state.existingDocuments.length > 0) {
@@ -73,6 +95,9 @@ class ViewerDocumentChooser extends React.Component<{}, DocumentChooserState> {
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const boxStyle: React.CSSProperties = {
       width: "30vw",

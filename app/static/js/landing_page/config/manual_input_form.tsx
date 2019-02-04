@@ -20,11 +20,9 @@ import * as classNames from "classnames";
 import { makeRequest, pluck } from "../../editor/util";
 import { TextInputField, URLInputField, CheckboxInputField, SelectInputField } from "./input_fields";
 
-interface ManualInputFormProps {
-  onSubmit: () => void;
-  formData: Partial<FormValues>;
-}
-
+/**
+ * Interface defining names and types for known config values.
+ */
 export interface FormValues {
   layoutService: string;
   clientApiUrl: string;
@@ -35,12 +33,33 @@ export interface FormValues {
   websocketService: string;
 }
 
+/**
+ * Props for ManualInputForm
+ */
+interface ManualInputFormProps {
+  onSubmit: () => void;
+  formData: Partial<FormValues>;
+}
+
+/**
+ * State for ManualInputForm
+ */
 interface ManualInputFormState {
   formData: Partial<FormValues>;
   formTainted: boolean;
   submitSuccess?: boolean;
 }
 
+/**
+ * This component renders a form for updating configuration manually through
+ * form input fields. It supplies a prop `onSubmit`, which is a callback that
+ * is invoked when the form was successfully submitted and a prop `formData`
+ * which allows for passing in initial values that the form should be populated
+ * with.
+ *
+ * @param onSubmit Callback invoked when the form is submitted
+ * @param formData Inital values for input fields
+ */
 class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputFormState> {
   private modeValues: Array<string> = ["standalone"];
 
@@ -60,6 +79,12 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     };
   }
 
+  /**
+   * Invoked when the component is about to receive new props. Updates the state
+   * with the new form data.
+   *
+   * @param newProps New props for the component
+   */
   public componentWillReceiveProps(newProps: ManualInputFormProps) {
     // Update state if props are about to be changed
     this.setState((prevState) => {
@@ -74,6 +99,10 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     });
   }
 
+  /**
+   * Invoked in response to the user submitting the form. Gathers all form
+   * values and sends them to the server. Updates the state accordingly.
+   */
   private async submitManualForm() {
     // Filter form data to make sure only valid keys are submitted
     const configData = pluck(this.state.formData, this.formKeys);
@@ -95,6 +124,9 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     }
   }
 
+  /**
+   * Renders a notification badge if the `submitSuccess` state variable is set.
+   */
   private renderNotification() {
     // Don't render anything if submitSuccess is not defined
     if (this.state.submitSuccess === undefined) {
@@ -129,6 +161,14 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     );
   }
 
+  /**
+   * Updates a configuration key with the given value by updating the state.
+   * Also sets the `formTainted` property to true, which enables the submit
+   * button.
+   *
+   * @param key Key to be updated
+   * @param value Updated value
+   */
   private updateFormData(key: keyof FormValues, value: string | boolean) {
     // Update key in form data and set tainted condition to true
     this.setState((prevState) => {
@@ -143,6 +183,9 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     });
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { formData } = this.state;
 

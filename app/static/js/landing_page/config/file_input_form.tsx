@@ -20,15 +20,28 @@ import * as classNames from "classnames";
 import { makeRequest } from "../../editor/util";
 import { FileInputField } from "./input_fields";
 
+/**
+ * Props for FileInputForm
+ */
 interface FileInputFormProps {
   onSubmit: () => void;
 }
 
+/**
+ * State for FileInputForm
+ */
 interface FileInputFormState {
   fileData: string;
   submitSuccess?: boolean;
 }
 
+/**
+ * This component renders a form for uploading a configuration file as JSON.
+ * It supplies a single prop `onSubmit`, which is a callback that is invoked
+ * when the form was successfully submitted.
+ *
+ * @param onSubmit Callback invoked when the form is submitted
+ */
 class FileInputForm extends React.Component<FileInputFormProps, FileInputFormState> {
   public constructor(props: FileInputFormProps) {
     super(props);
@@ -38,6 +51,9 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
     };
   }
 
+  /**
+   * Uploads the chosen file to the server and updates the state accordingly.
+   */
   private async submitFileForm() {
     try {
       // Submit config file and update state
@@ -56,6 +72,9 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
     }
   }
 
+  /**
+   * Renders a notification badge if the `submitSuccess` state variable is set.
+   */
   private renderNotification() {
     // Don't render anything if submitSuccess is undefined
     if (this.state.submitSuccess === undefined) {
@@ -88,6 +107,9 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
     );
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     // Render form for uploading a JSON config file
     return (

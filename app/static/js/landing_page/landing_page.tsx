@@ -19,6 +19,12 @@ import { Link } from "react-router-dom";
 
 import CurrentVersion from "../editor/components/current_version";
 
+/**
+ * Provides a landing page, from which the user can access all other parts of
+ * the application. These other parts of the application are connected via
+ * standard hyperlinks, whereas the link to the configuration page and the
+ * viewer are realised through separate components.
+ */
 const LandingPage: React.SFC<{}> = () => {
   // Render landing page with links to editor and trigger app as well as link
   // to preview player and global config

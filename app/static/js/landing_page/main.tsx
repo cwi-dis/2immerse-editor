@@ -25,6 +25,10 @@ import ViewerDocumentChooser from "./viewer_document_chooser";
 import "bulma/css/bulma.css";
 import "../../css/style.css";
 
+/**
+ * Callback triggered when the window is loaded. Renders the application to the
+ * DOM and attaches it to the `react` DOM node.
+ */
 window.onload = () => {
   // Initialise hash router, establish routes and attach to div 'react'
   render(

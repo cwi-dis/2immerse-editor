@@ -23,10 +23,17 @@ import ManualInputForm, { FormValues } from "./manual_input_form";
 import FileInputForm from "./file_input_form";
 import asBackButton from "../../trigger/utils/back_button";
 
+/**
+ * State for Config
+ */
 interface ConfigState {
   formData: Partial<FormValues>;
 }
 
+/**
+ * This component allows the user to set configuration options for the server.
+ * The configuration can either be uploaded as a JSON file or typed in manually.
+ */
 class Config extends React.Component<{}, ConfigState> {
   public constructor(props: ConfigState) {
     super(props);
@@ -36,6 +43,9 @@ class Config extends React.Component<{}, ConfigState> {
     };
   }
 
+  /**
+   * Retrieves the current confoguration from the API and updates state.
+   */
   public async fetchConfigData() {
     // Fetch config from server and update state
     const data = await makeRequest("GET", "/api/v1/configuration");
@@ -44,11 +54,18 @@ class Config extends React.Component<{}, ConfigState> {
     this.setState({ formData: config});
   }
 
+  /**
+   * Called when the component is first mounted and fetches the current
+   * configuration.
+   */
   public componentDidMount() {
     // Fetch config on init
     this.fetchConfigData();
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const boxStyle: React.CSSProperties = {
       width: "70vw",
@@ -61,7 +78,8 @@ class Config extends React.Component<{}, ConfigState> {
     const BackButton = asBackButton(Link);
 
     // Render config options and allow the user to either manually change the
-    // values or upload a config file
+    // values or upload a config file. Both have a onSubmit callback which is
+    // invoked when the form is submitted
     return (
       <div style={boxStyle}>
         <div style={{position: "absolute", top: 10, left: 10}}>
