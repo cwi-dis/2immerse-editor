@@ -35,7 +35,6 @@ export interface PreviewStatus {
 interface RemoteControlProps {
   documentId: string;
   previewStatus: PreviewStatus;
-  fetchError?: {status: number, statusText: string};
   clearSession: () => void;
 }
 
