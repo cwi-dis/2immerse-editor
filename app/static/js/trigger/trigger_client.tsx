@@ -24,13 +24,12 @@ import ErrorMessage from "./utils/error_message";
 import RemoteControl, { PreviewStatus } from "./remote_control";
 import { TriggerModeContext } from "./app";
 
-interface TriggerClientProps {
-  documentId: string;
-  clearSession: () => void;
-}
-
+// Allowed types for event params
 export type ParamTypes = "duration" | "time" | "string" | "url" | "const" | "set" | "selection";
 
+/**
+ * Defines all the properties that an event parameter can have
+ */
 export interface EventParams {
   type: ParamTypes;
   name: string;
@@ -40,6 +39,12 @@ export interface EventParams {
   required?: boolean;
 }
 
+/**
+ * Interface defining the properties that en event retrieved from the API can
+ * have. Each event can have multiple parameters, some of which are
+ * user-definable and will be in one of three states: `abstract`, `ready` or
+ * `active`.
+ */
 export interface Event {
   trigger: boolean;
   modify: boolean;
@@ -53,6 +58,17 @@ export interface Event {
   productionId: string;
 }
 
+/**
+ * Props for TriggerClient
+ */
+interface TriggerClientProps {
+  documentId: string;
+  clearSession: () => void;
+}
+
+/**
+ * State for TriggerClient
+ */
 interface TriggerClientState {
   showPreviewModal: boolean;
   showSettingsModal: boolean;
@@ -62,6 +78,15 @@ interface TriggerClientState {
   fetchError?: {status: number, statusText: string};
 }
 
+/**
+ * This component renders the main page of the trigger tool. On mount, it
+ * fetches a list of events for the given document ID via REST and then
+ * immediately subscribes to the * `EVENTS` channel of the websocket service
+ * and all events following that will be delivered on-demand.
+ *
+ * @param documentId Document ID of the current session
+ * @param clearSession Callback for clearing the session
+ */
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
   private socket: SocketIOClient.Socket;
 
@@ -80,6 +105,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     };
   }
 
+  /**
+   * Fetches a list of events from the API and updates the state accordingly.
+   * If the request fails, the error condition is set which causes the render
+   * method to display an error message.
+   */
   private async fetchEvents() {
     // Fetch events via the REST interface
     const url = `/api/v1/document/${this.props.documentId}/events`;
@@ -104,6 +134,11 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
+  /**
+   * Subscribes to the `EVENTS` channel of the websocket service to receive
+   * event updates. This allows for on-demand updates of the event list without
+   * having to explicitly poll for events.
+   */
   private async subscribeToEventUpdates() {
     // Retrieve websocket endpoint from API
     const data = await makeRequest("GET", "/api/v1/configuration");
@@ -141,6 +176,10 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     });
   }
 
+  /**
+   * Invoked when the component first mounts. Fetches a first set of events
+   * via REST and then subscribes to the websocket channel for updates.
+   */
   public componentDidMount() {
     // Fetch events via REST the first time round and then subscribe to the
     // Websocket channel
@@ -148,11 +187,22 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     this.subscribeToEventUpdates();
   }
 
+  /**
+   * Invoked before the component unmounts. Closes the websocket connection.
+   */
   public componentWillUnmount() {
     // Close Websocket on unmount
     this.socket.close();
   }
 
+  /**
+   * Renders the main content of the page depending on various state variables.
+   * Depending on the value of `triggerMode`, renders all events or only
+   * abstract ones.
+   *
+   * @param triggerMode Trigger mode. One of `trigger` or `enqueue`
+   * @returns The list of events, a loading spinner or an error
+   */
   private renderMainContent(triggerMode: string): JSX.Element {
     // Render spinner if page is in loading state
     if (this.state.pageIsLoading) {
@@ -182,6 +232,9 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     // Render main content and remote control
     return (

@@ -23,8 +23,13 @@ import TimecodePopup from "./utils/timecode_popup";
 
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
+// Possible values for remote control commands sent to the server
 type ControlCommand = { adjust: number } | { showdirty: boolean} | { playing: boolean };
 
+/**
+ * Data type which describes the shape of the preview status passed into the
+ * RemoteControl component via its props.
+ */
 export interface PreviewStatus {
   active: boolean;
   status: string;
@@ -32,12 +37,18 @@ export interface PreviewStatus {
   position?: number;
 }
 
+/**
+ * Props for RemoteControl
+ */
 interface RemoteControlProps {
   documentId: string;
   previewStatus: PreviewStatus;
   clearSession: () => void;
 }
 
+/**
+ * State for RemoteControl
+ */
 interface RemoteControlState {
   timeOffset: number;
   lastPositionUpdate?: number;
@@ -47,6 +58,14 @@ interface RemoteControlState {
   showSettingsModal: boolean;
 }
 
+/**
+ * This component allows the user to control the preview stream's playback and
+ * playback position, acting as a remote control for the preview player.
+ *
+ * @param documentId Document ID of the current session
+ * @param previewStatus Current status of the preview player
+ * @param clearSession Callback for clearing the current session
+ */
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
   private timerInterval: any;
   private timecodeBox: Nullable<HTMLDivElement>;
@@ -62,6 +81,10 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     };
   }
 
+  /**
+   * Invoked after the component is mounted first. Creates an interval timer
+   * which updates the the timecode every 10ms.
+   */
   public componentDidMount() {
     // Update timer every 10ms
     this.timerInterval = setInterval(() => {
@@ -82,11 +105,19 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }, 10);
   }
 
+  /**
+   * Invoked after the component is unmounted. Cancels the interval timer which
+   * updates the the timecode.
+   */
   public componentWillUnmount() {
     // Clear function to update timer once component is unmounted
     this.timerInterval && clearInterval(this.timerInterval);
   }
 
+  /**
+   * Invoked when the component is about to receive new props. Updates playback
+   * position state in case it was changed through the props.
+   */
   static getDerivedStateFromProps(nextProps: RemoteControlProps, prevState: RemoteControlState): Nullable<RemoteControlState> {
     // Update timer data before render in case it was updated through props
     return {
@@ -96,12 +127,19 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     };
   }
 
+  /**
+   * Toggles playback state by sending the corresponding command to the server.
+   */
   private togglePlayback() {
     // Toggle playback
     const { previewStatus } = this.props;
     this.sendControlCommand({ playing: !previewStatus.playing });
   }
 
+  /**
+   * Toggles between clean and dirty feed by sending the corresponding command
+   * to the server.
+   */
   private toggleGuideFeed() {
     const { showdirty } = this.state;
 
@@ -110,6 +148,16 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.setState({ showdirty: !showdirty });
   }
 
+  /**
+   * Sends a command to the remote control endpoint of the API for the document
+   * that the current session is attached to. Possible commands are:
+   *
+   *   - `{ adjust: n }` for adjusting the playback position
+   *   - `{ playing: true/false }` for starting stopping playback
+   *   - `{ showdirty: true/false}` for toggling between clean and dirty feed
+   *
+   * @param command Command to send to the server
+   */
   private async sendControlCommand(command: ControlCommand) {
     const { previewStatus } = this.props;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
@@ -131,6 +179,14 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
+  /**
+   * Converts a timestamp given in seconds into a timecode to be displayed on
+   * the UI in the format `00:00:00.000`. If the timer hasn't been initialised
+   * yet, the timecode is returned containing dashes instead of the numbers,
+   * like so `--:--:--.---`.
+   *
+   * @returns A timecode based on the current position in the stream
+   */
   private renderTimestamp() {
     let { position, timeOffset } = this.state;
 
@@ -152,12 +208,23 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     return "--:--:--.---";
   }
 
+  /**
+   * Adjusts the time offset of the clock by the given value.
+   *
+   * @param timeOffset Offset in seconds to add to the timestamp
+   */
   private updateOffset(timeOffset: number) {
     this.setState({
       timeOffset
     });
   }
 
+  /**
+   * Sends a control command to the server to seek the stream by the given
+   * amount of seconds.
+   *
+   * @param value Number of seconds to seek the stream by
+   */
   private seekBy(value: number) {
     // Seek stream by n seconds
     this.sendControlCommand({ adjust: value });
@@ -168,6 +235,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     });
   }
 
+  /**
+   * Renders the timecode popup if the corresponding state variable is set.
+   */
   private toggleTimecodePopup() {
     // Close popup if it's open already
     if (this.state.timecodePopup !== undefined) {
@@ -186,6 +256,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     }
   }
 
+  /**
+   * Renders the settings modal if the corresponding state variable is set.
+   */
   private renderSettingsModal() {
     // Don't render anything if showSettingsModal is false
     if (!this.state.showSettingsModal) {
@@ -199,6 +272,9 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     );
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { showdirty } = this.state;
     const { previewStatus } = this.props;
