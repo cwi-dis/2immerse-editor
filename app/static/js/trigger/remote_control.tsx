@@ -23,6 +23,8 @@ import TimecodePopup from "./utils/timecode_popup";
 
 import { makeRequest, Nullable, padStart } from "../editor/util";
 
+type ControlCommand = { adjust: number } | { showdirty: boolean} | { playing: boolean };
+
 export interface PreviewStatus {
   active: boolean;
   status: string;
@@ -109,7 +111,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
     this.setState({ showdirty: !showdirty });
   }
 
-  private async sendControlCommand(command: any) {
+  private async sendControlCommand(command: ControlCommand) {
     const { previewStatus } = this.props;
     const controlUrl = `/api/v1/document/${this.props.documentId}/remote/control`;
 
