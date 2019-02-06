@@ -94,6 +94,9 @@ type PromiseReject = (err: {status: number, statusText: string, body?: string}) 
 export function makeRequest(method: HTTPMethods, url: string, data?: any, contentType?: string): Promise<string> {
   // Return promise for HTTP request
   return new Promise<string>((resolve: PromiseResolve, reject: PromiseReject) => {
+    if (url.substring(0, 1) === '/' && (<any>window).EDITOR_ROOT) {
+     url = (<any>window).EDITOR_ROOT + url;
+    }
     const xhr = new XMLHttpRequest();
     xhr.open(method, url);
 

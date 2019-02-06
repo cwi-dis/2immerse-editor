@@ -2,6 +2,9 @@
 <html>
 <head>
   <title>2IMMERSE Editor</title>
+  <script type="text/javascript">
+    window.EDITOR_ROOT = "{{url_for('landing_page')}}".replace(/\/$/, "");
+  </script>
   <script type="text/javascript" src="{{url_for('static', filename='dist/' + filename) + '?key=' + key}}"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 </head>
