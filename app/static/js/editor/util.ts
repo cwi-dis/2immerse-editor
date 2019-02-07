@@ -447,7 +447,7 @@ export async function shortenUrl(originalUrl: string): Promise<string> {
   const { id } = JSON.parse(response);
 
   // Return shorturl with ID
-  return `${location.protocol}//${location.host}/shorturl/${id}`;
+  return `${location.protocol}//${location.host}${(window as any).EDITOR_ROOT}/shorturl/${id}`;
 }
 
 /**
