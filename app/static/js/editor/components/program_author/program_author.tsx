@@ -298,7 +298,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
     return (
       <div className="columnlayout">
         <div className="column-content">
-          <h3>Author Program</h3>
+          <h3>Program Author</h3>
           <div>
             <Stage width={this.canvasWidth} height={canvasHeight}>
               <Layer>

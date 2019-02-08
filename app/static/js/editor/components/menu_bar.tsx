@@ -34,10 +34,10 @@ class MenuBar extends React.Component<{}, {}> {
           <NavLink exact={true} to="/" activeStyle={{color: "#319aee"}}>Home</NavLink>
         </div>
         <div>
-          <NavLink to="/layout" activeStyle={{color: "#319aee"}}>Design Layout</NavLink>
+          <NavLink to="/layout" activeStyle={{color: "#319aee"}}>Layout Designer</NavLink>
         </div>
         <div>
-          <NavLink to="/program" activeStyle={{color: "#319aee"}}>Author Program</NavLink>
+          <NavLink to="/program" activeStyle={{color: "#319aee"}}>Program Author</NavLink>
         </div>
       </div>
     );
