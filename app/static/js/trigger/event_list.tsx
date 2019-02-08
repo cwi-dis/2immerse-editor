@@ -21,13 +21,16 @@ import { Event } from "./trigger_client";
 import EventContainer from "./event_container";
 import QueuedEventList from "./queued_event_list";
 
-interface EventListProps {
-  documentId: string;
-  events: Array<Event>;
-  triggerMode: string;
-  fetchEvents?: () => void;
-}
-
+/**
+ * Calculates the optimal width of the wrapper container hosting the individual
+ * event blocks. Starting from the full screen width, it is decreased until an
+ * exact multiple of the event block width is found, which is then returned as
+ * the optimal width. If no such width could be found, the event block width is
+ * returned.
+ *
+ * @param blockWidth The width of individual event blocks
+ * @returns The optimal width for the container based on screen width
+ */
 const findOptimalContainerWidth = (blockWidth = 400) => {
   // Calculate optimal width of container based on width of event blocks
   for (let containerWidth = window.outerWidth; containerWidth >= blockWidth; containerWidth--) {
@@ -39,6 +42,27 @@ const findOptimalContainerWidth = (blockWidth = 400) => {
   return blockWidth;
 };
 
+/**
+ * Props for EventList
+ */
+interface EventListProps {
+  documentId: string;
+  events: Array<Event>;
+  triggerMode: string;
+  fetchEvents?: () => void;
+}
+
+/**
+ * Renders a list of events by arranging them on a grid, where each event is
+ * placed inside a box displaying event title, thumbnail and a button for
+ * launching configuring the event. The exact events that are rendered from the
+ * list passed in via props depends on the given trigger mode.
+ *
+ * @param documentId The document ID for the current session
+ * @param events The list of events to be rendered
+ * @param triggerMode The current trigger mode
+ * @param fetchEvents Callback triggered when the event list should be updated
+ */
 const EventList: React.SFC<EventListProps> = (props) => {
   const { documentId, events, fetchEvents, triggerMode } = props;
 

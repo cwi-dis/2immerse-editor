@@ -19,16 +19,27 @@ import * as React from "react";
 import { Event } from "./trigger_client";
 import { makeRequest } from "../editor/util";
 
+/**
+ * Props for QueuedEventContainer
+ */
 interface QueuedEventContainerProps {
   documentId: string;
   event: Event;
 }
 
+/**
+ * Renders a single event as part of a `QueuedEventList`. Based on the type of
+ * event, border and background colours change. Moreover, for active events,
+ * a close icon is rendered which can be used to dequeue the events.
+ *
+ * @param documentId Document ID of the current session
+ * @param event Event to be rendered
+ */
 const QueuedEventContainer: React.SFC<QueuedEventContainerProps> = (props) => {
   const { event, documentId } = props;
 
   // Foreground and background colours for event containers
-  const colors: { [key: string]: [string, string] } = {
+  const colors = {
     "abstract": ["#161616", "transparent"],
     "ready": ["#C95A26", "#795341"],
     "active": ["#23D160", "#0C4620"]
@@ -64,11 +75,22 @@ const QueuedEventContainer: React.SFC<QueuedEventContainerProps> = (props) => {
   );
 };
 
+/**
+ * Props for QueuedEventList
+ */
 interface QueuedEventListProps {
   documentId: string;
   events: Array<Event>;
 }
 
+/**
+ * Renders a list of already queued events, filtering out abstract ones and
+ * replacing ready events with their active counterparts where available by
+ * matching them using their `productionId`.
+ *
+ * @param documentId Document ID of the current session
+ * @param events List of events to be rendered
+ */
 const QueuedEventList: React.SFC<QueuedEventListProps> = (props) => {
   const { events, documentId } = props;
   // Get active events

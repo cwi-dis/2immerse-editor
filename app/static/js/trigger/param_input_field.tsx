@@ -17,11 +17,21 @@
 import * as React from "react";
 import { EventParams } from "./trigger_client";
 
-type ParamInputFieldProps = EventParams & {
+/**
+ * Props for ParamInputField
+ */
+interface ParamInputFieldProps {
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void;
-};
+}
 
-const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputFieldProps) => {
+/**
+ * Renders an input field for an event parameter. The exact type of input field
+ * rendered is determined by the event type passed in through the props. If the
+ * event type is unknown, an error message is rendered.
+ *
+ * @param onChange Callback invoked when the rendered input field is changed by the user
+ */
+const ParamInputField: React.SFC<ParamInputFieldProps> = (props: ParamInputFieldProps & EventParams) => {
   switch (props.type) {
   case "duration":
   case "time":
