@@ -36,19 +36,19 @@ describe("Component <MenuBar />", () => {
     expect(linkProps.children.toString()).toEqual("Home");
   });
 
-  it("should contain a route with label 'Design Layout'", () => {
+  it("should contain a route with label 'Layout Designer'", () => {
     const menuBar = shallow(<MenuBar />);
     const linkProps = menuBar.find(NavLink).at(1).props();
 
     expect(linkProps.to).toEqual("/layout");
-    expect(linkProps.children.toString()).toEqual("Design Layout");
+    expect(linkProps.children.toString()).toEqual("Layout Designer");
   });
 
-  it("should contain a route with label 'Author Program'", () => {
+  it("should contain a route with label 'Program Author'", () => {
     const menuBar = shallow(<MenuBar />);
     const linkProps = menuBar.find(NavLink).at(2).props();
 
     expect(linkProps.to).toEqual("/program");
-    expect(linkProps.children.toString()).toEqual("Author Program");
+    expect(linkProps.children.toString()).toEqual("Program Author");
   });
 });
