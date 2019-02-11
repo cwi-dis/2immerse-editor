@@ -23,12 +23,18 @@ import { Event } from "./trigger_client";
 import EventModal from "./event_modal";
 import { TriggerModeContext } from "./app";
 
+/**
+ * Props for EventContainer
+ */
 interface EventContainerProps {
   documentId: string;
   event: Event;
   onTriggered?: () => void;
 }
 
+/**
+ * State for EventContainer
+ */
 interface EventContainerState {
   isLoading: boolean;
   flashSuccess: boolean;
@@ -36,6 +42,17 @@ interface EventContainerState {
   showEventModal: boolean;
 }
 
+/**
+ * This component renders a given event as a box on screen. It displays title,
+ * description, number of parameters and, depending on trigger mode and number
+ * of parameters a button to either launch the event directly or to open a modal
+ * dialogue which allows the user to configure event parameters and then either
+ * launch or enqueue it.
+ *
+ * @param documentId The document ID for the current session
+ * @param event The event to be rendered
+ * @param onTriggered A callback invoked when the event has been triggered
+ */
 class EventContainer extends React.Component<EventContainerProps, EventContainerState> {
   constructor(props: EventContainerProps) {
     super(props);
@@ -48,6 +65,14 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     };
   }
 
+  /**
+   * Returns the label to be put on the launch button of the event. The label
+   * depends on whether the event has any parameters, on the `triggerMode`,
+   * flags in the event itself or the `verb` field of the event if it is set.
+   *
+   * @param triggerMode The current trigger mode. Defaults to `trigger`
+   * @returns The label for the submit button
+   */
   private getButtonLabel(triggerMode = "trigger"): string {
     const { event } = this.props;
 
@@ -69,6 +94,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     return "show";
   }
 
+  /**
+   * Renders a modal dialogue for the current event and attaches it to the
+   * DOM element `modal-root` through a portal. Whether the modal is rendereed
+   * or not, depends on the value of the `showEventModal` state variable.
+   *
+   * @returns A portal to the event modal or `null`
+   */
   private renderEventModal() {
     // Render nothing if showEventModal is false
     if (!this.state.showEventModal) {
@@ -108,6 +140,15 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     );
   }
 
+  /**
+   * Callback invoked in response to the user clicking the submit button. Based
+   * on the given `triggerMode`, a different URL is composed which is then used
+   * to trigger the event with the given params. Invokes the `onTriggered`
+   * callback with either the argument `success` or `error` after the request
+   * has completed and updates the state accordingly.
+   *
+   * @param triggerMode The current trigger mode. Defaults to `trigger`
+   */
   private async launchEvent(triggerMode = "trigger") {
     const { event, documentId } = this.props;
     let endpoint: string, requestMethod: "PUT" | "POST";
@@ -144,6 +185,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     }
   }
 
+  /**
+   * Renders the parameter count for an event and returns it as a formatted JSX
+   * string. If zero is passed, the function returns `null`.
+   *
+   * @param count Number of parameters
+   * @returns A JSX string displaying the count or `null`
+   */
   private renderParamCount(count: number) {
     // Render nothing if event has no params
     if (count === 0) {
@@ -156,6 +204,9 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
     );
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { event } = this.props;
     const { isLoading, flashSuccess, flashError } = this.state;

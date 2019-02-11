@@ -20,14 +20,21 @@ import * as classNames from "classnames";
 import { makeRequest, Nullable } from "../editor/util";
 import asBackButton from "./utils/back_button";
 
+// Valid methods for starting a new session
+type InputMethod = "upload" | "url" | "id";
+
+/**
+ * Props for DocumentChooser
+ */
 interface DocumentChooserProps {
   assignDocumentId: (documentId: string) => void;
   triggerModeUpdated: (triggerMode: string) => void;
   triggerMode: "trigger" | "enqueue";
 }
 
-type InputMethod = "upload" | "url" | "id";
-
+/**
+ * State for DocumentChooser
+ */
 interface DocumentChooserState {
   selectedMethod: InputMethod;
   isLoading: boolean;
@@ -35,6 +42,25 @@ interface DocumentChooserState {
   existingDocuments: Array<{ id: string, description: string }>;
 }
 
+/**
+ * DocumentChooser enables the user to start a new session by loading a new
+ * document. This can be done in threee different ways:
+ *
+ *   1. Upload a document from the local filesystem
+ *   2. Provide a URL pointing to an existing document
+ *   3. Selecting a document which already exists on the server
+ *
+ * In the first two cases, upon submit, the component sends the data to the
+ * server and receives a new document ID. With this, the `assignDocumentId`
+ * callback is invoked to let the parent know that a document has been selected.
+ * In the third case, the document does not need to be allocated on the server,
+ * since it already exists. In that case, `assignDocumentId` is invoked
+ * immediately.
+ *
+ * @param assignDocumentId Callback invoked when a document ID has been selected
+ * @param triggerModeUpdated Callback invoked when the user updates the trigger mode
+ * @param triggerMode The current trigger mode
+ */
 class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChooserState> {
   private fileInput: Nullable<HTMLInputElement>;
   private urlInput: Nullable<HTMLInputElement>;
@@ -53,6 +79,11 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     };
   }
 
+  /**
+   * Invoked after the component is first mounted. Launches an API request to
+   * retrieve the list of existing documents from the server and update the
+   * state.
+   */
   public async componentDidMount() {
     try {
       // Get list of available documents from server
@@ -68,8 +99,14 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     }
   }
 
-  private methodUpdated(ev: any) {
-    const selectedMethod = ev.target.value;
+  /**
+   * Callback invoked in response to the user updating the selected upload
+   * method. Stores the new value to local storage and updates the state.
+   *
+   * @param ev The original change event
+   */
+  private methodUpdated(ev: React.ChangeEvent<HTMLSelectElement>) {
+    const selectedMethod = ev.target.value as InputMethod;
     localStorage.setItem("selectedMethod", selectedMethod);
 
     this.setState({
@@ -77,6 +114,15 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     });
   }
 
+  /**
+   * Callback invoked in response to the user submitting the form. This function
+   * checks the selected input method and formats the data, chooses the request
+   * endpoint accordingly and submits the data to the server. If the request
+   * completes successfully, a new session using the newly created document ID
+   * is initialised.
+   *
+   * @param ev The original form event
+   */
   private async submitForm(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
 
@@ -118,6 +164,9 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { selectedMethod } = this.state;
     const boxStyle: React.CSSProperties = {

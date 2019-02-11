@@ -24,8 +24,14 @@ import TriggerClient from "./trigger_client";
 
 import { makeRequest, Nullable, parseQueryString } from "../editor/util";
 
+// Valid trigger modes
 type TriggerMode = "trigger" | "enqueue";
+// Create new context for easily passing trigger mode to descendants
+export const TriggerModeContext = React.createContext("trigger");
 
+/**
+ * State for app
+ */
 interface AppState {
   documentId: Nullable<string>;
   triggerMode: TriggerMode;
@@ -33,8 +39,15 @@ interface AppState {
   ajaxError?: {status: number, statusText: string, message?: string};
 }
 
-export const TriggerModeContext = React.createContext("trigger");
-
+/**
+ * This component acts as the main entry point for the trigger application.
+ * Based in its internal state, it renders the approriate content. Starting
+ * fresh, it renders a form which allows the user to start a new session by
+ * various means. Once a new session is started and thus a document ID is
+ * selected, the main trigger client with the events contained in the document
+ * is rendered. Moreover, should an AJAX error occur, this component also takes
+ * care or rendering an appropriate error message.
+ */
 class App extends React.Component<{}, AppState> {
   constructor(props: never) {
     super(props);
@@ -58,6 +71,13 @@ class App extends React.Component<{}, AppState> {
     };
   }
 
+  /**
+   * Initialises a new session by assigning a document ID to the component's
+   * internal state. Also stores the document ID in local storage so it is
+   * persisted between reloads.
+   *
+   * @param documentId The document ID for this session
+   */
   private assignDocumentId(documentId: string) {
     // Store document ID in local storage
     localStorage.setItem("documentId", documentId);
@@ -68,6 +88,10 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
+  /**
+   * Clears the session by setting the `documentId` property to `null`. Also
+   * removes the ID from local storage and clears the hash portion of the URL.
+   */
   private clearSession() {
     // Remove document ID from local storage, clear stage and reset location hash
     localStorage.removeItem("documentId");
@@ -78,6 +102,12 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
+  /**
+   * Invoked after the component first mounts. Parses the query string and
+   * checks for presence of the keys `triggerMode` and `url` or `documentId`,
+   * which allow the user to directly assign a trigger mode and start a new
+   * session using the given (existing) document ID or URL.
+   */
   public async componentDidMount() {
     // Parse quesy string
     const queryData = parseQueryString(location.hash);
@@ -131,12 +161,31 @@ class App extends React.Component<{}, AppState> {
     location.hash = "";
   }
 
-  private triggerModeUpdated(triggerMode: "trigger" | "enqueue") {
+  /**
+   * Callback invoked to update the trigger mode. Updates the state accordingly
+   * and stores the new value in local storage.
+   *
+   * @param triggerMode The new trigger mode
+   */
+  private triggerModeUpdated(triggerMode: TriggerMode) {
     // Update state and local storage with new trigger mode value
     localStorage.setItem("triggerMode", triggerMode);
     this.setState({ triggerMode });
   }
 
+  /**
+   * Renders the main content, which is different depending on various state
+   * variables.
+   *
+   *   - If `isLoading` is true, a spinner is rendered
+   *   - If `ajaxError` is set, an error message is rendered
+   *   - If a `documentId` is set, render the main `TriggerClient`
+   *
+   * Otherwise the `DocumentChooser` component is rendered, where the user can
+   * start a new session.
+   *
+   * @returns The main content to be rendered
+   */
   private renderContent() {
     const { documentId, isLoading, ajaxError } = this.state;
 
@@ -166,6 +215,9 @@ class App extends React.Component<{}, AppState> {
     );
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     // Render content and store trigger mode in application context
     return (
