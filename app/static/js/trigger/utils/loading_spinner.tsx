@@ -16,6 +16,10 @@
 
 import * as React from "react";
 
+/**
+ * Renders a CSS-based spinner which can be used to indicate to the user that
+ * the application is in the process of loading data, e.g. from a server.
+ */
 const LoadingSpinner: React.SFC<{}> = () => {
   // Display a loading spinner implemented through a CSS animation
   return (

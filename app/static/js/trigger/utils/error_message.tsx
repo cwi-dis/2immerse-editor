@@ -16,6 +16,9 @@
 
 import * as React from "react";
 
+/**
+ * Props for ErrorMessage
+ */
 interface ErrorMessageProps {
   documentId?: string;
   statusText: string;
@@ -23,6 +26,16 @@ interface ErrorMessageProps {
   message?: string;
 }
 
+/**
+ * This component is intended to render HTTP error messages. It accepts a HTTP
+ * status code and text as props. Optionally also a document ID and a more
+ * descriptive error message can be passed in.
+ *
+ * @param documentId The document ID for the current session, if available
+ * @param statusText The text for the error code
+ * @param status The HTTP status
+ * @param message An optional message
+ */
 const ErrorMessage: React.SFC<ErrorMessageProps> = (props) => {
   // Display HTTP error message, also rendering the document ID if available
   return (

@@ -16,6 +16,14 @@
 
 import * as React from "react";
 
+/**
+ * Takes the passed component and add children to it which render a
+ * left-pointing arrow. This is intended to be used with elements such as the
+ * HTML anchor `a` or `Link` from `react-router`, thereby creating a convenient
+ * way to instantiate back-links.
+ *
+ * @param WrappedComponent Component to be wrapped
+ */
 function asBackButton<P>(WrappedComponent: React.ComponentType<P> | string) {
   // Higher-order component for wrapping a back-arrow in a custom link component
   return class BackButton extends React.Component<P> {

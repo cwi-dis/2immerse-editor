@@ -17,6 +17,9 @@
 import * as React from "react";
 import { Nullable } from "../../editor/util";
 
+/**
+ * Props for TimecodePopup
+ */
 interface TimecodePopupProps {
   position?: { top: number, left: number };
   timeOffset: number;
@@ -25,9 +28,29 @@ interface TimecodePopupProps {
   seekBy: (t: number) => void;
 }
 
+/**
+ * Renders a small popup window which which the user can add an offset to the
+ * timecode or seek the stream. The offset is merely for display convenience,
+ * whereas the seek field advances or retracts the current playback position by
+ * the given number of seconds. It accepts positive as well as negative values.
+ * The `position` prop indicates the absolute on-screen position the popup will
+ * be rendered at. If the prop is not given, nothing will be rendered,
+ * effectively hiding the popup.
+ *
+ * @param position Position the popup should be rendered at
+ * @param timeOffset Offset for the timecode
+ * @param updateOffset Callback invoked when the offset is updated
+ * @param seekBy Callback invoked when the stream is seeeked
+ */
 class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
   private seekByField: Nullable<HTMLInputElement>;
 
+  /**
+   * Callback invoked when the user hits the button next to the field for
+   * seeking the stream. Retrieves the seek value from the ref to the input
+   * field and calls the `seekBy` callback which informs the parent of the
+   * new value.
+   */
   private seekBy() {
     if (this.seekByField) {
       // Get value from event as number and invoke callback
@@ -36,12 +59,22 @@ class TimecodePopup extends React.Component<TimecodePopupProps, {}> {
     }
   }
 
+  /**
+   * Callback invoked when the user updates the form field for the time offset.
+   * Retrieves the new offset value from the passed event and invokes the
+   * `updateOffset` callback which informs the parent of the change.
+   *
+   * @param e The original change event
+   */
   private updateOffset(e: React.ChangeEvent<HTMLInputElement>) {
     // Get value from event as number and invoke callback
     const value = e.target.valueAsNumber;
     this.props.updateOffset(value);
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { position, timeOffset } = this.props;
 
