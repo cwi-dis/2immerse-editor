@@ -20,13 +20,34 @@ import GeneralSettings from "./general_settings";
 import PreviewLauncher from "./preview_launcher";
 import SessionSettings from "./session_settings";
 
+/**
+ * Props for SettingsModal
+ */
 interface SettingsModalProps {
   documentId: string;
   fetchError?: {status: number, statusText: string};
   clearSession: () => void;
 }
 
+/**
+ * This component ties all functionality related to settings together. This
+ * includes session settings and management, general preview player and
+ * application settings, controls for launching the preview player in various
+ * ways and convenient access to document and debug URLs. If the `fetchError`
+ * prop is set, only session management settings are available.
+ *
+ * @param documentId The document ID of the current session
+ * @param fetchError Information about a HTTP error elsewhere in the application
+ * @param clearSession Callback that is invoked when the session is cleared
+ */
 class SettingsModal extends React.Component<SettingsModalProps, {}> {
+  /**
+   * Callback invoked when the user clicks the link pointing to the current
+   * document. The function compiles the actual document ID for this host and
+   * overrides the clipboard.
+   *
+   * @param e The original clipboard event
+   */
   private copyApiUrl(e: React.ClipboardEvent<HTMLAnchorElement>) {
     // Compile URL for the current document
     const apiUrl = `${location.origin}/api/v1/document/${this.props.documentId}`;
@@ -38,6 +59,9 @@ class SettingsModal extends React.Component<SettingsModalProps, {}> {
     alert("API URL copied to clipboard");
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { fetchError } = this.props;
 

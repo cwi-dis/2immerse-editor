@@ -19,12 +19,30 @@ import * as classNames from "classnames";
 
 import { makeRequest } from "../../editor/util";
 
+/**
+ * Props for SessionSettings
+ */
 interface SessionSettingsProps {
   documentId: string;
   clearSession: () => void;
   fetchError?: {status: number, statusText: string};
 }
 
+/**
+ * This component renders various buttons which give the user access to
+ * functionality such as saving the document and clearing or deleting the
+ * current session. If the `fetchError` prop is given, it is implied that an
+ * error has occured elsewhere in the application and that certain functionality
+ * is not available anymore, such as saving the document. Thus, the presence
+ * of `fetchError` disabled some controls. The component also offers two
+ * controls for interacting with the session, namely "Clear Session" and "Delete
+ * session". The former one deletes the session on the client side, whereas the
+ * latter one deletes it both on the client and on the server.
+ *
+ * @param documentId The document ID for the current session
+ * @param clearSession Callback invoked when the session is cleared or deleted
+ * @param fetchError Error information about an error that has occured elsewhere
+ */
 const SessionSettings: React.SFC<SessionSettingsProps> = (props) => {
   const { documentId, clearSession, fetchError } = props;
   const downloadUrl = `/api/v1/document/${documentId}`;

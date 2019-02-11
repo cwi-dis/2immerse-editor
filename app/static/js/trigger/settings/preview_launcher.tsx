@@ -18,14 +18,28 @@ import * as React from "react";
 import * as QRCode from "qrcode";
 import { Nullable, shortenUrl } from "../../editor/util";
 
+/**
+ * Props for PreviewLauncher
+ */
 interface PreviewLauncherProps {
   documentId: string;
 }
 
+/**
+ * State for PreviewLauncher
+ */
 interface PreviewLauncherState {
   shortUrl: string;
 }
 
+/**
+ * This component is responsible for rendering the elements necessary for the
+ * various ways the preview launcher can be started. For one, directly through
+ * the URL, through a QR code or through a shortened URL. The component needs
+ * access to the current document ID to generate the preview URL.
+ *
+ * @param documentId The document ID for the current session
+ */
 class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLauncherState> {
   private qrCanvas: Nullable<HTMLCanvasElement>;
 
@@ -37,11 +51,20 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
     };
   }
 
+  /**
+   * Compiles the preview URL for the current host and document ID.
+   *
+   * @returns The preview URL for the current host
+   */
   private getPreviewUrl(): string {
     // Compile preview URL
     return `${location.protocol}//${location.host}/api/v1/document/${this.props.documentId}/preview`;
   }
 
+  /**
+   * Invoked after the component first mounts. Generates the preview URL,
+   * creates a QR code and a short URL for it and updates the state accordingly.
+   */
   public async componentDidMount() {
     const previewUrl = this.getPreviewUrl();
 
@@ -65,6 +88,9 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const previewUrl = this.getPreviewUrl();
     const { shortUrl } = this.state;

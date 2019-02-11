@@ -18,10 +18,7 @@ import * as React from "react";
 
 import { makeRequest, Nullable } from "../../editor/util";
 
-interface GeneralSettingsProps {
-  documentId: string;
-}
-
+// Known settings keys that the user can change
 interface GeneralSettings {
   playerMode: string;
   startPaused: boolean;
@@ -32,13 +29,31 @@ interface GeneralSettings {
   debugLinks: { [key: string]: string };
 }
 
+// Type containing all keys of the GeneralSettings type
 type GeneralSettingsKey = keyof GeneralSettings;
 
+/**
+ * State for GeneralSettings
+ */
+interface GeneralSettingsProps {
+  documentId: string;
+}
+
+/**
+ * Props for GeneralSettings
+ */
 interface GeneralSettingsState {
   settings?: GeneralSettings;
   saveSuccessful?: boolean;
 }
 
+/**
+ * This component allows the user to configure various aspects of the preview
+ * player by changing a series of settings. This component also offers access
+ * to various debug links.
+ *
+ * @param documentId The document ID for the current session
+ */
 class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSettingsState> {
   private settingsUrl: string;
 
@@ -52,6 +67,10 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     this.state = {};
   }
 
+  /**
+   * Invoked after the component first mounts. Requests the settings values from
+   * the server and stores the values in the component's internal state.
+   */
   public async componentDidMount() {
     try {
       // Retrieve all the settings from the server and update state
@@ -64,6 +83,13 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
   }
 
+  /**
+   * Renders a list of links given as key-value pairs as JSX elements. Where the
+   * key is the name of the link and the value is the link itself.
+   *
+   * @param links Links to render as a list
+   * @returns The links wrapped in JSX elements
+   */
   private renderDebugLinks(links: {[key: string]: string}) {
     const renderedLinks: Array<JSX.Element> = [];
 
@@ -82,6 +108,15 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     return renderedLinks;
   }
 
+  /**
+   * Generic function for updating settings values. The function takes the
+   * settings key to be updated and the updated value, creates a HTTP request
+   * and if successful, updates the state accordingly. In case the request
+   * fails, the error condition is set.
+   *
+   * @param key The key to update
+   * @param value The new value for the given key
+   */
   private async updateSettingsKey(key: GeneralSettingsKey, value: string | boolean) {
     try {
       console.log("changing", key, "to", value);
@@ -106,29 +141,59 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
   }
 
+  /**
+   * Callback invoked when the user wants to update the `playerMode` setting.
+   *
+   * @param e The original change event
+   */
   private changePlayerMode(e: React.ChangeEvent<HTMLSelectElement>) {
     const { value } = e.target;
     this.updateSettingsKey("playerMode", value);
   }
 
+  /**
+   * Callback invoked when the user wants to update the `startPaused` setting.
+   * The value is converted from string to boolean before is it passed to the
+   * server.
+   *
+   * @param e The original change event
+   */
   private changeStartPaused(e: React.ChangeEvent<HTMLInputElement>) {
     // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("startPaused", value);
   }
 
+  /**
+   * Callback invoked when the user wants to update the `previewFromWebcam`
+   * setting. The value is converted from string to boolean before is it passed
+   * to the server.
+   *
+   * @param e The original change event
+   */
   private changePreviewFromWebcam(e: React.ChangeEvent<HTMLInputElement>) {
     // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("previewFromWebcam", value);
   }
 
+  /**
+   * Callback invoked when the user wants to update the `enableControls`
+   * setting. The value is converted from string to boolean before is it passed
+   * to the server.
+   *
+   * @param e The original change event
+   */
   private changeEnableControls(e: React.ChangeEvent<HTMLInputElement>) {
     // Convert dropdown string value to boolean
     const value = (e.target.value === "true") ? true : false;
     this.updateSettingsKey("enableControls", value);
   }
 
+  /**
+   * Callback invoked when the user wants to update the description of the
+   * current session. The updated value is obtained from a ref.
+   */
   private changeDescription() {
     if (this.descriptionRef === null) {
       console.log("Ref for description field is empty");
@@ -140,6 +205,10 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     this.updateSettingsKey("description", value);
   }
 
+  /**
+   * Callback invoked when the user wants to update the `viewerExtraOffset`
+   * setting. The updated value is retrieved from a ref.
+   */
   private changeViewerExtraOffset() {
     if (this.viewerExtraOffsetRef === null) {
       return;
@@ -150,6 +219,14 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     this.updateSettingsKey("viewerExtraOffset", value);
   }
 
+  /**
+   * Renders a notification badge indicating either success or failure of a
+   * request to update a settings key. If the `saveSuccessful` state variable
+   * is `undefined`, nothing is rendered. The notification is cleared and
+   * disappears after one second.
+   *
+   * @returns The rendered notification
+   */
   private renderNotification() {
     const { saveSuccessful } = this.state;
 
@@ -180,6 +257,9 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     }
   }
 
+  /**
+   * Renders the component
+   */
   public render() {
     const { settings } = this.state;
 
