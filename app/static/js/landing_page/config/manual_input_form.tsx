@@ -136,14 +136,14 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
     // Set notification colour based on state of submitSuccess
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
     // Display notification for 5s
-    const timeout = setTimeout(() => {
+    const timeout = window.setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
 
     // Callback for closing the notification
     const closeNotification = () => {
       console.log("timeout:", timeout);
-      clearTimeout(timeout);
+      window.clearTimeout(timeout);
       this.setState({submitSuccess: undefined});
     };
 

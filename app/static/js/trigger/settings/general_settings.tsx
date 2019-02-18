@@ -235,7 +235,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
       return;
     } else {
       // Clear notification after 1 second
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.setState({ saveSuccessful: undefined });
       }, 1000);
 

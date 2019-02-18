@@ -67,7 +67,7 @@ interface RemoteControlState {
  * @param clearSession Callback for clearing the current session
  */
 class RemoteControl extends React.Component<RemoteControlProps, RemoteControlState> {
-  private timerInterval: any;
+  private timerInterval: number;
   private timecodeBox: Nullable<HTMLDivElement>;
 
   public constructor(props: RemoteControlProps) {
@@ -87,7 +87,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
    */
   public componentDidMount() {
     // Update timer every 10ms
-    this.timerInterval = setInterval(() => {
+    this.timerInterval = window.setInterval(() => {
       const { position, lastPositionUpdate } = this.state;
       const { previewStatus: { playing } } = this.props;
 
@@ -111,7 +111,7 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
    */
   public componentWillUnmount() {
     // Clear function to update timer once component is unmounted
-    this.timerInterval && clearInterval(this.timerInterval);
+    window.clearInterval(this.timerInterval);
   }
 
   /**

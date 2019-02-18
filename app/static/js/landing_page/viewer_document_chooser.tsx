@@ -35,7 +35,7 @@ interface ViewerDocumentChooserState {
  * `TV` or `standalone` mode.
  */
 class ViewerDocumentChooser extends React.Component<{}, ViewerDocumentChooserState> {
-  private documentInterval: any;
+  private documentInterval: number;
   private idInput: Nullable<HTMLSelectElement>;
   private modeInput: Nullable<HTMLSelectElement>;
 
@@ -55,7 +55,7 @@ class ViewerDocumentChooser extends React.Component<{}, ViewerDocumentChooserSta
    */
   public componentDidMount() {
     // Request list of documents every second
-    this.documentInterval = setInterval(async () => {
+    this.documentInterval = window.setInterval(async () => {
       // Fetch data, parse and update state
       const data = await makeRequest("GET", "/api/v1/document");
       const documents = JSON.parse(data);
@@ -73,7 +73,7 @@ class ViewerDocumentChooser extends React.Component<{}, ViewerDocumentChooserSta
   public componentWillUnmount() {
     // Clear interval for fetching documents on unmount
     if (this.documentInterval) {
-      clearInterval(this.documentInterval);
+      window.clearInterval(this.documentInterval);
     }
   }
 

@@ -83,13 +83,13 @@ class FileInputForm extends React.Component<FileInputFormProps, FileInputFormSta
 
     // Render notification and close automatically after 5s
     const notificationColor = (this.state.submitSuccess) ? "is-success" : "is-danger";
-    const timeout = setTimeout(() => {
+    const timeout = window.setTimeout(() => {
       this.setState({submitSuccess: undefined});
     }, 5000);
 
     // Callback for closing the notification
     const closeNotification = () => {
-      clearTimeout(timeout);
+      window.clearTimeout(timeout);
       this.setState({submitSuccess: undefined});
     };
 
