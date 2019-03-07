@@ -44,18 +44,10 @@ All of the following steps only apply if you want to actually do any frontend
 development. If you're not planning to touch the frontend in any way, you can
 ignore this entire section as `docker-compose` takes care of this process for
 you. Since the application uses TypeScript and React, we also need to setup the
-frontend build-chain. First off, make sure you have `npm` installed. Then,
-install `webpack` globally by running
+frontend build-chain.
 
-```
-[sudo] npm install -g webpack
-```
-
-Webpack is a pluggable module bundler which will be responsible for translating
-the TypeScript code and the React components to simple JavaScript and resolve
-all the imports.
-
-Also install `yarn`, which is basically npm which understands versions:
+Also install `yarn`, which is more advanced package manager for Node.js. The
+following instructions pertain to macOS.
 
 ```
 brew install yarn
@@ -73,13 +65,13 @@ Next up, build the app
 ```
 cd app/static/
 yarn install
-webpack
+yarn run webpack
 ```
 
 This will install all the application dependencies into a new folder
-`node_modules/`. Finally, simply run `webpack` in the `app/static/` folder to
-generate the application bundle.  The bundle needs to be regenerated every time
-you perform changes to the frontend code.
+`node_modules/`. Finally, simply run `yarn run webpack` in the `app/static/`
+folder to generate the application bundle.  The bundle needs to be regenerated
+every time you perform changes to the frontend code.
 
 ## Running the Application
 
@@ -90,10 +82,10 @@ docker-compose up
 ```
 
 to start all the containers and the HTTP server. The application should now be
-accessible from a browser at <http://localhost:8000>. Any changes performed to
+accessible from a browser at <http://localhost:8008>. Any changes performed to
 the code on the host machine should be reflected in the container
 automatically, but you may need to restart the Flask server if you change
-something in the backend code. To stop the containers, hit *Ctrl+C* on the
+something in the backend code. To stop the containers, hit *CMD+C* on the
 command line.
 
 ### Configuring the Backend
