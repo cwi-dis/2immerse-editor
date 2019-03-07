@@ -9,11 +9,14 @@
     "lib": ["dom", "es2015"],
     "strictNullChecks": true,
     "noStrictGenericChecks": true,
-    "keyofStringsOnly": true
+    "keyofStringsOnly": true,
+    "types": ["jest"]
   },
   "include": [
     "./js/**/*.tsx",
-    "./js/**/*.ts"
+    "./js/**/*.ts",
+    "./__tests__/**/*.tsx",
+    "./__tests__/**/*.ts"
   ],
   "exclude": [
     "./node_modules/**/*"

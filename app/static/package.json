@@ -7,21 +7,6 @@
     "test": "jest --verbose --bail --coverage",
     "covserver": "cd coverage/lcov-report; http-server; cd ../.."
   },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "testRegex": "(/__tests__/.*\\.(test|spec))\\.(ts|tsx|js)$",
-    "setupFiles": [
-      "./__tests__/setup.ts"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "json"
-    ]
-  },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
     "@types/enzyme": "^3.1.0",
