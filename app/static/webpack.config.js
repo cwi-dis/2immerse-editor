@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 
 module.exports = {
+  mode: "development",
   entry: {
     editor: "./js/editor/components/main.tsx",
     landing_page: "./js/landing_page/main.tsx",
