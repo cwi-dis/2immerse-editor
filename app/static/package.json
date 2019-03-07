@@ -15,7 +15,6 @@
     "setupFiles": [
       "./__tests__/setup.ts"
     ],
-    "mapCoverage": true,
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -26,6 +25,7 @@
   "devDependencies": {
     "@types/classnames": "^2.2.0",
     "@types/enzyme": "^3.1.0",
+    "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/jest": "^20.0.8",
     "@types/qrcode": "^0.8.0",
     "@types/randomcolor": "^0.4.3",
@@ -38,14 +38,14 @@
     "@types/shortid": "0.0.29",
     "@types/sinon": "^2.3.3",
     "css-loader": "^2.1.1",
-    "enzyme": "^3.1.0",
-    "enzyme-adapter-react-16": "^1.0.4",
-    "jest": "^21.0.1",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.10.0",
+    "jest": "^24.3.0",
     "react-test-renderer": "^16.0.0",
     "redux-mock-store": "^1.5.1",
-    "sinon": "^3.2.1",
+    "sinon": "^7.2.7",
     "style-loader": "^0.18.2",
-    "ts-jest": "^21.0.0",
+    "ts-jest": "^24.0.0",
     "ts-loader": "^5.3.3",
     "tslint": "^5.10.0",
     "tslint-react": "^3.6.0",
