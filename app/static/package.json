@@ -37,7 +37,7 @@
     "@types/redux-mock-store": "^0.0.13",
     "@types/shortid": "0.0.29",
     "@types/sinon": "^2.3.3",
-    "css-loader": "^0.28.7",
+    "css-loader": "^2.1.1",
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-16": "^1.0.4",
     "jest": "^21.0.1",
