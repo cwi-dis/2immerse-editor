@@ -50,7 +50,8 @@
     "tslint": "^5.10.0",
     "tslint-react": "^3.6.0",
     "typescript": "^3.2.4",
-    "webpack": "^3.5.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3",
     "xhr-mock": "^1.9.1"
   },
   "dependencies": {
