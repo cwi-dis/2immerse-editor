@@ -52,7 +52,7 @@
     "typescript": "^3.2.4",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
-    "xhr-mock": "^1.9.1"
+    "xhr-mock": "^2.4.1"
   },
   "dependencies": {
     "@types/escape-string-regexp": "^0.0.32",
