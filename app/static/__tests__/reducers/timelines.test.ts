@@ -75,6 +75,11 @@ describe("TimelineTrack class", () => {
     });
 
     expect(track.regionId).toEqual("region1");
+
+    if (!track.timelineElements) {
+      return fail();
+    }
+
     expect(track.timelineElements.count()).toEqual(1);
     expect(track.timelineElements.get(0)).toEqual(timelineElement);
   });
@@ -105,9 +110,13 @@ describe("Timeline class", () => {
     expect(timeline.id).toEqual("screen1");
     expect(timeline.chapterId).toEqual("chapter1");
 
+    if (!timeline.timelineTracks) {
+      return fail();
+    }
+
     expect(timeline.timelineTracks.count()).toEqual(1);
-    expect(timeline.timelineTracks.get(0).regionId).toEqual("region1");
-    expect(timeline.timelineTracks.get(0).timelineElements.count()).toEqual(0);
+    expect(timeline.timelineTracks.get(0)!.regionId).toEqual("region1");
+    expect(timeline.timelineTracks.get(0)!.timelineElements!.count()).toEqual(0);
   });
 });
 
@@ -211,21 +220,39 @@ describe("Timelines reducer", () => {
 
     expect(transformedState.count()).toEqual(9);
 
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track5");
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region3");
+    let timeline = transformedState.get(0);
 
-    expect(transformedState.get(1).timelineTracks.count()).toEqual(2);
-    expect(transformedState.get(1).timelineTracks.get(0).id).toEqual("track1");
-    expect(transformedState.get(1).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(1).timelineTracks.get(1).id).toEqual("track2");
-    expect(transformedState.get(1).timelineTracks.get(1).regionId).toEqual("region2");
+    if (!timeline) {
+      return fail();
+    }
 
-    expect(transformedState.get(5).timelineTracks.count()).toEqual(2);
-    expect(transformedState.get(5).timelineTracks.get(0).id).toEqual("track3");
-    expect(transformedState.get(5).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(5).timelineTracks.get(1).id).toEqual("track4");
-    expect(transformedState.get(5).timelineTracks.get(1).regionId).toEqual("region2");
+    expect(timeline.timelineTracks!.count()).toEqual(1);
+    expect(timeline.timelineTracks!.get(0)!.id).toEqual("track5");
+    expect(timeline.timelineTracks!.get(0)!.regionId).toEqual("region3");
+
+    timeline = transformedState.get(1);
+
+    if (!timeline) {
+      return fail();
+    }
+
+    expect(timeline.timelineTracks!.count()).toEqual(2);
+    expect(timeline.timelineTracks!.get(0)!.id).toEqual("track1");
+    expect(timeline.timelineTracks!.get(0)!.regionId).toEqual("region1");
+    expect(timeline.timelineTracks!.get(1)!.id).toEqual("track2");
+    expect(timeline.timelineTracks!.get(1)!.regionId).toEqual("region2");
+
+    timeline = transformedState.get(5);
+
+    if (!timeline) {
+      return fail();
+    }
+
+    expect(timeline.timelineTracks!.count()).toEqual(2);
+    expect(timeline.timelineTracks!.get(0)!.id).toEqual("track3");
+    expect(timeline.timelineTracks!.get(0)!.regionId).toEqual("region1");
+    expect(timeline.timelineTracks!.get(1)!.id).toEqual("track4");
+    expect(timeline.timelineTracks!.get(1)!.regionId).toEqual("region2");
   });
 
   it("should allocate a new element for each element in the tree", () => {
@@ -267,25 +294,37 @@ describe("Timelines reducer", () => {
       } }} as any
     );
 
-    expect(transformedState.get(1).timelineTracks.count()).toEqual(2);
-    expect(transformedState.get(1).timelineTracks.get(0).id).toEqual("track1");
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.count()).toEqual(2);
+    let timeline = transformedState.get(1);
 
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).componentId).toEqual("logo");
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(10);
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+    if (!timeline) {
+      return fail();
+    }
 
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).componentId).toEqual("video");
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).duration).toEqual(10);
-    expect(transformedState.get(1).timelineTracks.get(0).timelineElements.get(1).offset).toEqual(5);
+    expect(timeline.timelineTracks!.count()).toEqual(2);
+    expect(timeline.timelineTracks!.get(0)!.id).toEqual("track1");
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.count()).toEqual(2);
 
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).componentId).toEqual("video2");
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(34);
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(2);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.componentId).toEqual("logo");
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.duration).toEqual(10);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.offset).toEqual(0);
 
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).componentId).toEqual("livestream");
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).duration).toEqual(0);
-    expect(transformedState.get(5).timelineTracks.get(0).timelineElements.get(1).offset).toEqual(5);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.componentId).toEqual("video");
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.duration).toEqual(10);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.offset).toEqual(5);
+
+    timeline = transformedState.get(5);
+
+    if (!timeline) {
+      return fail();
+    }
+
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.componentId).toEqual("video2");
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.duration).toEqual(34);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(0)!.offset).toEqual(2);
+
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.componentId).toEqual("livestream");
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.duration).toEqual(0);
+    expect(timeline.timelineTracks!.get(0)!.timelineElements!.get(1)!.offset).toEqual(5);
   });
 
   it("should set an element's offset to 0 if it is undefined", () => {
@@ -306,9 +345,19 @@ describe("Timelines reducer", () => {
       } }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(10);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+    const timeline = transformedState.get(0);
+    if (!timeline) {
+      return fail();
+    }
+
+    const firstTrack = timeline.timelineTracks!.get(0);
+    if (!firstTrack) {
+      return fail();
+    }
+
+    expect(firstTrack.timelineElements!.count()).toEqual(1);
+    expect(firstTrack.timelineElements!.get(0)!.duration).toEqual(10);
+    expect(firstTrack.timelineElements!.get(0)!.offset).toEqual(0);
   });
 
   it("should set an element's duration to 0 if it is 999999", () => {
@@ -329,9 +378,19 @@ describe("Timelines reducer", () => {
       } }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(0);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+    const timeline = transformedState.get(0);
+    if (!timeline) {
+      return fail();
+    }
+
+    const firstTrack = timeline.timelineTracks!.get(0);
+    if (!firstTrack) {
+      return fail();
+    }
+
+    expect(firstTrack.timelineElements!.count()).toEqual(1);
+    expect(firstTrack.timelineElements!.get(0)!.duration).toEqual(0);
+    expect(firstTrack.timelineElements!.get(0)!.offset).toEqual(0);
   });
 
   it("should set an element's duration to 0 if it larger than 999999", () => {
@@ -352,9 +411,11 @@ describe("Timelines reducer", () => {
       } }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).duration).toEqual(0);
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.get(0).offset).toEqual(0);
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
+
+    expect(elements.count()).toEqual(1);
+    expect(elements.get(0)!.duration).toEqual(0);
+    expect(elements.get(0)!.offset).toEqual(0);
   });
 
   it("should create a new timeline for a chapter on ADD_TIMELINE if the list is empty", () => {
@@ -365,9 +426,9 @@ describe("Timelines reducer", () => {
 
     expect(state.count()).toEqual(1);
     expect(state.get(0)).toBeInstanceOf(Timeline);
-    expect(state.get(0).chapterId).toEqual("chapter1");
-    expect(state.get(0).timelineTracks).toBeInstanceOf(List);
-    expect(state.get(0).timelineTracks.count()).toEqual(0);
+    expect(state.get(0)!.chapterId).toEqual("chapter1");
+    expect(state.get(0)!.timelineTracks).toBeInstanceOf(List);
+    expect(state.get(0)!.timelineTracks!.count()).toEqual(0);
   });
 
   it("should create a new timeline for a chapter on ADD_TIMELINE", () => {
@@ -383,12 +444,12 @@ describe("Timelines reducer", () => {
     expect(transformedState.count()).toEqual(2);
 
     expect(transformedState.get(0)).toBeInstanceOf(Timeline);
-    expect(transformedState.get(0).chapterId).toEqual("chapter1");
+    expect(transformedState.get(0)!.chapterId).toEqual("chapter1");
 
     expect(transformedState.get(1)).toBeInstanceOf(Timeline);
-    expect(transformedState.get(1).chapterId).toEqual("chapter2");
-    expect(transformedState.get(1).timelineTracks).toBeInstanceOf(List);
-    expect(transformedState.get(1).timelineTracks.count()).toEqual(0);
+    expect(transformedState.get(1)!.chapterId).toEqual("chapter2");
+    expect(transformedState.get(1)!.timelineTracks).toBeInstanceOf(List);
+    expect(transformedState.get(1)!.timelineTracks!.count()).toEqual(0);
   });
 
   it("should return the state untransformed if a timeline for the chapter already exists on ADD_TIMELINE", () => {
@@ -405,9 +466,9 @@ describe("Timelines reducer", () => {
 
     expect(transformedState.count()).toEqual(1);
     expect(transformedState.get(0)).toBeInstanceOf(Timeline);
-    expect(transformedState.get(0).chapterId).toEqual("chapter1");
-    expect(transformedState.get(0).timelineTracks).toBeInstanceOf(List);
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(0);
+    expect(transformedState.get(0)!.chapterId).toEqual("chapter1");
+    expect(transformedState.get(0)!.timelineTracks).toBeInstanceOf(List);
+    expect(transformedState.get(0)!.timelineTracks!.count()).toEqual(0);
   });
 
   it("should remove a timeline on REMOVE_TIMELINE", () => {
@@ -422,8 +483,8 @@ describe("Timelines reducer", () => {
     );
 
     expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).id).toEqual("timeline2");
-    expect(transformedState.get(0).chapterId).toEqual("chapter2");
+    expect(transformedState.get(0)!.id).toEqual("timeline2");
+    expect(transformedState.get(0)!.chapterId).toEqual("chapter2");
   });
 
   it("should return the state untransformed if the timeline does not exist on REMOVE_TIMELINE", () => {
@@ -449,9 +510,9 @@ describe("Timelines reducer", () => {
       { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1" }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
+    expect(transformedState.get(0)!.timelineTracks!.count()).toEqual(1);
+    expect(transformedState.get(0)!.timelineTracks!.get(0)!.regionId).toEqual("region1");
+    expect(transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!.count()).toEqual(0);
   });
 
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter with the given track ID", () => {
@@ -464,10 +525,12 @@ describe("Timelines reducer", () => {
       { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1", trackId: "newtrack" }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("newtrack");
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
+    const tracks = transformedState.get(0)!.timelineTracks!;
+
+    expect(tracks.count()).toEqual(1);
+    expect(tracks.get(0)!.id).toEqual("newtrack");
+    expect(tracks.get(0)!.regionId).toEqual("region1");
+    expect(tracks.get(0)!.timelineElements!.count()).toEqual(0);
   });
 
   it("should add a new locked track for the given region on ADD_TIMELINE_TRACK for the given chapter", () => {
@@ -480,10 +543,12 @@ describe("Timelines reducer", () => {
       { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1", locked: true }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(0).timelineTracks.get(0).timelineElements.count()).toEqual(0);
-    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeTruthy();
+    const tracks = transformedState.get(0)!.timelineTracks!;
+
+    expect(tracks.count()).toEqual(1);
+    expect(tracks.get(0)!.regionId).toEqual("region1");
+    expect(tracks.get(0)!.timelineElements!.count()).toEqual(0);
+    expect(tracks.get(0)!.locked).toBeTruthy();
   });
 
   it("should add a new track for the given region on ADD_TIMELINE_TRACK for the given chapter even if a track for the region exists", () => {
@@ -498,10 +563,12 @@ describe("Timelines reducer", () => {
       { type: "ADD_TIMELINE_TRACK", payload: { timelineId: "timeline1", regionId: "region1" }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(2);
-    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track1");
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region1");
-    expect(transformedState.get(0).timelineTracks.get(1).regionId).toEqual("region1");
+    const tracks = transformedState.get(0)!.timelineTracks!;
+
+    expect(tracks.count()).toEqual(2);
+    expect(tracks.get(0)!.id).toEqual("track1");
+    expect(tracks.get(0)!.regionId).toEqual("region1");
+    expect(tracks.get(1)!.regionId).toEqual("region1");
   });
 
   it("should return the state untransformed on REMOVE_TIMELINE_TRACK if the timeline does not exist", () => {
@@ -549,10 +616,15 @@ describe("Timelines reducer", () => {
       { type: "REMOVE_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
     );
 
-    expect(transformedState.get(0).id).toEqual("timeline1");
-    expect(transformedState.get(0).timelineTracks.count()).toEqual(1);
-    expect(transformedState.get(0).timelineTracks.get(0).id).toEqual("track2");
-    expect(transformedState.get(0).timelineTracks.get(0).regionId).toEqual("region2");
+    const timeline = transformedState.get(0);
+    if (!timeline) {
+      return fail();
+    }
+
+    expect(timeline.id).toEqual("timeline1");
+    expect(timeline.timelineTracks!.count()).toEqual(1);
+    expect(timeline.timelineTracks!.get(0)!.id).toEqual("track2");
+    expect(timeline.timelineTracks!.get(0)!.regionId).toEqual("region2");
   });
 
   it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK when the track is empty", () => {
@@ -567,14 +639,18 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(1);
 
-    expect(elements.get(0).componentId).toEqual("component1");
-    expect(elements.get(0).offset).toEqual(0);
-    expect(elements.get(0).duration).toEqual(10);
-    expect(elements.get(0).previewUrl).toBeUndefined();
+    const firstElement = elements.get(0);
+    if (!firstElement) {
+      return fail();
+    }
+
+    expect(firstElement.componentId).toEqual("component1");
+    expect(firstElement.offset).toEqual(0);
+    expect(firstElement.duration).toEqual(10);
+    expect(firstElement.previewUrl).toBeUndefined();
   });
 
   it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK with the given preview URL", () => {
@@ -589,14 +665,18 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10, previewUrl: "http://some.url" }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(1);
 
-    expect(elements.get(0).componentId).toEqual("component1");
-    expect(elements.get(0).offset).toEqual(0);
-    expect(elements.get(0).duration).toEqual(10);
-    expect(elements.get(0).previewUrl).toEqual("http://some.url");
+    const firstElement = elements.get(0);
+    if (!firstElement) {
+      return fail();
+    }
+
+    expect(firstElement.componentId).toEqual("component1");
+    expect(firstElement.offset).toEqual(0);
+    expect(firstElement.duration).toEqual(10);
+    expect(firstElement.previewUrl).toEqual("http://some.url");
   });
 
   it("should add a new element to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK with the given element id", () => {
@@ -611,14 +691,18 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component1", duration: 10, elementId: "newelement" }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(1);
 
-    expect(elements.get(0).id).toEqual("newelement");
-    expect(elements.get(0).componentId).toEqual("component1");
-    expect(elements.get(0).offset).toEqual(0);
-    expect(elements.get(0).duration).toEqual(10);
+    const firstElement = elements.get(0);
+    if (!firstElement) {
+      return fail();
+    }
+
+    expect(firstElement.id).toEqual("newelement");
+    expect(firstElement.componentId).toEqual("component1");
+    expect(firstElement.offset).toEqual(0);
+    expect(firstElement.duration).toEqual(10);
   });
 
   it("should insert a new element after the last to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -635,13 +719,17 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", insertPosition: -1 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(2);
 
-    expect(elements.get(1).componentId).toEqual("component2");
-    expect(elements.get(1).duration).toEqual(0);
-    expect(elements.get(1).offset).toEqual(0);
+    const secondElement = elements.get(1);
+    if (!secondElement) {
+      return fail();
+    }
+
+    expect(secondElement.componentId).toEqual("component2");
+    expect(secondElement.duration).toEqual(0);
+    expect(secondElement.offset).toEqual(0);
   });
 
   it("should insert a new element with the given length to the selected track on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -658,13 +746,17 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component2", duration: 200, insertPosition: -1 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(2);
 
-    expect(elements.get(1).componentId).toEqual("component2");
-    expect(elements.get(1).duration).toEqual(200);
-    expect(elements.get(1).offset).toEqual(0);
+    const secondElement = elements.get(1);
+    if (!secondElement) {
+      return fail();
+    }
+
+    expect(secondElement.componentId).toEqual("component2");
+    expect(secondElement.duration).toEqual(200);
+    expect(secondElement.offset).toEqual(0);
   });
 
   it("should insert a new element at the given position on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -682,13 +774,17 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 1 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(3);
 
-    expect(elements.get(1).componentId).toEqual("component3");
-    expect(elements.get(1).duration).toEqual(200);
-    expect(elements.get(1).offset).toEqual(0);
+    const secondElement = elements.get(1);
+    if (!secondElement) {
+      return fail();
+    }
+
+    expect(secondElement.componentId).toEqual("component3");
+    expect(secondElement.duration).toEqual(200);
+    expect(secondElement.offset).toEqual(0);
   });
 
   it("should insert a new element at the end of the list if insertPosition is larger than the number of elements on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -706,13 +802,17 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 1000 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(3);
 
-    expect(elements.get(2).componentId).toEqual("component3");
-    expect(elements.get(2).duration).toEqual(200);
-    expect(elements.get(2).offset).toEqual(0);
+    const lastElement = elements.get(2);
+    if (!lastElement) {
+      return fail();
+    }
+
+    expect(lastElement.componentId).toEqual("component3");
+    expect(lastElement.duration).toEqual(200);
+    expect(lastElement.offset).toEqual(0);
   });
 
   it("should insert a new element at the end of the list if insertPosition is less than -1 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -730,13 +830,17 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: -54 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(3);
 
-    expect(elements.get(2).componentId).toEqual("component3");
-    expect(elements.get(2).duration).toEqual(200);
-    expect(elements.get(2).offset).toEqual(0);
+    const lastElement = elements.get(2);
+    if (!lastElement) {
+      return fail();
+    }
+
+    expect(lastElement.componentId).toEqual("component3");
+    expect(lastElement.duration).toEqual(200);
+    expect(lastElement.offset).toEqual(0);
   });
 
   it("should insert a new element at the beginning of the list if insertPosition is 0 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -754,13 +858,18 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 200, insertPosition: 0 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(3);
 
-    expect(elements.get(0).componentId).toEqual("component3");
-    expect(elements.get(0).duration).toEqual(200);
-    expect(elements.get(0).offset).toEqual(0);
+    const firstElement = elements.get(0);
+
+    if (!firstElement) {
+      return fail();
+    }
+
+    expect(firstElement.componentId).toEqual("component3");
+    expect(firstElement.duration).toEqual(200);
+    expect(firstElement.offset).toEqual(0);
   });
 
   it("should add an element with duration 0 on ADD_ELEMENT_TO_TIMELINE_TRACK", () => {
@@ -778,13 +887,18 @@ describe("Timelines reducer", () => {
       { type: "ADD_ELEMENT_TO_TIMELINE_TRACK", payload: { timelineId: "timeline1", trackId: "track1", componentId: "component3", duration: 0, insertPosition: 0 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toEqual(3);
 
-    expect(elements.get(0).componentId).toEqual("component3");
-    expect(elements.get(0).duration).toEqual(0);
-    expect(elements.get(0).offset).toEqual(0);
+    const firstElement = elements.get(0);
+
+    if (!firstElement) {
+      return fail();
+    }
+
+    expect(firstElement.componentId).toEqual("component3");
+    expect(firstElement.duration).toEqual(0);
+    expect(firstElement.offset).toEqual(0);
   });
 
   it("should return the state untransformed on ADD_ELEMENT_TO_TIMELINE_TRACK if the length less than 0", () => {
@@ -835,8 +949,8 @@ describe("Timelines reducer", () => {
       { type: "UPDATE_ELEMENT_OFFSET", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", offset: 55 }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
-    expect(elements.first().offset).toBe(55);
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
+    expect(elements.first()!.offset).toBe(55);
   });
 
   it("should return the state untransformed on UPDATE_ELEMENT_OFFSET when passing a negative number", () => {
@@ -955,7 +1069,7 @@ describe("Timelines reducer", () => {
       { type: "REMOVE_ELEMENT", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1" }} as any
     );
 
-    const elements = transformedState.get(0).timelineTracks.get(0).timelineElements;
+    const elements = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!;
     expect(elements.count()).toBe(0);
   });
 
@@ -1024,7 +1138,7 @@ describe("Timelines reducer", () => {
       { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: 23 }} as any
     );
 
-    const element = transformedState.get(0).timelineTracks.get(0).timelineElements.get(0);
+    const element = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!.get(0)!;
     expect(element.duration).toBe(23);
   });
 
@@ -1042,7 +1156,7 @@ describe("Timelines reducer", () => {
       { type: "UPDATE_ELEMENT_LENGTH", payload: { timelineId: "timeline1", trackId: "track1", elementId: "element1", length: 0 }} as any
     );
 
-    const element = transformedState.get(0).timelineTracks.get(0).timelineElements.get(0);
+    const element = transformedState.get(0)!.timelineTracks!.get(0)!.timelineElements!.get(0)!;
     expect(element.duration).toBe(0);
   });
 
@@ -1145,14 +1259,14 @@ describe("Timelines reducer", () => {
       { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeTruthy();
+    expect(transformedState.get(0)!.timelineTracks!.get(0)!.locked).toBeTruthy();
 
     transformedState = reducer(
       transformedState,
       { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track1" }} as any
     );
 
-    expect(transformedState.get(0).timelineTracks.get(0).locked).toBeFalsy();
+    expect(transformedState.get(0)!.timelineTracks!.get(0)!.locked).toBeFalsy();
   });
 
   it("should return the state untransformed on TOGGLE_TRACK_LOCK is the timeline does not exist", () => {

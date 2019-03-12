@@ -50,8 +50,8 @@ describe("Master class", () => {
     expect(master.id).toEqual("master1");
     expect(master.name).toEqual("another master name");
 
-    expect(master.placedComponents.count()).toEqual(1);
-    expect(master.placedComponents.get(0).screen).toEqual("screen1");
+    expect(master.placedComponents!.count()).toEqual(1);
+    expect(master.placedComponents!.get(0)!.screen).toEqual("screen1");
   });
 });
 
@@ -94,8 +94,8 @@ describe("Masters reducer", () => {
 
     expect(transformedState.layouts.count()).toEqual(3);
     expect(transformedState.layouts.get(2)).toBeInstanceOf(Master);
-    expect(transformedState.layouts.get(2).name).toEqual("Master Layout 3");
-    expect(transformedState.layouts.get(2).placedComponents).toEqual(List());
+    expect(transformedState.layouts.get(2)!.name).toEqual("Master Layout 3");
+    expect(transformedState.layouts.get(2)!.placedComponents).toEqual(List());
   });
 
   it("should remove an existing master layout on REMOVE_MASTER_LAYOUT", () => {
@@ -111,7 +111,7 @@ describe("Masters reducer", () => {
 
     expect(transformedState.layouts.count()).toEqual(1);
     expect(transformedState.layouts.get(0)).toBeInstanceOf(Master);
-    expect(transformedState.layouts.get(0).id).toEqual("masterId1");
+    expect(transformedState.layouts.get(0)!.id).toEqual("masterId1");
   });
 
   it("should return the state unchanged on REMOVE_MASTER_LAYOUT when using a non-existent ID", () => {
@@ -172,7 +172,7 @@ describe("Masters reducer", () => {
       new Master({ id: "masterId2", name: "Master Layout 2" })
     ])});
 
-    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+    expect(state.layouts.first()!.placedComponents!.count()).toEqual(0);
 
     const transformedState = reducer(
       state,
@@ -184,12 +184,12 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
+    const layout = transformedState.layouts.first()!;
 
-    expect(layout.placedComponents.count()).toEqual(1);
-    expect(layout.placedComponents.get(0).screen).toEqual("screen1");
-    expect(layout.placedComponents.get(0).region).toEqual("region1");
-    expect(layout.placedComponents.get(0).component).toEqual("component1");
+    expect(layout.placedComponents!.count()).toEqual(1);
+    expect(layout.placedComponents!.get(0)!.screen).toEqual("screen1");
+    expect(layout.placedComponents!.get(0)!.region).toEqual("region1");
+    expect(layout.placedComponents!.get(0)!.component).toEqual("component1");
   });
 
   it("should not add component to the placedComponents key if already present on ASSIGN_COMPONENT_TO_MASTER", () => {
@@ -213,9 +213,9 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
+    const layout = transformedState.layouts.first()!;
 
-    expect(layout.placedComponents.count()).toEqual(1);
+    expect(layout.placedComponents!.count()).toEqual(1);
     expect(transformedState).toBe(state);
   });
 
@@ -225,7 +225,7 @@ describe("Masters reducer", () => {
       new Master({ id: "masterId2", name: "Master Layout 2" })
     ])});
 
-    expect(state.layouts.first().placedComponents.count()).toEqual(0);
+    expect(state.layouts.first()!.placedComponents!.count()).toEqual(0);
 
     const transformedState = reducer(
       state,
@@ -237,10 +237,10 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
+    const layout = transformedState.layouts.first()!;
 
     expect(transformedState).toBe(state);
-    expect(layout.placedComponents.count()).toEqual(0);
+    expect(layout.placedComponents!.count()).toEqual(0);
   });
 
   it("should remove all component placements containing the given screen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
@@ -261,11 +261,11 @@ describe("Masters reducer", () => {
       { type: "REMOVE_SCREEN_FROM_LAYOUTS", payload: { screenId: "screen1" }} as any
     );
 
-    expect(transformedState.layouts.get(0).placedComponents.count()).toEqual(2);
-    expect(transformedState.layouts.get(0).placedComponents.get(0).screen).toEqual("screen2");
-    expect(transformedState.layouts.get(0).placedComponents.get(1).screen).toEqual("screen3");
+    expect(transformedState.layouts.get(0)!.placedComponents!.count()).toEqual(2);
+    expect(transformedState.layouts.get(0)!.placedComponents!.get(0)!.screen).toEqual("screen2");
+    expect(transformedState.layouts.get(0)!.placedComponents!.get(1)!.screen).toEqual("screen3");
 
-    expect(transformedState.layouts.get(1).placedComponents.count()).toEqual(0);
+    expect(transformedState.layouts.get(1)!.placedComponents!.count()).toEqual(0);
   });
 
   it("should return the state untransformed if there is no match for the sceen ID on REMOVE_SCREEN_FROM_LAYOUTS", () => {
@@ -312,8 +312,8 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
-    expect(layout.placedComponents.count()).toBe(3);
+    const layout = transformedState.layouts.first()!;
+    expect(layout.placedComponents!.count()).toBe(3);
   });
 
   it("should return the state untransformed if the master layout does not exist on REMOVE_COMPONENT_FROM_MASTER", () => {
@@ -339,9 +339,9 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
+    const layout = transformedState.layouts.first()!;
 
-    expect(layout.placedComponents.count()).toBe(4);
+    expect(layout.placedComponents!.count()).toBe(4);
     expect(transformedState).toBe(transformedState);
   });
 
@@ -368,9 +368,9 @@ describe("Masters reducer", () => {
       }} as any
     );
 
-    const layout = transformedState.layouts.first();
+    const layout = transformedState.layouts.first()!;
 
-    expect(layout.placedComponents.count()).toBe(4);
+    expect(layout.placedComponents!.count()).toBe(4);
     expect(transformedState).toBe(transformedState);
   });
 
@@ -405,11 +405,11 @@ describe("Masters reducer", () => {
       { type: "REMOVE_REGION_FROM_LAYOUTS", payload: { regionId: "region4" }} as any
     );
 
-    expect(transformedState.layouts.get(0).placedComponents.count()).toEqual(2);
-    expect(transformedState.layouts.get(0).placedComponents.get(0).region).toEqual("region1");
-    expect(transformedState.layouts.get(0).placedComponents.get(1).region).toEqual("region2");
+    expect(transformedState.layouts.get(0)!.placedComponents!.count()).toEqual(2);
+    expect(transformedState.layouts.get(0)!.placedComponents!.get(0)!.region).toEqual("region1");
+    expect(transformedState.layouts.get(0)!.placedComponents!.get(1)!.region).toEqual("region2");
 
-    expect(transformedState.layouts.get(1).placedComponents.count()).toEqual(0);
+    expect(transformedState.layouts.get(1)!.placedComponents!.count()).toEqual(0);
   });
 
   it("should return the state untransformed if there is no match for the region ID on REMOVE_REGION_FROM_LAYOUTS", () => {

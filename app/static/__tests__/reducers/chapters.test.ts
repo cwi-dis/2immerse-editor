@@ -78,8 +78,14 @@ describe("Chapters reducer", () => {
     );
 
     expect(state.count()).toEqual(1);
-    expect(state.get(0).id).toEqual("chapter1");
-    expect(state.get(0).name).toEqual("Chapter 1");
+
+    const firstChapter = state.get(0);
+    if (!firstChapter) {
+      return fail();
+    }
+
+    expect(firstChapter.id).toEqual("chapter1");
+    expect(firstChapter.name).toEqual("Chapter 1");
   });
 
   it("should load an entire tree on LOAD_CHAPTER_TREE and replace the current one", () => {
@@ -104,12 +110,18 @@ describe("Chapters reducer", () => {
     );
 
     expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).id).toEqual("chapter1");
-    expect(transformedState.get(0).name).toEqual("Chapter 1");
 
-    expect(transformedState.get(0).children.count()).toEqual(2);
-    expect(transformedState.get(0).children.get(0).id).toEqual("chapter1.1");
-    expect(transformedState.get(0).children.get(1).id).toEqual("chapter1.2");
+    const firstChapter = transformedState.get(0);
+    if (!firstChapter) {
+      return fail();
+    }
+
+    expect(firstChapter.id).toEqual("chapter1");
+    expect(firstChapter.name).toEqual("Chapter 1");
+
+    expect(firstChapter.children!.count()).toEqual(2);
+    expect(firstChapter.children!.get(0)!.id).toEqual("chapter1.1");
+    expect(firstChapter.children!.get(1)!.id).toEqual("chapter1.2");
   });
 
   it("should add a chapter before the existing one on ADD_CHAPTER_BEFORE", () => {
@@ -139,7 +151,7 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(2);
     expect(transformedState.get(0)).toBeInstanceOf(Chapter);
-    expect(transformedState.get(0).id).toEqual("chapter2");
+    expect(transformedState.get(0)!.id).toEqual("chapter2");
     expect(transformedState.get(1)).toBe(state.get(0));
   });
 
@@ -176,12 +188,17 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(1);
 
-    const firstLevel = transformedState.get(0).children;
+    const firstLevel = transformedState.get(0)!.children;
+
+    if (!firstLevel) {
+      return fail();
+    }
+
     expect(firstLevel.count()).toEqual(3);
 
-    expect(firstLevel.get(0)).toBe(state.get(0).children.get(0));
+    expect(firstLevel.get(0)).toBe(state.get(0)!.children!.get(0));
     expect(firstLevel.get(1)).toBeInstanceOf(Chapter);
-    expect(firstLevel.get(2)).toBe(state.get(0).children.get(1));
+    expect(firstLevel.get(2)).toBe(state.get(0)!.children!.get(1));
   });
 
   it("should add a chapter after the last one on ADD_CHAPTER_AFTER", () => {
@@ -214,7 +231,7 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(2);
     expect(transformedState.get(1)).toBeInstanceOf(Chapter);
-    expect(transformedState.get(1).id).toEqual("chapter2");
+    expect(transformedState.get(1)!.id).toEqual("chapter2");
     expect(transformedState.get(0)).toBe(state.get(0));
   });
 
@@ -272,12 +289,16 @@ describe("Chapters reducer", () => {
 
     expect(transformedState.count()).toEqual(1);
 
-    const firstLevel = transformedState.get(0).children;
+    const firstLevel = transformedState.get(0)!.children;
+    if (!firstLevel) {
+      return fail();
+    }
+
     expect(firstLevel.count()).toEqual(3);
 
-    expect(firstLevel.get(0)).toBe(state.get(0).children.get(0));
+    expect(firstLevel.get(0)).toBe(state.get(0)!.children!.get(0));
     expect(firstLevel.get(1)).toBeInstanceOf(Chapter);
-    expect(firstLevel.get(2)).toBe(state.get(0).children.get(1));
+    expect(firstLevel.get(2)).toBe(state.get(0)!.children!.get(1));
   });
 
   it("should rename an existing chapter on RENAME_CHAPTER", () => {
@@ -291,7 +312,7 @@ describe("Chapters reducer", () => {
     );
 
     expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).name).toEqual("new name");
+    expect(transformedState.get(0)!.name).toEqual("new name");
   });
 
   it("should add a new node as child of a leaf node on ADD_CHAPTER_CHILD", () => {
@@ -305,11 +326,15 @@ describe("Chapters reducer", () => {
       state,
       { type: "ADD_CHAPTER_CHILD", payload: { accessPath: [0, 0] }} as any
     );
-    const chapterChildren = transformedState.get(0).children.get(0).children;
+    const chapterChildren = transformedState.get(0)!.children!.get(0)!.children;
+
+    if (!chapterChildren) {
+      return fail();
+    }
 
     expect(chapterChildren.count()).toEqual(1);
     expect(chapterChildren.get(0)).toBeInstanceOf(Chapter);
-    expect(chapterChildren.get(0).children).toEqual(List());
+    expect(chapterChildren.get(0)!.children).toEqual(List());
   });
 
   it("should add a new node as child on ADD_CHAPTER_CHILD with the given id", () => {
@@ -323,8 +348,8 @@ describe("Chapters reducer", () => {
     );
 
     expect(transformedState.count()).toEqual(1);
-    expect(transformedState.get(0).children.count()).toEqual(1);
-    expect(transformedState.get(0).children.get(0).id).toEqual("chapter2");
+    expect(transformedState.get(0)!.children!.count()).toEqual(1);
+    expect(transformedState.get(0)!.children!.get(0)!.id).toEqual("chapter2");
   });
 
   it("should insert a new node between two existing nodes on ADD_CHAPTER_CHILD", () => {
@@ -339,14 +364,19 @@ describe("Chapters reducer", () => {
       { type: "ADD_CHAPTER_CHILD", payload: { accessPath: [0] }} as any
     );
 
-    expect(transformedState.get(0).id).toEqual("chapter1");
+    expect(transformedState.get(0)!.id).toEqual("chapter1");
 
-    const chapterChildren = transformedState.get(0).children;
+    const chapterChildren = transformedState.get(0)!.children;
+
+    if (!chapterChildren) {
+      return fail();
+    }
+
     expect(chapterChildren.count()).toEqual(1);
     expect(chapterChildren.get(0)).toBeInstanceOf(Chapter);
 
-    expect(chapterChildren.get(0).children.count()).toEqual(1);
-    expect(chapterChildren.get(0).children.get(0).id).toEqual("chapter1.1");
+    expect(chapterChildren.get(0)!.children!.count()).toEqual(1);
+    expect(chapterChildren.get(0)!.children!.get(0)!.id).toEqual("chapter1.1");
   });
 
   it("should remove a leaf node on REMOVE_CHAPTER", () => {
@@ -361,7 +391,7 @@ describe("Chapters reducer", () => {
       { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 0] }} as any
     );
 
-    expect(transformedState.get(0).children).toEqual(List());
+    expect(transformedState.get(0)!.children).toEqual(List());
   });
 
   it("should remove the root node on REMOVE_CHAPTER", () => {
@@ -391,9 +421,14 @@ describe("Chapters reducer", () => {
       { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 0] }} as any
     );
 
-    expect(transformedState.get(0).children.count()).toEqual(1);
-    expect(transformedState.get(0).children.get(0).id).toEqual("chapter1.1.1");
-    expect(transformedState.get(0).children.get(0).children).toEqual(List());
+    const chapter = transformedState.get(0)!.children;
+    if (!chapter) {
+      return fail();
+    }
+
+    expect(chapter.count()).toEqual(1);
+    expect(chapter.get(0)!.id).toEqual("chapter1.1.1");
+    expect(chapter.get(0)!.children).toEqual(List());
   });
 
   it("should remove a node and attach its children to the parent at the right position on REMOVE_CHAPTER", () => {
@@ -412,14 +447,18 @@ describe("Chapters reducer", () => {
       state,
       { type: "REMOVE_CHAPTER", payload: { accessPath: [0, 1] }} as any
     );
-    const chapterChildren = transformedState.get(0).children;
+    const chapterChildren = transformedState.get(0)!.children;
+
+    if (!chapterChildren) {
+      return fail();
+    }
 
     expect(chapterChildren.count()).toEqual(4);
 
-    expect(chapterChildren.get(1).id).toEqual("chapter1.2.1");
-    expect(chapterChildren.get(2).id).toEqual("chapter1.2.2");
+    expect(chapterChildren.get(1)!.id).toEqual("chapter1.2.1");
+    expect(chapterChildren.get(2)!.id).toEqual("chapter1.2.2");
 
-    expect(chapterChildren.get(1).children).toEqual(List());
-    expect(chapterChildren.get(2).children).toEqual(List());
+    expect(chapterChildren.get(1)!.children).toEqual(List());
+    expect(chapterChildren.get(2)!.children).toEqual(List());
   });
 });

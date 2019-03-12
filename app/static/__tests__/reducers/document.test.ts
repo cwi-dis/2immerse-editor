@@ -27,7 +27,8 @@ describe("Document reducer", () => {
 
   it("should return the given state on an unknown action", () => {
     const state: DocumentState = {
-      documentId: "helloworld"
+      documentId: "helloworld",
+      baseUrl: "http://example.com"
     };
 
     expect(
