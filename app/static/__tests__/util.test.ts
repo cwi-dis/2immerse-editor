@@ -856,6 +856,7 @@ describe("Utility function between()", () => {
 describe("Utility function makeRequest()", () => {
   it("should reject with empty response when given a non-existent address", () => {
     mock.setup();
+    mock.error(() => {});
 
     mock.get("http://does-not.exist/", (req, res) => {
       return Promise.reject(new Error());
