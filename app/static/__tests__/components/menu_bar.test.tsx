@@ -33,6 +33,11 @@ describe("Component <MenuBar />", () => {
     const linkProps = menuBar.find(NavLink).at(0).props();
 
     expect(linkProps.to).toEqual("/");
+
+    if (!linkProps.children) {
+      return fail();
+    }
+
     expect(linkProps.children.toString()).toEqual("Home");
   });
 
@@ -41,6 +46,11 @@ describe("Component <MenuBar />", () => {
     const linkProps = menuBar.find(NavLink).at(1).props();
 
     expect(linkProps.to).toEqual("/layout");
+
+    if (!linkProps.children) {
+      return fail();
+    }
+
     expect(linkProps.children.toString()).toEqual("Layout Designer");
   });
 
@@ -49,6 +59,11 @@ describe("Component <MenuBar />", () => {
     const linkProps = menuBar.find(NavLink).at(2).props();
 
     expect(linkProps.to).toEqual("/program");
+
+    if (!linkProps.children) {
+      return fail();
+    }
+
     expect(linkProps.children.toString()).toEqual("Program Author");
   });
 });

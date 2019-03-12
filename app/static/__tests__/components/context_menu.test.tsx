@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/// <reference types="jest" />
-
 import * as React from "react";
 import { mount } from "enzyme";
 import { spy } from "sinon";
@@ -26,7 +24,7 @@ describe("Component <ContextMenu />", () => {
   it("should not render anything with 'visible' set to false", () => {
     const contextMenu = mount(
       <ContextMenu visible={false} x={0} y={0}>
-        <ContextMenuDivider/>
+        <ContextMenuDivider />
       </ContextMenu>
     );
 
@@ -36,7 +34,7 @@ describe("Component <ContextMenu />", () => {
   it("should render a context menu with a single divider with 'visible' set to true", () => {
     const contextMenu = mount(
       <ContextMenu visible={true} x={0} y={0}>
-        <ContextMenuDivider/>
+        <ContextMenuDivider />
       </ContextMenu>
     );
 
@@ -47,17 +45,22 @@ describe("Component <ContextMenu />", () => {
   it("should render a context-menu at the given position", () => {
     const contextMenu = mount(
       <ContextMenu visible={true} x={321} y={123}>
-        <ContextMenuDivider/>
+        <ContextMenuDivider />
       </ContextMenu>
     );
 
     expect(contextMenu.isEmptyRender()).toBeFalsy();
 
     const rootDiv = contextMenu.find("div").first();
+    const { style } = rootDiv.props();
 
-    expect(rootDiv.props().style.position).toEqual("absolute");
-    expect(rootDiv.props().style.left).toEqual(321);
-    expect(rootDiv.props().style.top).toEqual(123);
+    if (!style) {
+      return fail();
+    }
+
+    expect(style.position).toEqual("absolute");
+    expect(style.left).toEqual(321);
+    expect(style.top).toEqual(123);
   });
 
   it("should call the component's onItemClicked callback when clicking an entry", () => {
@@ -125,9 +128,14 @@ describe("Component <ContextMenuEntry />", () => {
     );
 
     const container = contextMenuEntry.find("div").first();
+    const { style } = container.props();
 
-    expect(container.props().style.color).toEqual("#000000");
-    expect(container.props().style.backgroundColor).toEqual("transparent");
+    if (!style) {
+      return fail();
+    }
+
+    expect(style.color).toEqual("#000000");
+    expect(style.backgroundColor).toEqual("transparent");
   });
 
   it("should change state.selected to true on mouseover", () => {
@@ -149,9 +157,14 @@ describe("Component <ContextMenuEntry />", () => {
     contextMenuEntry.update();
 
     const container = contextMenuEntry.find("div").first();
+    const { style } = container.props();
 
-    expect(container.props().style.color).toEqual("#FFFFFF");
-    expect(container.props().style.backgroundColor).toEqual("#007ACC");
+    if (!style) {
+      return fail();
+    }
+
+    expect(style.color).toEqual("#FFFFFF");
+    expect(style.backgroundColor).toEqual("#007ACC");
   });
 
   it("should reset state.selected to false on mouseout", () => {
@@ -204,9 +217,14 @@ describe("Component <ContextMenuDivider />", () => {
     const container = contextMenuDivider.find("div").first();
 
     expect(container.props().className).toEqual("divider");
+    const { style } = container.props();
 
-    expect(container.props().style.borderTop).toEqual("1px solid #BBBBBB");
-    expect(container.props().style.width).toEqual("100%");
-    expect(container.props().style.height).toEqual(2);
+    if (!style) {
+      return fail();
+    }
+
+    expect(style.borderTop).toEqual("1px solid #BBBBBB");
+    expect(style.width).toEqual("100%");
+    expect(style.height).toEqual(2);
   });
 });
