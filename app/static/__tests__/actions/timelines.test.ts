@@ -16,7 +16,7 @@
 
 /// <reference types="jest" />
 
-import * as configureMockStore from "redux-mock-store/dist/index-cjs";
+import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import { List } from "immutable";
 
@@ -287,7 +287,7 @@ describe("Async timeline actions", () => {
       ])
     });
 
-    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10));
+    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10) as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 
@@ -317,7 +317,7 @@ describe("Async timeline actions", () => {
       ])
     });
 
-    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10, 0, "http://some.url"));
+    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10, 0, "http://some.url") as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 
@@ -349,7 +349,7 @@ describe("Async timeline actions", () => {
       ])
     });
 
-    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10, 0, "http://some.url", "newtrack", "newelement"));
+    store.dispatch(actionCreators.addTimelineTrackAndAddElement("timeline1", "region1", "component1", 10, 0, "http://some.url", "newtrack", "newelement") as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 
@@ -372,7 +372,7 @@ describe("Async timeline actions", () => {
       ])
     });
 
-    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1"));
+    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1") as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 
@@ -398,7 +398,7 @@ describe("Async timeline actions", () => {
       ])
     });
 
-    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1"));
+    store.dispatch(actionCreators.removeElementAndUpdateTrack("timeline1", "track1", "element1") as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 });

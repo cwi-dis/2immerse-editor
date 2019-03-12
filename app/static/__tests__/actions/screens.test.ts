@@ -16,7 +16,7 @@
 
 /// <reference types="jest" />
 
-import * as configureMockStore from "redux-mock-store/dist/index-cjs";
+import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import { List } from "immutable";
 
@@ -214,10 +214,10 @@ describe("Async timeline actions", () => {
     });
 
     const areas = [
-      { x: 0.1, y: 0.6, w: 0.5, h: 0.4, color: "#FFFFFF", name: "Main Region", region: "main" }
+      { id: "mainRegion", x: 0.1, y: 0.6, w: 0.5, h: 0.4, color: "#FFFFFF", name: "Main Region", region: "main" }
     ];
 
-    store.dispatch(actionCreators.addDeviceAndPlaceRegions("personal", "my screen", "landscape", areas));
+    store.dispatch(actionCreators.addDeviceAndPlaceRegions("personal", "my screen", "landscape", areas) as any);
     expect(store.getActions()).toEqual(expectedActions);
   });
 });

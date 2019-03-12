@@ -16,7 +16,7 @@
 
 /// <reference types="jest" />
 
-import * as configureMockStore from "redux-mock-store/dist/index-cjs";
+import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import { List } from "immutable";
 
@@ -120,9 +120,9 @@ describe("Master actions", () => {
   });
 });
 
-describe("Async master actions", () => {
-  const mockStore = configureMockStore([thunk]);
+const mockStore = configureMockStore([thunk]);
 
+describe("Async master actions", () => {
   it("should create and select a master when calling addMasterLayoutAndUpdateCurrent() and creating the first master", () => {
     const expectedActions = [
       { type: "ADD_MASTER_LAYOUT", payload: { name: "Master 1" }},
@@ -130,7 +130,7 @@ describe("Async master actions", () => {
     ];
 
     const store = mockStore({ masters: { currentLayout: undefined, layouts: List() } });
-    store.dispatch(actionCreators.addMasterLayoutAndUpdateCurrent("Master 1"));
+    store.dispatch(actionCreators.addMasterLayoutAndUpdateCurrent("Master 1") as any);
 
     expect(store.getActions()).toEqual(expectedActions);
   });
