@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-/// <reference types="jest" />
-
 import { List, Map } from "immutable";
-import * as XHRmock from "xhr-mock";
+import mock from "xhr-mock";
 
 import * as util from "../js/editor/util";
 import { Chapter } from "../js/editor/reducers/chapters";
@@ -208,7 +206,7 @@ describe("Utility function getDescendantChapters()", () => {
     ]);
 
     expect(
-      util.getDescendantChapters(tree.get(0)).map((chapter) => chapter.id)
+      util.getDescendantChapters(tree.get(0)!).map((chapter) => chapter.id)
     ).toEqual(
       List(["chapter1.1", "chapter1.2", "chapter1.3"])
     );
@@ -455,9 +453,13 @@ describe("Utility function trimFront()", () => {
 
     const { timelineElements } = util.trimFront(track, 10);
 
+    if (!timelineElements) {
+      return fail("timelineElements property is undefined");
+    }
+
     expect(timelineElements.count()).toBe(2);
-    expect(timelineElements.get(0).duration).toBe(12);
-    expect(timelineElements.get(1).duration).toBe(8);
+    expect(timelineElements.get(0)!.duration).toBe(12);
+    expect(timelineElements.get(1)!.duration).toBe(8);
   });
 
   it("should remove elements from the front and update first element's offset if the boundary falls onto an offset", () => {
@@ -469,10 +471,14 @@ describe("Utility function trimFront()", () => {
 
     const { timelineElements } = util.trimFront(track, 12);
 
+    if (!timelineElements) {
+      return fail("timelineElements property is undefined");
+    }
+
     expect(timelineElements.count()).toBe(2);
-    expect(timelineElements.get(0).offset).toBe(3);
-    expect(timelineElements.get(0).duration).toBe(12);
-    expect(timelineElements.get(1).duration).toBe(3);
+    expect(timelineElements.get(0)!.offset).toBe(3);
+    expect(timelineElements.get(0)!.duration).toBe(12);
+    expect(timelineElements.get(1)!.duration).toBe(3);
   });
 
   it("should remove elements from the front and update first element's offset if the boundary falls onto an offset", () => {
@@ -484,10 +490,14 @@ describe("Utility function trimFront()", () => {
 
     const { timelineElements } = util.trimFront(track, 15);
 
+    if (!timelineElements) {
+      return fail("timelineElements property is undefined");
+    }
+
     expect(timelineElements.count()).toBe(2);
-    expect(timelineElements.get(0).offset).toBe(0);
-    expect(timelineElements.get(0).duration).toBe(12);
-    expect(timelineElements.get(1).duration).toBe(3);
+    expect(timelineElements.get(0)!.offset).toBe(0);
+    expect(timelineElements.get(0)!.duration).toBe(12);
+    expect(timelineElements.get(1)!.duration).toBe(3);
   });
 
   it("should remove elements from the front and update first element's duration if the boundary falls onto a duration", () => {
@@ -499,10 +509,14 @@ describe("Utility function trimFront()", () => {
 
     const { timelineElements } = util.trimFront(track, 17);
 
+    if (!timelineElements) {
+      return fail();
+    }
+
     expect(timelineElements.count()).toBe(2);
-    expect(timelineElements.get(0).offset).toBe(0);
-    expect(timelineElements.get(0).duration).toBe(10);
-    expect(timelineElements.get(1).duration).toBe(3);
+    expect(timelineElements.get(0)!.offset).toBe(0);
+    expect(timelineElements.get(0)!.duration).toBe(10);
+    expect(timelineElements.get(1)!.duration).toBe(3);
   });
 });
 
@@ -521,9 +535,13 @@ describe("Utility function trimBack()", () => {
 
     const { timelineElements } = util.trimBack(track, 10);
 
+    if (!timelineElements) {
+      return fail();
+    }
+
     expect(timelineElements.count()).toBe(1);
-    expect(timelineElements.get(0).id).toBe("e1");
-    expect(timelineElements.get(0).duration).toBe(10);
+    expect(timelineElements.get(0)!.id).toBe("e1");
+    expect(timelineElements.get(0)!.duration).toBe(10);
   });
 
   it("should remove elements at the back and update the last element's duration if end falls onto a duration", () => {
@@ -535,9 +553,13 @@ describe("Utility function trimBack()", () => {
 
     const { timelineElements } = util.trimBack(track, 7);
 
+    if (!timelineElements) {
+      return fail();
+    }
+
     expect(timelineElements.count()).toBe(1);
-    expect(timelineElements.get(0).id).toBe("e1");
-    expect(timelineElements.get(0).duration).toBe(7);
+    expect(timelineElements.get(0)!.id).toBe("e1");
+    expect(timelineElements.get(0)!.duration).toBe(7);
   });
 
   it("should remove elements at the back and update the last element's duration if end falls onto a duration", () => {
@@ -549,10 +571,14 @@ describe("Utility function trimBack()", () => {
 
     const { timelineElements } = util.trimBack(track, 25);
 
+    if (!timelineElements) {
+      return fail();
+    }
+
     expect(timelineElements.count()).toBe(3);
-    expect(timelineElements.get(0).duration).toBe(10);
-    expect(timelineElements.get(1).duration).toBe(12);
-    expect(timelineElements.get(2).duration).toBe(3);
+    expect(timelineElements.get(0)!.duration).toBe(10);
+    expect(timelineElements.get(1)!.duration).toBe(12);
+    expect(timelineElements.get(2)!.duration).toBe(3);
   });
 
   it("should remove elements at the back and if the remainder falls within an elements offset", () => {
@@ -564,8 +590,12 @@ describe("Utility function trimBack()", () => {
 
     const { timelineElements } = util.trimBack(track, 12);
 
+    if (!timelineElements) {
+      return fail();
+    }
+
     expect(timelineElements.count()).toBe(1);
-    expect(timelineElements.get(0).duration).toBe(10);
+    expect(timelineElements.get(0)!.duration).toBe(10);
   });
 });
 
@@ -624,8 +654,8 @@ describe("Utility function trimTimelineTrack()", () => {
     const trimmed = util.trimTimelineTrack(track, 10, 50).timelineElements!;
 
     expect(trimmed.count()).toBe(2);
-    expect(trimmed.get(0).id).toBe("e2");
-    expect(trimmed.get(1).id).toBe("e3");
+    expect(trimmed.get(0)!.id).toBe("e2");
+    expect(trimmed.get(1)!.id).toBe("e3");
   });
 
   it("should return all elements between start and end if they fall within the timeline's duration", () => {
@@ -638,9 +668,9 @@ describe("Utility function trimTimelineTrack()", () => {
     const trimmed = util.trimTimelineTrack(track, 10, 27).timelineElements!;
 
     expect(trimmed.count()).toBe(1);
-    expect(trimmed.get(0).id).toBe("e2");
-    expect(trimmed.get(0).offset).toBe(5);
-    expect(trimmed.get(0).duration).toBe(12);
+    expect(trimmed.get(0)!.id).toBe("e2");
+    expect(trimmed.get(0)!.offset).toBe(5);
+    expect(trimmed.get(0)!.duration).toBe(12);
   });
 
   it("should return all elements between start and end with adjusted duration and offset if they fall within the timeline's duration", () => {
@@ -653,9 +683,9 @@ describe("Utility function trimTimelineTrack()", () => {
     const trimmed = util.trimTimelineTrack(track, 11, 26).timelineElements!;
 
     expect(trimmed.count()).toBe(1);
-    expect(trimmed.get(0).id).toBe("e2");
-    expect(trimmed.get(0).offset).toBe(4);
-    expect(trimmed.get(0).duration).toBe(11);
+    expect(trimmed.get(0)!.id).toBe("e2");
+    expect(trimmed.get(0)!.offset).toBe(4);
+    expect(trimmed.get(0)!.duration).toBe(11);
   });
 });
 
@@ -665,7 +695,7 @@ describe("Utility function parseQueryString()", () => {
   });
 
   it("should parse a single key-value pair", () => {
-    const expected = Map<string, string>([["key", "value"]]);
+    const expected = Map<string, string>().set("key", "value");
 
     expect(
       util.parseQueryString("key=value")
@@ -673,11 +703,14 @@ describe("Utility function parseQueryString()", () => {
   });
 
   it("should parse multiple key-value pairs", () => {
-    const expected = Map<string, string>([
+    const expected = [
       ["key1", "value1"],
       ["key2", "value2"],
-      ["key3", "value3"],
-    ]);
+      ["key3", "value3"]
+    ].reduce(
+      (m, [k, v]) => m.set(k, v),
+      Map<string, string>()
+    );
 
     expect(
       util.parseQueryString("key1=value1&key2=value2&key3=value3")
@@ -685,11 +718,14 @@ describe("Utility function parseQueryString()", () => {
   });
 
   it("should parse all values as strings", () => {
-    const expected = Map<string, string>([
+    const expected = [
       ["key1", "value1"],
       ["key2", "42"],
       ["key3", "0.123"],
-    ]);
+    ].reduce(
+      (m, [k, v]) => m.set(k, v),
+      Map<string, string>()
+    );
 
     expect(
       util.parseQueryString("key1=value1&key2=42&key3=0.123")
@@ -697,11 +733,14 @@ describe("Utility function parseQueryString()", () => {
   });
 
   it("should decode URI-encoded values", () => {
-    const expected = Map<string, string>([
+    const expected = [
       ["key1", "spam&eggs"],
       ["key2", "ham, spam & eggs"],
       ["key3", "answer=42"],
-    ]);
+    ].reduce(
+      (m, [k, v]) => m.set(k, v),
+      Map<string, string>()
+    );
 
     expect(
       util.parseQueryString("key1=spam%26eggs&key2=ham%2C%20spam%20%26%20eggs&key3=answer%3D42")
@@ -715,18 +754,20 @@ describe("Utility function parseQueryString()", () => {
     expect(
       util.parseQueryString("=value1&key2=value2&=value3")
     ).toEqual(
-      Map<string, string>([["key2", "value2"]])
-      );
+      Map<string, string>().set("key2", "value2")
+    );
   });
 
   it("should assign undefined to keys without value", () => {
     expect(
       util.parseQueryString("key")
-    ).toEqual(Map([["key", undefined]]));
+    ).toEqual(Map<string, any>().set("key", undefined));
 
     expect(
       util.parseQueryString("key1&key2")
-    ).toEqual(Map([["key1", undefined], ["key2", undefined]]));
+    ).toEqual(
+      Map<string, any>().set("key1", undefined).set("key2", undefined)
+    );
   });
 
   it("should assign empty string to keys with empty value", () => {
@@ -814,215 +855,205 @@ describe("Utility function between()", () => {
 
 describe("Utility function makeRequest()", () => {
   it("should reject with empty response when given a non-existent address", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.get("http://does-not.exist", (req, res) => {
-      return null;
+    mock.get("http://does-not.exist/", (req, res) => {
+      return res.body(null);
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("GET", "http://does-not.exist")
+      util.makeRequest("GET", "http://does-not.exist/")
     ).rejects.toEqual({
       status: 0,
       statusText: "",
-      body: null
+      body: ""
     }).then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should reject with HTTP error and the 'body' property set to the response body", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.get("http://triggers-some-other.error", (req, res) => {
-      return res.status(400).statusText("Bad Request").body("This is the response body");
-    });
-
-    expect.assertions(1);
-
-    return expect(
-      util.makeRequest("GET", "http://triggers-some-other.error")
-    ).rejects.toEqual({
+    mock.get("http://triggers-some-other.error/", {
       status: 400,
-      statusText: "Bad Request",
+      reason: "Bad Request",
       body: "This is the response body"
-    }).then(() => {
-      XHRmock.teardown();
     });
   });
 
   it("should reject with HTTP error and message on error", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.get("http://triggers-some.error", (req, res) => {
-      return res.status(400).statusText("Bad Request").body("Some error occurred");
+    mock.get("http://triggers-some.error/", (req, res) => {
+      return res.status(400).reason("Bad Request").body("Some error occurred");
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("GET", "http://triggers-some.error")
+      util.makeRequest("GET", "http://triggers-some.error/")
     ).rejects.toEqual({
       status: 400,
       statusText: "Bad Request",
       body: "Some error occurred"
     }).then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should resolve with HTTP status and body on HTTP status 200", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.get("http://should-return.success", (req, res) => {
+    mock.get("http://should-return.success/", (req, res) => {
       return res.status(200).body("Success");
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("GET", "http://should-return.success")
+      util.makeRequest("GET", "http://should-return.success/")
     ).resolves.toEqual("Success").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should resolve with HTTP status and body on HTTP status 200", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.get("http://should-return.success", (req, res) => {
+    mock.get("http://should-return.success/", (req, res) => {
       return res.status(204);
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("GET", "http://should-return.success")
+      util.makeRequest("GET", "http://should-return.success/")
     ).resolves.toEqual("").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should properly set the Content-Type request header", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-return.success", (req, res) => {
+    mock.post("http://should-return.success/", (req, res) => {
       return res.status(200).body(req.header("Content-Type"));
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-return.success", "", "image/png")
+      util.makeRequest("POST", "http://should-return.success/", "", "image/png")
     ).resolves.toEqual("image/png").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should automatically stringify the value when passing an object", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-stringify.object", (req, res) => {
+    mock.post("http://should-stringify.object/", (req, res) => {
       return res.status(200).body(req.body());
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-stringify.object", {hello: "world"})
+      util.makeRequest("POST", "http://should-stringify.object/", {hello: "world"})
     ).resolves.toEqual(JSON.stringify({hello: "world"})).then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should ignore contentType parameter if an object is passed in as data", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-ignore-content.type", (req, res) => {
+    mock.post("http://should-ignore-content.type/", (req, res) => {
       return res.status(200).body(req.header("Content-Type"));
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-ignore-content.type", {hello: "world"}, "image/png")
+      util.makeRequest("POST", "http://should-ignore-content.type/", {hello: "world"}, "image/png")
     ).resolves.toEqual("application/json").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should automatically set the Content-Type header to application/json when passing an object", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-set-content.type", (req, res) => {
+    mock.post("http://should-set-content.type/", (req, res) => {
       return res.status(200).body(req.header("Content-Type"));
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-set-content.type", {hello: "world"})
+      util.makeRequest("POST", "http://should-set-content.type/", {hello: "world"})
     ).resolves.toEqual("application/json").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should automatically set the Content-Type header to application/json when passing an array", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-set-content.type", (req, res) => {
+    mock.post("http://should-set-content.type/", (req, res) => {
       return res.status(200).body(req.header("Content-Type"));
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-set-content.type", [1, 2, 3])
+      util.makeRequest("POST", "http://should-set-content.type/", [1, 2, 3])
     ).resolves.toEqual("application/json").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should not automatically set the Content-Type header to application/json when passing an instance of FormData", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-not-set-content.type", (req, res) => {
+    mock.post("http://should-not-set-content.type/", (req, res) => {
       return res.status(200).body(req.header("Content-Type"));
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-not-set-content.type", new FormData())
+      util.makeRequest("POST", "http://should-not-set-content.type/", new FormData())
     ).resolves.not.toEqual("application/json").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 
   it("should send the given data to the server", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post("http://should-send.data", (req, res) => {
+    mock.post("http://should-send.data/", (req, res) => {
       return res.status(200).body(req.body());
     });
 
     expect.assertions(1);
 
     return expect(
-      util.makeRequest("POST", "http://should-send.data", "hello world")
+      util.makeRequest("POST", "http://should-send.data/", "hello world")
     ).resolves.toEqual("hello world").then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 });
 
 describe("Utility function shortenUrl()", () => {
   it("should return a promise which resolves to the shortened url", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post(/shorturl/, (req, res) => {
+    mock.post(/shorturl/, (req, res) => {
       return res.status(200).body(JSON.stringify({
         id: 0
       }));
@@ -1032,16 +1063,16 @@ describe("Utility function shortenUrl()", () => {
 
     return expect(
       util.shortenUrl("http://this-is-a-long.url")
-    ).resolves.toEqual("about:///shorturl/0").then(() => {
-      XHRmock.teardown();
+    ).resolves.toEqual("http://localhost/shorturl/0").then(() => {
+      mock.teardown();
     });
   });
 
   it("should reject the promise with an error object on failure", () => {
-    XHRmock.setup();
+    mock.setup();
 
-    XHRmock.post(/shorturl/, (req, res) => {
-      return res.status(500).statusText("Some error").body("Some more details on the error");
+    mock.post(/shorturl/, (req, res) => {
+      return res.status(500).reason("Some error").body("Some more details on the error");
     });
 
     expect.assertions(1);
@@ -1053,7 +1084,7 @@ describe("Utility function shortenUrl()", () => {
       statusText: "Some error",
       body: "Some more details on the error"
     }).then(() => {
-      XHRmock.teardown();
+      mock.teardown();
     });
   });
 });
@@ -1580,13 +1611,21 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.timelineTracks.count()).toEqual(2);
 
     const [track1, track2] = merged.timelineTracks.toArray();
 
+    if (!track1.timelineElements || !track2.timelineElements) {
+      return fail();
+    }
+
     expect(track1.regionId).toEqual("region1");
     expect(track1.timelineElements.count()).toEqual(1);
-    expect(track1.timelineElements.get(0).duration).toEqual(50);
+    expect(track1.timelineElements.get(0)!.duration).toEqual(50);
 
     expect(track2.regionId).toEqual("region2");
     expect(track2.timelineElements.count()).toEqual(2);
@@ -1611,17 +1650,25 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.timelineTracks.count()).toEqual(2);
 
     const [track1, track2] = merged.timelineTracks.toArray();
 
+    if (!track1.timelineElements || !track2.timelineElements) {
+      return fail();
+    }
+
     expect(track1.regionId).toEqual("region1");
     expect(track1.timelineElements.count()).toEqual(2);
 
-    expect(track1.timelineElements.get(0).offset).toEqual(0);
-    expect(track1.timelineElements.get(0).duration).toEqual(10);
-    expect(track1.timelineElements.get(1).offset).toEqual(40);
-    expect(track1.timelineElements.get(1).duration).toEqual(0);
+    expect(track1.timelineElements.get(0)!.offset).toEqual(0);
+    expect(track1.timelineElements.get(0)!.duration).toEqual(10);
+    expect(track1.timelineElements.get(1)!.offset).toEqual(40);
+    expect(track1.timelineElements.get(1)!.duration).toEqual(0);
 
     expect(track2.regionId).toEqual("region2");
     expect(track2.timelineElements.count()).toEqual(2);
@@ -1648,10 +1695,18 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.id).toEqual("timeline1");
     expect(merged.timelineTracks.count()).toEqual(2);
 
     const [track1, track2] = merged.timelineTracks.toArray();
+
+    if (!track1.timelineElements || !track2.timelineElements) {
+      return fail();
+    }
 
     expect(track1.regionId).toEqual("region1");
     expect(track1.timelineElements.count()).toEqual(2);
@@ -1685,10 +1740,18 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.id).toEqual("");
     expect(merged.timelineTracks.count()).toEqual(1);
 
-    const track1 = merged.timelineTracks.get(0);
+    const track1 = merged.timelineTracks.get(0)!;
+
+    if (!track1.timelineElements) {
+      return fail();
+    }
 
     expect(track1.regionId).toEqual("region2");
     expect(track1.timelineElements.count()).toEqual(2);
@@ -1716,10 +1779,18 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.id).toEqual("");
     expect(merged.timelineTracks.count()).toEqual(1);
 
-    const track1 = merged.timelineTracks.get(0);
+    const track1 = merged.timelineTracks.get(0)!;
+
+    if (!track1.timelineElements) {
+      return fail();
+    }
 
     expect(track1.regionId).toEqual("region2");
     expect(track1.timelineElements.count()).toEqual(3);
@@ -1758,10 +1829,18 @@ describe("Utility function mergeTimelines()", () => {
 
     const merged = util.mergeTimelines(chapter, timelines);
 
+    if (!merged.timelineTracks) {
+      return fail();
+    }
+
     expect(merged.id).toEqual("");
     expect(merged.timelineTracks.count()).toEqual(2);
 
     const [track1, track2] = merged.timelineTracks.toArray();
+
+    if (!track1.timelineElements || !track2.timelineElements) {
+      return fail();
+    }
 
     expect(track1.regionId).toEqual("region1");
     expect(track2.regionId).toEqual("region2");
@@ -1829,39 +1908,41 @@ describe("Utility function pluck()", () => {
 });
 
 describe("Utility function validateLayout()", () => {
-  it("should resolve if the schema matches the data", () => {
-    XHRmock.setup();
+  it("should resolve if the schema matches the data", async () => {
+    mock.setup();
 
-    XHRmock.get("/static/dist/v4-document-schema.json", (req, res) => {
-      return res.body(JSON.stringify({
+    mock.get("/static/dist/v4-document-schema.json", (req, res) => {
+      return res.status(200).body(JSON.stringify({
         type: "number"
       }));
     });
 
-    expect.assertions(1);
-
-    return expect(
-      util.validateLayout(1)
-    ).resolves.toBeUndefined().then(() => {
-      XHRmock.teardown();
-    });
+    try {
+      const result = await util.validateLayout(1);
+      expect(result).toBeUndefined();
+    } catch {
+      fail("Promise rejected");
+    } finally {
+      mock.teardown();
+    }
   });
 
-  it("should reject with error if the schema does not match the data", () => {
-    XHRmock.setup();
+  it("should reject with error if the schema does not match the data", async () => {
+    mock.setup();
 
-    XHRmock.get("/static/dist/v4-document-schema.json", (req, res) => {
-      return res.body(JSON.stringify({
+    mock.get("/static/dist/v4-document-schema.json", (req, res) => {
+      return res.status(200).body(JSON.stringify({
         type: "string"
       }));
     });
 
-    expect.assertions(1);
-
-    return expect(
-      util.validateLayout(1)
-    ).rejects.not.toBeUndefined().then(() => {
-      XHRmock.teardown();
-    });
+    try {
+      await util.validateLayout(1);
+      fail("Promise resolved");
+    } catch (err) {
+      expect(err).not.toBeUndefined();
+    } finally {
+      mock.teardown();
+    }
   });
 });
