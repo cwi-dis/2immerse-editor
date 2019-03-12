@@ -858,7 +858,7 @@ describe("Utility function makeRequest()", () => {
     mock.setup();
 
     mock.get("http://does-not.exist/", (req, res) => {
-      return res.body(null);
+      return Promise.reject(new Error());
     });
 
     expect.assertions(1);
