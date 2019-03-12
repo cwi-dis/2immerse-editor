@@ -21,6 +21,7 @@ interface Action {
 }
 
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
+type ReducerFunction<T> = (state: T | undefined, action: Action) => T;
 
 /**
  * This class represents an alternative to creating reducer functions with big
@@ -66,7 +67,7 @@ export class ActionHandler<T> {
    *
    * @returns A single reducer function which combines all action handlers into one
    */
-  public getReducer(): ActionHandlerFunction<T> {
+  public getReducer(): ReducerFunction<T> {
     // Return a reducer function which checks the map for the given action name and invokes
     // the associated function to transform the given state or returns the state unchanged
     // otherwise
