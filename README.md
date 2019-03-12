@@ -132,22 +132,14 @@ report, invoke
 coverage report
 ```
 
-For running the backend tests, first make sure you have the `jest` binary
-installed. To install it, run
+For running the frontend tests, make sure to use the version of `jest` that
+comes bundled with the application to avoid version conflicts.
 
-```
-[sudo] npm install -g jest
-```
-
-After that, it is simply a matter of navigating to `app/static/` and calling
-`jest`. This will run all tests in the `__tests__/` directory. You can pass the
-flags `--verbose` and `--coverage` to cause the runner to print the description
-of each test case and generate a test coverage report at the end.
-
-These two steps can be combined into one by running `make test` in the root
-directory of the app or running the script `run_tests.sh` in the `scripts/`
-directory. Make sure you have `coverage` and `jest` installed
-beforehand.
+To run the test suites, it is simply a matter of navigating to `app/static/`
+and calling `yarn run jest`. This will run all tests in the `__tests__/`
+directory. You can pass the flags `--verbose` and `--coverage` to cause the
+runner to print the description of each test case and generate a test coverage
+report at the end.
 
 ## License and Authors
 
