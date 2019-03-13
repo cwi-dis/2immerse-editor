@@ -875,16 +875,6 @@ describe("Utility function makeRequest()", () => {
     });
   });
 
-  it("should reject with HTTP error and the 'body' property set to the response body", () => {
-    mock.setup();
-
-    mock.get("http://triggers-some-other.error/", {
-      status: 400,
-      reason: "Bad Request",
-      body: "This is the response body"
-    });
-  });
-
   it("should reject with HTTP error and message on error", () => {
     mock.setup();
 
