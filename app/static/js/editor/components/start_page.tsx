@@ -16,8 +16,8 @@
 
 import * as React from "react";
 import { List } from "immutable";
-import { bindActionCreators } from "redux";
-import { connect, Dispatch } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
+import { connect } from "react-redux";
 import * as classNames from "classnames";
 
 import { Nullable, makeRequest } from "../util";

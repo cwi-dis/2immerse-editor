@@ -16,8 +16,8 @@
 
 import * as React from "react";
 import { List, Map, Set } from "immutable";
-import { bindActionCreators } from "redux";
-import { connect, Dispatch } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
+import { connect } from "react-redux";
 import { Group, Layer, Line, Stage } from "react-konva";
 
 import { ApplicationState, navigate } from "../../store";
