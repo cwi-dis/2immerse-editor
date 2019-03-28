@@ -22,6 +22,8 @@
     "@types/redux-mock-store": "^1.0.0",
     "@types/shortid": "0.0.29",
     "@types/sinon": "^2.3.3",
+    "@types/escape-string-regexp": "^0.0.32",
+    "@types/socket.io-client": "^1.4.32",
     "css-loader": "^2.1.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
@@ -40,8 +42,6 @@
     "xhr-mock": "^2.4.1"
   },
   "dependencies": {
-    "@types/escape-string-regexp": "^0.0.32",
-    "@types/socket.io-client": "^1.4.32",
     "bulma": "^0.6.2",
     "classnames": "^2.2.5",
     "escape-string-regexp": "^1.0.5",
@@ -49,7 +49,6 @@
     "jsonschema": "^1.2.2",
     "konva": "https://github.com/troeggla/konva",
     "qrcode": "^0.9.0",
-    "raf": "^3.4.0",
     "react": "^16.7.0",
     "react-dom": "^16.3.3",
     "react-konva": "https://github.com/lavrton/react-konva",
