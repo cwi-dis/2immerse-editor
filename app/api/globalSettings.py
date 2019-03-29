@@ -17,10 +17,11 @@ from __future__ import unicode_literals
 #
 # Global settings for this instance of the backend service.
 #
-# Replace the URLs here for running local copies of everything (or use the environment variables).
+# Replace the URLs here for running local copies of everything (or use the
+# environment variables).
 #
-# When deployed to the 2immerse infrastructure with the Mantl stuff there will be
-# environment variables that override the URLs
+# When deployed to the 2immerse infrastructure with the Mantl stuff there will
+# be environment variables that override the URLs
 from builtins import object
 import os
 
@@ -29,7 +30,7 @@ class GlobalSettings(object):
     # URL for the preview player:
     clientApiUrl = os.getenv(
         "CLIENT_API_URL",
-        "https://origin.platform.2immerse.eu/client-api/master/dist/test/general-test/dist/index.html"
+        None
     )
 
     # URLs for 2immerse services
