@@ -1059,6 +1059,26 @@ describe("Utility function shortenUrl()", () => {
     });
   });
 
+  it("should splice window.EDITOR_ROOT into the URL if present", () => {
+    mock.setup();
+    (window as any).EDITOR_ROOT = "/editor-root";
+
+    mock.post(/shorturl/, (req, res) => {
+      return res.status(200).body(JSON.stringify({
+        id: 0
+      }));
+    });
+
+    expect.assertions(1);
+
+    return expect(
+      util.shortenUrl("http://this-is-a-long.url")
+    ).resolves.toEqual("http://localhost/editor-root/shorturl/0").then(() => {
+      (window as any).EDITOR_ROOT = undefined;
+      mock.teardown();
+    });
+  });
+
   it("should reject the promise with an error object on failure", () => {
     mock.setup();
 
