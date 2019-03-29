@@ -59,6 +59,12 @@ def get_docRoot(localPath=API_ROOT):
         if not hostRP:
             hostRP = request.headers.get('Host')
 
+        path = request.headers.get('X-Script-Name')
+        if path and localPath:
+            localPath = path + localPath
+        elif path and not localPath:
+            localPath = path
+
         assert hostRP
         docRoot = '%s://%s/' % (protoRP, hostRP)
     else:

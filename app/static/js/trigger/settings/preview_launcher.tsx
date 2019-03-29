@@ -58,7 +58,7 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
    */
   private getPreviewUrl(): string {
     // Compile preview URL
-    return `${location.protocol}//${location.host}/api/v1/document/${this.props.documentId}/preview`;
+    return `${location.protocol}//${location.host}${(window as any).EDITOR_ROOT}/api/v1/document/${this.props.documentId}/preview`;
   }
 
   /**

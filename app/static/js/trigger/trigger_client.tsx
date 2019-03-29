@@ -143,15 +143,23 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     // Retrieve websocket endpoint from API
     const data = await makeRequest("GET", "/api/v1/configuration");
 
-    const { websocketService }  = JSON.parse(data);
+    let { websocketService }  = JSON.parse(data);
     const { documentId } = this.props;
+
+    const options: SocketIOClient.ConnectOpts = { transports: ["websocket"] };
+    const res = /^(.*?)(\/?){(.+)}(\/?)(.*?)$/.exec(websocketService);
+
+    if (res) {
+      options.path = res[3] + "/socket.io";
+      websocketService = res[1] + ((res[2] || res[4]) ? "/" : "") + res[5];
+    }
 
     // Initialise websocket URL
     const url = websocketService.replace(/.+:\/\//, "").replace(/\/$/, "") + "/trigger";
     console.log("Connecting to", url);
 
     // Connect to websocket
-    this.socket = io(url, { transports: ["websocket"] });
+    this.socket = io(url, options);
 
     this.socket.on("connect", () => {
       console.log("Connected to websocket-service");
