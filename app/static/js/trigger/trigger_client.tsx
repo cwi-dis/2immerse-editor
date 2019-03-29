@@ -146,11 +146,12 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     let { websocketService }  = JSON.parse(data);
     const { documentId } = this.props;
 
-    const options = { transports: ["websocket"] };
+    const options: SocketIOClient.ConnectOpts = { transports: ["websocket"] };
     const res = /^(.*?)(\/?){(.+)}(\/?)(.*?)$/.exec(websocketService);
+
     if (res) {
-      (options as any).path = res[3] + "/socket.io";
-      websocketService = res[1] + ((res[2] || res[4]) ? '/' : '') + res[5];
+      options.path = res[3] + "/socket.io";
+      websocketService = res[1] + ((res[2] || res[4]) ? "/" : "") + res[5];
     }
 
     // Initialise websocket URL

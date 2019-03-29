@@ -179,12 +179,12 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
 
     // Get default value for URL field from localStorage
     const urlDefaultValue = localStorage.getItem("urlDefault");
-    const BackButton = asBackButton<{ onClick: any }>("a");
+    const BackButton = asBackButton<{ onClick: () => void }>("a");
 
     return (
       <div style={boxStyle}>
         <div style={{position: "absolute", top: 10, left: 10}}>
-          <BackButton onClick={function() { location.href=(window as any).EDITOR_ROOT + '/'; } } />
+          <BackButton onClick={() => location.href = (window as any).EDITOR_ROOT + "/"} />
         </div>
 
         {(this.state.ajaxError) ?
