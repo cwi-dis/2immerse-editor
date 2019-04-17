@@ -15,7 +15,8 @@
  */
 
 import { combineReducers } from "redux";
-import { routerReducer } from "react-router-redux";
+import { History } from "history";
+import { connectRouter } from "connected-react-router";
 
 import assets from "./assets";
 import chapters from "./chapters";
@@ -24,15 +25,16 @@ import masters from "./masters";
 import screens from "./screens";
 import timelines from "./timelines";
 
-// Combine all reducers into a single reducer
-const rootReducer = combineReducers({
+// Combine all reducers into a single reducer and return a function which takes
+// a history object as argument
+const createRootReducer = (history: History) => combineReducers({
   assets,
   chapters,
   document,
   masters,
-  router: routerReducer,
+  router: connectRouter(history),
   screens,
   timelines
 });
 
-export default rootReducer;
+export default createRootReducer;

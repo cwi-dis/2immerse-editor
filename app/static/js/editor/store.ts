@@ -15,17 +15,18 @@
  */
 
 import { applyMiddleware, compose, createStore } from "redux";
-import { routerMiddleware, push, RouterAction } from "react-router-redux";
+import { routerMiddleware, push, RouterAction } from "connected-react-router";
 import { createHashHistory, LocationDescriptor } from "history";
 import thunk from "redux-thunk";
 
-import rootReducer from "./reducers/index";
+import createRootReducer from "./reducers/index";
 import { AssetState } from "./reducers/assets";
 import { ChapterState } from "./reducers/chapters";
 import { DocumentState } from "./reducers/document";
 import { MasterState } from "./reducers/masters";
 import { ScreenState } from "./reducers/screens";
 import { TimelineState } from "./reducers/timelines";
+import { RouterState } from "connected-react-router";
 
 // Combined application state
 export interface ApplicationState {
@@ -33,6 +34,7 @@ export interface ApplicationState {
   chapters: ChapterState;
   document: DocumentState;
   masters: MasterState;
+  router: RouterState;
   screens: ScreenState;
   timelines: TimelineState;
 }
@@ -46,7 +48,7 @@ const router = routerMiddleware(history);
 
 // Initialise application store with root reducer and insert routing and thunk middlewares
 const store = createStore(
-  rootReducer,
+  createRootReducer(history),
   undefined,
   composeEnhancers(applyMiddleware(thunk), applyMiddleware(router))
 );
@@ -59,7 +61,7 @@ const store = createStore(
  * @param route Route to navigate to
  * @param state State to pass to the route. Optional
  */
-export function navigate(route: LocationDescriptor, state?: any): RouterAction {
+export function navigate(route: string, state?: any): RouterAction {
   return store.dispatch(push(route, state));
 }
 
