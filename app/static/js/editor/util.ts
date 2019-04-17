@@ -41,6 +41,14 @@ export interface RouterProps {
 }
 
 /**
+ * Data type for a simple x/y point on a plane
+ */
+export interface Vector2d {
+  x: number;
+  y: number;
+}
+
+/**
  * Basic action without payload and string for name of action.
  */
 interface Action {

@@ -17,7 +17,7 @@
 import * as React from "react";
 import { RegularPolygon } from "react-konva";
 
-import { Vector2d } from "konva";
+import { Vector2d } from "../../util";
 
 /**
  * Props for ScrubberHead

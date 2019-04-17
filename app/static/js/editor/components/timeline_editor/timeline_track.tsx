@@ -17,8 +17,8 @@
 import * as React from "react";
 import { List } from "immutable";
 import { Group, Line, Rect, Text } from "react-konva";
-import { Vector2d } from "konva";
 
+import { Vector2d } from "../../util";
 import PreviewImage from "./preview_image";
 import { TimelineElement } from "../../reducers/timelines";
 
