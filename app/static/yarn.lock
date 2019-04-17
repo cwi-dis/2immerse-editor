@@ -3627,9 +3627,10 @@ kleur@^3.0.2:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.2.tgz#83c7ec858a41098b613d5998a7b653962b504f68"
   integrity sha512-3h7B2WRT5LNXOtQiAaWonilegHcPSf9nLVXlSTci8lu1dZUuui61+EsPEZqSVxY7rXYmB2DVKMQILxaO5WL61Q==
 
-"konva@https://github.com/troeggla/konva":
-  version "2.0.2"
-  resolved "https://github.com/troeggla/konva#e96889677c6445fdd6801cde8d0e408b896841b0"
+konva@^3.2.4:
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-3.2.4.tgz#ca6f19d41f0870a2505cdf0de56facb888e30dc8"
+  integrity sha512-ej5Jj7OmqecjxJQn1p9twUZkesIIJrc3aJi9B3Wp7apg+IOzxuIL9Ynbzoj9j7F0uxqT+IExntnF8FYizPqUBQ==
 
 lcid@^2.0.0:
   version "2.0.0"
@@ -4823,12 +4824,13 @@ react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.2, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.4.tgz#90f336a68c3a29a096a3d648ab80e87ec61482a2"
   integrity sha512-PVadd+WaUDOAciICm/J1waJaSvgq+4rHE/K70j0PFqKhkTBsPv/82UGQJNXAngz1fOQLLxI6z1sEDmJDQhCTAA==
 
-"react-konva@https://github.com/lavrton/react-konva":
-  version "1.7.2"
-  resolved "https://github.com/lavrton/react-konva#cdc97a488f3f84a0e0974645cf887ccbb454ecc2"
+react-konva@^16.8.6:
+  version "16.8.6"
+  resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-16.8.6.tgz#0fe7ef2b6c75eeeec71ba9ca9db1829b5889293c"
+  integrity sha512-6KRIqHyJuTTMuAehDIXvw+ZrtEj2aMc2fwolhmFlg1HBzH4PJimsMByTcEx292Afh9d38TcHdjXP1C58qqDOlg==
   dependencies:
-    fbjs "^0.8.16"
-    react-reconciler "^0.9.0"
+    react-reconciler "^0.20.4"
+    scheduler "^0.13.6"
 
 react-reconciler@^0.20.4:
   version "0.20.4"
