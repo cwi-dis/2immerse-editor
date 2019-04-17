@@ -17,11 +17,10 @@
 import * as React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import { ConnectedRouter } from "react-router-redux";
-import { Route, withRouter } from "react-router-dom";
+import { Switch, Route } from "react-router";
+import { ConnectedRouter } from "connected-react-router";
 
 import store, { history } from "../store";
-
 import Layout from "./layout";
 import LayoutDesigner from "./layout_designer/layout_designer";
 import MasterManager from "./master_manager/master_manager";
@@ -32,9 +31,6 @@ import StartPage from "./start_page";
 import "bulma/css/bulma.css";
 import "../../../css/style.css";
 
-// Wrap the Layout component with a router
-const App = withRouter(Layout);
-
 /**
  * Callback triggered when the window is loaded. Renders the application to the
  * DOM and attaches it to the `react` DOM node.
@@ -44,13 +40,15 @@ window.onload = () => {
   render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <App>
-          <Route exact={true} path="/" component={StartPage} />
-          <Route exact={true} path="/layout" component={LayoutDesigner} />
-          <Route exact={true} path="/masters" component={MasterManager} />
-          <Route exact={true} path="/program" component={ProgramAuthor} />
-          <Route exact={true} path="/timeline/:chapterid" component={TimelineEditor} />
-        </App>
+        <Layout>
+          <Switch>
+            <Route exact={true} path="/" component={StartPage} />
+            <Route exact={true} path="/layout" component={LayoutDesigner} />
+            <Route exact={true} path="/masters" component={MasterManager} />
+            <Route exact={true} path="/program" component={ProgramAuthor} />
+            <Route exact={true} path="/timeline/:chapterid" component={TimelineEditor} />
+          </Switch>
+        </Layout>
       </ConnectedRouter>
     </Provider>,
     document.getElementById("react")
