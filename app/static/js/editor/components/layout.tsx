@@ -19,7 +19,6 @@ import * as React from "react";
 import CurrentVersion from "./current_version";
 import MenuBar from "./menu_bar";
 
-
 /**
  * Layout provides a wrapper around the application and renders components
  * which are displayed throughout the entire application, such as the MenuBar

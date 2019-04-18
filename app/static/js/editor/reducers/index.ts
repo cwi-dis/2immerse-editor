@@ -27,14 +27,16 @@ import timelines from "./timelines";
 
 // Combine all reducers into a single reducer and return a function which takes
 // a history object as argument
-const createRootReducer = (history: History) => combineReducers({
-  assets,
-  chapters,
-  document,
-  masters,
-  router: connectRouter(history),
-  screens,
-  timelines
-});
+const createRootReducer = (history: History) => {
+  return combineReducers({
+    assets,
+    chapters,
+    document,
+    masters,
+    router: connectRouter(history),
+    screens,
+    timelines
+  });
+};
 
 export default createRootReducer;
