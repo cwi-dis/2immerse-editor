@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "test": "jest --verbose --bail --coverage",
-    "covserver": "cd coverage/lcov-report; http-server; cd ../.."
+    "doc": "typedoc --out ../../docs/ --ignoreCompilerErrors js/"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
@@ -38,6 +38,7 @@
     "ts-loader": "^5.3.3",
     "tslint": "^5.10.0",
     "tslint-react": "^3.6.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.2.4",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3",
