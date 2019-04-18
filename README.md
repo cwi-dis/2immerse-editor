@@ -73,6 +73,12 @@ This will install all the application dependencies into a new folder
 folder to generate the application bundle.  The bundle needs to be regenerated
 every time you perform changes to the frontend code.
 
+## Documentation
+
+The documentation for the frontend can be found at <https://2-IMMERSE.github.io/editor/>.
+Moreover, a couple of guide documents can be found in this repository in the
+directory `guides/` in the root folder.
+
 ## Running the Application
 
 After you're done with the setup, in the top-level directory, call
