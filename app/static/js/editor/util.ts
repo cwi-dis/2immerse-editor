@@ -95,8 +95,8 @@ type PromiseReject = (err: {status: number, statusText: string, body?: string}) 
  *
  * @param method HTTP method. One of GET, POST, PUT or DELETE
  * @param url The target URL for the request
- * @param data Optional. Data to send with the request
- * @param contentType Optional. Content type of the request data
+ * @param data Data to send with the request
+ * @param contentType Content type of the request data
  * @returns A promise which resolves to the response body
  */
 export function makeRequest(method: HTTPMethods, url: string, data?: any, contentType?: string): Promise<string> {
@@ -190,6 +190,7 @@ export function capitalize(str: string): string {
  * Selects a subset of key-value pairs from an object and returns a new object
  * containing only the selected keys.
  *
+ * @typeparam T Type of the `obj` parameter
  * @param obj Object to pluck keys from
  * @param keys Names of keys that should be plucked
  * @returns A new object with the given subset of keys
@@ -210,6 +211,8 @@ export function pluck<T>(obj: T, keys: Array<keyof T>): Partial<T> {
  * Finds an object in a given collection by investigating each entry's key 'id'
  * and checking it against the given search value.
  *
+ * @typeparam T Type of the items inside `collection`. Must have a key named `id`
+ * @typeparam U Type of the values inside an object of type `T` and type of the value to search for
  * @param collection Collection to search
  * @param search Value to search for
  * @returns The index the entry was found at and the entry itself as a tuple
@@ -515,6 +518,7 @@ export function getCanvasDropPosition(stageWrapper: Nullable<Stage>, pageX: numb
  * Compares two arrays element by element and returns whether they are equal or
  * not.
  *
+ * @typeparam T Type of the elements inside the array
  * @param a First array
  * @param b Second array
  * @returns True if the arrays are equal, false otherwise
