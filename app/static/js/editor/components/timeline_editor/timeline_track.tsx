@@ -26,17 +26,28 @@ import { TimelineElement } from "../../reducers/timelines";
  * Props for TimelineTrack
  */
 interface TimelineTrackProps {
+  /** The name of the track */
   name: string;
+  /** The background color of the label */
   labelColor?: string;
+  /** The width of the track */
   width: number;
+  /** The height of the track */
   height: number;
+  /** The elements that should be rendered on the track */
   elements: List<TimelineElement>;
+  /** The duration of the track in seconds */
   trackDuration?: number;
+  /** The position of the scrubber head in pixels */
   scrubberPosition?: number;
+  /** Whether the track is locked */
   locked?: boolean;
+  /** Margins to the left and right of the track, given as `[lmargin, rmargin]` */
   offsets?: [number, number];
 
+  /** Callback invoked when an element is removed from the track. Receives the ID of the element that has been removed */
   elementRemoved: (id: string) => void;
+  /** Callback invoked when an element is clicked. Receives the ID and the current duration of the element that has been clicked */
   elementClicked: (id: string, currentDuration: number) => void;
 }
 
@@ -49,20 +60,9 @@ interface TimelineTrackProps {
  * indicate the current position within the track. The component also provides
  * callbacks which are triggered when elements are clicked or removed. Elements
  * are removed by dragging them off the timeline track.
- *
- * @param name The name of the track
- * @param labelColor The background color of the label. Optional
- * @param width The width of the track
- * @param height The height of the track
- * @param elements The elements that should be rendered on the track
- * @param trackDuration The duration of the track in seconds. Optional
- * @param scrubberPosition The position of the scrubber head in pixels. Optional
- * @param locked Whether the track is locked
- * @param offsets Margins to the left and right of the track. Optional, given as `[lmargin, rmargin]`
- * @param elementRemoved Callback invoked when an element is removed from the track. Receives the ID of the element that has been removed
- * @param elementClicked Callback invoked when an element is clicked. Receives the ID and the current duration of the element that has been clicked
  */
 class TimelineTrack extends React.Component<TimelineTrackProps, {}> {
+  /** Initial Y position of an element on the track, used for calculating drag distances */
   private initialYPosition?: number;
 
   public constructor(props: TimelineTrackProps) {
