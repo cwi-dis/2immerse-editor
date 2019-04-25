@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "test": "jest --verbose --bail --coverage",
-    "doc": "typedoc --out ../../docs/ --mode file --ignoreCompilerErrors js/"
+    "doc": "typedoc --out ../../docs/ --mode file --ignoreCompilerErrors js/ && touch ../../docs/.nojekyll"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.0",
