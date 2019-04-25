@@ -20,7 +20,24 @@ interface Action {
   type: string;
 }
 
+/**
+ * Type for functions passed to the `addHandler()` method of `ActionHandler`.
+ *
+ * @typeparam T Type of the state that will be passed to the function
+ * @param state State that the reducer will act upon
+ * @param action Action that the reducer will act upon
+ * @returns The transformed state
+ */
 type ActionHandlerFunction<T> = (state: T, action: Action) => T;
+
+/**
+ * Type of the function returned by `getReducer()` of `ActionHandler`.
+ *
+ * @typeparam T Type of the state that will be passed to the function
+ * @param state State that the reducer will act upon. Optional
+ * @param action Action that the reducer will act upon
+ * @returns The transformed state
+ */
 type ReducerFunction<T> = (state: T | undefined, action: Action) => T;
 
 /**
@@ -30,6 +47,8 @@ type ReducerFunction<T> = (state: T | undefined, action: Action) => T;
  * functions can be added via the `addHandler()` method, supplying action names
  * a strings. Finally, a complete reducer function, which can be passed to
  * `combineReducers()`, can be obtained by calling `getReducer()`.
+ *
+ * @typeparam T Type of initial state
  */
 export class ActionHandler<T> {
   private initialState: T;
