@@ -177,13 +177,7 @@ export function padStart(s: any, targetLength: number, pad = "0") {
  * @returns The input string with the first letter capitalised
  */
 export function capitalize(str: string): string {
-  // If string if empty, return unchanged
-  if (str.length === 0) {
-    return str;
-  }
-
-  // Convert first char to uppercase and prepend it to rest of string
-  return str[0].toUpperCase() + str.slice(1);
+  return str.split("").map((c, i) => (i === 0) ? c.toUpperCase() : c).join("");
 }
 
 /**
