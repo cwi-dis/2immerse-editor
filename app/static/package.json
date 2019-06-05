@@ -27,7 +27,7 @@
     "css-loader": "^2.1.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
-    "jest": "^24.3.0",
+    "jest": "^24.8.0",
     "jest-haste-map": "^24.5.0",
     "jest-resolve": "^24.5.0",
     "react-test-renderer": "^16.0.0",
