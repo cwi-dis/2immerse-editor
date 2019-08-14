@@ -38,6 +38,8 @@ describe("Component <CurrentVersion/>", () => {
     expect(currentVersion.state().revision).toEqual("some_commit_hash");
     expect(currentVersion.state().fetchError).toBeFalsy();
 
+    currentVersion.update();
+
     expect(
       currentVersion.render().find("a").first().prop("href")
     ).toEqual(
@@ -67,15 +69,15 @@ describe("Component <CurrentVersion/>", () => {
   });
 
   it("should take the commit URL as a prop", async () => {
-    const promise = Promise.resolve(JSON.stringify(["some_other_branch", "some_other_commit_hash"]));
-    const stubbedFn = stub(util, "makeRequest").returns(promise);
-
     const currentVersion = mount<CurrentVersionProps, CurrentVersionState>(
       <CurrentVersion commitUrl="http://my-commit-url.com/" />
     );
     expect.assertions(5);
 
-    await promise;
+    currentVersion.setState({
+      branch: "some_other_branch",
+      revision: "some_other_commit_hash"
+    });
 
     expect(currentVersion.props().commitUrl).toEqual("http://my-commit-url.com/");
     expect(currentVersion.state().branch).toEqual("some_other_branch");
@@ -87,7 +89,5 @@ describe("Component <CurrentVersion/>", () => {
     ).toEqual(
       "http://my-commit-url.com/some_other_commit_hash"
     );
-
-    stubbedFn.restore();
   });
 });
