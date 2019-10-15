@@ -228,7 +228,7 @@ function mapStateToProps(state: ApplicationState): MasterManagerConnectedProps {
  *
  * @param dispatch Dispatch function for the configured store
  */
-function mapDispatchToProps(dispatch: Dispatch<any>): MasterManagerActionProps {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     masterActions: bindActionCreators(masterActionCreators, dispatch),
     screenActions: bindActionCreators(screenActionCreators, dispatch)

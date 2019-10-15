@@ -307,7 +307,7 @@ function mapStateToProps(state: ApplicationState): StartPageConnectedProps {
  *
  * @param dispatch Dispatch function for the configured store
  */
-function mapDispatchToProps(dispatch: Dispatch<any>): StartPageActionProps {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     assetActions: bindActionCreators(assetActionCreators, dispatch),
     documentActions: bindActionCreators(documentActionCreators, dispatch),

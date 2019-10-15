@@ -721,7 +721,7 @@ function mapStateToProps(state: ApplicationState): TimelineEditorConnectedProps 
  *
  * @param dispatch Dispatch function for the configured store
  */
-function mapDispatchToProps(dispatch: Dispatch<any>): TimelineEditorActionProps {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     timelineActions: bindActionCreators(timelineActionCreators, dispatch),
     screenActions: bindActionCreators(screenActionCreators, dispatch)

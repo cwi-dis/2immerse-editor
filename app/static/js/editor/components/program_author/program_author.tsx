@@ -345,7 +345,7 @@ function mapStateToProps(state: ApplicationState): ProgramAuthorConnectedProps {
  *
  * @param dispatch Dispatch function for the configured store
  */
-function mapDispatchToProps(dispatch: Dispatch<any>): ProgramAuthorActionProps {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     chapterActions: bindActionCreators(chapterActionCreators, dispatch),
     timelineActions: bindActionCreators(timelineActionCreators, dispatch)

@@ -290,7 +290,7 @@ function mapStateToProps(state: ApplicationState): LayoutDesignerConnectedProps 
  *
  * @param dispatch Dispatch function for the configured store
  */
-function mapDispatchToProps(dispatch: Dispatch<any>): LayoutDesignerActionProps {
+function mapDispatchToProps(dispatch: Dispatch) {
   return {
     screenActions: bindActionCreators(screenActionCreators, dispatch)
   };
