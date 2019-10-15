@@ -127,10 +127,8 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
       // Update state accordingly if request was successful
       if (settings) {
-        settings[key] = value;
-
         this.setState({
-          settings,
+          settings: Object.assign({}, settings, {[key]: value}),
           saveSuccessful: true
         });
       }
