@@ -14,9 +14,7 @@
   },
   "include": [
     "./js/**/*.tsx",
-    "./js/**/*.ts",
-    "./__tests__/**/*.tsx",
-    "./__tests__/**/*.ts"
+    "./js/**/*.ts"
   ],
   "exclude": [
     "./node_modules/**/*"
