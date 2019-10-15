@@ -115,7 +115,7 @@ describe("Component <ContextMenuEntry />", () => {
   });
 
   it("should initialise with state.selected being false", () => {
-    const contextMenuEntry = mount(
+    const contextMenuEntry = mount<ContextMenuEntry>(
       <ContextMenuEntry name="Some entry" callback={() => {}} />
     );
 
@@ -139,7 +139,7 @@ describe("Component <ContextMenuEntry />", () => {
   });
 
   it("should change state.selected to true on mouseover", () => {
-    const contextMenuEntry = mount(
+    const contextMenuEntry = mount<ContextMenuEntry>(
       <ContextMenuEntry name="Some entry" callback={() => {}} />
     );
 
@@ -168,7 +168,7 @@ describe("Component <ContextMenuEntry />", () => {
   });
 
   it("should reset state.selected to false on mouseout", () => {
-    const contextMenuEntry = mount(
+    const contextMenuEntry = mount<ContextMenuEntry>(
       <ContextMenuEntry name="Some entry" callback={() => {}} />
     );
 
