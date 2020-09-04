@@ -224,7 +224,7 @@ export class FileInputField extends React.Component<FileInputFieldProps, {}> {
    *
    * @param newProps New props that were assigned to the component
    */
-  public componentWillReceiveProps(newProps: FileInputFieldProps) {
+  public UNSAFE_componentWillReceiveProps(newProps: FileInputFieldProps) {
     // Clear input field if 'clear' prop is set
     if (newProps.clear && this.inputField) {
       this.inputField.value = "";

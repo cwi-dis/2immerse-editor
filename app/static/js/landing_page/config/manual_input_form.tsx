@@ -85,7 +85,7 @@ class ManualInputForm extends React.Component<ManualInputFormProps, ManualInputF
    *
    * @param newProps New props for the component
    */
-  public componentWillReceiveProps(newProps: ManualInputFormProps) {
+  public UNSAFE_componentWillReceiveProps(newProps: ManualInputFormProps) {
     // Update state if props are about to be changed
     this.setState((prevState) => {
       const newState = {...prevState};

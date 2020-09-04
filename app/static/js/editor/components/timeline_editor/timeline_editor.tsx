@@ -173,7 +173,7 @@ class TimelineEditor extends React.Component<TimelineEditorProps, TimelineEditor
    * whether there is a timeline associated to the given chapter and redirects
    * back to the ProgramAuthor component if not.
    */
-  public componentWillMount() {
+  public UNSAFE_componentWillMount() {
     if (this.getTimeline() === undefined) {
       console.log("Chapter has no timeline yet, redirecting to ProgramAuthor");
       navigate("/program");
