@@ -9,6 +9,7 @@ module.exports = {
     "dist/",
     "bin/",
     "docs/",
+    "coverage/",
     "webpack.config.js"
   ],
   "extends": [
