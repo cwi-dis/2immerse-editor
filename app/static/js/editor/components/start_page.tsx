@@ -246,21 +246,21 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
                 </div>
               </div>
 
-              {(selectedMethod === "url") ?
+              {(selectedMethod === "url") ? (
                 <div className="field">
                   <label className="label">Document URL</label>
                   <div className="control">
                     <input key="url" className="input is-info" required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
                   </div>
                 </div>
-              : (selectedMethod === "upload") ?
+              ) : (selectedMethod === "upload") ? (
                 <div className="field">
                   <label className="label">File</label>
                   <div className="control">
                     <input key="upload" className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
                   </div>
                 </div>
-              :
+              ) : (
                 <div className="field">
                   <label className="label">Document ID</label>
                   <div className="control">
@@ -273,7 +273,7 @@ class StartPage extends React.Component<StartPageProps, StartPageState> {
                     </div>
                   </div>
                 </div>
-             }
+              )}
 
               <div className="field" style={{marginTop: 25}}>
                 <div className="control">

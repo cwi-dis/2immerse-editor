@@ -240,10 +240,13 @@ class EventContainer extends React.Component<EventContainerProps, EventContainer
           <TriggerModeContext.Consumer>
             {(triggerMode) =>
               <button
-                className={classNames(
-                            "button",
-                            "is-info",
-                            {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError})}
+                className={
+                  classNames(
+                    "button",
+                    "is-info",
+                    {"is-loading": isLoading, "button-pulse-success": flashSuccess, "button-pulse-error": flashError}
+                  )
+                }
                 onClick={() => (paramCount === 0) ? this.launchEvent(triggerMode) : this.setState({showEventModal: true})}
                 onAnimationEnd={() => this.setState({flashSuccess: false, flashError: false})}
               >

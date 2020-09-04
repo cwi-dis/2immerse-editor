@@ -132,9 +132,9 @@ class ViewerDocumentChooser extends React.Component<{}, ViewerDocumentChooserSta
           <div className="control">
             <div className="select is-fullwidth is-info">
               <select ref={(e) => this.modeInput = e} required={true}>
-                  <option value="">default</option>
-                  <option value="?mode=TV">TV</option>
-                  <option value="?mode=standalone">Standalone</option>
+                <option value="">default</option>
+                <option value="?mode=TV">TV</option>
+                <option value="?mode=standalone">Standalone</option>
               </select>
             </div>
           </div>

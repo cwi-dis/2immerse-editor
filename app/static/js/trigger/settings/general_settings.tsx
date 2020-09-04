@@ -94,16 +94,14 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     const renderedLinks: Array<JSX.Element> = [];
 
     // Compile a list of <a> elements from the debug links
-    for (let key in links) {
-      if (links.hasOwnProperty(key)) {
-        renderedLinks.push(
-          <a key={key} target="_blank" href={links[key]}>{key}</a>
-        );
+    Object.keys(links).forEach((key) => {
+      renderedLinks.push(
+        <a key={key} target="_blank" rel="noreferer noopener" href={links[key]}>{key}</a>
+      );
 
-        // Insert <br> element after each line
-        renderedLinks.push(<br key={key + "br"} />);
-      }
-    }
+      // Insert <br> element after each line
+      renderedLinks.push(<br key={key + "br"} />);
+    });
 
     return renderedLinks;
   }

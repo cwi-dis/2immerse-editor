@@ -273,8 +273,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
   private isSubmitEnabled(): boolean {
     const { params } = this.state;
     // Check whether all required params have a value
-    const submitEnabled = params.filter((p) => p.required)
-                                .every((p) => p.value !== undefined && p.value !== "");
+    const submitEnabled = params.filter((p) => p.required).every((p) => p.value !== undefined && p.value !== "");
 
     return submitEnabled;
   }

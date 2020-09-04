@@ -187,14 +187,16 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
           <BackButton onClick={() => location.href = (window as any).EDITOR_ROOT + "/"} />
         </div>
 
-        {(this.state.ajaxError) ?
+        {(this.state.ajaxError) ? (
           <div className="notification is-danger">
             <p>
               Could not complete request:&emsp;
               <i>{this.state.ajaxError.statusText} (HTTP Error {this.state.ajaxError.status})</i>
             </p>
           </div>
-         : ""
+        ) : (
+          ""
+        )
         }
 
         <form className="column" onSubmit={this.submitForm.bind(this)}>
@@ -210,21 +212,21 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
               </div>
             </div>
           </div>
-          {(selectedMethod === "url") ?
+          {(selectedMethod === "url") ? (
             <div className="field">
               <label className="label">Document URL</label>
               <div className="control">
                 <input key="url" className="input is-info" defaultValue={urlDefaultValue || undefined} required={true} ref={(e) => this.urlInput = e} type="url" placeholder="URL" />
               </div>
             </div>
-           : (selectedMethod === "upload") ?
+          ) : (selectedMethod === "upload") ? (
             <div className="field">
               <label className="label">File</label>
               <div className="control">
                 <input key="upload" className="input is-info" required={true} ref={(e) => this.fileInput = e} type="file" placeholder="File" />
               </div>
             </div>
-           :
+          ) : (
             <div className="field">
               <label className="label">Document ID</label>
               <div className="control">
@@ -237,7 +239,7 @@ class DocumentChooser extends React.Component<DocumentChooserProps, DocumentChoo
                 </div>
               </div>
             </div>
-          }
+          )}
 
           <div className="field">
             <label className="label">Trigger Mode</label>

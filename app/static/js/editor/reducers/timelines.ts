@@ -265,8 +265,8 @@ actionHandler.addHandler("REMOVE_ELEMENT", (state, action: actions.REMOVE_ELEMEN
         return elements.remove(elementnum);
       });
     });
-   } catch {
-     // Do nothing if any element along the chain does not exist
+  } catch {
+    // Do nothing if any element along the chain does not exist
     return state;
   }
 });
@@ -297,8 +297,8 @@ actionHandler.addHandler("UPDATE_ELEMENT_LENGTH", (state, action: actions.UPDATE
         });
       });
     });
-   } catch {
-     // Do nothing if any element along the chain does not exist
+  } catch {
+    // Do nothing if any element along the chain does not exist
     return state;
   }
 });
@@ -320,7 +320,7 @@ actionHandler.addHandler("TOGGLE_TRACK_LOCK", (state, action: actions.TOGGLE_TRA
       });
     });
   } catch {
-     // Do nothing if any element along the chain does not exist
+    // Do nothing if any element along the chain does not exist
     return state;
   }
 });

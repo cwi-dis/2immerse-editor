@@ -300,7 +300,7 @@ export function getDescendantChapters(chapters: List<Chapter> | Chapter): List<C
   };
 
   // If param chapters is a list itslef, call function on list object
-  if (chapters.hasOwnProperty("size")) {
+  if (Object.prototype.hasOwnProperty.call(chapters, "size")) {
     return fn(chapters as List<Chapter>, List());
   }
 
