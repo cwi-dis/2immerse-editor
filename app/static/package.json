@@ -57,7 +57,7 @@
     "jsonschema": "^1.2.2",
     "konva": "^3.2.4",
     "qrcode": "^0.9.0",
-    "react": "^16.8.6",
+    "react": "^16.9.0",
     "react-dom": "^16.6.0",
     "react-konva": "^16.8.6",
     "react-redux": "^6.0.1",
