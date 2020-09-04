@@ -96,7 +96,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
     // Compile a list of <a> elements from the debug links
     Object.keys(links).forEach((key) => {
       renderedLinks.push(
-        <a key={key} target="_blank" rel="noreferer noopener" href={links[key]}>{key}</a>
+        <a key={key} target="_blank" rel="noreferrer" href={links[key]}>{key}</a>
       );
 
       // Insert <br> element after each line

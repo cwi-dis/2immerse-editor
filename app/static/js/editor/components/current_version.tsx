@@ -99,7 +99,7 @@ class CurrentVersion extends React.Component<CurrentVersionProps, CurrentVersion
       return (
         <div style={style}>
           Current version:&nbsp;
-          <a target="_blank" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${revision}`}>
+          <a target="_blank" rel="noreferrer" style={{color: "#BBBBBB", textDecoration: "underline"}} href={`${this.props.commitUrl}${revision}`}>
             {branch}/{revision}
           </a>
         </div>

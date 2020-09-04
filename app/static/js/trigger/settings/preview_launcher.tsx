@@ -103,6 +103,7 @@ class PreviewLauncher extends React.Component<PreviewLauncherProps, PreviewLaunc
           className="button is-info"
           href={previewUrl}
           target="_blank"
+          rel="noreferrer"
         >
           Open preview in new tab
         </a>
