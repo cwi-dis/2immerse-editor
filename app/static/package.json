@@ -36,8 +36,6 @@
     "style-loader": "^0.18.2",
     "ts-jest": "^25.3.0",
     "ts-loader": "^5.3.3",
-    "tslint": "^5.17.0",
-    "tslint-react": "^3.6.0",
     "typedoc": "^0.17.4",
     "typescript": "^3.2.4",
     "webpack": "^4.44.1",
