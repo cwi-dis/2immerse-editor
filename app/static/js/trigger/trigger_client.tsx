@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import * as io from "socket.io-client";
+import * as socketIO from "socket.io-client";
 
 import { makeRequest } from "../editor/util";
 import EventList from "./event_list";
@@ -88,7 +88,7 @@ interface TriggerClientState {
  * @param clearSession Callback for clearing the session
  */
 class TriggerClient extends React.Component<TriggerClientProps, TriggerClientState> {
-  private socket: SocketIOClient.Socket;
+  private socket: socketIO.Socket;
 
   constructor(props: TriggerClientProps) {
     super(props);
@@ -146,7 +146,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     let { websocketService }  = JSON.parse(data);
     const { documentId } = this.props;
 
-    const options: SocketIOClient.ConnectOpts = { transports: ["websocket"] };
+    const options: Partial<socketIO.ManagerOptions> = { transports: ["websocket"] };
     const res = /^(.*?)(\/?){(.+)}(\/?)(.*?)$/.exec(websocketService);
 
     if (res) {
@@ -159,7 +159,7 @@ class TriggerClient extends React.Component<TriggerClientProps, TriggerClientSta
     console.log("Connecting to", url);
 
     // Connect to websocket
-    this.socket = io(url, options);
+    this.socket = socketIO.io(url, options);
 
     this.socket.on("connect", () => {
       console.log("Connected to websocket-service");
