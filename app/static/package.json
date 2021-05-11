@@ -27,7 +27,7 @@
     "@types/socket.io-client": "^1.4.32",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
-    "css-loader": "^5.2.0",
+    "css-loader": "^5.2.4",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
     "eslint": "^7.10.0",
