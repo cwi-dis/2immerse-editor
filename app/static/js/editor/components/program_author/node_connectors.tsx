@@ -53,7 +53,7 @@ const NodeConnectors: React.SFC<NodeConnectorsProps> = (props) => {
   const [width, height] = props.boxSize;
   const [xMargin, yMargin] = props.margins;
 
-  let connectorLines: Array<JSX.Element> = [];
+  const connectorLines: Array<JSX.Element> = [];
   const centerX = x + width / 2;
 
   // If node has children draw connector line on the bottom

@@ -734,7 +734,7 @@ export function getAncestorOffsets(chapters: List<Chapter>, timelines: List<Time
     return List().push([[], "", 0]);
   }
 
-  let offsets = List<[Array<number>, string, number]>([]);
+  const offsets = List<[Array<number>, string, number]>([]);
 
   // Get parent chapter
   const parentAccessPath = accessPath.slice(0, -1);
@@ -849,7 +849,7 @@ export function trimFront(track: TimelineTrack, start: number): TimelineTrack {
 
   // Check whether we need to adjust the first element's duration of offset
   if (start - timeElapsed > 0) {
-    let remaining = start - timeElapsed;
+    const remaining = start - timeElapsed;
 
     elements = elements.update(0, (e) => {
       // Update offset

@@ -189,7 +189,7 @@ class ProgramAuthor extends React.Component<ProgramAuthorProps, {}> {
 
       // Render chapter node and connectors for current chapter, then make recursive
       // call to method on child nodes, combine it all into single list
-      let rects = [(
+      const rects = [(
         <ChapterNode
           key={`group.${currentPath}`}
           chapter={chapter}

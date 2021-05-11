@@ -1278,7 +1278,7 @@ describe("Timelines reducer", () => {
       ])})
     ]);
 
-    let transformedState = reducer(
+    const transformedState = reducer(
       initialState,
       { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline2", trackId: "track1" }} as any
     );
@@ -1295,7 +1295,7 @@ describe("Timelines reducer", () => {
       ])})
     ]);
 
-    let transformedState = reducer(
+    const transformedState = reducer(
       initialState,
       { type: "TOGGLE_TRACK_LOCK", payload: { timelineId: "timeline1", trackId: "track2" }} as any
     );

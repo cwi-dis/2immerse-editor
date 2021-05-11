@@ -35,7 +35,9 @@ interface TimeConverterProps {
  * @param style CSS style for the wrapping element
  */
 const TimeConverter: React.SFC<TimeConverterProps> = (props) => {
-  let { seconds, style } = props;
+  let { seconds } = props;
+  const { style } = props;
+
   // Function for padding a number with leading zeroes
   const padZero = (n: number) => padStart(n, 2, "0");
 

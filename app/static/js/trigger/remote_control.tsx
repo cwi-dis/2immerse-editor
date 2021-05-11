@@ -188,7 +188,8 @@ class RemoteControl extends React.Component<RemoteControlProps, RemoteControlSta
    * @returns A timecode based on the current position in the stream
    */
   private renderTimestamp() {
-    let { position, timeOffset } = this.state;
+    let { position } = this.state;
+    const { timeOffset } = this.state;
 
     // Only render timestamp if timer has initialised
     if (position) {

@@ -189,7 +189,7 @@ class EventModal extends React.Component<EventModalProps, EventModalState> {
    */
   private updateParamField(i: number, ev: React.ChangeEvent<HTMLInputElement>) {
     // Get current value of param at index i and update it
-    let currentValue = this.state.params.get(i)!;
+    const currentValue = this.state.params.get(i)!;
     currentValue.value = ev.target.value;
 
     // Update state with new value

@@ -121,7 +121,7 @@ class GeneralSettings extends React.Component<GeneralSettingsProps, GeneralSetti
 
       // Setting given key to new value
       await makeRequest("PUT", this.settingsUrl, { [key]: value }, "application/json");
-      let { settings } = this.state;
+      const { settings } = this.state;
 
       // Update state accordingly if request was successful
       if (settings) {
